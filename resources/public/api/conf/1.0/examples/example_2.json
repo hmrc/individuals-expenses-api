@@ -3,12 +3,12 @@
   "aFieldDefinedInline": "bar",
   "links": [
     {
-      "href": "/insert/context/AA11112A",
+      "href": "/individuals/expenses/AA11112A",
       "rel": "self",
       "method": "GET"
     },
     {
-      "href": "/insert/context/AA111112A/foo/bar",
+      "href": "/individuals/expenses/AA111112A/foo/bar",
       "rel": "sample-rel",
       "method": "GET"
     }

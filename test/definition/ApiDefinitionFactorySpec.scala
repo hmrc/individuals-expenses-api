@@ -46,19 +46,19 @@ class ApiDefinitionFactorySpec extends UnitSpec {
             scopes = Seq(
               Scope(
                 key = readScope,
-                name = "#name#",
-                description = "#desc#"
+                name = "View your Self Assessment information",
+                description = "Allow read access to self assessment data"
               ),
               Scope(
                 key = writeScope,
-                name = "#name#",
-                description = "#desc#"
+                name = "Change your Self Assessment information",
+                description = "Allow write access to self assessment data"
               )
             ),
             api = APIDefinition(
-              name = "#mtd-api# (MTD)",
-              description = "#desc#",
-              context = "mtd/template",
+              name = "Individual Expenses API (MTD)",
+              description = "An API for retrieving individual expenses data for Self Assessment",
+              context = "individuals/expenses",
               categories = Seq("INCOME_TAX_MTD"),
               versions = Seq(
                 APIVersion(
