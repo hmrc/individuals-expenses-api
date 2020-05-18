@@ -28,7 +28,7 @@ class ApiDefinitionFactorySpec extends UnitSpec {
 
   class Test extends MockHttpClient with MockAppConfig {
     val apiDefinitionFactory = new ApiDefinitionFactory(mockAppConfig)
-    MockedAppConfig.apiGatewayContext returns "mtd/template"
+    MockedAppConfig.apiGatewayContext returns "individuals/expenses"
   }
 
   "definition" when {
