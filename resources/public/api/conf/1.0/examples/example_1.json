@@ -1,0 +1,16 @@
+{
+  "anIdUsedAcrossMultipleSchemas": "123456789012345",
+  "aFieldDefinedInline": "foo",
+  "links": [
+    {
+      "href": "/individuals/expenses/AA11111A",
+      "rel": "self",
+      "method": "GET"
+    },
+    {
+      "href": "/individuals/expenses/AA111111A/foo/bar",
+      "rel": "sample-rel",
+      "method": "GET"
+    }
+  ]
+}
