@@ -1,6 +1,6 @@
 #%RAML 1.0
 ---
-title: MTD Template
+title: Individual Expenses API
 version: 1.0
 
 protocols: [ HTTPS ]
@@ -29,7 +29,7 @@ uses:
   errors: errors.raml
   headers: headers.raml
 
-'/mtd/template':
+'/individuals/expenses':
   /{nino}:
     uriParameters:
       nino:

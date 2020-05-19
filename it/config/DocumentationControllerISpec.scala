@@ -27,19 +27,19 @@ class DocumentationControllerISpec extends IntegrationBaseSpec {
     |{
     |   "scopes":[
     |      {
-    |         "key":"read:self-assessment",
-    |         "name":"#name#",
-    |         "description":"#desc#"
+    |        "key":"read:self-assessment",
+    |        "name":"View your Self Assessment information",
+    |        "description":"Allow read access to self assessment data"
     |      },
     |      {
-    |         "key":"write:self-assessment",
-    |         "name":"#name#",
-    |         "description":"#desc#"
+    |        "key":"write:self-assessment",
+    |        "name":"Change your Self Assessment information",
+    |        "description":"Allow write access to self assessment data"
     |      }
     |   ],
     |   "api":{
-    |      "name":"#mtd-api# (MTD)",
-    |      "description":"#desc#",
+    |      "name":"Individuals Expenses API (MTD)",
+    |      "description":"An API for retrieving individual expenses data for Self Assessment",
     |      "context":"mtd/template",
     |      "categories":[
     |         "INCOME_TAX_MTD"
