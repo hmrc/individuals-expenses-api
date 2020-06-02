@@ -38,7 +38,7 @@ class DocumentationControllerISpec extends IntegrationBaseSpec {
     |      }
     |   ],
     |   "api":{
-    |      "name":"Individuals Expenses API (MTD)",
+    |      "name":"Individuals Expenses (MTD)",
     |      "description":"An API for retrieving individual expenses data for Self Assessment",
     |      "context":"individuals/expenses",
     |      "categories":[
