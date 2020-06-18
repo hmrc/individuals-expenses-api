@@ -1,0 +1,37 @@
+is:
+  - headers.acceptJson
+  - headers.contentTypeJson
+  - headers.testScenarioHeader
+  - errors.formatNino
+  - errors.formatTaxYear
+  - errors.ruleTaxYearRangeInvalid
+  - errors.formatValue
+  - errors.incorrectOrEmptyBody
+  - errors.formatCustomerRef
+  - errors.clientOrAgentNotAuthorised
+  - errors.notFound
+displayName: Amend Expenses [test only]
+description: This endpoint allows a developer to amend expenses income for trade union and patent royalties. A National Insurance number and tax year must be provided.
+(annotations.sandboxData): !include scenarios/amend_expenses.md
+(annotations.scope): "write:self-assessment"
+securedBy: [ sec.oauth_2_0: { scopes: [ "write:self-assessment" ] } ]
+body:
+  application/json:
+    type: !include schemas/amend_expenses_request.json
+    examples:
+     example-1:
+      description: Default Example
+      value: !include examples/amend_expenses/request_1.json
+responses:
+  200:
+    body:
+      application/json:
+        type: !include schemas/amend_expenses_response.json
+        examples:
+          example-1:
+            description: Default Example
+            value: !include examples/amend_expenses/response_1.json
+    headers:
+      X-CorrelationId:
+        example: c75f40a6-a3df-4429-a697-471eeec46435
+        description: Unique ID for operation tracking <br> String, 36 characters.

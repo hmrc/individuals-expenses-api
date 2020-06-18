@@ -22,7 +22,7 @@ traits:
             type: types.errorResponse
             examples:
               clientOrAgentNotAuthorised:
-                description: 'The client or agent is not authorised. This is because: the client is not subscribed to MTD, the agent is not subscribed to Agent Services, or the client has not authorised the agent to act on their behalf'
+                description: 'The client or agent is not authorised. This is because: the client is not subscribed to MTD, the agent is not subscribed to Agent Services, or the client has not authorised the agent to act on their behalf.'
                 value:
                   code: CLIENT_OR_AGENT_NOT_AUTHORISED
   formatNino:
@@ -33,7 +33,7 @@ traits:
             type: types.errorResponse
             examples:
               formatNino:
-                description: The format of the supplied NINO field is not valid
+                description: The format of the supplied NINO field is not valid.
                 value:
                   code: FORMAT_NINO
   formatTaxYear:
@@ -44,9 +44,31 @@ traits:
             type: types.errorResponse
             examples:
               formatTaxYear:
-                description: The format of the supplied tax year field is not valid
+                description: The format of the supplied tax year field is not valid.
                 value:
                   code: FORMAT_TAX_YEAR
+  formatValue:
+    responses:
+      400:
+        body:
+          application/json:
+            type: types.errorResponse
+            examples:
+              formatValue:
+                description: One or more values have been added with the incorrect format.
+                value:
+                  code: FORMAT_VALUE
+  formatCustomerRef:
+    responses:
+      400:
+        body:
+          application/json:
+            type: types.errorResponse
+            examples:
+              formatCustomerRef:
+                description: The format of customer reference is not valid.
+                value:
+                  code: FORMAT_CUSTOMER_REFERENCE
   incorrectOrEmptyBody:
     responses:
       400:
@@ -55,7 +77,7 @@ traits:
             type: types.errorResponse
             examples:
               incorrectOrEmptyBody:
-                description: An empty or non-matching body was submitted
+                description: An empty or non-matching body was submitted.
                 value:
                   code: RULE_INCORRECT_OR_EMPTY_BODY_SUBMITTED
   ruleTaxYearNotSupported:
@@ -69,17 +91,17 @@ traits:
                 description: The specified tax year is not supported. That is, the tax year specified is before the minimum tax year value.
                 value:
                   code: RULE_TAX_YEAR_NOT_SUPPORTED
-  ruleTaxYearRangeExceeded:
+  ruleTaxYearRangeInvalid:
     responses:
       400:
         body:
           application/json:
             type: types.errorResponse
             examples:
-              ruleTaxYearRangeExceeded:
-                description: Tax year range exceeded. A tax year range of one year is required.
+              ruleTaxYearRangeInvalid:
+                description: Tax year range invalid. A tax year range of one year is required.
                 value:
-                  code: RULE_TAX_YEAR_RANGE_EXCEEDED
+                  code: RULE_TAX_YEAR_RANGE_INVALID
   ruleTaxYearNotEnded:
       responses:
         400:
@@ -110,6 +132,6 @@ traits:
             type: types.errorResponse
             examples:
               ruleSelfEmploymentId:
-                description: A self-employment ID can only be supplied for a self-employment business type
+                description: A self-employment ID can only be supplied for a self-employment business type.
                 value:
                   code: RULE_SELF_EMPLOYMENT_ID
