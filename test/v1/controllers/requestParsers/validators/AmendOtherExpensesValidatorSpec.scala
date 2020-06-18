@@ -27,14 +27,14 @@ class AmendOtherExpensesValidatorSpec extends UnitSpec {
   private val requestBodyJson = Json.parse(
     """
       |{
-      |    {
-      |      "customerReference": "myref",
-      |      "expenseAmount": 1223.22
-      |    },
-      |    {
-      |      "customerReference": "myref",
-      |      "expenseAmount": 1223.22
-      |    }
+      |  "paymentsToTradeUnionsForDeathBenefits": {
+      |    "customerReference": "TRADE UNION PAYMENTS",
+      |    "expenseAmount": 1223.22
+      |  },
+      |  "patentRoyaltiesPayments":{
+      |    "customerReference": "ROYALTIES PAYMENTS",
+      |    "expenseAmount": 1223.22
+      |  }
       |}""".stripMargin)
 
   val validator = new AmendOtherExpensesValidator
