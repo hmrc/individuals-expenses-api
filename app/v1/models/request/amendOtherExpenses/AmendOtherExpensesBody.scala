@@ -14,18 +14,13 @@
  * limitations under the License.
  */
 
-package v1.controllers.requestParsers
+package v1.models.request.amendOtherExpenses
 
-import javax.inject.Inject
-import uk.gov.hmrc.domain.Nino
-import v1.controllers.requestParsers.validators.SampleValidator
-import v1.models.domain.SampleRequestBody
-import v1.models.request.{DesTaxYear, SampleRawData, SampleRequestData}
+import play.api.libs.json.{Json, OFormat}
 
-class SampleRequestDataParser @Inject()(val validator: SampleValidator)
-  extends RequestParser[SampleRawData, SampleRequestData] {
+case class AmendOtherExpensesBody(paymentsToTradeUnionsForDeathBenefits: Option[PaymentsToTradeUnionsForDeathBenefits],
+                                  patentRoyaltiesPayments: Option[PatentRoyaltiesPayments])
 
-  override protected def requestFor(data: SampleRawData): SampleRequestData =
-    SampleRequestData(Nino(data.nino), DesTaxYear.fromMtd(data.taxYear), data.body.as[SampleRequestBody])
-
+object AmendOtherExpensesBody {
+  implicit val format: OFormat[AmendOtherExpensesBody] = Json.format[AmendOtherExpensesBody]
 }
