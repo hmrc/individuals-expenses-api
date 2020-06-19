@@ -17,16 +17,19 @@
 package v1.services
 
 import cats.data.EitherT
-import javax.inject.Inject
+import cats.implicits._
+import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Logging
 import v1.connectors.AmendOtherExpensesConnector
 import v1.controllers.EndpointLogContext
-import v1.models.errors.{DownstreamError, NinoFormatError, NotFoundError, TaxYearFormatError}
+import v1.models.errors._
+import v1.models.request.amendOtherExpenses.AmendOtherExpensesRequest
 import v1.support.DesResponseMappingSupport
 
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class AmendOtherExpensesService @Inject()(connector: AmendOtherExpensesConnector) extends DesResponseMappingSupport with Logging {
 
   def amend(request: AmendOtherExpensesRequest)(
