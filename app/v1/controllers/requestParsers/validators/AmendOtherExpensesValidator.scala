@@ -36,6 +36,8 @@ class AmendOtherExpensesValidator extends Validator[AmendOtherExpensesRawData] {
   )
 }
 
+  private def validateCustomerReference()
+
   override def validate(data: AmendOtherExpensesRawData): List[MtdError] = {
   run(validationSet, data).distinct
 }
