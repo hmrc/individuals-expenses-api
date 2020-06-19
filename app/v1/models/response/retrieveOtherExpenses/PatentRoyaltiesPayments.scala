@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package v1.models.hateoas
+package v1.models.response.retrieveOtherExpenses
 
-object RelType {
-  val SAMPLE_ENDPOINT_REL = "sample-rel"
-  val AMEND_EXPENSES_OTHER = "amend-expenses-other"
-  val DELETE_EXPENSES_OTHER = "delete-expenses-other"
+import play.api.libs.json.{Json, OFormat}
 
-  val SELF = "self"
+case class PatentRoyaltiesPayments(customerReference: Option[String], expenseAmount: BigDecimal)
+
+object PatentRoyaltiesPayments {
+  implicit val format: OFormat[PatentRoyaltiesPayments] = Json.format[PatentRoyaltiesPayments]
 }

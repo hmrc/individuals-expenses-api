@@ -14,12 +14,8 @@
  * limitations under the License.
  */
 
-package v1.models.hateoas
+package v1.models.request.retrieveOtherExpenses
 
-object RelType {
-  val SAMPLE_ENDPOINT_REL = "sample-rel"
-  val AMEND_EXPENSES_OTHER = "amend-expenses-other"
-  val DELETE_EXPENSES_OTHER = "delete-expenses-other"
+import v1.models.request.RawData
 
-  val SELF = "self"
-}
+case class RetrieveOtherExpensesRawData(nino: String, taxYear: String) extends RawData

@@ -14,12 +14,8 @@
  * limitations under the License.
  */
 
-package v1.models.hateoas
+package v1.models.request.retrieveOtherExpenses
 
-object RelType {
-  val SAMPLE_ENDPOINT_REL = "sample-rel"
-  val AMEND_EXPENSES_OTHER = "amend-expenses-other"
-  val DELETE_EXPENSES_OTHER = "delete-expenses-other"
+import uk.gov.hmrc.domain.Nino
 
-  val SELF = "self"
-}
+case class RetrieveOtherExpensesRequest(nino: Nino, taxYear: String)
