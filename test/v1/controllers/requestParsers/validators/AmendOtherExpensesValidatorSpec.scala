@@ -19,6 +19,7 @@ package v1.controllers.requestParsers.validators
 import play.api.libs.json.Json
 import support.UnitSpec
 import v1.models.errors._
+import v1.models.request.amendOtherExpenses.AmendOtherExpensesRawData
 
 class AmendOtherExpensesValidatorSpec extends UnitSpec {
 
@@ -37,43 +38,91 @@ class AmendOtherExpensesValidatorSpec extends UnitSpec {
       |  }
       |}""".stripMargin)
 
+  private val requestBodyJsonNoDecimals = Json.parse(
+    """
+      |{
+      |  "paymentsToTradeUnionsForDeathBenefits": {
+      |    "customerReference": "TRADE UNION PAYMENTS",
+      |    "expenseAmount": 1223
+      |  },
+      |  "patentRoyaltiesPayments":{
+      |    "customerReference": "ROYALTIES PAYMENTS",
+      |    "expenseAmount": 1223
+      |  }
+      |}""".stripMargin)
+
+  private val emptyJson = Json.parse(
+    """
+      |{}
+      |""".stripMargin
+  )
+
   val validator = new AmendOtherExpensesValidator
 
 
   "running a validation" should {
     "return no errors" when {
       "a valid request is supplied" in {
-        validator.validate(AmendOtherExpensesRawData() shouldBe Nil)
+        validator.validate(AmendOtherExpensesRawData(validNino, validTaxYear, requestBodyJson)) shouldBe Nil
+      }
+      "a valid request is supplied without decimal places in the JSON" in {
+        validator.validate(AmendOtherExpensesRawData(validNino, validTaxYear, requestBodyJsonNoDecimals)) shouldBe Nil
       }
     }
 
-    "return NinoFormatError error" when {
-      "an invalid nino is supplied" in {
-        validator.validate(AmendOtherExpensesRawData("A12344A", validTaxYear, requestBodyJson)) shouldBe
-          List(NinoFormatError)
+    "return a path parameter error" when {
+      "the nino is invalid" in {
+        validator.validate(AmendOtherExpensesRawData("Walrus", validTaxYear, requestBodyJson)) shouldBe List(NinoFormatError)
+      }
+      "the taxYear format is invalid" in {
+        validator.validate(AmendOtherExpensesRawData(validNino, "2000", requestBodyJson)) shouldBe List(TaxYearFormatError)
+      }
+      "the taxYear range is invalid" in {
+        validator.validate(AmendOtherExpensesRawData(validNino, "2017-20", requestBodyJson)) shouldBe List(RuleTaxYearRangeExceededError)
+      }
+      "all path parameters are invalid" in {
+        validator.validate(AmendOtherExpensesRawData("Walrus", "2000", requestBodyJson)) shouldBe List(NinoFormatError, TaxYearFormatError)
       }
     }
 
-    "return TaxYearFormatError error" when {
-      "an invalid tax year is supplied" in {
-        validator.validate(AmendOtherExpensesRawData(validNino, "20178", requestBodyJson)) shouldBe
-          List(TaxYearFormatError)
+    "return RuleIncorrectOrEmptyBodyError error" when {
+      "an empty JSON body is submitted" in {
+        validator.validate(AmendOtherExpensesRawData(validNino, validTaxYear, emptyJson)) shouldBe List(RuleIncorrectOrEmptyBodyError)
+      }
+      "at least one mandatory field is missing" in {
+        val json =  Json.parse(
+          """
+            |{
+            |  "paymentsToTradeUnionsForDeathBenefits": {},
+            |  "patentRoyaltiesPayments":{
+            |    "customerReference": "ROYALTIES PAYMENTS",
+            |    "expenseAmount": 1223
+            |  }
+            |}""".stripMargin)
+        validator.validate(AmendOtherExpensesRawData(validNino, validTaxYear, json)) shouldBe List(RuleIncorrectOrEmptyBodyError)
+      }
+    }
+    "return a FORMAT_VALUE error" when {
+      "expenseAmount is below 0" in {
+        val badJson = Json.parse(
+          """
+            |{
+            |  "paymentsToTradeUnionsForDeathBenefits": {
+            |    "customerReference": "TRADE UNION PAYMENTS",
+            |    "expenseAmount": 1223
+            |  },
+            |  "patentRoyaltiesPayments":{
+            |    "customerReference": "ROYALTIES PAYMENTS",
+            |    "expenseAmount": -1223
+            |  }
+            |}""".stripMargin)
+        validator.validate(AmendOtherExpensesRawData(validNino, validTaxYear, badJson)) shouldBe List(
+          ValueFormatError.copy(paths = Some(Seq(
+            "/patentRoyaltiesPayments/expenseAmount"
+          )))
+        )
       }
     }
 
-    "return RuleTaxYearNotSupportedError error" when {
-      "an out of range tax year is supplied" in {
-        validator.validate(
-          AmendOtherExpensesRawData(validNino, "2016-17", requestBodyJson)) shouldBe
-          List(RuleTaxYearNotSupportedError)
-      }
-    }
-
-    "return multiple errors" when {
-      "request supplied has multiple errors" in {
-        validator.validate(AmendOtherExpensesRawData("A12344A", "20178", requestBodyJson)) shouldBe
-          List(NinoFormatError, TaxYearFormatError)
-      }
-    }
   }
 }

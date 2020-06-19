@@ -18,10 +18,12 @@ package v1.controllers.requestParsers
 
 import play.api.libs.json.Json
 import support.UnitSpec
+import uk.gov.hmrc.domain.Nino
 import v1.mocks.validators.MockAmendOtherExpensesValidator
 import v1.models.errors._
+import v1.models.request.amendOtherExpenses._
 
-class AmendOtherExpensesRequestDataParserSpec extends UnitSpec {
+class AmendOtherExpensesRequestParserSpec extends UnitSpec {
   val nino = "AA123456B"
   val taxYear = "2017-18"
   val calcId = "someCalcId"
@@ -39,10 +41,10 @@ class AmendOtherExpensesRequestDataParserSpec extends UnitSpec {
       |}""".stripMargin)
 
   val inputData =
-    AmendOtherExpensesRawData()
+    AmendOtherExpensesRawData(nino, taxYear, requestBodyJson)
 
   trait Test extends MockAmendOtherExpensesValidator {
-    lazy val parser = new AmendOtherExpensesRequestDataParser(mockValidator)
+    lazy val parser = new AmendOtherExpensesRequestParser(mockValidator)
   }
 
   "parse" should {
@@ -52,7 +54,10 @@ class AmendOtherExpensesRequestDataParserSpec extends UnitSpec {
         MockAmendOtherExpensesValidator.validate(inputData).returns(Nil)
 
         parser.parseRequest(inputData) shouldBe
-          Right(AmendOtherExpensesRequestData())
+          Right(AmendOtherExpensesRequest(Nino(nino), taxYear, AmendOtherExpensesBody(
+            Some(PaymentsToTradeUnionsForDeathBenefits(Some("TRADE UNION PAYMENTS"), 1223.22)),
+            Some(PatentRoyaltiesPayments(Some("ROYALTIES PAYMENTS"), 1223.22))
+          )))
       }
     }
 

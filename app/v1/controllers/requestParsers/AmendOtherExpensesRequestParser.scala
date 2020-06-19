@@ -17,14 +17,14 @@
 package v1.controllers.requestParsers
 
 import javax.inject.Inject
-import uk.gov.hmrc.auth.core.Nino
+import uk.gov.hmrc.domain.Nino
 import v1.controllers.requestParsers.validators.AmendOtherExpensesValidator
-import v1.models.requestData.DesTaxYear
+import v1.models.request.amendOtherExpenses.{AmendOtherExpensesBody, AmendOtherExpensesRawData, AmendOtherExpensesRequest}
 
-class AmendOtherExpensesRequestDataParser @Inject()(val validator: AmendOtherExpensesValidator)
-  extends RequestParser[AmendOtherExpensesRawData, AmendOtherExpensesRequestData] {
+class AmendOtherExpensesRequestParser @Inject()(val validator: AmendOtherExpensesValidator)
+  extends RequestParser[AmendOtherExpensesRawData, AmendOtherExpensesRequest] {
 
-  override protected def requestFor(data: AmendOtherExpensesRawData): AmendOtherExpensesRequestData =
-    AmendOtherExpensesRequestData(Nino(data.nino), DesTaxYear.fromMtd(data.taxYear), data.body.as[ AmendOtherExpensesRequestBody])
+  override protected def requestFor(data: AmendOtherExpensesRawData): AmendOtherExpensesRequest =
+    AmendOtherExpensesRequest(Nino(data.nino), data.taxYear, data.body.as[AmendOtherExpensesBody])
 
 }
