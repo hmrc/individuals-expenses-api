@@ -51,6 +51,24 @@ class AmendOtherExpensesValidatorSpec extends UnitSpec {
       |  }
       |}""".stripMargin)
 
+  private val requestBodyJsonNoPaymentsToTradeUnionsForDeathBenefits = Json.parse(
+    """
+      |{
+      |  "patentRoyaltiesPayments":{
+      |    "customerReference": "ROYALTIES PAYMENTS",
+      |    "expenseAmount": 1223.22
+      |  }
+      |}""".stripMargin)
+
+  private val requestBodyJsonNoPatentRoyaltiesPayments = Json.parse(
+    """
+      |{
+      |  "paymentsToTradeUnionsForDeathBenefits": {
+      |    "customerReference": "TRADE UNION PAYMENTS",
+      |    "expenseAmount": 1223.22
+      |  }
+      |}""".stripMargin)
+
   private val emptyJson = Json.parse(
     """
       |{}
@@ -67,6 +85,12 @@ class AmendOtherExpensesValidatorSpec extends UnitSpec {
       }
       "a valid request is supplied without decimal places in the JSON" in {
         validator.validate(AmendOtherExpensesRawData(validNino, validTaxYear, requestBodyJsonNoDecimals)) shouldBe Nil
+      }
+      "a valid request is supplied without paymentsToTradeUnionsForDeathBenefits in the JSON" in {
+        validator.validate(AmendOtherExpensesRawData(validNino, validTaxYear, requestBodyJsonNoPaymentsToTradeUnionsForDeathBenefits)) shouldBe Nil
+      }
+      "a valid request is supplied without patentRoyaltiesPayments in the JSON" in {
+        validator.validate(AmendOtherExpensesRawData(validNino, validTaxYear, requestBodyJsonNoPatentRoyaltiesPayments)) shouldBe Nil
       }
     }
 
