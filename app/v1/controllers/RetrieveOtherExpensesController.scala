@@ -17,18 +17,21 @@
 package v1.controllers
 
 import cats.data.EitherT
-import javax.inject.Inject
+import cats.implicits._
+import javax.inject.{Inject, Singleton}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import utils.Logging
+import v1.controllers.requestParsers.RetrieveOtherExpensesRequestParser
 import v1.hateoas.HateoasFactory
-import v1.models.errors.{BadRequestError, DownstreamError, ErrorWrapper, NinoFormatError, NotFoundError, TaxYearFormatError}
+import v1.models.errors.{BadRequestError, DownstreamError, ErrorWrapper, NinoFormatError, NotFoundError, RuleTaxYearRangeInvalidError, TaxYearFormatError}
 import v1.models.request.retrieveOtherExpenses.RetrieveOtherExpensesRawData
 import v1.models.response.retrieveOtherExpenses.RetrieveOtherExpensesHateoasData
-import v1.services.{EnrolmentsAuthService, MtdIdLookupService}
+import v1.services.{EnrolmentsAuthService, MtdIdLookupService, RetrieveOtherExpensesService}
 
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class RetrieveOtherExpensesController @Inject()(val authService: EnrolmentsAuthService,
                                                 val lookupService: MtdIdLookupService,
                                                 parser: RetrieveOtherExpensesRequestParser,
@@ -46,7 +49,7 @@ class RetrieveOtherExpensesController @Inject()(val authService: EnrolmentsAuthS
       val result =
         for {
           parsedRequest <- EitherT.fromEither[Future](parser.parseRequest(rawData))
-          serviceResponse <- EitherT(service.retrieve(parsedRequest))
+          serviceResponse <- EitherT(service.retrieveOtherExpenses(parsedRequest))
           vendorResponse <- EitherT.fromEither[Future](
             hateoasFactory.wrap(serviceResponse.responseData, RetrieveOtherExpensesHateoasData(nino, taxYear)).asRight[ErrorWrapper])
         } yield {
