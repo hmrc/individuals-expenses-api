@@ -16,18 +16,25 @@
 
 package v1.controllers.requestParsers.validators.validations
 
-import play.api.libs.json._
-import v1.models.errors.MtdError
+import v1.models.errors.{ValueFormatError, MtdError}
 
-object JsonFormatValidation {
+object NumberValidation {
 
-  def validate[A](data: JsValue, error: MtdError)(implicit reads: Reads[A]): List[MtdError] = {
-
-    if(data == JsObject.empty) List(error) else data.validate[A] match {
-      case JsSuccess(_, _) => NoValidationErrors
-      case _               => List(error)
+  def validateOptional(field: Option[BigDecimal], path: String): List[MtdError] = {
+    field match {
+      case None => NoValidationErrors
+      case Some(value) => validate(value, path)
     }
-
   }
 
+
+  private def validate(field: BigDecimal, path: String): List[MtdError] = {
+    if (field >= 0 && field < 100000000000.00 && field.scale <= 2) {
+      Nil
+    } else {
+      List(
+        ValueFormatError.copy(paths = Some(Seq(path)))
+      )
+    }
+  }
 }

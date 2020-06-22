@@ -16,18 +16,24 @@
 
 package v1.controllers.requestParsers.validators.validations
 
-import play.api.libs.json._
-import v1.models.errors.MtdError
+import v1.models.errors._
 
-object JsonFormatValidation {
+object CustomerReferenceValidation {
 
-  def validate[A](data: JsValue, error: MtdError)(implicit reads: Reads[A]): List[MtdError] = {
-
-    if(data == JsObject.empty) List(error) else data.validate[A] match {
-      case JsSuccess(_, _) => NoValidationErrors
-      case _               => List(error)
+  def validateOptional(field: Option[String], path: String): List[MtdError] = {
+    field match {
+      case None => NoValidationErrors
+      case Some(value) => validate(value, path)
     }
-
   }
 
+  private def validate(customerRef: String, path: String): List[MtdError] = {
+    if (customerRef.length <= 25) {
+      NoValidationErrors
+    } else {
+      List(
+        CustomerReferenceFormatError.copy(paths = Some(Seq(path)))
+      )
+    }
+  }
 }
