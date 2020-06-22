@@ -30,7 +30,7 @@ trait MockDeleteOtherExpensesConnector extends MockFactory {
 
   object MockDeleteOtherExpensesConnector {
 
-    def amend(requestData: DeleteOtherExpensesRequest): CallHandler[Future[DesOutcome[Unit]]] = {
+    def deleteOtherExpenses(requestData: DeleteOtherExpensesRequest): CallHandler[Future[DesOutcome[Unit]]] = {
       (mockDeleteOtherExpensesConnector
         .deleteOtherExpenses(_: DeleteOtherExpensesRequest)(_: HeaderCarrier, _: ExecutionContext))
         .expects(requestData, *, *)
