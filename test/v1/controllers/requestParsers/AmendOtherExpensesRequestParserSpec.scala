@@ -26,7 +26,6 @@ import v1.models.request.amendOtherExpenses._
 class AmendOtherExpensesRequestParserSpec extends UnitSpec {
   val nino = "AA123456B"
   val taxYear = "2017-18"
-  val calcId = "someCalcId"
 
   private val requestBodyJson = Json.parse(
     """{
@@ -38,7 +37,8 @@ class AmendOtherExpensesRequestParserSpec extends UnitSpec {
       |    "customerReference": "ROYALTIES PAYMENTS",
       |    "expenseAmount": 1223.22
       |  }
-      |}""".stripMargin)
+      |}
+      |""".stripMargin)
 
   val inputData =
     AmendOtherExpensesRawData(nino, taxYear, requestBodyJson)
