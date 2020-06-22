@@ -51,7 +51,7 @@
           "href": {
             "description": "The relative url of the endpoint",
             "type": "string",
-            "example": "/individuals/expenses/other/{nino}/{taxYear}"
+            "example": "/individuals/expenses/other/TC663795B/2019-20"
           },
           "rel": {
             "description": "A label for the endpoint, which describes how it is related to the current resource. The rel will be self where the action is retrieval of the same resource",
