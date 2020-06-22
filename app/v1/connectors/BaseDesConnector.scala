@@ -72,7 +72,7 @@ trait BaseDesConnector {
                                    httpReads: HttpReads[DesOutcome[Resp]]): Future[DesOutcome[Resp]] = {
 
     def doDelete(implicit hc: HeaderCarrier): Future[DesOutcome[Resp]] =
-      http.GET(s"${appConfig.desBaseUrl}/${uri.value}")
+      http.DELETE(s"${appConfig.desBaseUrl}/${uri.value}")
 
     doDelete(desHeaderCarrier(hc))
   }
