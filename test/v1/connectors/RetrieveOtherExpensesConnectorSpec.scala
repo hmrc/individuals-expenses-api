@@ -16,6 +16,7 @@
 
 package v1.connectors
 
+import javax.inject.Singleton
 import mocks.MockAppConfig
 import uk.gov.hmrc.domain.Nino
 import v1.mocks.MockHttpClient
@@ -25,7 +26,7 @@ import v1.models.response.retrieveOtherExpenses.{PatentRoyaltiesPayments, Paymen
 
 import scala.concurrent.Future
 
-
+@Singleton
 class RetrieveOtherExpensesConnectorSpec extends ConnectorSpec {
 
   private val nino = Nino("AA123456A")
@@ -49,7 +50,7 @@ class RetrieveOtherExpensesConnectorSpec extends ConnectorSpec {
         )))
         MockedHttpClient.
           get(
-            url = s"$baseUrl/expenses/${request.nino}/${request.taxYear}",
+            url = s"$baseUrl/expenses/other/${request.nino}/${request.taxYear}",
             requiredHeaders = "Environment" -> "des-environment", "Authorization" -> s"Bearer des-token"
           ).returns(Future.successful(outcome))
         await(connector.retrieveOtherExpenses(request)) shouldBe outcome
