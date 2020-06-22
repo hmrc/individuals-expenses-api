@@ -29,7 +29,7 @@ uses:
   errors: errors.raml
   headers: headers.raml
 
-'/individuals/expenses/other':
+'/individuals/expenses':
   /{nino}:
     uriParameters:
       nino:
@@ -37,7 +37,6 @@ uses:
         type: string
         example: TC663795B
     /{taxYear}:
-      get: !include retrieve_other_expenses.raml
       uriParameters:
         taxYear:
           description: 'The tax year the data applies to, for example, 2019-20. The start year and end year must not span two tax years. No gaps are allowed, for example, 2019-21 is not valid.'
@@ -57,4 +56,5 @@ uses:
             description: 'The tax year the data applies to, for example, 2019-20. The start year and end year must not span two tax years. No gaps are allowed, for example, 2019-21 is not valid.'
             example: "2020-21"
         put: !include amend_expenses.raml
+        get: !include retrieve_other_expenses.raml
         delete: !include delete_expenses.raml
