@@ -23,7 +23,7 @@ import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import utils.Logging
 import v1.models.errors._
 import v1.models.request.deleteOtherExpenses.DeleteOtherExpensesRawData
-import v1.services.{EnrolmentsAuthService, MtdIdLookupService}
+import v1.services.{DeleteOtherExpensesService, EnrolmentsAuthService, MtdIdLookupService}
 
 import scala.concurrent.{ExecutionContext, Future}
 

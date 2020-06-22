@@ -21,11 +21,13 @@ import play.api.mvc.Result
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
 import v1.mocks.hateoas.MockHateoasFactory
+import v1.mocks.requestParsers.MockDeleteOtherExpensesRequestDataParser
 import v1.mocks.services._
 import v1.models.errors._
 import v1.models.outcomes.ResponseWrapper
 import v1.models.request.deleteOtherExpenses.{DeleteOtherExpensesRawData, DeleteOtherExpensesRequest}
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class DeleteOtherExpensesControllerSpec
@@ -64,11 +66,11 @@ class DeleteOtherExpensesControllerSpec
     "return NoContent" when {
       "the request recieved is valid" in new Test {
 
-        MockDeleteOtherExpensesParser
+        MockDeleteOtherExpensesRequestDataParser
           .parse(rawData)
           .returns(Right(requestData))
 
-        MockDeleteService
+        MockDeleteOtherExpensesService
           .delete(requestData)
           .returns(Future.successful(Right(ResponseWrapper(correlationId, ()))))
 
@@ -83,7 +85,7 @@ class DeleteOtherExpensesControllerSpec
         def errorsFromParserTester(error: MtdError, expectedStatus: Int): Unit = {
           s"a ${error.code} error is returned from the parser" in new Test {
 
-            MockDeleteForeignReliefsRequestParser
+            MockDeleteOtherExpensesRequestDataParser
               .parse(rawData)
               .returns(Left(ErrorWrapper(Some(correlationId), error, None)))
 
@@ -109,11 +111,11 @@ class DeleteOtherExpensesControllerSpec
         def serviceErrors(mtdError: MtdError, expectedStatus: Int): Unit = {
           s"a $mtdError error is returned from the service" in new Test {
 
-            MockDeleteForeignReliefsRequestParser
+            MockDeleteOtherExpensesRequestDataParser
               .parse(rawData)
               .returns(Right(requestData))
 
-            MockDeleteService
+            MockDeleteOtherExpensesService
               .delete(requestData)
               .returns(Future.successful(Left(ErrorWrapper(Some(correlationId), mtdError))))
 
