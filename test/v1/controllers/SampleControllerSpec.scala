@@ -151,7 +151,7 @@ class SampleControllerSpec
           (NinoFormatError, BAD_REQUEST),
           (TaxYearFormatError, BAD_REQUEST),
           (RuleTaxYearNotSupportedError, BAD_REQUEST),
-          (RuleTaxYearRangeExceededError, BAD_REQUEST),
+          (RuleTaxYearRangeInvalidError, BAD_REQUEST),
           (RuleIncorrectOrEmptyBodyError, BAD_REQUEST),
           (DownstreamError, INTERNAL_SERVER_ERROR)
         )
