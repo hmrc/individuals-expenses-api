@@ -18,10 +18,13 @@ package v1
 
 import v1.models.errors.ErrorWrapper
 import v1.models.outcomes.ResponseWrapper
+import v1.models.response.retrieveOtherExpenses.RetrieveOtherExpensesBody
 
 package object services {
 
   private type ServiceOutcome[A] = Either[ErrorWrapper, ResponseWrapper[A]]
 
   type AmendOtherExpensesServiceOutcome = ServiceOutcome[Unit]
+
+  type RetrieveOtherExpensesServiceOutcome = ServiceOutcome[RetrieveOtherExpensesBody]
 }
