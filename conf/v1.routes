@@ -1,1 +1,3 @@
 POST       /:nino/:taxYear/sample-endpoint                  v1.controllers.SampleController.handleRequest(nino: String, taxYear: String)
+
+GET        /other/:nino/:taxYear                            v1.controllers.RetrieveOtherExpensesController.handleRequest(nino: String, taxYear: String)
