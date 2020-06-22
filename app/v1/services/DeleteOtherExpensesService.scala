@@ -21,25 +21,25 @@ import javax.inject.{Inject, Singleton}
 import cats.implicits._
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Logging
-import v1.connectors.RetrieveOtherExpensesConnector
+import v1.connectors.DeleteOtherExpensesConnector
 import v1.controllers.EndpointLogContext
 import v1.models.errors._
-import v1.models.request.retrieveOtherExpenses.RetrieveOtherExpensesRequest
+import v1.models.request.deleteOtherExpenses.DeleteOtherExpensesRequest
 import v1.support.DesResponseMappingSupport
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class RetrieveOtherExpensesService @Inject()(retrieveOtherExpensesConnector: RetrieveOtherExpensesConnector)
+class DeleteOtherExpensesService @Inject()(deleteOtherExpensesConnector: DeleteOtherExpensesConnector)
   extends DesResponseMappingSupport with Logging {
 
-  def retrieveOtherExpenses(request: RetrieveOtherExpensesRequest)(
+  def deleteOtherExpenses(request: DeleteOtherExpensesRequest)(
     implicit hc: HeaderCarrier,
     ec: ExecutionContext,
-    logContext: EndpointLogContext): Future[RetrieveOtherExpensesServiceOutcome] = {
+    logContext: EndpointLogContext): Future[DeleteOtherExpensesServiceOutcome] = {
 
     val result = for {
-      desResponseWrapper <- EitherT(retrieveOtherExpensesConnector.retrieveOtherExpenses(request)).leftMap(mapDesErrors(desErrorMap))
+      desResponseWrapper <- EitherT(deleteOtherExpensesConnector.deleteOtherExpenses(request)).leftMap(mapDesErrors(desErrorMap))
     } yield desResponseWrapper
     result.value
   }

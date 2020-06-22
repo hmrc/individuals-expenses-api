@@ -20,40 +20,39 @@ import mocks.MockAppConfig
 import uk.gov.hmrc.domain.Nino
 import v1.mocks.MockHttpClient
 import v1.models.outcomes.ResponseWrapper
-import v1.models.request.retrieveOtherExpenses.RetrieveOtherExpensesRequest
-import v1.models.response.retrieveOtherExpenses.{PatentRoyaltiesPayments, PaymentsToTradeUnionsForDeathBenefits, RetrieveOtherExpensesBody}
+import v1.models.request.deleteOtherExpenses.DeleteOtherExpensesRequest
 
 import scala.concurrent.Future
 
-class RetrieveOtherExpensesConnectorSpec extends ConnectorSpec {
+class DeleteOtherExpensesConnectorSpec extends ConnectorSpec {
 
-  private val nino = Nino("AA123456A")
-  private val taxYear = "2019-20"
+  val taxYear = "2017-18"
+  val nino = Nino("AA123456A")
 
   class Test extends MockHttpClient with MockAppConfig {
-    val connector: RetrieveOtherExpensesConnector = new RetrieveOtherExpensesConnector(http = mockHttpClient, appConfig = mockAppConfig)
+    val connector: DeleteOtherExpensesConnector = new DeleteOtherExpensesConnector(http = mockHttpClient, appConfig = mockAppConfig)
+
     val desRequestHeaders: Seq[(String, String)] = Seq("Environment" -> "des-environment", "Authorization" -> s"Bearer des-token")
     MockedAppConfig.desBaseUrl returns baseUrl
     MockedAppConfig.desToken returns "des-token"
     MockedAppConfig.desEnvironment returns "des-environment"
   }
 
-  "retrieve business details" should {
-    val request = RetrieveOtherExpensesRequest(nino, taxYear)
-    "return a result" when {
+  "delete" should {
+    val request = DeleteOtherExpensesRequest(nino, taxYear)
+
+    "return a 204 with no body" when {
       "the downstream call is successful" in new Test {
-        val outcome = Right(ResponseWrapper(correlationId, RetrieveOtherExpensesBody(
-          Some(PaymentsToTradeUnionsForDeathBenefits(Some("TRADE UNION PAYMENTS"), 5433.54)),
-          Some(PatentRoyaltiesPayments(Some("ROYALTIES PAYMENTS"), 98765.12))
-        )))
+        val outcome = Right(ResponseWrapper(correlationId, ()))
+
         MockedHttpClient.
-          get(
+          delete(
             url = s"$baseUrl/expenses/other/${request.nino}/${request.taxYear}",
             requiredHeaders = "Environment" -> "des-environment", "Authorization" -> s"Bearer des-token"
           ).returns(Future.successful(outcome))
-        await(connector.retrieveOtherExpenses(request)) shouldBe outcome
+
+        await(connector.deleteOtherExpenses(request)) shouldBe outcome
       }
     }
   }
-
 }
