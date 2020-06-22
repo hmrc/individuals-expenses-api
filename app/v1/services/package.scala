@@ -27,4 +27,7 @@ package object services {
   type AmendOtherExpensesServiceOutcome = ServiceOutcome[Unit]
 
   type RetrieveOtherExpensesServiceOutcome = ServiceOutcome[RetrieveOtherExpensesBody]
+
+  type DeleteOtherExpensesServiceOutcome = ServiceOutcome[Unit]
+
 }
