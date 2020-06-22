@@ -135,14 +135,3 @@ traits:
                 description: A self-employment ID can only be supplied for a self-employment business type.
                 value:
                   code: RULE_SELF_EMPLOYMENT_ID
-  ruleTaxYearRangeInvalid:
-    responses:
-      400:
-        body:
-          application/json:
-            type: types.errorResponse
-            examples:
-              ruleTaxYearRangeInvalid:
-                description: Tax year range invalid. A tax year range of one year is required.
-                value:
-                  code: RULE_TAX_YEAR_RANGE_INVALID
