@@ -18,6 +18,7 @@ package v1.services
 
 import cats.data.EitherT
 import javax.inject.Inject
+import cats.implicits._
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Logging
 import v1.connectors.RetrieveOtherExpensesConnector
@@ -31,7 +32,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class RetrieveOtherExpensesService @Inject()(retrieveOtherExpensesConnector: RetrieveOtherExpensesConnector)
   extends DesResponseMappingSupport with Logging {
 
-  def retrieveOtherExpensesService(request: RetrieveOtherExpensesRequest)(
+  def retrieveOtherExpenses(request: RetrieveOtherExpensesRequest)(
     implicit hc: HeaderCarrier,
     ec: ExecutionContext,
     logContext: EndpointLogContext): Future[RetrieveOtherExpensesServiceOutcome] = {
@@ -45,7 +46,7 @@ class RetrieveOtherExpensesService @Inject()(retrieveOtherExpensesConnector: Ret
     Map(
       "INVALID_TAXABLE_ENTITY_ID" -> NinoFormatError,
       "FORMAT_TAX_YEAR" -> TaxYearFormatError,
-      "NOT_FOUND" -> NotFoundError
+      "NOT_FOUND" -> NotFoundError,
       "SERVER_ERROR" -> DownstreamError,
       "SERVICE_UNAVAILABLE" -> DownstreamError
     )
