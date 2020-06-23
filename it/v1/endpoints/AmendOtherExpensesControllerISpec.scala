@@ -17,67 +17,63 @@
 package v1.endpoints
 
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
-import play.api.http.Status
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, JsValue, Json}
 import play.api.libs.ws.{WSRequest, WSResponse}
+import play.api.http.Status._
 import support.IntegrationBaseSpec
-import v1.models.errors.{DownstreamError, MtdError, NinoFormatError, NotFoundError, TaxYearFormatError}
+import v1.models.errors._
 import v1.stubs.{AuditStub, AuthStub, DesStub, MtdIdLookupStub}
+import play.api.http.HeaderNames.ACCEPT
 
 class AmendOtherExpensesControllerISpec extends IntegrationBaseSpec {
 
   private trait Test {
 
-    val nino = "AA123456A"
-    val taxYear = "2019-20"
+    val nino: String = "AA123456A"
+    val taxYear: String = "2019-20"
 
-    val responseBody = Json.parse(
+    val amount: BigDecimal = 5000.99
+
+    val requestBodyJson: JsValue = Json.parse(
       s"""
          |{
          |  "paymentsToTradeUnionsForDeathBenefits": {
          |    "customerReference": "TRADE UNION PAYMENTS",
-         |    "expenseAmount": 1223.22
+         |    "expenseAmount": $amount
          |  },
          |  "patentRoyaltiesPayments":{
          |    "customerReference": "ROYALTIES PAYMENTS",
-         |    "expenseAmount": 1223.22
-         |  },
-         |  "links":[
-         |      {
-         |         "href":"/individuals/expenses/other/$nino/$taxYear",
-         |         "method":"GET",
-         |         "rel":"self"
-         |      },
-         |      {
-         |         "href":"/individuals/expenses/other/$nino/$taxYear",
-         |         "method":"PUT",
-         |         "rel":"amend-expenses-other"
-         |      },
-         |      {
-         |         "href":"/individuals/expenses/other/$nino/$taxYear",
-         |         "method":"DELETE",
-         |         "rel":"delete-expenses-other"
-         |      }
-         |   ]
+         |    "expenseAmount": $amount
+         |  }
          |}
          |""".stripMargin
     )
 
-    val desResponseBody = Json.parse(
+    val responseBody = Json.parse(
       s"""
          |{
-         |  "paymentsToTradeUnionsForDeathBenefits": {
-         |    "customerReference": "TRADE UNION PAYMENTS",
-         |    "expenseAmount": 1223.22
-         |  },
-         |  "patentRoyaltiesPayments":{
-         |    "customerReference": "ROYALTIES PAYMENTS",
-         |    "expenseAmount": 1223.22
-         |  }
+         |  "links": [
+         |    {
+         |      "href": "/individuals/expenses/other/$nino/$taxYear",
+         |      "method": "GET",
+         |      "rel": "self"
+         |    },
+         |    {
+         |      "href": "/individuals/expenses/other/$nino/$taxYear",
+         |      "method": "PUT",
+         |      "rel": "amend-expenses-other"
+         |    },
+         |    {
+         |      "href": "/individuals/expenses/other/$nino/$taxYear",
+         |      "method": "DELETE",
+         |      "rel": "delete-expenses-other"
+         |    }
+         |  ]
          |}
          |""".stripMargin)
 
-    def uri: String = s"/foreign/$nino/$taxYear"
+    def uri: String = s"/other/$nino/$taxYear"
+
     def desUri: String = s"/expenses/other/$nino/$taxYear"
 
     def setupStubs(): StubMapping
@@ -97,7 +93,7 @@ class AmendOtherExpensesControllerISpec extends IntegrationBaseSpec {
     """.stripMargin
   }
 
-  "Calling the retrieve endpoint" should {
+  "Calling the amend endpoint" should {
 
     "return a 200 status code" when {
 
@@ -107,46 +103,115 @@ class AmendOtherExpensesControllerISpec extends IntegrationBaseSpec {
           AuditStub.audit()
           AuthStub.authorised()
           MtdIdLookupStub.ninoFound(nino)
-          DesStub.onSuccess(DesStub.GET, desUri, Status.OK, desResponseBody)
+          DesStub.onSuccess(DesStub.PUT, desUri, NO_CONTENT, JsObject.empty)
         }
 
-        val response: WSResponse = await(request().get())
-        response.status shouldBe Status.OK
+        val response: WSResponse = await(request().put(requestBodyJson))
+        response.status shouldBe OK
         response.json shouldBe responseBody
         response.header("X-CorrelationId").nonEmpty shouldBe true
-        response.header("Content-Type") shouldBe Some("application/json")
       }
     }
 
     "return error according to spec" when {
 
       "validation error" when {
-        def validationErrorTest(requestNino: String, requestId: String, expectedStatus: Int, expectedBody: MtdError): Unit = {
-          s"validation fails with ${expectedBody.code} error" in new Test {
+        s"an invalid NINO is provided" in new Test {
+          override val nino: String = "INVALID_NINO"
 
-            override val nino: String = requestNino
-            override val taxYear: String = requestId
-
-            override def setupStubs(): StubMapping = {
-              AuditStub.audit()
-              AuthStub.authorised()
-              MtdIdLookupStub.ninoFound(requestNino)
-            }
-
-            val response: WSResponse = await(request().delete())
-            response.status shouldBe expectedStatus
-            response.json shouldBe Json.toJson(expectedBody)
-            response.header("Content-Type") shouldBe Some("application/json")
+          override def setupStubs(): StubMapping = {
+            AuditStub.audit()
+            AuthStub.authorised()
+            MtdIdLookupStub.ninoFound(nino)
           }
+
+          val response: WSResponse = await(request().put(requestBodyJson))
+          response.status shouldBe BAD_REQUEST
+          response.json shouldBe Json.toJson(NinoFormatError)
         }
+        s"an invalid taxYear is provided" in new Test {
+          override val taxYear: String = "INVALID_TAXYEAR"
 
-        val input = Seq(
-          ("Walrus", "2019-20", Status.BAD_REQUEST, NinoFormatError),
-          ("AA123456A", "203100", Status.BAD_REQUEST, TaxYearFormatError)
-        )
+          override def setupStubs(): StubMapping = {
+            AuditStub.audit()
+            AuthStub.authorised()
+            MtdIdLookupStub.ninoFound(nino)
+          }
 
+          val response: WSResponse = await(request().put(requestBodyJson))
+          response.status shouldBe BAD_REQUEST
+          response.json shouldBe Json.toJson(TaxYearFormatError)
+        }
+        s"an invalid amount is provided" in new Test {
+          override val requestBodyJson: JsValue = Json.parse(
+            s"""
+               |{
+               |  "paymentsToTradeUnionsForDeathBenefits": {
+               |    "customerReference": "TRADE UNION PAYMENTS",
+               |    "expenseAmount": -1
+               |  },
+               |  "patentRoyaltiesPayments":{
+               |    "customerReference": "ROYALTIES PAYMENTS",
+               |    "expenseAmount": -1
+               |  }
+               |}
+               |""".stripMargin
+          )
 
-        input.foreach(args => (validationErrorTest _).tupled(args))
+          override def setupStubs(): StubMapping = {
+            AuditStub.audit()
+            AuthStub.authorised()
+            MtdIdLookupStub.ninoFound(nino)
+          }
+
+          val response: WSResponse = await(request().put(requestBodyJson))
+          response.status shouldBe BAD_REQUEST
+          response.json shouldBe Json.toJson(ValueFormatError.copy(paths = Some(Seq("/paymentsToTradeUnionsForDeathBenefits/expenseAmount",
+                                                                                    "/patentRoyaltiesPayments/expenseAmount"))))
+        }
+        s"a taxYear with range of greater than a year is provided" in new Test {
+          override val taxYear: String = "2019-21"
+
+          override def setupStubs(): StubMapping = {
+            AuditStub.audit()
+            AuthStub.authorised()
+            MtdIdLookupStub.ninoFound(nino)
+          }
+
+          val response: WSResponse = await(request().put(requestBodyJson))
+          response.status shouldBe BAD_REQUEST
+          response.json shouldBe Json.toJson(RuleTaxYearRangeInvalidError)
+        }
+        s"an empty body is provided" in new Test {
+          override val requestBodyJson: JsValue = Json.parse("""{}""")
+
+          override def setupStubs(): StubMapping = {
+            AuditStub.audit()
+            AuthStub.authorised()
+            MtdIdLookupStub.ninoFound(nino)
+          }
+
+          val response: WSResponse = await(request().put(requestBodyJson))
+          response.status shouldBe BAD_REQUEST
+          response.json shouldBe Json.toJson(RuleIncorrectOrEmptyBodyError)
+        }
+        s"a body missing mandatory fields is provided" in new Test {
+          override val requestBodyJson: JsValue = Json.parse(
+            """{
+              | "paymentsToTradeUnionsForDeathBenefits": {},
+              | "patentRoyaltiesPayments": {}
+              |}""".stripMargin)
+
+          override def setupStubs(): StubMapping = {
+            AuditStub.audit()
+            AuthStub.authorised()
+            MtdIdLookupStub.ninoFound(nino)
+          }
+
+          val response: WSResponse = await(request().put(requestBodyJson))
+          response.status shouldBe BAD_REQUEST
+          response.json shouldBe Json.toJson(RuleIncorrectOrEmptyBodyError)
+        }
       }
 
       "des service error" when {
@@ -157,22 +222,21 @@ class AmendOtherExpensesControllerISpec extends IntegrationBaseSpec {
               AuditStub.audit()
               AuthStub.authorised()
               MtdIdLookupStub.ninoFound(nino)
-              DesStub.onError(DesStub.DELETE, desUri, desStatus, errorBody(desCode))
+              DesStub.onError(DesStub.PUT, desUri, desStatus, errorBody(desCode))
             }
 
-            val response: WSResponse = await(request().delete())
+            val response: WSResponse = await(request().put(requestBodyJson))
             response.status shouldBe expectedStatus
             response.json shouldBe Json.toJson(expectedBody)
           }
         }
 
         val input = Seq(
-          (Status.BAD_REQUEST, "INVALID_TAXABLE_ENTITY_ID", Status.BAD_REQUEST, NinoFormatError),
-          (Status.BAD_REQUEST, "FORMAT_TAX_YEAR", Status.BAD_REQUEST, TaxYearFormatError),
-          (Status.NOT_FOUND, "NOT_FOUND", Status.NOT_FOUND, NotFoundError),
-          (Status.INTERNAL_SERVER_ERROR, "SERVER_ERROR", Status.INTERNAL_SERVER_ERROR, DownstreamError),
-          (Status.SERVICE_UNAVAILABLE, "SERVICE_UNAVAILABLE", Status.INTERNAL_SERVER_ERROR, DownstreamError)
-        )
+          (BAD_REQUEST, "INVALID_TAXABLE_ENTITY_ID", BAD_REQUEST, NinoFormatError),
+          (BAD_REQUEST, "FORMAT_TAX_YEAR", BAD_REQUEST, TaxYearFormatError),
+          (BAD_REQUEST, "NOT_FOUND", NOT_FOUND, NotFoundError),
+          (SERVICE_UNAVAILABLE, "SERVICE_UNAVAILABLE", INTERNAL_SERVER_ERROR, DownstreamError),
+          (INTERNAL_SERVER_ERROR, "SERVER_ERROR", INTERNAL_SERVER_ERROR, DownstreamError))
 
         input.foreach(args => (serviceErrorTest _).tupled(args))
       }
