@@ -33,6 +33,7 @@ class DeleteOtherExpensesControllerISpec extends IntegrationBaseSpec {
     val taxYear = "2017-18"
 
     def uri: String = s"/other/$nino/$taxYear"
+
     def desUri: String = s"/expenses/other/$nino/$taxYear"
 
     def setupStubs(): StubMapping
@@ -59,15 +60,76 @@ class DeleteOtherExpensesControllerISpec extends IntegrationBaseSpec {
       "any valid request is made" in new Test {
 
         override def setupStubs(): StubMapping = {
-        AuditStub.audit()
-        AuthStub.authorised()
-        MtdIdLookupStub.ninoFound(nino)
-        DesStub.onSuccess(DesStub.DELETE, desUri, Status.NO_CONTENT, JsObject.empty)
+          AuditStub.audit()
+          AuthStub.authorised()
+          MtdIdLookupStub.ninoFound(nino)
+          DesStub.onSuccess(DesStub.DELETE, desUri, Status.NO_CONTENT, JsObject.empty)
         }
 
         val response: WSResponse = await(request().delete())
         response.status shouldBe Status.NO_CONTENT
         response.header("X-CorrelationId").nonEmpty shouldBe true
+      }
+    }
+
+    "return error according to spec" when {
+
+      "validation error" when {
+        def validationErrorTest(requestNino: String, requestId: String, expectedStatus: Int, expectedBody: MtdError): Unit = {
+          s"validation fails with ${expectedBody.code} error" in new Test {
+
+            override val nino: String = requestNino
+            override val taxYear: String = requestId
+
+            override def setupStubs(): StubMapping = {
+              AuditStub.audit()
+              AuthStub.authorised()
+              MtdIdLookupStub.ninoFound(nino)
+            }
+
+            val response: WSResponse = await(request().delete())
+            response.status shouldBe expectedStatus
+            response.json shouldBe Json.toJson(expectedBody)
+            response.header("Content-Type") shouldBe Some("application/json")
+          }
+        }
+
+        val input = Seq(
+          ("Walrus", "2019-20", Status.BAD_REQUEST, NinoFormatError),
+          ("AA123456A", "203100", Status.BAD_REQUEST, TaxYearFormatError),
+          ("AA123456A", "2018-20", Status.BAD_REQUEST, RuleTaxYearRangeInvalidError)
+        )
+
+
+        input.foreach(args => (validationErrorTest _).tupled(args))
+      }
+
+      "des service error" when {
+        def serviceErrorTest(desStatus: Int, desCode: String, expectedStatus: Int, expectedBody: MtdError): Unit = {
+          s"des returns an $desCode error and status $desStatus" in new Test {
+
+            override def setupStubs(): StubMapping = {
+              AuditStub.audit()
+              AuthStub.authorised()
+              MtdIdLookupStub.ninoFound(nino)
+              DesStub.onError(DesStub.DELETE, desUri, desStatus, errorBody(desCode))
+            }
+
+            val response: WSResponse = await(request().delete())
+            response.status shouldBe expectedStatus
+            response.json shouldBe Json.toJson(expectedBody)
+          }
+        }
+
+        val input = Seq(
+          (Status.BAD_REQUEST, "INVALID_TAXABLE_ENTITY_ID", Status.BAD_REQUEST, NinoFormatError),
+          (Status.BAD_REQUEST, "FORMAT_TAX_YEAR", Status.BAD_REQUEST, TaxYearFormatError),
+          (Status.NOT_FOUND, "NOT_FOUND", Status.NOT_FOUND, NotFoundError),
+          (Status.INTERNAL_SERVER_ERROR, "SERVER_ERROR", Status.INTERNAL_SERVER_ERROR, DownstreamError),
+          (Status.SERVICE_UNAVAILABLE, "SERVICE_UNAVAILABLE", Status.INTERNAL_SERVER_ERROR, DownstreamError)
+        )
+
+        input.foreach(args => (serviceErrorTest _).tupled(args))
       }
     }
   }
