@@ -21,16 +21,18 @@ import javax.inject.{Inject, Singleton}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import utils.Logging
+import v1.controllers.requestParsers.DeleteOtherExpensesRequestParser
 import v1.models.errors._
 import v1.models.request.deleteOtherExpenses.DeleteOtherExpensesRawData
 import v1.services.{DeleteOtherExpensesService, EnrolmentsAuthService, MtdIdLookupService}
+import cats.instances.future._
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class DeleteOtherExpensesController @Inject()(val authService: EnrolmentsAuthService,
                                               val lookupService: MtdIdLookupService,
-                                              parser: DeleteOtherExpensesRequestDataParser,
+                                              parser: DeleteOtherExpensesRequestParser,
                                               service: DeleteOtherExpensesService,
                                               cc: ControllerComponents)(implicit ec: ExecutionContext)
   extends AuthorisedController(cc) with BaseController with Logging {
@@ -44,7 +46,7 @@ class DeleteOtherExpensesController @Inject()(val authService: EnrolmentsAuthSer
       val result =
         for {
           parsedRequest <- EitherT.fromEither[Future](parser.parseRequest(rawData))
-          serviceResponse <- EitherT(service.delete(parsedRequest))
+          serviceResponse <- EitherT(service.deleteOtherExpenses(parsedRequest))
         } yield {
           logger.info(
             s"[${endpointLogContext.controllerName}][${endpointLogContext.endpointName}] - " +
@@ -60,11 +62,10 @@ class DeleteOtherExpensesController @Inject()(val authService: EnrolmentsAuthSer
 
   private def errorResult(errorWrapper: ErrorWrapper) = {
     (errorWrapper.error: @unchecked) match {
-      case RuleIncorrectOrEmptyBodyError | BadRequestError | NinoFormatError | TaxYearFormatError | RuleTaxYearNotSupportedError |
-           RuleTaxYearRangeInvalidError =>
-        BadRequest(Json.toJson(errorWrapper))
-      case NotFoundError => NotFound(Json.toJson(errorWrapper))
+      case NinoFormatError | BadRequestError | TaxYearFormatError | RuleTaxYearRangeInvalidError => BadRequest(Json.toJson(errorWrapper))
       case DownstreamError => InternalServerError(Json.toJson(errorWrapper))
+      case NotFoundError => NotFound(Json.toJson(errorWrapper))
+      case UnauthorisedError => Forbidden(Json.toJson(errorWrapper))
     }
   }
 }

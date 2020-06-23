@@ -18,12 +18,13 @@ package v1.mocks.requestParsers
 
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
+import v1.controllers.requestParsers.DeleteOtherExpensesRequestParser
 import v1.models.errors.ErrorWrapper
 import v1.models.request.deleteOtherExpenses.{DeleteOtherExpensesRawData, DeleteOtherExpensesRequest}
 
 trait MockDeleteOtherExpensesRequestDataParser extends MockFactory {
 
-  val mockRequestDataParser: DeleteOtherExpensesRequestDataParser = mock[DeleteOtherExpensesRequestDataParser]
+  val mockRequestDataParser: DeleteOtherExpensesRequestParser = mock[DeleteOtherExpensesRequestParser]
 
   object MockDeleteOtherExpensesRequestDataParser {
     def parse(data: DeleteOtherExpensesRawData): CallHandler[Either[ErrorWrapper, DeleteOtherExpensesRequest]] = {
