@@ -122,11 +122,11 @@ class RetrieveOtherExpensesControllerISpec extends IntegrationBaseSpec {
     "return error according to spec" when {
 
       "validation error" when {
-        def validationErrorTest(requestNino: String, requestId: String, expectedStatus: Int, expectedBody: MtdError): Unit = {
+        def validationErrorTest(requestNino: String, requestTaxYear: String, expectedStatus: Int, expectedBody: MtdError): Unit = {
           s"validation fails with ${expectedBody.code} error" in new Test {
 
             override val nino: String = requestNino
-            override val taxYear: String = requestId
+            override val taxYear: String = requestTaxYear
 
             override def setupStubs(): StubMapping = {
               AuditStub.audit()
