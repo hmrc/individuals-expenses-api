@@ -30,11 +30,11 @@ class DeleteOtherExpensesControllerISpec extends IntegrationBaseSpec {
   private trait Test {
 
     val nino = "AA123456A"
-    val taxYear = "2017-18"
+    val requestTaxYear = "2017-18"
 
-    def uri: String = s"/other/$nino/$taxYear"
+    def uri: String = s"/other/$nino/$requestTaxYear"
 
-    def desUri: String = s"/expenses/other/$nino/$taxYear"
+    def desUri: String = s"/expenses/other/$nino/$requestTaxYear"
 
     def setupStubs(): StubMapping
 
@@ -79,7 +79,7 @@ class DeleteOtherExpensesControllerISpec extends IntegrationBaseSpec {
           s"validation fails with ${expectedBody.code} error" in new Test {
 
             override val nino: String = requestNino
-            override val taxYear: String = requestId
+            override val requestTaxYear: String = requestId
 
             override def setupStubs(): StubMapping = {
               AuditStub.audit()
