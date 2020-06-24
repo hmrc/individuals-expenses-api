@@ -20,11 +20,11 @@ import cats.data.EitherT
 import cats.implicits._
 import javax.inject.{Inject, Singleton}
 import play.api.libs.json.{JsValue, Json}
-import play.api.mvc.{Action, AnyContent, ControllerComponents}
+import play.api.mvc.{Action, ControllerComponents}
 import utils.Logging
 import v1.controllers.requestParsers.AmendOtherExpensesRequestParser
 import v1.hateoas.HateoasFactory
-import v1.models.errors.{BadRequestError, DownstreamError, ErrorWrapper, NinoFormatError, NotFoundError, TaxYearFormatError}
+import v1.models.errors._
 import v1.models.request.amendOtherExpenses.AmendOtherExpensesRawData
 import v1.models.response.amendOtherExpenses.AmendOtherExpensesHateoasData
 import v1.models.response.amendOtherExpenses.AmendOtherExpensesResponse.AmendOrderLinksFactory
@@ -44,9 +44,9 @@ class AmendOtherExpensesController @Inject()(val authService: EnrolmentsAuthServ
   implicit val endpointLogContext: EndpointLogContext =
     EndpointLogContext(controllerName = "AmendOtherExpensesController", endpointName = "amendOtherExpenses")
 
-  def handleRequest(nino: String, taxYear: String, amendOtherExpensesBody: JsValue): Action[AnyContent] =
-    authorisedAction(nino).async { implicit request =>
-      val rawData = AmendOtherExpensesRawData(nino, taxYear, amendOtherExpensesBody)
+  def handleRequest(nino: String, taxYear: String): Action[JsValue] =
+    authorisedAction(nino).async(parse.json) { implicit request =>
+      val rawData = AmendOtherExpensesRawData(nino, taxYear, request.body)
       val result =
         for {
           parsedRequest <- EitherT.fromEither[Future](parser.parseRequest(rawData))
@@ -70,7 +70,10 @@ class AmendOtherExpensesController @Inject()(val authService: EnrolmentsAuthServ
 
   private def errorResult(errorWrapper: ErrorWrapper) = {
     (errorWrapper.error: @unchecked) match {
-      case NinoFormatError | BadRequestError | TaxYearFormatError => BadRequest(Json.toJson(errorWrapper))
+      case NinoFormatError | BadRequestError | TaxYearFormatError
+                           | RuleTaxYearRangeInvalidError
+                           | RuleIncorrectOrEmptyBodyError
+                           | MtdErrorWithCustomMessage(ValueFormatError.code)=> BadRequest(Json.toJson(errorWrapper))
       case DownstreamError => InternalServerError(Json.toJson(errorWrapper))
       case NotFoundError => NotFound(Json.toJson(errorWrapper))
     }

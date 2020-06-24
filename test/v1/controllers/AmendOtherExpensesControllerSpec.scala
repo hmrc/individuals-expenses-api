@@ -46,16 +46,15 @@ class AmendOtherExpensesControllerSpec
   private val nino = "AA123456A"
   private val taxYear = "2019-20"
   private val correlationId = "X-123"
-  private val rawData = AmendOtherExpensesRawData(nino, taxYear, requestBodyJson)
-  private val requestData = AmendOtherExpensesRequest(Nino(nino), taxYear , requestBody)
   private val testHateoasLink = Link(href = s"individuals/expenses/other/$nino/$taxYear", method = GET, rel = "self")
   private val requestBody = AmendOtherExpensesBody(
-    Some(PaymentsToTradeUnionsForDeathBenefits(Some(""),2309.95)),
-    Some(PatentRoyaltiesPayments(Some(""), 2309.95))
+    Some(PaymentsToTradeUnionsForDeathBenefits(Some("TRADE UNION PAYMENTS"),1223.22)),
+    Some(PatentRoyaltiesPayments(Some("ROYALTIES PAYMENTS"), 1223.22))
   )
 
   private val requestBodyJson = Json.parse(
     """
+      |{
       |  "paymentsToTradeUnionsForDeathBenefits": {
       |    "customerReference": "TRADE UNION PAYMENTS",
       |    "expenseAmount": 1223.22
@@ -64,7 +63,11 @@ class AmendOtherExpensesControllerSpec
       |    "customerReference": "ROYALTIES PAYMENTS",
       |    "expenseAmount": 1223.22
       |  }
+      |}
       |""".stripMargin)
+
+  private val rawData = AmendOtherExpensesRawData(nino, taxYear, requestBodyJson)
+  private val requestData = AmendOtherExpensesRequest(Nino(nino), taxYear , requestBody)
 
   trait Test {
     val hc = HeaderCarrier()
@@ -92,13 +95,13 @@ class AmendOtherExpensesControllerSpec
 
         MockAmendOtherExpensesService
           .amend(requestData)
-          .returns(Future.successful(Right(ResponseWrapper(correlationId, requestBodyJson))))
+          .returns(Future.successful(Right(ResponseWrapper(correlationId, ()))))
 
         MockHateoasFactory
           .wrap((), AmendOtherExpensesHateoasData(nino, taxYear))
-          .returns(HateoasWrapper(requestBodyJson, Seq(testHateoasLink)))
+          .returns(HateoasWrapper((), Seq(testHateoasLink)))
 
-        val result: Future[Result] = controller.handleRequest(nino, taxYear, requestBodyJson)(fakeRequest)
+        val result: Future[Result] = controller.handleRequest(nino, taxYear)(fakePostRequest(requestBodyJson))
         status(result) shouldBe OK
         header("X-CorrelationId", result) shouldBe Some(correlationId)
       }
@@ -112,7 +115,7 @@ class AmendOtherExpensesControllerSpec
               .parseRequest(rawData)
               .returns(Left(ErrorWrapper(Some(correlationId), error, None)))
 
-            val result: Future[Result] = controller.handleRequest(nino, taxYear, requestBodyJson)(fakeRequest)
+            val result: Future[Result] = controller.handleRequest(nino, taxYear)(fakePostRequest(requestBodyJson))
 
             status(result) shouldBe expectedStatus
             contentAsJson(result) shouldBe Json.toJson(error)
@@ -141,7 +144,7 @@ class AmendOtherExpensesControllerSpec
               .amend(requestData)
               .returns(Future.successful(Left(ErrorWrapper(Some(correlationId), mtdError))))
 
-            val result: Future[Result] = controller.handleRequest(nino, taxYear, requestBodyJson)(fakeRequest)
+            val result: Future[Result] = controller.handleRequest(nino, taxYear)(fakePostRequest(requestBodyJson))
 
             status(result) shouldBe expectedStatus
             contentAsJson(result) shouldBe Json.toJson(mtdError)
