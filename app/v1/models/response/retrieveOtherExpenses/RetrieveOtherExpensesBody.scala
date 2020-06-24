@@ -16,8 +16,10 @@
 
 package v1.models.response.retrieveOtherExpenses
 
+import config.AppConfig
 import play.api.libs.json.{Json, OFormat}
-import v1.hateoas.{HateoasLinks}
+import v1.hateoas.{HateoasLinks, HateoasLinksFactory}
+import v1.models.hateoas.{HateoasData, Link}
 
 case class RetrieveOtherExpensesBody(paymentsToTradeUnionsForDeathBenefits: Option[PaymentsToTradeUnionsForDeathBenefits],
                                       patentRoyaltiesPayments: Option[PatentRoyaltiesPayments])
@@ -25,16 +27,16 @@ case class RetrieveOtherExpensesBody(paymentsToTradeUnionsForDeathBenefits: Opti
 object RetrieveOtherExpensesBody extends HateoasLinks {
   implicit val format: OFormat[RetrieveOtherExpensesBody] = Json.format[RetrieveOtherExpensesBody]
 
-//  implicit object RetrieveOtherExpensesLinksFactory extends HateoasLinksFactory[RetrieveOtherExpensesBody, RetrieveOtherExpensesHateoasData] {
-//    override def links(appConfig: AppConfig, data: RetrieveOtherExpensesHateoasData): Seq[Link] = {
-//      import data._
-//      Seq(
-//        amendOtherExpenses(appConfig, nino, taxYear),
-//        retrieveOtherExpenses(appConfig, nino, taxYear),
-//        deleteOtherExpenses(appConfig, nino, taxYear)
-//      )
-//    }
-//  }
+  implicit object RetrieveOtherExpensesLinksFactory extends HateoasLinksFactory[RetrieveOtherExpensesBody, RetrieveOtherExpensesHateoasData] {
+    override def links(appConfig: AppConfig, data: RetrieveOtherExpensesHateoasData): Seq[Link] = {
+      import data._
+      Seq(
+        amendOtherExpenses(appConfig, nino, taxYear),
+        retrieveOtherExpenses(appConfig, nino, taxYear),
+        deleteOtherExpenses(appConfig, nino, taxYear)
+      )
+    }
+  }
 }
 
-//case class RetrieveOtherExpensesHateoasData(nino: String, taxYear: String) extends HateoasData
+case class RetrieveOtherExpensesHateoasData(nino: String, taxYear: String) extends HateoasData

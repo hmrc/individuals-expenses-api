@@ -27,19 +27,19 @@ trait HateoasLinks {
   private def sampleUri(appConfig: AppConfig, nino: String): String =
     s"/${appConfig.apiGatewayContext}/$nino/sample-endpoint"
 
-//  private def otherExpensesUri(appConfig: AppConfig, nino: String, taxYear: String): String =
-//    s"/${appConfig.apiGatewayContext}/other/$nino/$taxYear"
+  private def otherExpensesUri(appConfig: AppConfig, nino: String, taxYear: String): String =
+    s"/${appConfig.apiGatewayContext}/other/$nino/$taxYear"
 
   //API resource links
   def sampleLink(appConfig: AppConfig, nino: String): Link =
     Link(href = sampleUri(appConfig, nino), method = GET, rel = SAMPLE_ENDPOINT_REL)
 
-//  def retrieveOtherExpenses(appConfig: AppConfig, nino: String, taxYear: String): Link =
-//    Link(href = otherExpensesUri(appConfig, nino, taxYear), method = GET, rel = SELF)
-//
-//  def amendOtherExpenses(appConfig: AppConfig, nino: String, taxYear: String): Link =
-//    Link(href = otherExpensesUri(appConfig, nino, taxYear), method = PUT, rel = AMEND_EXPENSES_OTHER)
-//
-//  def deleteOtherExpenses(appConfig: AppConfig, nino: String, taxYear: String): Link =
-//    Link(href = otherExpensesUri(appConfig, nino, taxYear), method = DELETE, rel = DELETE_EXPENSES_OTHER)
+  def retrieveOtherExpenses(appConfig: AppConfig, nino: String, taxYear: String): Link =
+    Link(href = otherExpensesUri(appConfig, nino, taxYear), method = GET, rel = SELF)
+
+  def amendOtherExpenses(appConfig: AppConfig, nino: String, taxYear: String): Link =
+    Link(href = otherExpensesUri(appConfig, nino, taxYear), method = PUT, rel = AMEND_EXPENSES_OTHER)
+
+  def deleteOtherExpenses(appConfig: AppConfig, nino: String, taxYear: String): Link =
+    Link(href = otherExpensesUri(appConfig, nino, taxYear), method = DELETE, rel = DELETE_EXPENSES_OTHER)
 }
