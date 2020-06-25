@@ -30,9 +30,9 @@ trait HateoasLinks {
   private def otherExpensesUri(appConfig: AppConfig, nino: String, taxYear: String): String =
     s"/${appConfig.apiGatewayContext}/other/$nino/$taxYear"
 
-  //API resource links
-  def sampleLink(appConfig: AppConfig, nino: String): Link =
-    Link(href = sampleUri(appConfig, nino), method = GET, rel = SAMPLE_ENDPOINT_REL)
+    //API resource links
+    def sampleLink(appConfig: AppConfig, nino: String): Link =
+      Link(href = sampleUri(appConfig, nino), method = GET, rel = SAMPLE_ENDPOINT_REL)
 
   def retrieveOtherExpenses(appConfig: AppConfig, nino: String, taxYear: String): Link =
     Link(href = otherExpensesUri(appConfig, nino, taxYear), method = GET, rel = SELF)

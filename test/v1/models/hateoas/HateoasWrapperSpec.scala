@@ -56,4 +56,26 @@ class HateoasWrapperSpec extends UnitSpec {
     """.stripMargin)
     }
   }
+
+  "HateoasWrapper writesEmpty" must {
+    "write links" in {
+      Json.toJson(HateoasWrapper((), Seq(Link("/some/resource", GET, "thing")))) shouldBe
+        Json.parse("""
+                     |{
+                     |  "links" : [
+                     |    {
+                     |      "href": "/some/resource",
+                     |      "rel": "thing",
+                     |      "method": "GET"
+                     |    }
+                     |  ]
+                     |}
+      """.stripMargin)
+    }
+
+    "not write links array if there are no links" in {
+      Json.toJson(HateoasWrapper((), Nil)) shouldBe
+        Json.parse("""{}""".stripMargin)
+    }
+  }
 }
