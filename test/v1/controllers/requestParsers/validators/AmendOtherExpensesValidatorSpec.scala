@@ -141,9 +141,25 @@ class AmendOtherExpensesValidatorSpec extends UnitSpec {
             |  }
             |}""".stripMargin)
         validator.validate(AmendOtherExpensesRawData(validNino, validTaxYear, badJson)) shouldBe List(
-          ValueFormatError.copy(paths = Some(Seq(
-            "/patentRoyaltiesPayments/expenseAmount"
-          )))
+          ValueFormatError.copy(paths = Some(Seq("/patentRoyaltiesPayments/expenseAmount")))
+        )
+      }
+      "multiple errors is below 0" in {
+        val badJson = Json.parse(
+          """
+            |{
+            |  "paymentsToTradeUnionsForDeathBenefits": {
+            |    "customerReference": "TRADE UNION PAYMENTS",
+            |    "expenseAmount": -1223
+            |  },
+            |  "patentRoyaltiesPayments":{
+            |    "customerReference": "ROYALTIES PAYMENTS",
+            |    "expenseAmount": -1223
+            |  }
+            |}""".stripMargin)
+        validator.validate(AmendOtherExpensesRawData(validNino, validTaxYear, badJson)) shouldBe List(
+          ValueFormatError.copy(paths = Some(Seq("/paymentsToTradeUnionsForDeathBenefits/expenseAmount",
+            "/patentRoyaltiesPayments/expenseAmount")))
         )
       }
     }

@@ -57,11 +57,11 @@ class AmendOtherExpensesValidator extends Validator[AmendOtherExpensesRawData] {
     List(
       CustomerReferenceValidation.validateOptional(
         field = paymentsToTradeUnionsForDeathBenefits.customerReference,
-        path = s"/payments/customerReference"
+        path = s"/paymentsToTradeUnionsForDeathBenefits/customerReference"
       ),
       NumberValidation.validateOptional(
         field = Some(paymentsToTradeUnionsForDeathBenefits.expenseAmount),
-        path = s"/payments/expenseAmount"
+        path = s"/paymentsToTradeUnionsForDeathBenefits/expenseAmount"
       )
     ).flatten
   }

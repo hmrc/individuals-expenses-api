@@ -73,7 +73,7 @@ class AmendOtherExpensesController @Inject()(val authService: EnrolmentsAuthServ
       case NinoFormatError | BadRequestError | TaxYearFormatError
                            | RuleTaxYearRangeInvalidError
                            | RuleIncorrectOrEmptyBodyError
-                           | MtdErrorWithCustomMessage(ValueFormatError.code)=> BadRequest(Json.toJson(errorWrapper))
+                           | MtdErrorWithCustomMessage(ValueFormatError.code )=> BadRequest(Json.toJson(errorWrapper))
       case DownstreamError => InternalServerError(Json.toJson(errorWrapper))
       case NotFoundError => NotFound(Json.toJson(errorWrapper))
     }
