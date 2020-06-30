@@ -70,7 +70,9 @@ class AmendOtherExpensesController @Inject()(val authService: EnrolmentsAuthServ
 
   private def errorResult(errorWrapper: ErrorWrapper) = {
     (errorWrapper.error: @unchecked) match {
-      case NinoFormatError | BadRequestError | TaxYearFormatError
+      case NinoFormatError | BadRequestError
+                           | TaxYearFormatError
+                           | MtdErrorWithCustomMessage(CustomerReferenceFormatError.code)
                            | RuleTaxYearRangeInvalidError
                            | RuleIncorrectOrEmptyBodyError
                            | MtdErrorWithCustomMessage(ValueFormatError.code )=> BadRequest(Json.toJson(errorWrapper))
