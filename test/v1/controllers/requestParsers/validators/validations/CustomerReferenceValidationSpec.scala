@@ -22,9 +22,13 @@ import v1.models.errors.CustomerReferenceFormatError
 class CustomerReferenceValidationSpec extends UnitSpec {
 
   val validReference: Option[String] = Some("validReference")
-  val smallestAllowedReference: Option[String] = Some("")
-  val largestAllowedReference: Option[String] = Some("abcdefghijklmnopqrstuvwxy")
-  val invalidReference: Option[String] = Some("abcdefghijklmnopqrstuvwxyz")
+  val smallestAllowedReference: Option[String] = Some("a")
+  val largestAllowedReference: Option[String] = Some("abcdefghijklmnopqrstuvwxyabcdefghijklmnopqrstuvwxyabcdefghijklmnopqrstuvwxyabcdefghijknine")
+
+  val invalidReferenceSmallestLength: Option[String] = Some("")
+  val invalidReferenceLength: Option[String] = Some("abcdefghijklmnopqrstuvwxyabcdefghijklmnopqrstuvwxyabcdefghijklmnopqrstuvwxyabcdefghijknineandthensome")
+  val invalidReferenceCharacter: Option[String] = Some("REFERENCE\\EXAMPLE")
+
 
   "validate" should {
     "return no errors" when {
@@ -36,19 +40,31 @@ class CustomerReferenceValidationSpec extends UnitSpec {
         val validationResult = CustomerReferenceValidation.validateOptional(None, "/vctSubscription/1/customerReference")
         validationResult.isEmpty shouldBe true
       }
-      "the smallest allowed reference (0) is supplied" in {
+      "the smallest allowed reference (1) is supplied" in {
         val validationResult = CustomerReferenceValidation.validateOptional(smallestAllowedReference, "/vctSubscription/1/customerReference")
         validationResult.isEmpty shouldBe true
       }
-      "the largest allowed reference (25) is supplied" in {
+      "the largest allowed reference (90) is supplied" in {
         val validationResult = CustomerReferenceValidation.validateOptional(largestAllowedReference, "/vctSubscription/1/customerReference")
         validationResult.isEmpty shouldBe true
       }
     }
 
     "return an error" when {
-      "an invalid reference is supplied (26)" in {
-        val validationResult = CustomerReferenceValidation.validateOptional(invalidReference, "/vctSubscription/1/customerReference")
+      "an invalid reference is supplied (too short)" in {
+        val validationResult = CustomerReferenceValidation.validateOptional(invalidReferenceSmallestLength, "/vctSubscription/1/customerReference")
+        validationResult.isEmpty shouldBe false
+        validationResult.length shouldBe 1
+        validationResult.head shouldBe CustomerReferenceFormatError.copy(paths = Some(Seq("/vctSubscription/1/customerReference")))
+      }
+      "an invalid reference is supplied (too long)" in {
+        val validationResult = CustomerReferenceValidation.validateOptional(invalidReferenceLength, "/vctSubscription/1/customerReference")
+        validationResult.isEmpty shouldBe false
+        validationResult.length shouldBe 1
+        validationResult.head shouldBe CustomerReferenceFormatError.copy(paths = Some(Seq("/vctSubscription/1/customerReference")))
+      }
+      "an invalid reference is supplied (\\ character)" in {
+        val validationResult = CustomerReferenceValidation.validateOptional(invalidReferenceCharacter, "/vctSubscription/1/customerReference")
         validationResult.isEmpty shouldBe false
         validationResult.length shouldBe 1
         validationResult.head shouldBe CustomerReferenceFormatError.copy(paths = Some(Seq("/vctSubscription/1/customerReference")))
