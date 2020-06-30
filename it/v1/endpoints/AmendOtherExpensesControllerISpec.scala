@@ -169,6 +169,33 @@ class AmendOtherExpensesControllerISpec extends IntegrationBaseSpec {
           response.json shouldBe Json.toJson(ValueFormatError.copy(paths = Some(Seq("/paymentsToTradeUnionsForDeathBenefits/expenseAmount",
                                                                                     "/patentRoyaltiesPayments/expenseAmount"))))
         }
+        s"an invalid customer reference is provided" in new Test {
+          override val requestBodyJson: JsValue = Json.parse(
+            s"""
+               |{
+               |  "paymentsToTradeUnionsForDeathBenefits": {
+               |    "customerReference": "TRADE UNION PAYMENTS AND OTHER THINGS THAT LEAD TO A REALLY LONG NAME THAT I'M HOPING IS OVER NINETY CHARACTERS",
+               |    "expenseAmount": $amount
+               |  },
+               |  "patentRoyaltiesPayments":{
+               |    "customerReference": "ROYALTIES PAYMENTS AND OTHER THINGS THAT LEAD TO A REALLY LONG NAME THAT I'M HOPING IS OVER NINETY CHARACTERS",
+               |    "expenseAmount": $amount
+               |  }
+               |}
+               |""".stripMargin
+          )
+
+          override def setupStubs(): StubMapping = {
+            AuditStub.audit()
+            AuthStub.authorised()
+            MtdIdLookupStub.ninoFound(nino)
+          }
+
+          val response: WSResponse = await(request().put(requestBodyJson))
+          response.status shouldBe BAD_REQUEST
+          response.json shouldBe Json.toJson(CustomerReferenceFormatError.copy(paths = Some(Seq("/paymentsToTradeUnionsForDeathBenefits/customerReference",
+                                                                                                "/patentRoyaltiesPayments/customerReference"))))
+        }
         s"a taxYear with range of greater than a year is provided" in new Test {
           override val taxYear: String = "2019-21"
 
@@ -212,6 +239,7 @@ class AmendOtherExpensesControllerISpec extends IntegrationBaseSpec {
           response.status shouldBe BAD_REQUEST
           response.json shouldBe Json.toJson(RuleIncorrectOrEmptyBodyError)
         }
+
       }
 
       "des service error" when {
