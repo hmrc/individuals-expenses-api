@@ -15,5 +15,6 @@
   "required": [
     "anIdUsedAcrossMultipleSchemas",
     "aFieldDefinedInline"
-  ]
+  ],
+  "additionalProperties": false
 }
