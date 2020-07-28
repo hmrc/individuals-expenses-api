@@ -17,7 +17,7 @@
 package v1.controllers.requestParsers.validators
 
 import support.UnitSpec
-import v1.models.errors.{NinoFormatError, RuleTaxYearRangeInvalidError, TaxYearFormatError}
+import v1.models.errors.{NinoFormatError, RuleTaxYearNotSupportedError, RuleTaxYearRangeInvalidError, TaxYearFormatError}
 import v1.models.request.deleteEmploymentExpenses.DeleteEmploymentExpensesRawData
 
 class DeleteEmploymentExpensesValidatorSpec extends UnitSpec {
@@ -52,6 +52,13 @@ class DeleteEmploymentExpensesValidatorSpec extends UnitSpec {
       "an out of range tax year is supplied" in {
         validator.validate(DeleteEmploymentExpensesRawData(validNino, "2021-23")) shouldBe
           List(RuleTaxYearRangeInvalidError)
+      }
+    }
+
+    "return RuleTaxYearNotSupported error" when {
+      "a tax year before the minimum accepted value is supplied" in {
+        validator.validate(DeleteEmploymentExpensesRawData(validNino, "2019-20")) shouldBe
+          List(RuleTaxYearNotSupportedError)
       }
     }
 
