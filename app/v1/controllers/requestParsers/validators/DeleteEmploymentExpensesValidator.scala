@@ -18,6 +18,7 @@ package v1.controllers.requestParsers.validators
 
 import v1.controllers.requestParsers.validators.validations.{NinoValidation, TaxYearValidation}
 import v1.models.errors.MtdError
+import v1.models.request.deleteEmploymentExpenses.DeleteEmploymentExpensesRawData
 
 class DeleteEmploymentExpensesValidator extends Validator[DeleteEmploymentExpensesRawData] {
 
@@ -26,7 +27,7 @@ class DeleteEmploymentExpensesValidator extends Validator[DeleteEmploymentExpens
   private def parameterFormatValidation: DeleteEmploymentExpensesRawData => List[List[MtdError]] = (data: DeleteEmploymentExpensesRawData) => {
     List(
       NinoValidation.validate(data.nino),
-      TaxYearValidation.validate(data.taxYear)
+      TaxYearValidation.validateWithMinimum(data.taxYear)
     )
   }
 
