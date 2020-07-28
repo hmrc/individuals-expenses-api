@@ -16,34 +16,39 @@
 
 package v1.services
 
+import cats.data.EitherT
 import javax.inject.{Inject, Singleton}
+import cats.implicits._
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Logging
 import v1.connectors.DeleteEmploymentExpensesConnector
 import v1.controllers.EndpointLogContext
+import v1.models.errors.{DownstreamError, MtdError, NinoFormatError, NotFoundError, TaxYearFormatError}
+import v1.models.request.deleteEmploymentExpenses.DeleteEmploymentExpensesRequest
 import v1.support.DesResponseMappingSupport
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class DeleteEmploymentExpensesService @Inject()(deleteOtherExpensesConnector: DeleteEmploymentExpensesConnector)
+class DeleteEmploymentExpensesService @Inject()(deleteEmploymentExpensesConnector: DeleteEmploymentExpensesConnector)
   extends DesResponseMappingSupport with Logging {
 
-  def deleteOtherExpenses(request: DeleteEmploymentExpensesRequest)(
+  def deleteEmploymentExpenses(request: DeleteEmploymentExpensesRequest)(
     implicit hc: HeaderCarrier,
     ec: ExecutionContext,
     logContext: EndpointLogContext): Future[DeleteEmploymentExpensesServiceOutcome] = {
 
     val result = for {
-      desResponseWrapper <- EitherT(deleteOtherExpensesConnector.deleteOtherExpenses(request)).leftMap(mapDesErrors(desErrorMap))
+      desResponseWrapper <- EitherT(deleteEmploymentExpensesConnector.deleteEmploymentExpenses(request)).leftMap(mapDesErrors(desErrorMap))
     } yield desResponseWrapper
     result.value
   }
   private def desErrorMap: Map[String, MtdError] =
     Map(
       "INVALID_TAXABLE_ENTITY_ID" -> NinoFormatError,
-      "FORMAT_TAX_YEAR" -> TaxYearFormatError,
-      "NOT_FOUND" -> NotFoundError,
+      "INVALID_TAX_YEAR" -> TaxYearFormatError,
+      "INVALID_CORRELATIONID" -> DownstreamError,
+      "NO_DATA_FOUND" -> NotFoundError,
       "SERVER_ERROR" -> DownstreamError,
       "SERVICE_UNAVAILABLE" -> DownstreamError
     )

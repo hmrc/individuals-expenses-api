@@ -14,27 +14,27 @@
  * limitations under the License.
  */
 
-package v1.connectors
+package v1.mocks.connectors
 
-import config.AppConfig
-import javax.inject.{Inject, Singleton}
+import org.scalamock.handlers.CallHandler
+import org.scalamock.scalatest.MockFactory
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
-import v1.connectors.httpparsers.StandardDesHttpParser._
+import v1.connectors.{DeleteEmploymentExpensesConnector, DesOutcome}
 import v1.models.request.deleteEmploymentExpenses.DeleteEmploymentExpensesRequest
 
 import scala.concurrent.{ExecutionContext, Future}
 
-@Singleton
-class DeleteEmploymentExpensesConnector @Inject()(val http: HttpClient,
-                                                  val appConfig: AppConfig) extends BaseDesConnector {
-  def deleteEmploymentExpenses(request: DeleteEmploymentExpensesRequest)(
-    implicit hc: HeaderCarrier,
-    ec: ExecutionContext): Future[DesOutcome[Unit]] = {
+trait MockDeleteEmploymentExpensesConnector extends MockFactory {
 
-    delete(
-      DesUri[Unit](s"income-tax/expenses/employments/${request.nino}/${request.taxYear}")
-    )
+  val mockDeleteEmploymentExpensesConnector: DeleteEmploymentExpensesConnector = mock[DeleteEmploymentExpensesConnector]
+
+  object MockDeleteEmploymentExpensesConnector {
+
+    def deleteEmploymentExpenses(requestData: DeleteEmploymentExpensesRequest): CallHandler[Future[DesOutcome[Unit]]] = {
+      (mockDeleteEmploymentExpensesConnector
+        .deleteEmploymentExpenses(_: DeleteEmploymentExpensesRequest)(_: HeaderCarrier, _: ExecutionContext))
+        .expects(requestData, *, *)
+    }
   }
 
 }
