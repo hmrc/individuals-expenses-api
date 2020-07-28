@@ -30,4 +30,6 @@ package object services {
 
   type DeleteOtherExpensesServiceOutcome = ServiceOutcome[Unit]
 
+  type DeleteEmploymentExpensesServiceOutcome = ServiceOutcome[Unit]
+
 }
