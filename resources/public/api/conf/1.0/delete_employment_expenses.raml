@@ -1,0 +1,20 @@
+is:
+  - headers.acceptJson
+  - headers.testScenarioHeader
+  - errors.formatNino
+  - errors.formatTaxYear
+  - errors.ruleTaxYearNotSupported
+  - errors.ruleTaxYearRangeInvalid
+  - errors.clientOrAgentNotAuthorised
+  - errors.notFound
+displayName: Delete Employment Expenses [test only]
+description: This endpoint allows a developer to delete employment expenses for a user. This endpoint can only be used after the tax year has ended. A National Insurance number and Tax year are required.
+(annotations.sandboxData): !include scenarios/delete_employment_expenses.md
+(annotations.scope): "write:self-assessment"
+securedBy: [ sec.oauth_2_0: { scopes: [ "write:self-assessment" ] } ]
+responses:
+  204:
+    headers:
+      X-CorrelationId:
+        example: c75f40a6-a3df-4429-a697-471eeec46435
+        description: Unique ID for operation tracking <br> String, 36 characters.

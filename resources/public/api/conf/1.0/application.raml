@@ -55,6 +55,19 @@ uses:
           taxYear:
             description: 'The tax year the data applies to, for example, 2019-20. The start year and end year must not span two tax years. No gaps are allowed, for example, 2019-21 is not valid.'
             example: "2020-21"
-        put: !include amend_expenses.raml
+        put: !include amend_other_expenses.raml
         get: !include retrieve_other_expenses.raml
-        delete: !include delete_expenses.raml
+        delete: !include delete_other_expenses.raml
+  /employments:
+    /{nino}:
+      uriParameters:
+        nino:
+          description: National Insurance number, in the format AA999999A.
+          type: string
+          example: TC663795B
+      /{taxYear}:
+        uriParameters:
+          taxYear:
+            description: 'The tax year the data applies to, for example, 2020-21. The tax year must have ended. The start year and end year must not span two tax years. No gaps are allowed, for example, 2020-22 is not valid.'
+            example: "2021-22"
+        delete: !include delete_employment_expenses.raml
