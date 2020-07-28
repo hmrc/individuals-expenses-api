@@ -17,7 +17,7 @@
 package v1.controllers.requestParsers.validators.validations
 
 import support.UnitSpec
-import v1.models.errors.{RuleTaxYearRangeInvalidError, TaxYearFormatError}
+import v1.models.errors.{RuleTaxYearNotSupportedError, RuleTaxYearRangeInvalidError, TaxYearFormatError}
 import v1.models.utils.JsonErrorValidators
 
 class TaxYearValidationSpec extends UnitSpec with JsonErrorValidators {
@@ -73,6 +73,15 @@ class TaxYearValidationSpec extends UnitSpec with JsonErrorValidators {
       validationResult.length shouldBe 1
       validationResult.head shouldBe RuleTaxYearRangeInvalidError
 
+    }
+
+    "the start year is below the minimum value" in {
+
+      val invalidTaxYear = "2020-21"
+      val validationResult = TaxYearValidation.validateWithMinimum(invalidTaxYear)
+      validationResult.isEmpty shouldBe false
+      validationResult.length shouldBe 1
+      validationResult.head shouldBe RuleTaxYearNotSupportedError
     }
 
   }

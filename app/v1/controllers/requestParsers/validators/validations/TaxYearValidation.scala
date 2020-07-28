@@ -16,7 +16,7 @@
 
 package v1.controllers.requestParsers.validators.validations
 
-import v1.models.errors.{MtdError, RuleTaxYearRangeInvalidError, TaxYearFormatError}
+import v1.models.errors._
 
 object TaxYearValidation {
 
@@ -30,6 +30,28 @@ object TaxYearValidation {
 
       if (end - start == 1) {
         NoValidationErrors
+      } else {
+        List(RuleTaxYearRangeInvalidError)
+      }
+    } else {
+      List(TaxYearFormatError)
+    }
+  }
+
+
+  def validateWithMinimum(taxYear: String): List[MtdError] = {
+    if (taxYear.matches(taxYearFormat)) {
+
+      val start = taxYear.substring(2, 4).toInt
+      val end   = taxYear.substring(5, 7).toInt
+      val startYear = taxYear.substring(0, 4).toInt
+
+      if (end - start == 1) {
+        if (startYear >= minimumTaxYear){
+          NoValidationErrors
+        } else {
+          List(RuleTaxYearNotSupportedError)
+        }
       } else {
         List(RuleTaxYearRangeInvalidError)
       }
