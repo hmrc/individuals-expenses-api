@@ -10,9 +10,9 @@ is:
   - errors.formatCustomerRef
   - errors.clientOrAgentNotAuthorised
   - errors.notFound
-displayName: Amend Expenses [test only]
+displayName: Amend Other Expenses [test only]
 description: This endpoint allows a developer to amend expenses income for trade union and patent royalties. A National Insurance number and tax year must be provided.
-(annotations.sandboxData): !include scenarios/amend_expenses.md
+(annotations.sandboxData): !include scenarios/amend_other_expenses.md
 (annotations.scope): "write:self-assessment"
 securedBy: [ sec.oauth_2_0: { scopes: [ "write:self-assessment" ] } ]
 body:
