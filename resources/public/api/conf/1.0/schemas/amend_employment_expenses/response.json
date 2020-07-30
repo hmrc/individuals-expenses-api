@@ -13,15 +13,15 @@
           "href": {
             "description": "The relative url of the endpoint",
             "type": "string",
-            "example": "/individuals/expenses/other/{nino}/{taxYear}"
+            "example": "/individuals/expenses/employments/{nino}/{taxYear}"
           },
           "rel": {
             "description": "A label for the endpoint, which describes how it is related to the current resource. The rel will be self where the action is retrieval of the same resource",
             "type": "string",
             "enum": [
               "self",
-              "amend-expenses-employments",
-              "delete-expenses-employments"
+              "amend-employment-expenses",
+              "delete-employment-expenses"
             ]
           },
           "method": {
