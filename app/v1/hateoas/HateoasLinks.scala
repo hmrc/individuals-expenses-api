@@ -30,6 +30,9 @@ trait HateoasLinks {
   private def otherExpensesUri(appConfig: AppConfig, nino: String, taxYear: String): String =
     s"/${appConfig.apiGatewayContext}/other/$nino/$taxYear"
 
+  private def employmentExpensesUri(appConfig: AppConfig, nino: String, taxYear: String): String =
+    s"/${appConfig.apiGatewayContext}/employments/$nino/$taxYear"
+
     //API resource links
     def sampleLink(appConfig: AppConfig, nino: String): Link =
       Link(href = sampleUri(appConfig, nino), method = GET, rel = SAMPLE_ENDPOINT_REL)
@@ -42,4 +45,14 @@ trait HateoasLinks {
 
   def deleteOtherExpenses(appConfig: AppConfig, nino: String, taxYear: String): Link =
     Link(href = otherExpensesUri(appConfig, nino, taxYear), method = DELETE, rel = DELETE_EXPENSES_OTHER)
+
+  def retrieveEmploymentExpenses(appConfig: AppConfig, nino: String, taxYear: String): Link =
+    Link(href = employmentExpensesUri(appConfig, nino, taxYear), method = GET, rel = SELF)
+
+  def amendEmploymentExpenses(appConfig: AppConfig, nino: String, taxYear: String): Link =
+    Link(href = employmentExpensesUri(appConfig, nino, taxYear), method = PUT, rel = AMEND_EMPLOYMENT_EXPENSES)
+
+  def deleteEmploymentExpenses(appConfig: AppConfig, nino: String, taxYear: String): Link =
+    Link(href = employmentExpensesUri(appConfig, nino, taxYear), method = DELETE, rel = DELETE_EMPLOYMENT_EXPENSES)
+
 }

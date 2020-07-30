@@ -18,8 +18,12 @@ package v1.models.hateoas
 
 object RelType {
   val SAMPLE_ENDPOINT_REL = "sample-rel"
+
   val AMEND_EXPENSES_OTHER = "amend-expenses-other"
   val DELETE_EXPENSES_OTHER = "delete-expenses-other"
+
+  val AMEND_EMPLOYMENT_EXPENSES = "amend-employment-expenses"
+  val DELETE_EMPLOYMENT_EXPENSES = "delete-employment-expenses"
 
   val SELF = "self"
 }
