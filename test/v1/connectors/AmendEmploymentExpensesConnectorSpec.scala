@@ -16,19 +16,22 @@
 
 package v1.connectors
 
+import mocks.MockAppConfig
 import uk.gov.hmrc.domain.Nino
+import v1.mocks.MockHttpClient
+import v1.models.outcomes.ResponseWrapper
+import v1.models.request.amendEmploymentExpenses.{AmendEmploymentExpensesBody, AmendEmploymentExpensesRequest, Expenses}
+
+import scala.concurrent.Future
 
 class AmendEmploymentExpensesConnectorSpec extends ConnectorSpec {
 
   val taxYear = "2021-22"
   val nino = Nino("AA123456A")
-  val body = AmendEmploymentsExpensesBody(
-    Some(PaymentsToTradeUnionsForDeathBenefits(Some("TRADE UNION PAYMENTS"), 2000.99)),
-    Some(PatentRoyaltiesPayments(Some("ROYALTIES PAYMENTS"), 2000.99))
-  )
+  val body = AmendEmploymentExpensesBody(Expenses(Some(123.12), Some(123.12), Some(123.12), Some(123.12), Some(123.12), Some(123.12), Some(123.12), Some(123.12)))
 
   class Test extends MockHttpClient with MockAppConfig {
-    val connector: AmendOtherExpensesConnector = new AmendOtherExpensesConnector(http = mockHttpClient, appConfig = mockAppConfig)
+    val connector: AmendEmploymentExpensesConnector = new AmendEmploymentExpensesConnector(http = mockHttpClient, appConfig = mockAppConfig)
 
     val desRequestHeaders: Seq[(String, String)] = Seq("Environment" -> "des-environment", "Authorization" -> s"Bearer des-token")
     MockedAppConfig.desBaseUrl returns baseUrl
@@ -37,13 +40,13 @@ class AmendEmploymentExpensesConnectorSpec extends ConnectorSpec {
   }
 
   "amend" should {
-    val request = AmendOtherExpensesRequest(nino, taxYear, body)
+    val request = AmendEmploymentExpensesRequest(nino, taxYear, body)
 
     "put a body and return 204 no body" in new Test {
       val outcome = Right(ResponseWrapper(correlationId, ()))
       MockedHttpClient
         .put(
-          url = s"$baseUrl/expenses/other/$nino/$taxYear",
+          url = s"$baseUrl/income-tax/expenses/employments/$nino/$taxYear",
           body = body,
           requiredHeaders = "Environment" -> "des-environment", "Authorization" -> s"Bearer des-token"
         )
