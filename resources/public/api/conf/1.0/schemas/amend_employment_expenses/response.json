@@ -13,15 +13,24 @@
           "href": {
             "description": "The relative url of the endpoint",
             "type": "string",
+<<<<<<< HEAD
             "example": "/individuals/expenses/employments/{nino}/{taxYear}"
+=======
+            "example": "/individuals/expenses/other/{nino}/{taxYear}"
+>>>>>>> 1eb9f2a... Amend Employment Expenses RAML
           },
           "rel": {
             "description": "A label for the endpoint, which describes how it is related to the current resource. The rel will be self where the action is retrieval of the same resource",
             "type": "string",
             "enum": [
               "self",
+<<<<<<< HEAD
               "amend-employment-expenses",
               "delete-employment-expenses"
+=======
+              "amend-expenses-employments",
+              "delete-expenses-employments"
+>>>>>>> 1eb9f2a... Amend Employment Expenses RAML
             ]
           },
           "method": {
