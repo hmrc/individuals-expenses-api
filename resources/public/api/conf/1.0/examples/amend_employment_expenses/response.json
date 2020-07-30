@@ -1,0 +1,19 @@
+{
+  "links":[
+    {
+      "href":"/individuals/expenses/employments/TC663795B/2019-20",
+      "method":"PUT",
+      "rel":"amend-expenses-employments"
+    },
+    {
+      "href":"/individuals/expenses/employments/TC663795B/2019-20",
+      "method":"GET",
+      "rel":"self"
+    },
+    {
+      "href":"/individuals/expenses/employments/TC663795B/2019-20",
+      "method":"DELETE",
+      "rel":"delete-expenses-employments"
+    }
+  ]
+}
