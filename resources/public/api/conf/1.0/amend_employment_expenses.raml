@@ -4,33 +4,34 @@ is:
   - headers.testScenarioHeader
   - errors.formatNino
   - errors.formatTaxYear
-  - errors.ruleTaxYearRangeInvalid
   - errors.formatValue
   - errors.incorrectOrEmptyBody
-  - errors.formatCustomerRef
+  - errors.ruleTaxYearNotSupported
+  - errors.ruleTaxYearRangeInvalid
+  - errors.ruleTaxYearNotEnded
   - errors.clientOrAgentNotAuthorised
   - errors.notFound
-displayName: Amend Other Expenses [test only]
-description: This endpoint allows a developer to amend expenses income for trade union and patent royalties. A National Insurance number and tax year must be provided.
-(annotations.sandboxData): !include scenarios/amend_other_expenses.md
+displayName: Amend Employment Expenses [test only]
+description: This endpoint allows a developer to add or update existing employment expenses. This endpoint can only be used after the tax year has ended. A National Insurance number and Tax year are required.
+(annotations.sandboxData): !include scenarios/amend_employment_expenses.md
 (annotations.scope): "write:self-assessment"
 securedBy: [ sec.oauth_2_0: { scopes: [ "write:self-assessment" ] } ]
 body:
   application/json:
-    type: !include schemas/amend_other_expenses/request.json
+    type: !include schemas/amend_employment_expenses/request.json
     examples:
      example-1:
       description: Default Example
-      value: !include examples/amend_other_expenses/request.json
+      value: !include examples/amend_employment_expenses/request.json
 responses:
   200:
     body:
       application/json:
-        type: !include schemas/amend_other_expenses/response.json
+        type: !include schemas/amend_employment_expenses/response.json
         examples:
           example-1:
             description: Default Example
-            value: !include examples/amend_other_expenses/response.json
+            value: !include examples/amend_employment_expenses/response.json
     headers:
       X-CorrelationId:
         example: c75f40a6-a3df-4429-a697-471eeec46435
