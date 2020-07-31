@@ -1,0 +1,35 @@
+is:
+  - headers.acceptJson
+  - headers.testScenarioHeader
+  - errors.formatNino
+  - errors.formatTaxYear
+  - errors.formatView
+  - errors.ruleTaxYearNotSupported
+  - errors.ruleTaxYearRangeInvalid
+  - errors.clientOrAgentNotAuthorised
+  - errors.notFound
+  - queryParameters.source
+displayName: Retrieve Employment Expenses [test only].
+description: This endpoint allows a developer to retrieve existing employment expenses. A National Insurance number and Tax year must be provided.
+(annotations.sandboxData): !include scenarios/retrieve_employment_expenses.md
+(annotations.scope): "read:self-assessment"
+securedBy: [ sec.oauth_2_0: { scopes: [ "read:self-assessment" ] } ]
+responses:
+  200:
+    body:
+      application/json:
+        type: !include schemas/retrieve_employment_expenses_response.json
+        examples:
+          example-1:
+            description: Example user response
+            value: !include examples/retrieve_employment_expenses/user.json
+          example-2:
+            description: Example HMRC held response
+            value: !include examples/retrieve_employment_expenses/hmrc_held.json
+          example-3:
+            description: Example latest response
+            value: !include examples/retrieve_employment_expenses/latest.json
+    headers:
+      X-CorrelationId:
+        example: c75f40a6-a3df-4429-a697-471eeec46435
+        description: Unique ID for operation tracking <br> String, 36 characters.
