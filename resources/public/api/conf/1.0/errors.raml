@@ -47,17 +47,17 @@ traits:
                 description: The format of the supplied tax year field is not valid.
                 value:
                   code: FORMAT_TAX_YEAR
-  formatView:
+  formatSource:
     responses:
       400:
         body:
           application/json:
             type: types.errorResponse
             examples:
-              formatView:
-                description: The format of the supplied View field is not valid.
+              formatSource:
+                description: The format of the supplied Source field is not valid.
                 value:
-                  code: FORMAT_VIEW
+                  code: FORMAT_SOURCE
   formatValue:
     responses:
       400:
