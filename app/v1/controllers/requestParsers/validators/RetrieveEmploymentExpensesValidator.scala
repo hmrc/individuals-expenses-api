@@ -18,26 +18,25 @@ package v1.controllers.requestParsers.validators
 
 import v1.controllers.requestParsers.validators.validations.{MtdTaxYearValidation, NinoValidation, TaxYearValidation}
 import v1.models.errors.{MtdError, RuleTaxYearNotSupportedError}
-import v1.models.request.deleteEmploymentExpenses.DeleteEmploymentExpensesRawData
 
-class DeleteEmploymentExpensesValidator extends Validator[DeleteEmploymentExpensesRawData] {
+class RetrieveEmploymentExpensesValidator extends Validator[RetrieveEmploymentExpensesRawData] {
 
   private val validationSet = List(parameterFormatValidation, parameterRuleValidation)
 
-  private def parameterFormatValidation: DeleteEmploymentExpensesRawData => List[List[MtdError]] = (data: DeleteEmploymentExpensesRawData) => {
+  private def parameterFormatValidation: RetrieveEmploymentExpensesRawData => List[List[MtdError]] = (data: RetrieveEmploymentExpensesRawData) => {
     List(
       NinoValidation.validate(data.nino),
       TaxYearValidation.validate(data.taxYear)
     )
   }
 
-  private def parameterRuleValidation: DeleteEmploymentExpensesRawData => List[List[MtdError]] = (data: DeleteEmploymentExpensesRawData) => {
+  private def parameterRuleValidation: RetrieveEmploymentExpensesRawData => List[List[MtdError]] = (data: RetrieveEmploymentExpensesRawData) => {
     List(
       MtdTaxYearValidation.validate(data.taxYear, RuleTaxYearNotSupportedError)
     )
   }
 
-  override def validate(data: DeleteEmploymentExpensesRawData): List[MtdError] = {
+  override def validate(data: RetrieveEmploymentExpensesRawData): List[MtdError] = {
     run(validationSet, data).distinct
   }
 }

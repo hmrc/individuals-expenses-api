@@ -14,27 +14,15 @@
  * limitations under the License.
  */
 
-package v1.controllers.requestParsers.validators.validations
+package v1.controllers.requestParsers
 
-import v1.models.errors._
+import javax.inject.Inject
+import uk.gov.hmrc.domain.Nino
 
-object TaxYearValidation {
+class RetrieveEmploymentExpensesRequestParser @Inject()(val validator: RetrieveEmploymentExpensesValidator)
+  extends RequestParser[RetrieveEmploymentExpensesRawData, RetrieveEmploymentExpensesRequest] {
 
-  val taxYearFormat = "20[1-9][0-9]\\-[1-9][0-9]"
+  override protected def requestFor(data: RetrieveEmploymentExpensesRawData): RetrieveEmploymentExpensesRequest =
+    RetrieveEmploymentExpensesRequest(Nino(data.nino), data.taxYear)
 
-  def validate(taxYear: String): List[MtdError] = {
-    if (taxYear.matches(taxYearFormat)) {
-
-      val start = taxYear.substring(2, 4).toInt
-      val end   = taxYear.substring(5, 7).toInt
-
-      if (end - start == 1) {
-        NoValidationErrors
-      } else {
-        List(RuleTaxYearRangeInvalidError)
-      }
-    } else {
-      List(TaxYearFormatError)
-    }
-  }
 }
