@@ -16,8 +16,14 @@
 
 package v1.controllers.requestParsers.validators
 
+import config.AppConfig
+import mocks.MockAppConfig
+import org.joda.time.DateTime
+import org.joda.time.format.{DateTimeFormat, DateTimeFormatter}
 import play.api.libs.json.Json
 import support.UnitSpec
+import utils.CurrentDateTime
+import v1.mocks.MockCurrentDateTime
 import v1.models.errors._
 import v1.models.request.amendOtherExpenses.AmendOtherExpensesRawData
 
@@ -75,45 +81,60 @@ class AmendOtherExpensesValidatorSpec extends UnitSpec {
       |""".stripMargin
   )
 
-  val validator = new AmendOtherExpensesValidator
 
+  class Test extends MockCurrentDateTime with MockAppConfig {
+
+    implicit val dateTimeProvider: CurrentDateTime = mockCurrentDateTime
+    val dateTimeFormatter: DateTimeFormatter = DateTimeFormat.forPattern("yyyy-MM-dd")
+
+    implicit val appConfig: AppConfig = mockAppConfig
+
+    val validator = new AmendOtherExpensesValidator
+
+    MockCurrentDateTime.getCurrentDate
+      .returns(DateTime.parse("2022-07-11", dateTimeFormatter))
+      .anyNumberOfTimes()
+
+    MockedAppConfig.minimumPermittedTaxYear
+      .returns(2021)
+  }
 
   "running a validation" should {
     "return no errors" when {
-      "a valid request is supplied" in {
+      "a valid request is supplied" in new Test {
         validator.validate(AmendOtherExpensesRawData(validNino, validTaxYear, requestBodyJson)) shouldBe Nil
       }
-      "a valid request is supplied without decimal places in the JSON" in {
+      "a valid request is supplied without decimal places in the JSON" in new Test {
         validator.validate(AmendOtherExpensesRawData(validNino, validTaxYear, requestBodyJsonNoDecimals)) shouldBe Nil
       }
-      "a valid request is supplied without paymentsToTradeUnionsForDeathBenefits in the JSON" in {
+      "a valid request is supplied without paymentsToTradeUnionsForDeathBenefits in the JSON" in new Test {
         validator.validate(AmendOtherExpensesRawData(validNino, validTaxYear, requestBodyJsonNoPaymentsToTradeUnionsForDeathBenefits)) shouldBe Nil
       }
-      "a valid request is supplied without patentRoyaltiesPayments in the JSON" in {
+      "a valid request is supplied without patentRoyaltiesPayments in the JSON" in new Test {
         validator.validate(AmendOtherExpensesRawData(validNino, validTaxYear, requestBodyJsonNoPatentRoyaltiesPayments)) shouldBe Nil
       }
     }
 
     "return a path parameter error" when {
-      "the nino is invalid" in {
+      "the nino is invalid" in new Test {
         validator.validate(AmendOtherExpensesRawData("Walrus", validTaxYear, requestBodyJson)) shouldBe List(NinoFormatError)
       }
-      "the taxYear format is invalid" in {
+      "the taxYear format is invalid" in new Test {
         validator.validate(AmendOtherExpensesRawData(validNino, "2000", requestBodyJson)) shouldBe List(TaxYearFormatError)
       }
-      "the taxYear range is invalid" in {
+      "the taxYear range is invalid" in new Test {
         validator.validate(AmendOtherExpensesRawData(validNino, "2017-20", requestBodyJson)) shouldBe List(RuleTaxYearRangeInvalidError)
       }
-      "all path parameters are invalid" in {
+      "all path parameters are invalid" in new Test {
         validator.validate(AmendOtherExpensesRawData("Walrus", "2000", requestBodyJson)) shouldBe List(NinoFormatError, TaxYearFormatError)
       }
     }
 
     "return RuleIncorrectOrEmptyBodyError error" when {
-      "an empty JSON body is submitted" in {
+      "an empty JSON body is submitted" in new Test {
         validator.validate(AmendOtherExpensesRawData(validNino, validTaxYear, emptyJson)) shouldBe List(RuleIncorrectOrEmptyBodyError)
       }
-      "at least one mandatory field is missing" in {
+      "at least one mandatory field is missing" in new Test {
         val json =  Json.parse(
           """
             |{
@@ -127,7 +148,7 @@ class AmendOtherExpensesValidatorSpec extends UnitSpec {
       }
     }
     "return a FORMAT_VALUE error" when {
-      "expenseAmount is below 0" in {
+      "expenseAmount is below 0" in new Test {
         val badJson = Json.parse(
           """
             |{
@@ -144,7 +165,7 @@ class AmendOtherExpensesValidatorSpec extends UnitSpec {
           ValueFormatError.copy(paths = Some(Seq("/patentRoyaltiesPayments/expenseAmount")))
         )
       }
-      "multiple errors is below 0" in {
+      "multiple errors is below 0" in new Test {
         val badJson = Json.parse(
           """
             |{

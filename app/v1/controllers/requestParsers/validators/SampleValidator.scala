@@ -16,12 +16,16 @@
 
 package v1.controllers.requestParsers.validators
 
+import config.AppConfig
+import javax.inject.Inject
+import utils.CurrentDateTime
 import v1.controllers.requestParsers.validators.validations._
 import v1.models.domain.SampleRequestBody
 import v1.models.errors.{MtdError, RuleIncorrectOrEmptyBodyError, RuleTaxYearNotSupportedError}
 import v1.models.request.SampleRawData
 
-class SampleValidator extends Validator[SampleRawData] {
+class SampleValidator @Inject()(implicit currentDateTime: CurrentDateTime, appConfig: AppConfig)
+  extends Validator[SampleRawData] {
 
   private val validationSet = List(parameterFormatValidation, parameterRuleValidation)
 
@@ -35,7 +39,7 @@ class SampleValidator extends Validator[SampleRawData] {
 
   private def parameterRuleValidation: SampleRawData => List[List[MtdError]] = { data =>
     List(
-      MtdTaxYearValidation.validate(data.taxYear, RuleTaxYearNotSupportedError)
+      MtdTaxYearValidation.validate(data.taxYear)
     )
   }
 

@@ -16,28 +16,84 @@
 
 package v1.controllers.requestParsers.validators
 
-import v1.controllers.requestParsers.validators.validations.{JsonFormatValidation, MtdTaxYearValidation, NinoValidation, TaxYearValidation}
+import javax.inject.Inject
+import config.AppConfig
+import utils.CurrentDateTime
+import v1.controllers.requestParsers.validators.validations.{JsonFormatValidation, MtdTaxYearValidation, NinoValidation, NoValidationErrors, NumberValidation, TaxYearValidation}
 import v1.models.errors.{MtdError, RuleIncorrectOrEmptyBodyError, RuleTaxYearNotSupportedError}
+import v1.models.request.amendEmploymentExpenses.{AmendEmploymentExpensesBody, AmendEmploymentExpensesRawData, Expenses}
 
-class AmendEmploymentExpensesValidator extends Validator[AmendEmploymentExpensesRawdata] {
-  private val validationSet = List(parameterFormatValidation, bodyFormatValidation, parameterRuleValidation, bodyFieldValidation)
+class AmendEmploymentExpensesValidator @Inject()(implicit currentDateTime: CurrentDateTime, appConfig: AppConfig)
+  extends Validator[AmendEmploymentExpensesRawData] {
+  private val validationSet = List(parameterFormatValidation, bodyFormatValidation, parameterRuleValidation)
 
-  private def parameterFormatValidation: AmendEmploymentExpensesRawdata => List[List[MtdError]] = (data: AmendEmploymentExpensesRawdata) => {
+  private def parameterFormatValidation: AmendEmploymentExpensesRawData => List[List[MtdError]] = (data: AmendEmploymentExpensesRawData) => {
     List(
       NinoValidation.validate(data.nino),
       TaxYearValidation.validate(data.taxYear),
     )
   }
 
-  private def bodyFormatValidation: AmendEmploymentExpensesRawdata => List[List[MtdError]] = { data =>
+  private def bodyFormatValidation: AmendEmploymentExpensesRawData => List[List[MtdError]] = { data =>
     List(
       JsonFormatValidation.validate[AmendEmploymentExpensesBody](data.body, RuleIncorrectOrEmptyBodyError)
     )
   }
 
-  private val parameterRuleValidation: AmendEmploymentExpensesRawdata => List[List[MtdError]] = { data =>
+  private val parameterRuleValidation: AmendEmploymentExpensesRawData => List[List[MtdError]] = { data =>
     List(
-      MtdTaxYearValidation.validate(data.taxYear, RuleTaxYearNotSupportedError)
+      MtdTaxYearValidation.validate(data.taxYear)
     )
+  }
+
+//  private def bodyFieldValidation: AmendEmploymentExpensesRawData => List[List[MtdError]] = { data =>
+//    val body = data.body.as[AmendEmploymentExpensesBody]
+//
+//    List(flattenErrors(
+//      List(
+//        body.expenses.map(validateExpenses).getOrElse(NoValidationErrors)
+//      )
+//    ))
+//  }
+
+  private def validateExpenses(expenses: Expenses): List[MtdError] = {
+    List(
+      NumberValidation.validateOptional(
+        field = expenses.businessTravelCosts,
+        path = s"/expenses/businessTravelCosts"
+      ),
+      NumberValidation.validateOptional(
+        field = expenses.jobExpenses,
+        path = s"/expenses/jobExpenses"
+      ),
+      NumberValidation.validateOptional(
+        field = expenses.flatRateJobExpenses,
+        path = s"/expenses/flatRateJobExpenses"
+      ),
+      NumberValidation.validateOptional(
+        field = expenses.professionalSubscriptions,
+        path = s"/expenses/professionalSubscriptions"
+      ),
+      NumberValidation.validateOptional(
+        field = expenses.hotelAndMealExpenses,
+        path = s"/expenses/hotelAndMealExpenses"
+      ),
+      NumberValidation.validateOptional(
+        field = expenses.otherAndCapitalAllowances,
+        path = s"/expenses/otherAndCapitalAllowances"
+      ),
+      NumberValidation.validateOptional(
+        field = expenses.vehicleExpenses,
+        path = s"/expenses/vehicleExpenses"
+      ),
+      NumberValidation.validateOptional(
+        field = expenses.mileageAllowanceRelief,
+        path = s"/expenses/mileageAllowanceRelief"
+      )
+    ).flatten
+  }
+
+  override def validate(data: AmendEmploymentExpensesRawData): List[MtdError] = {
+    run(validationSet, data).distinct
   }
 }

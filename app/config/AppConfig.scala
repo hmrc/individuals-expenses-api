@@ -32,6 +32,8 @@ trait AppConfig {
 
   def apiGatewayContext: String
 
+  def minimumPermittedTaxYear: Int
+
   def apiStatus(version: String): String
 
   def featureSwitch: Option[Configuration]
@@ -47,6 +49,7 @@ class AppConfigImpl @Inject()(config: ServicesConfig, configuration: Configurati
   val desEnv: String = config.getString("microservice.services.des.env")
   val desToken: String = config.getString("microservice.services.des.token")
   val apiGatewayContext: String = config.getString("api.gateway.context")
+  val minimumPermittedTaxYear: Int = config.getInt("minimumPermittedTaxYear")
 
   def apiStatus(version: String): String = config.getString(s"api.$version.status")
 
@@ -57,5 +60,5 @@ class AppConfigImpl @Inject()(config: ServicesConfig, configuration: Configurati
 
 trait FixedConfig {
   // Minimum tax year for MTD
-  val minimumTaxYear = 2018
+  val minimumTaxYear = 2019
 }
