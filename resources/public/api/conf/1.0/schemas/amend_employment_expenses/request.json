@@ -11,65 +11,37 @@
         "businessTravelCosts": {
           "description": "Expenses associated with business travel.\n\nThe value must be between 0 and 99999999999.99",
           "type": "number",
-<<<<<<< HEAD
           "example": "2000.99"
-=======
-          "example": ""
->>>>>>> 1eb9f2a... Amend Employment Expenses RAML
         },
         "jobExpenses": {
           "description": "The actual expense of replacing or maintaining tools or special work clothes.\n\nThe value must be between 0 and 99999999999.99",
           "type": "number",
-<<<<<<< HEAD
           "example": "2000.99"
-=======
-          "example": ""
->>>>>>> 1eb9f2a... Amend Employment Expenses RAML
         },
         "flatRateJobExpenses": {
           "description": "Fixed rate expenses applied for replacing or maintaining tools or special work clothes.\n\nThe value must be between 0 and 99999999999.99",
           "type": "number",
-<<<<<<< HEAD
           "example": "2000.99"
-=======
-          "example": ""
->>>>>>> 1eb9f2a... Amend Employment Expenses RAML
         },
         "professionalSubscriptions": {
           "description": "Fees or subscriptions to professional bodies, required in order to undertake the employment.\n\nThe value must be between 0 and 99999999999.99",
           "type": "number",
-<<<<<<< HEAD
           "example": "2000.99"
-=======
-          "example": ""
->>>>>>> 1eb9f2a... Amend Employment Expenses RAML
         },
         "hotelAndMealExpenses": {
           "description": "Subsistence costs incurred with work.\n\nThe value must be between 0 and 99999999999.99",
           "type": "number",
-<<<<<<< HEAD
           "example": "2000.99"
-=======
-          "example": ""
->>>>>>> 1eb9f2a... Amend Employment Expenses RAML
         },
         "otherAndCapitalAllowances": {
           "description": "The expense from purchasing small items required for this employment.\n\nThe value must be between 0 and 99999999999.99",
           "type": "number",
-<<<<<<< HEAD
           "example": "2000.99"
-=======
-          "example": ""
->>>>>>> 1eb9f2a... Amend Employment Expenses RAML
         },
         "vehicleExpenses": {
           "description": "Vehicle expenses for using own car, van or motorcycle for business mileage occurred during work.\n\nThe value must be between 0 and 99999999999.99",
           "type": "number",
-<<<<<<< HEAD
           "example": "2000.99"
-=======
-          "example": ""
->>>>>>> 1eb9f2a... Amend Employment Expenses RAML
         },
         "mileageAllowanceRelief": {
           "description": "The shortfall incurred when the employer pays less than the approved mileage rate.\n\nThe value must be between 0 and 99999999999.99",
@@ -80,11 +52,8 @@
       "additionalProperties": false
     }
   },
-<<<<<<< HEAD
   "required": [
     "expenses"
   ],
-=======
->>>>>>> 1eb9f2a... Amend Employment Expenses RAML
   "additionalProperties": false
 }
