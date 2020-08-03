@@ -16,7 +16,7 @@
 
 package v1.controllers.requestParsers.validators.validations
 
-import config.{AppConfig, FixedConfig}
+import config.AppConfig
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 import utils.CurrentDateTime

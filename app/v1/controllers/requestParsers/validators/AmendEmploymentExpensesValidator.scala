@@ -16,16 +16,16 @@
 
 package v1.controllers.requestParsers.validators
 
-import javax.inject.Inject
 import config.AppConfig
+import javax.inject.Inject
 import utils.CurrentDateTime
-import v1.controllers.requestParsers.validators.validations.{JsonFormatValidation, MtdTaxYearValidation, NinoValidation, NoValidationErrors, NumberValidation, TaxYearValidation}
-import v1.models.errors.{MtdError, RuleIncorrectOrEmptyBodyError, RuleTaxYearNotSupportedError}
+import v1.controllers.requestParsers.validators.validations._
+import v1.models.errors.{MtdError, RuleIncorrectOrEmptyBodyError}
 import v1.models.request.amendEmploymentExpenses.{AmendEmploymentExpensesBody, AmendEmploymentExpensesRawData, Expenses}
 
 class AmendEmploymentExpensesValidator @Inject()(implicit currentDateTime: CurrentDateTime, appConfig: AppConfig)
   extends Validator[AmendEmploymentExpensesRawData] {
-  private val validationSet = List(parameterFormatValidation, bodyFormatValidation, parameterRuleValidation)
+  private val validationSet = List(parameterFormatValidation, bodyFormatValidation, parameterRuleValidation, bodyFieldValidation)
 
   private def parameterFormatValidation: AmendEmploymentExpensesRawData => List[List[MtdError]] = (data: AmendEmploymentExpensesRawData) => {
     List(
@@ -40,21 +40,21 @@ class AmendEmploymentExpensesValidator @Inject()(implicit currentDateTime: Curre
     )
   }
 
-  private val parameterRuleValidation: AmendEmploymentExpensesRawData => List[List[MtdError]] = { data =>
+  private def parameterRuleValidation: AmendEmploymentExpensesRawData => List[List[MtdError]] = { data =>
     List(
       MtdTaxYearValidation.validate(data.taxYear)
     )
   }
 
-//  private def bodyFieldValidation: AmendEmploymentExpensesRawData => List[List[MtdError]] = { data =>
-//    val body = data.body.as[AmendEmploymentExpensesBody]
-//
-//    List(flattenErrors(
-//      List(
-//        body.expenses.map(validateExpenses).getOrElse(NoValidationErrors)
-//      )
-//    ))
-//  }
+  private def bodyFieldValidation: AmendEmploymentExpensesRawData => List[List[MtdError]] = { data =>
+    val body = data.body.as[AmendEmploymentExpensesBody]
+
+    List(flattenErrors(
+      List(
+        validateExpenses(body.expenses)
+      )
+    ))
+  }
 
   private def validateExpenses(expenses: Expenses): List[MtdError] = {
     List(

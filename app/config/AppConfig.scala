@@ -57,8 +57,3 @@ class AppConfigImpl @Inject()(config: ServicesConfig, configuration: Configurati
 
   def endpointsEnabled(version: String): Boolean = config.getBoolean(s"api.$version.endpoints.enabled")
 }
-
-trait FixedConfig {
-  // Minimum tax year for MTD
-  val minimumTaxYear = 2019
-}

@@ -24,7 +24,7 @@ import org.scalamock.handlers.CallHandler
 import support.UnitSpec
 import utils.CurrentDateTime
 import v1.mocks.MockCurrentDateTime
-import v1.models.errors.RuleTaxYearNotSupportedError
+import v1.models.errors.{RuleTaxYearNotEndedError, RuleTaxYearNotSupportedError}
 import v1.models.utils.JsonErrorValidators
 
 class MtdTaxYearValidationSpec extends UnitSpec with JsonErrorValidators {
@@ -45,16 +45,11 @@ class MtdTaxYearValidationSpec extends UnitSpec with JsonErrorValidators {
 
   "validate" should {
     "return no errors" when {
-      "a tax year greater than 2017 is supplied" in new Test {
-
-        val validTaxYear = "2018-19"
-        val validationResult = MtdTaxYearValidation.validate(validTaxYear)
-        validationResult.isEmpty shouldBe true
-
-      }
-
       "the minimum allowed tax year is supplied" in new Test {
-        val validTaxYear = "2017-18"
+
+        setupTimeProvider("2022-04-06")
+
+        val validTaxYear = "2021-22"
         val validationResult = MtdTaxYearValidation.validate(validTaxYear)
         validationResult.isEmpty shouldBe true
       }
@@ -62,13 +57,26 @@ class MtdTaxYearValidationSpec extends UnitSpec with JsonErrorValidators {
     }
 
     "return the given error" when {
-      "a tax year below 2017 is supplied" in new Test {
+      "a tax year below 2021-22 is supplied" in new Test {
+
+        setupTimeProvider("2022-04-06")
 
         val invalidTaxYear = "2015-16"
         val validationResult = MtdTaxYearValidation.validate(invalidTaxYear)
         validationResult.isEmpty shouldBe false
         validationResult.length shouldBe 1
         validationResult.head shouldBe RuleTaxYearNotSupportedError
+      }
+      "the supplied tax year has not yet ended" in new Test {
+
+        setupTimeProvider("2022-04-04")
+
+        private val invalidTaxYear = "2021-22"
+        private val validationResult = MtdTaxYearValidation.validate(invalidTaxYear)
+
+        validationResult.isEmpty shouldBe false
+        validationResult.length shouldBe 1
+        validationResult.head shouldBe RuleTaxYearNotEndedError
       }
     }
   }

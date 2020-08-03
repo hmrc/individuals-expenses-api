@@ -30,7 +30,7 @@ import v1.models.request.amendOtherExpenses.AmendOtherExpensesRawData
 class AmendOtherExpensesValidatorSpec extends UnitSpec {
 
   private val validNino = "AA123456A"
-  private val validTaxYear = "2018-19"
+  private val validTaxYear = "2021-22"
   private val requestBodyJson = Json.parse(
     """
       |{
@@ -89,7 +89,7 @@ class AmendOtherExpensesValidatorSpec extends UnitSpec {
 
     implicit val appConfig: AppConfig = mockAppConfig
 
-    val validator = new AmendOtherExpensesValidator
+    val validator = new AmendOtherExpensesValidator()
 
     MockCurrentDateTime.getCurrentDate
       .returns(DateTime.parse("2022-07-11", dateTimeFormatter))
