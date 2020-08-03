@@ -9,7 +9,7 @@
     <tbody>
         <tr>
             <td><p>N/A - DEFAULT</p></td>
-            <td><p>Simulate a success response.</p></td>
+            <td><p>Simulates a success response.</p></td>
         </tr>
         <tr>
             <td><p>NOT_FOUND</p></td>
