@@ -26,14 +26,14 @@ import v1.models.request.DesTaxYear
 object MtdTaxYearValidation {
 
   // @param taxYear In format YYYY-YY
-  def validate(taxYear: String)(implicit dateTimeProvider: CurrentDateTime, appConfig: AppConfig): List[MtdError] = {
+  def validate(taxYear: String, checkCurrentTaxYear: Boolean = false)(implicit dateTimeProvider: CurrentDateTime, appConfig: AppConfig): List[MtdError] = {
 
     val desTaxYear = Integer.parseInt(DesTaxYear.fromMtd(taxYear).value)
     val currentDate: DateTime = dateTimeProvider.getDateTime
 
     desTaxYear match {
       case _ if desTaxYear < appConfig.minimumPermittedTaxYear => List(RuleTaxYearNotSupportedError)
-      case _ if desTaxYear >= getCurrentTaxYear(currentDate) => List(RuleTaxYearNotEndedError)
+      case _ if checkCurrentTaxYear && desTaxYear >= getCurrentTaxYear(currentDate) => List(RuleTaxYearNotEndedError)
       case _ => NoValidationErrors
     }
   }

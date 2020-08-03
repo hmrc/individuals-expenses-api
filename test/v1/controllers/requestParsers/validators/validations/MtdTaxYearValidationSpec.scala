@@ -72,7 +72,7 @@ class MtdTaxYearValidationSpec extends UnitSpec with JsonErrorValidators {
         setupTimeProvider("2022-04-04")
 
         private val invalidTaxYear = "2021-22"
-        private val validationResult = MtdTaxYearValidation.validate(invalidTaxYear)
+        private val validationResult = MtdTaxYearValidation.validate(invalidTaxYear, true)
 
         validationResult.isEmpty shouldBe false
         validationResult.length shouldBe 1
