@@ -1,0 +1,12 @@
+#%RAML 1.0 Library
+
+uses:
+  types: https://developer.service.hmrc.gov.uk/api-documentation/assets/common/modules/types.raml
+
+traits:
+  source:
+    queryParameters:
+      source:
+        description: 'Specifies the source of data to be returned. Defaults to "latest" if not provided, which combines the HMRC and user-provided overridden values. Limited to the following possible values: hmrcHeld, user and latest'
+        required: false
+
