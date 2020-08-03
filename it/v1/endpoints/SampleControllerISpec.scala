@@ -31,7 +31,7 @@ class SampleControllerISpec extends IntegrationBaseSpec {
   private trait Test {
 
     val nino = "AA123456A"
-    val taxYear = "2017-18"
+    val taxYear = "2020-21"
     val correlationId = "X-123"
 
     val requestJson: JsValue = Json.parse(
@@ -78,7 +78,7 @@ class SampleControllerISpec extends IntegrationBaseSpec {
     trait SampleTest extends Test {
       def uri: String = s"/$nino/$taxYear/sample-endpoint"
 
-      def desUri: String = s"/income-tax/nino/$nino/taxYear/${DesTaxYear.fromMtd(taxYear)}/someService"
+      def desUri: String = s"/income-tax/$nino/${DesTaxYear.fromMtd(taxYear)}/someService"
 
       val desResponse: JsValue = Json.parse(
         """

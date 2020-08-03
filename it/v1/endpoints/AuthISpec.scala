@@ -29,7 +29,7 @@ class AuthISpec extends IntegrationBaseSpec {
 
   private trait Test {
     val nino          = "AA123456A"
-    val taxYear       = "2017-18"
+    val taxYear       = "2020-21"
     val data        = "someData"
     val correlationId = "X-123"
 
