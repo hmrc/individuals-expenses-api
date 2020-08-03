@@ -16,15 +16,30 @@
 
 package v1.models.response.retrieveEmploymentExpenses
 
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.functional.syntax._
+import play.api.libs.json.{JsPath, Json, OWrites, Reads}
+import v1.models.des.DesSource
+import v1.models.domain.MtdSource
 
 case class RetrieveEmploymentExpensesResponse(submittedOn: Option[String],
                                               totalExpenses: Option[BigDecimal],
-                                              source: Option[String],
+                                              source: Option[MtdSource],
                                               dateIgnored: Option[String],
                                               expenses: Option[Expenses])
 
 object RetrieveEmploymentExpensesResponse {
-  implicit val format: OFormat[RetrieveEmploymentExpensesResponse] = Json.format[RetrieveEmploymentExpensesResponse]
 
+  implicit val reads: Reads[RetrieveEmploymentExpensesResponse] = (
+    (JsPath \ "submittedOn").readNullable[String] and
+      (JsPath \ "totalExpenses").readNullable[BigDecimal] and
+      (JsPath \ "source").readNullable[DesSource].map(_.map {
+        case DesSource.`HMRC HELD` => DesSource.`HMRC HELD`.toMtd
+        case DesSource.`LATEST` => DesSource.`LATEST`.toMtd
+        case DesSource.`CUSTOMER`=> DesSource.`CUSTOMER`.toMtd
+      }) and
+      (JsPath \ "dateIgnored").readNullable[String] and
+      (JsPath \ "expenses").readNullable[Expenses]
+    ) (RetrieveEmploymentExpensesResponse.apply _)
+
+  implicit  val writes: OWrites[RetrieveEmploymentExpensesResponse] = Json.writes[RetrieveEmploymentExpensesResponse]
 }

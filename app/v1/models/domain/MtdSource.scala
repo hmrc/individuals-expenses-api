@@ -21,20 +21,20 @@ import utils.enums.Enums
 import v1.models.des.DesSource
 
 sealed trait MtdSource {
-  def toDesSource: DesSource
+  def toDes: DesSource
 }
 
   object MtdSource {
     case object `hmrcHeld` extends MtdSource {
-      override def toDesSource: DesSource = DesSource.`HMRC HELD`
+      override def toDes: DesSource = DesSource.`HMRC HELD`
     }
 
     case object `user` extends MtdSource {
-      override def toDesSource: DesSource = DesSource.`CUSTOMER`
+      override def toDes: DesSource = DesSource.`CUSTOMER`
     }
 
     case object `latest` extends MtdSource{
-      override def toDesSource: DesSource = DesSource.`LATEST`
+      override def toDes: DesSource = DesSource.`LATEST`
     }
 
     implicit val format: Format[MtdSource] = Enums.format[MtdSource]
