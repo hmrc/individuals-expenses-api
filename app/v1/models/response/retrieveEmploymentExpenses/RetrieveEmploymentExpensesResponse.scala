@@ -26,4 +26,5 @@ case class RetrieveEmploymentExpensesResponse(submittedOn: Option[String],
 
 object RetrieveEmploymentExpensesResponse {
   implicit val format: OFormat[RetrieveEmploymentExpensesResponse] = Json.format[RetrieveEmploymentExpensesResponse]
+
 }
