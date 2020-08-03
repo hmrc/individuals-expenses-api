@@ -9,15 +9,7 @@
     <tbody>
         <tr>
             <td><p>N/A - DEFAULT</p></td>
-            <td><p>Simulate a success response with either no source or a LATEST source.</p></td>
-        </tr>
-        <tr>
-            <td><p>USER</p></td>
-            <td><p>Simulate a success response with a USER source.</p></td>
-        </tr>
-        <tr>
-            <td><p>HMRC_HELD</p></td>
-            <td><p>Simulate a success response with a HMRC HELD source.</p></td>
+            <td><p>Simulate a success response.</p></td>
         </tr>
         <tr>
             <td><p>NOT_FOUND</p></td>
