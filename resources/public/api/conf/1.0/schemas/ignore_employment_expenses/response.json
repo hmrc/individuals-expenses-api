@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "title": "Amend Expenses",
-  "description": "Allows the amendments of expenses",
+  "title": "Ignore Expenses",
+  "description": "Allows HMRC Held expenses to be ignored",
   "type": "object",
   "properties": {
     "links": {
