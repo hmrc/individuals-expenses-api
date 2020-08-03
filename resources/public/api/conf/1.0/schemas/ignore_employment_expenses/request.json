@@ -1,0 +1,17 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Ignore Expenses",
+  "description": "Allows HMRC Held expenses to be ignored",
+  "type": "object",
+  "properties": {
+    "ignoreExpenses": {
+      "description": "A boolean instructing HMRC not to consider employment expenses in the tax calculation, when set to true.\n\nThe value must be true or false.",
+      "type": "boolean",
+      "example": "true"
+    }
+  },
+  "required": [
+    "ignoreExpenses"
+  ],
+  "additionalProperties": false
+}
