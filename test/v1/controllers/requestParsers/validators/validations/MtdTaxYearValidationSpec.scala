@@ -53,7 +53,23 @@ class MtdTaxYearValidationSpec extends UnitSpec with JsonErrorValidators {
         val validationResult = MtdTaxYearValidation.validate(validTaxYear)
         validationResult.isEmpty shouldBe true
       }
+      "the minimum allowed tax year is supplied with checkCurrentYear set to true" in new Test {
 
+        setupTimeProvider("2022-04-06")
+
+        val validTaxYear = "2021-22"
+        val validationResult = MtdTaxYearValidation.validate(validTaxYear, true)
+        validationResult.isEmpty shouldBe true
+      }
+      "the supplied tax year has not yet ended, with checkCurrentTaxYear set to false" in new Test {
+
+        setupTimeProvider("2022-04-04")
+
+        private val invalidTaxYear = "2021-22"
+        private val validationResult = MtdTaxYearValidation.validate(invalidTaxYear, false)
+
+        validationResult.isEmpty shouldBe true
+      }
     }
 
     "return the given error" when {
@@ -67,7 +83,7 @@ class MtdTaxYearValidationSpec extends UnitSpec with JsonErrorValidators {
         validationResult.length shouldBe 1
         validationResult.head shouldBe RuleTaxYearNotSupportedError
       }
-      "the supplied tax year has not yet ended" in new Test {
+      "the supplied tax year has not yet ended, with checkCurrentTaxYear set to true" in new Test {
 
         setupTimeProvider("2022-04-04")
 
