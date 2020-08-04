@@ -6,3 +6,4 @@ PUT        /other/:nino/:taxYear                            v1.controllers.Amend
 
 DELETE     /employments/:nino/:taxYear                      v1.controllers.DeleteEmploymentExpensesController.handleRequest(nino: String, taxYear: String)
 PUT        /employments/:nino/:taxYear                      v1.controllers.AmendEmploymentExpensesController.handleRequest(nino: String, taxYear: String)
+PUT        /employments/:nino/:taxYear/ignore               v1.controllers.IgnoreEmploymentExpensesController.handleRequest(nino: String, taxYear: String)

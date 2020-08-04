@@ -48,18 +48,18 @@ class IgnoreEmploymentExpensesServiceSpec extends UnitSpec {
   }
 
   "service" should {
-    "service call successful" when {
-      "return mapped result" in new Test {
+    "return mapped result" when {
+      "connector call successful" in new Test {
         MockIgnoreEmploymentExpensesConnector.ignore(requestData)
           .returns(Future.successful(Right(ResponseWrapper(correlationId, ()))))
 
-        await(service.amend(requestData)) shouldBe Right(ResponseWrapper(correlationId, ()))
+        await(service.ignore(requestData)) shouldBe Right(ResponseWrapper(correlationId, ()))
       }
     }
   }
 
-  "unsuccessful" should {
-    "map errors according to spec" when {
+  "map errors according to spec" should {
+    "connector call unsuccessful" when {
 
       def serviceError(desErrorCode: String, error: MtdError): Unit =
         s"a $desErrorCode error is returned from the service" in new Test {
@@ -67,7 +67,7 @@ class IgnoreEmploymentExpensesServiceSpec extends UnitSpec {
           MockIgnoreEmploymentExpensesConnector.ignore(requestData)
             .returns(Future.successful(Left(ResponseWrapper(correlationId, DesErrors.single(DesErrorCode(desErrorCode))))))
 
-          await(service.amend(requestData)) shouldBe Left(ErrorWrapper(Some(correlationId), error))
+          await(service.ignore(requestData)) shouldBe Left(ErrorWrapper(Some(correlationId), error))
         }
 
       val input = Seq(

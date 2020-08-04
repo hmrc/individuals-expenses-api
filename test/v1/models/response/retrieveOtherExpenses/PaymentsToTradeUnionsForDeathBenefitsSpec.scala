@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package v1.models.response.RetrieveOtherExpenses
+package v1.models.response.retrieveOtherExpenses
 
 import play.api.libs.json.Json
 import support.UnitSpec
-import v1.models.response.retrieveOtherExpenses.PaymentsToTradeUnionsForDeathBenefits
 import v1.models.utils.JsonErrorValidators
 
 class PaymentsToTradeUnionsForDeathBenefitsSpec extends UnitSpec with JsonErrorValidators {
