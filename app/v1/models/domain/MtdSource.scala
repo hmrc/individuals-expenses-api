@@ -27,7 +27,7 @@ sealed trait MtdSource {
 object MtdSource {
 
   case object `hmrcHeld` extends MtdSource {
-    override def toDes: DesSource = DesSource.`HMRC HELD`
+    override def toDes: DesSource = DesSource.`HMRC-HELD`
   }
 
   case object `user` extends MtdSource {

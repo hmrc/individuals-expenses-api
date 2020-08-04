@@ -37,6 +37,10 @@ object DesSource {
   case object `LATEST` extends DesSource {
     override def toMtd: MtdSource = MtdSource.`latest`
   }
+  
+  case object `HMRC-HELD` extends DesSource {
+    override def toMtd: MtdSource = MtdSource.`hmrcHeld`
+  }
 
   implicit val format: Format[DesSource] = Enums.format[DesSource]
 }

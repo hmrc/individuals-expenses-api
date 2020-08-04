@@ -28,6 +28,8 @@ class DesSourceSpec extends UnitSpec{
   val desLatest = DesSource.`LATEST`
   val desCustomer = DesSource.`CUSTOMER`
   val desHmrc = DesSource.`HMRC HELD`
+  val desOutgoingHmrc = DesSource.`HMRC-HELD`
+
 
   "mtdSources" when {
     "when using the toDes" should {
@@ -39,6 +41,9 @@ class DesSourceSpec extends UnitSpec{
       }
       "return the correct DesSource for hmrcHeld" in {
         desHmrc.toMtd shouldBe mtdHmrc
+      }
+      "return the correct DesSource for outgoingHmrcHeld" in {
+        desOutgoingHmrc.toMtd shouldBe mtdHmrc
       }
     }
   }

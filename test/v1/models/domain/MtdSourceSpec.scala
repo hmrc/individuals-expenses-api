@@ -27,7 +27,7 @@ class MtdSourceSpec extends UnitSpec {
 
   val desLatest = DesSource.`LATEST`
   val desCustomer = DesSource.`CUSTOMER`
-  val desHmrc = DesSource.`HMRC HELD`
+  val desOutgoingHmrc = DesSource.`HMRC-HELD`
 
   "mtdSources" when {
     "when using the toDes" should {
@@ -38,7 +38,7 @@ class MtdSourceSpec extends UnitSpec {
         mtdCustomer.toDes shouldBe desCustomer
       }
       "return the correct DesSource for hmrcHeld" in {
-        mtdHmrc.toDes shouldBe desHmrc
+        mtdHmrc.toDes shouldBe desOutgoingHmrc
       }
     }
   }
