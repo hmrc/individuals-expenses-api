@@ -32,11 +32,7 @@ object RetrieveEmploymentExpensesResponse {
   implicit val reads: Reads[RetrieveEmploymentExpensesResponse] = (
     (JsPath \ "submittedOn").readNullable[String] and
       (JsPath \ "totalExpenses").readNullable[BigDecimal] and
-      (JsPath \ "source").readNullable[DesSource].map(_.map {
-        case DesSource.`HMRC HELD` => DesSource.`HMRC HELD`.toMtd
-        case DesSource.`LATEST` => DesSource.`LATEST`.toMtd
-        case DesSource.`CUSTOMER`=> DesSource.`CUSTOMER`.toMtd
-      }) and
+      (JsPath \ "source").readNullable[DesSource].map(_.map(_.toMtd)) and
       (JsPath \ "dateIgnored").readNullable[String] and
       (JsPath \ "expenses").readNullable[Expenses]
     ) (RetrieveEmploymentExpensesResponse.apply _)
