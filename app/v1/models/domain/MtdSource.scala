@@ -24,19 +24,20 @@ sealed trait MtdSource {
   def toDes: DesSource
 }
 
-  object MtdSource {
-    case object `hmrcHeld` extends MtdSource {
-      override def toDes: DesSource = DesSource.`HMRC HELD`
-    }
+object MtdSource {
 
-    case object `user` extends MtdSource {
-      override def toDes: DesSource = DesSource.`CUSTOMER`
-    }
-
-    case object `latest` extends MtdSource{
-      override def toDes: DesSource = DesSource.`LATEST`
-    }
-
-    implicit val format: Format[MtdSource] = Enums.format[MtdSource]
+  case object `hmrcHeld` extends MtdSource {
+    override def toDes: DesSource = DesSource.`HMRC HELD`
   }
+
+  case object `user` extends MtdSource {
+    override def toDes: DesSource = DesSource.`CUSTOMER`
+  }
+
+  case object `latest` extends MtdSource {
+    override def toDes: DesSource = DesSource.`LATEST`
+  }
+
+  implicit val format: Format[MtdSource] = Enums.format[MtdSource]
+}
 
