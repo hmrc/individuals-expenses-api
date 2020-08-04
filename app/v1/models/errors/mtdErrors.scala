@@ -43,6 +43,9 @@ object RuleIncorrectOrEmptyBodyError extends MtdError("RULE_INCORRECT_OR_EMPTY_B
 object RuleTaxYearRangeInvalidError
     extends MtdError("RULE_TAX_YEAR_RANGE_INVALID", "Tax year range invalid. A tax year range of one year is required")
 
+object RuleTaxYearNotEndedError
+    extends MtdError("RULE_TAX_YEAR_NOT_ENDED", "Tax year not ended")
+
 //Standard Errors
 object NotFoundError extends MtdError("MATCHING_RESOURCE_NOT_FOUND", "Matching resource not found")
 
