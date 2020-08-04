@@ -48,7 +48,7 @@ class SampleValidatorSpec extends UnitSpec {
     val validator = new SampleValidator()
 
     MockCurrentDateTime.getCurrentDate
-      .returns(DateTime.parse("2019-07-11", dateTimeFormatter))
+      .returns(DateTime.parse("2020-07-11", dateTimeFormatter))
       .anyNumberOfTimes()
 
     MockedAppConfig.minimumPermittedTaxYear

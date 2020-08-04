@@ -92,7 +92,7 @@ class AmendOtherExpensesValidatorSpec extends UnitSpec {
     val validator = new AmendOtherExpensesValidator()
 
     MockCurrentDateTime.getCurrentDate
-      .returns(DateTime.parse("2019-07-11", dateTimeFormatter))
+      .returns(DateTime.parse("2020-07-11", dateTimeFormatter))
       .anyNumberOfTimes()
 
     MockedAppConfig.minimumPermittedTaxYear
