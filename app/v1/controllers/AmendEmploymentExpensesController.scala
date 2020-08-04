@@ -25,7 +25,7 @@ import v1.hateoas.HateoasFactory
 import v1.models.errors._
 import v1.models.request.amendEmploymentExpenses.AmendEmploymentExpensesRawData
 import v1.models.response.amendEmploymentExpenses.AmendEmploymentExpensesHateoasData
-import v1.services.{EnrolmentsAuthService, MtdIdLookupService}
+import v1.services.{AmendEmploymentExpensesService, EnrolmentsAuthService, MtdIdLookupService}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -73,7 +73,7 @@ class AmendEmploymentExpensesController @Inject()(val authService: EnrolmentsAut
            | RuleTaxYearRangeInvalidError
            | RuleIncorrectOrEmptyBodyError
            | RuleTaxYearNotSupportedError
-           | RuleTaxYearNotEnded
+           | RuleTaxYearNotEndedError
            | MtdErrorWithCustomMessage(ValueFormatError.code )=> BadRequest(Json.toJson(errorWrapper))
       case DownstreamError => InternalServerError(Json.toJson(errorWrapper))
       case NotFoundError => NotFound(Json.toJson(errorWrapper))
