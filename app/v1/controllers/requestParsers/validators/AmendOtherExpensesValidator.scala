@@ -19,11 +19,11 @@ package v1.controllers.requestParsers.validators
 import v1.controllers.requestParsers.validators.validations._
 import config.AppConfig
 import javax.inject.Inject
-import utils.CurrentDateTime
+import utils.{CurrentDateTime, CurrentTaxYear}
 import v1.models.errors._
 import v1.models.request.amendOtherExpenses._
 
-class AmendOtherExpensesValidator @Inject()(implicit currentDateTime: CurrentDateTime, appConfig: AppConfig)
+class AmendOtherExpensesValidator @Inject()(implicit currentDateTime: CurrentDateTime, appConfig: AppConfig, currentTaxYear: CurrentTaxYear)
   extends Validator[AmendOtherExpensesRawData] {
   private val validationSet = List(parameterFormatValidation, bodyFormatValidation, parameterRuleValidation, bodyFieldValidation)
 

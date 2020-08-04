@@ -18,13 +18,13 @@ package v1.controllers.requestParsers.validators
 
 import config.AppConfig
 import javax.inject.Inject
-import utils.CurrentDateTime
+import utils.{CurrentDateTime, CurrentTaxYear}
 import v1.controllers.requestParsers.validators.validations._
 import v1.models.domain.SampleRequestBody
 import v1.models.errors.{MtdError, RuleIncorrectOrEmptyBodyError}
 import v1.models.request.SampleRawData
 
-class SampleValidator @Inject()(implicit currentDateTime: CurrentDateTime, appConfig: AppConfig)
+class SampleValidator @Inject()(implicit currentDateTime: CurrentDateTime, appConfig: AppConfig, currentTaxYear: CurrentTaxYear)
   extends Validator[SampleRawData] {
 
   private val validationSet = List(parameterFormatValidation, parameterRuleValidation)
