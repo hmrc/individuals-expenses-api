@@ -32,6 +32,8 @@ package object services {
 
   type AmendEmploymentExpensesServiceOutcome = ServiceOutcome[Unit]
 
+  type IgnoreEmploymentExpensesServiceOutcome = ServiceOutcome[Unit]
+
   type DeleteEmploymentExpensesServiceOutcome = ServiceOutcome[Unit]
 
 }
