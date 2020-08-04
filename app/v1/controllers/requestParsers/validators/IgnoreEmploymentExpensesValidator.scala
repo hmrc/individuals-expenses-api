@@ -21,7 +21,7 @@ import v1.models.errors._
 import v1.models.request.ignoreEmploymentExpenses._
 
 class IgnoreEmploymentExpensesValidator extends Validator[IgnoreEmploymentExpensesRawData] {
-  private val validationSet = List(parameterFormatValidation, bodyFormatValidation, parameterRuleValidation, bodyFieldValidation)
+  private val validationSet = List(parameterFormatValidation, bodyFormatValidation, parameterRuleValidation)
 
   private def parameterFormatValidation: IgnoreEmploymentExpensesRawData => List[List[MtdError]] = (data: IgnoreEmploymentExpensesRawData) => {
   List(
