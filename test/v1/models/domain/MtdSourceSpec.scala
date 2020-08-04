@@ -17,9 +17,10 @@
 package v1.models.domain
 
 import support.UnitSpec
+import utils.enums.EnumJsonSpecSupport
 import v1.models.des.DesSource
 
-class MtdSourceSpec extends UnitSpec {
+class MtdSourceSpec extends UnitSpec with EnumJsonSpecSupport {
 
   val mtdLatest = MtdSource.`latest`
   val mtdCustomer = MtdSource.`user`
@@ -28,6 +29,13 @@ class MtdSourceSpec extends UnitSpec {
   val desLatest = DesSource.`LATEST`
   val desCustomer = DesSource.`CUSTOMER`
   val desOutgoingHmrc = DesSource.`HMRC-HELD`
+
+  testRoundTrip[MtdSource](
+    ("latest",MtdSource.`latest`),
+    ("user",MtdSource.`user`),
+    ("hmrcHeld", MtdSource.`hmrcHeld`)
+  )
+
 
   "mtdSources" when {
     "when using the toDes" should {
