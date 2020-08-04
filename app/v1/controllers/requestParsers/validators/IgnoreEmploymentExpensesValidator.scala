@@ -38,7 +38,7 @@ class IgnoreEmploymentExpensesValidator extends Validator[IgnoreEmploymentExpens
 
   private def parameterRuleValidation: IgnoreEmploymentExpensesRawData => List[List[MtdError]] = { data =>
   List(
-  MtdTaxYearValidation.validate(data.taxYear)
+  MtdTaxYearValidation.validate(data.taxYear, true)
   )
 }
 
