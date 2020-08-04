@@ -30,7 +30,7 @@ import v1.models.request.amendOtherExpenses.AmendOtherExpensesRawData
 class AmendOtherExpensesValidatorSpec extends UnitSpec {
 
   private val validNino = "AA123456A"
-  private val validTaxYear = "2021-22"
+  private val validTaxYear = "2019-20"
   private val requestBodyJson = Json.parse(
     """
       |{
@@ -92,11 +92,11 @@ class AmendOtherExpensesValidatorSpec extends UnitSpec {
     val validator = new AmendOtherExpensesValidator()
 
     MockCurrentDateTime.getCurrentDate
-      .returns(DateTime.parse("2022-07-11", dateTimeFormatter))
+      .returns(DateTime.parse("2019-07-11", dateTimeFormatter))
       .anyNumberOfTimes()
 
     MockedAppConfig.minimumPermittedTaxYear
-      .returns(2021)
+      .returns(2019)
   }
 
   "running a validation" should {

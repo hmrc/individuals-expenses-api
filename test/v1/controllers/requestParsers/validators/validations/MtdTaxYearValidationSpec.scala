@@ -40,32 +40,24 @@ class MtdTaxYearValidationSpec extends UnitSpec with JsonErrorValidators {
         .returns(DateTime.parse(date, dateTimeFormatter))
 
     MockedAppConfig.minimumPermittedTaxYear
-      .returns(2021)
+      .returns(2019)
   }
 
   "validate" should {
     "return no errors" when {
       "the minimum allowed tax year is supplied" in new Test {
 
-        setupTimeProvider("2022-04-06")
+        setupTimeProvider("2019-04-06")
 
-        val validTaxYear = "2021-22"
+        val validTaxYear = "2019-20"
         val validationResult = MtdTaxYearValidation.validate(validTaxYear)
-        validationResult.isEmpty shouldBe true
-      }
-      "the minimum allowed tax year is supplied with checkCurrentYear set to true" in new Test {
-
-        setupTimeProvider("2022-04-06")
-
-        val validTaxYear = "2021-22"
-        val validationResult = MtdTaxYearValidation.validate(validTaxYear, true)
         validationResult.isEmpty shouldBe true
       }
       "the supplied tax year has not yet ended, with checkCurrentTaxYear set to false" in new Test {
 
-        setupTimeProvider("2022-04-04")
+        setupTimeProvider("2019-04-06")
 
-        private val invalidTaxYear = "2021-22"
+        private val invalidTaxYear = "2019-20"
         private val validationResult = MtdTaxYearValidation.validate(invalidTaxYear, false)
 
         validationResult.isEmpty shouldBe true
@@ -75,7 +67,7 @@ class MtdTaxYearValidationSpec extends UnitSpec with JsonErrorValidators {
     "return the given error" when {
       "a tax year below 2021-22 is supplied" in new Test {
 
-        setupTimeProvider("2022-04-06")
+        setupTimeProvider("2019-04-06")
 
         val invalidTaxYear = "2015-16"
         val validationResult = MtdTaxYearValidation.validate(invalidTaxYear)
@@ -85,9 +77,9 @@ class MtdTaxYearValidationSpec extends UnitSpec with JsonErrorValidators {
       }
       "the supplied tax year has not yet ended, with checkCurrentTaxYear set to true" in new Test {
 
-        setupTimeProvider("2022-04-04")
+        setupTimeProvider("2019-04-06")
 
-        private val invalidTaxYear = "2021-22"
+        private val invalidTaxYear = "2019-20"
         private val validationResult = MtdTaxYearValidation.validate(invalidTaxYear, true)
 
         validationResult.isEmpty shouldBe false

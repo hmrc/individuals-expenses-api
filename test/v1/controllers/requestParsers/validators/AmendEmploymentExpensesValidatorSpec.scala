@@ -30,7 +30,7 @@ import v1.models.request.amendEmploymentExpenses.AmendEmploymentExpensesRawData
 class AmendEmploymentExpensesValidatorSpec extends UnitSpec {
 
   private val validNino = "AA123456A"
-  private val validTaxYear = "2021-22"
+  private val validTaxYear = "2019-20"
   private val requestBodyJson = Json.parse(
     """
       |{
@@ -173,6 +173,12 @@ class AmendEmploymentExpensesValidatorSpec extends UnitSpec {
       |    }
       |}""".stripMargin)
 
+  private val requestBodyJsonEmptyExpensesObject = Json.parse(
+    """
+      |{
+      |    "expenses": {}
+      |}""".stripMargin)
+
   private val emptyJson = Json.parse(
     """
       |{}
@@ -189,11 +195,11 @@ class AmendEmploymentExpensesValidatorSpec extends UnitSpec {
     val validator = new AmendEmploymentExpensesValidator()
 
     MockCurrentDateTime.getCurrentDate
-      .returns(DateTime.parse("2022-07-11", dateTimeFormatter))
+      .returns(DateTime.parse("2018-07-11", dateTimeFormatter))
       .anyNumberOfTimes()
 
     MockedAppConfig.minimumPermittedTaxYear
-      .returns(2021)
+      .returns(2018)
   }
 
   "running a validation" should {
@@ -228,6 +234,10 @@ class AmendEmploymentExpensesValidatorSpec extends UnitSpec {
       "a valid request is supplied without mileageAllowanceRelief in the JSON" in new Test {
         validator.validate(AmendEmploymentExpensesRawData(validNino, validTaxYear, requestBodyJsonNoMileageAllowanceRelief)) shouldBe Nil
       }
+      "an empty expenses object is submitted" in new Test {
+        validator.validate(AmendEmploymentExpensesRawData
+        (validNino, validTaxYear, requestBodyJsonEmptyExpensesObject))shouldBe Nil
+      }
     }
 
     "return a path parameter error" when {
@@ -241,7 +251,7 @@ class AmendEmploymentExpensesValidatorSpec extends UnitSpec {
         validator.validate(AmendEmploymentExpensesRawData(validNino, "2021-24", requestBodyJson)) shouldBe List(RuleTaxYearRangeInvalidError)
       }
       "the taxYear is below the minimum tax year" in new Test {
-        validator.validate(AmendEmploymentExpensesRawData(validNino, "2018-19", requestBodyJson)) shouldBe List(RuleTaxYearNotSupportedError)
+        validator.validate(AmendEmploymentExpensesRawData(validNino, "2016-17", requestBodyJson)) shouldBe List(RuleTaxYearNotSupportedError)
       }
       "the taxYear has not yet ended" in new Test {
         validator.validate(AmendEmploymentExpensesRawData(validNino, "2022-23", requestBodyJson)) shouldBe List(RuleTaxYearNotEndedError)
