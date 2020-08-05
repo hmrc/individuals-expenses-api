@@ -16,7 +16,8 @@
 
 package v1.mocks
 
-import org.scalamock.handlers.CallHandler
+import org.joda.time.DateTime
+import org.scalamock.handlers.CallHandler1
 import org.scalamock.scalatest.MockFactory
 import utils.CurrentTaxYear
 
@@ -25,6 +26,7 @@ trait MockCurrentTaxYear extends MockFactory {
   val mockCurrentTaxYear: CurrentTaxYear = mock[CurrentTaxYear]
 
   object MockCurrentTaxYear {
-    def getCurrentTaxYear: CallHandler[Int] = (mockCurrentTaxYear.getCurrentTaxYear _)
+    def getCurrentTaxYear(date: DateTime): CallHandler1[DateTime, Int] =
+      (mockCurrentTaxYear.getCurrentTaxYear(_: DateTime)).expects(date)
   }
 }

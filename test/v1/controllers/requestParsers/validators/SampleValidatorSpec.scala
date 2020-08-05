@@ -22,8 +22,8 @@ import org.joda.time.DateTime
 import org.joda.time.format.{DateTimeFormat, DateTimeFormatter}
 import play.api.libs.json.Json
 import support.UnitSpec
-import utils.CurrentDateTime
-import v1.mocks.MockCurrentDateTime
+import utils.{CurrentDateTime, CurrentTaxYear}
+import v1.mocks.{MockCurrentDateTime, MockCurrentTaxYear}
 import v1.models.errors._
 import v1.models.request.SampleRawData
 
@@ -31,6 +31,7 @@ class SampleValidatorSpec extends UnitSpec {
 
   private val validNino = "AA123456A"
   private val validTaxYear = "2019-20"
+  private val date = DateTime.parse("2020-08-05")
   private val requestBodyJson = Json.parse(
     """{
       |  "data" : "someData"
@@ -38,12 +39,13 @@ class SampleValidatorSpec extends UnitSpec {
     """.stripMargin)
 
 
-  class Test extends MockCurrentDateTime with MockAppConfig {
+  class Test extends MockCurrentDateTime with MockCurrentTaxYear with MockAppConfig {
 
     implicit val dateTimeProvider: CurrentDateTime = mockCurrentDateTime
     val dateTimeFormatter: DateTimeFormatter = DateTimeFormat.forPattern("yyyy-MM-dd")
 
     implicit val appConfig: AppConfig = mockAppConfig
+    implicit val currentTaxYear: CurrentTaxYear = mockCurrentTaxYear
 
     val validator = new SampleValidator()
 
@@ -53,6 +55,9 @@ class SampleValidatorSpec extends UnitSpec {
 
     MockedAppConfig.minimumPermittedTaxYear
       .returns(2019)
+
+    MockCurrentTaxYear.getCurrentTaxYear(date)
+      .returns(2021)
   }
   "running a validation" should {
     "return no errors" when {
