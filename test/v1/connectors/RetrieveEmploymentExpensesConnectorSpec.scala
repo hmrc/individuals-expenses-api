@@ -19,8 +19,11 @@ package v1.connectors
 import mocks.MockAppConfig
 import uk.gov.hmrc.domain.Nino
 import v1.mocks.MockHttpClient
+import v1.models.des.DesSource
+import v1.models.domain.MtdSource
 import v1.models.outcomes.ResponseWrapper
-import v1.models.request.amendEmploymentExpenses.Expenses
+import v1.models.request.retrieveEmploymentExpenses.RetrieveEmploymentsExpensesRequest
+import v1.models.response.retrieveEmploymentExpenses.{Expenses, RetrieveEmploymentExpensesResponse}
 
 import scala.concurrent.Future
 
@@ -28,6 +31,8 @@ class RetrieveEmploymentExpensesConnectorSpec extends ConnectorSpec {
 
   private val nino = Nino("AA123456A")
   private val taxYear = "2019-20"
+  val source = DesSource.`CUSTOMER`
+
 
 
   class Test extends MockHttpClient with MockAppConfig {
@@ -39,14 +44,14 @@ class RetrieveEmploymentExpensesConnectorSpec extends ConnectorSpec {
   }
 
   "retrieve employment expenses" should {
-    val request = RetrieveEmploymentExpensesRequest(nino, taxYear)
+    val request = RetrieveEmploymentsExpensesRequest(nino, taxYear, source)
     "return a result" when {
       "the downstream call is successful" in new Test {
-        val outcome = Right(ResponseWrapper(correlationId, RetrieveEmploymentExpensesBody(
-          "2019-04-06",
-          2000.99,
-          "user",
-          "2019-04-06",
+        val outcome = Right(ResponseWrapper(correlationId, RetrieveEmploymentExpensesResponse(
+          Some("2019-04-06"),
+          Some(2000.99),
+          Some(MtdSource.`user`),
+          Some("2019-04-06"),
           Some(Expenses(
             Some(2000.99),
             Some(2000.99),

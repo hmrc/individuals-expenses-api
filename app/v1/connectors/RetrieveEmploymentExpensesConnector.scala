@@ -20,18 +20,21 @@ import config.AppConfig
 import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import v1.connectors.httpparsers.StandardDesHttpParser._
+import v1.models.request.retrieveEmploymentExpenses.RetrieveEmploymentsExpensesRequest
+import v1.models.response.retrieveEmploymentExpenses.RetrieveEmploymentExpensesResponse
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class RetrieveEmploymentExpensesConnector @Inject()(val http: HttpClient,
                                                     val appConfig: AppConfig) extends BaseDesConnector {
-  def retrieveEmploymentExpenses(request: RetrieveEmploymentExpensesRequest)
-                                (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[DesOutcome[RetrieveEmploymentExpensesBody]] = {
+  def retrieveEmploymentExpenses(request: RetrieveEmploymentsExpensesRequest)
+                                (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[DesOutcome[RetrieveEmploymentExpensesResponse]] = {
 
     val url = s"expenses/employments/${request.nino}/${request.taxYear}"
     get(
-      DesUri[RetrieveEmploymentExpensesBody](s"$url")
+      DesUri[RetrieveEmploymentExpensesResponse](s"$url")
     )
   }
 }

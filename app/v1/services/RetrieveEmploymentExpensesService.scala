@@ -19,25 +19,27 @@ package v1.services
 import cats.data.EitherT
 import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.http.HeaderCarrier
+import cats.implicits._
 import utils.Logging
 import v1.connectors.RetrieveEmploymentExpensesConnector
 import v1.controllers.EndpointLogContext
 import v1.models.errors._
+import v1.models.request.retrieveEmploymentExpenses.RetrieveEmploymentsExpensesRequest
 import v1.support.DesResponseMappingSupport
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class RetrieveEmploymentExpensesService @Inject()(retrieveEmploymentExpensesService: RetrieveEmploymentExpensesConnector)
+class RetrieveEmploymentExpensesService @Inject()(retrieveEmploymentsExpensesConnector: RetrieveEmploymentExpensesConnector)
   extends DesResponseMappingSupport with Logging {
 
-  def retrieveEmploymentExpenses(request: RetrieveEmploymentExpensesRequest)(
+  def retrieveEmploymentExpenses(request: RetrieveEmploymentsExpensesRequest)(
     implicit hc: HeaderCarrier,
     ec: ExecutionContext,
-    logContext: EndpointLogContext): Future[RetrieveEmploymentExpensesOutcome] = {
+    logContext: EndpointLogContext): Future[RetrieveEmploymentExpensesServiceOutcome] = {
 
     val result = for {
-      desResponseWrapper <- EitherT(retrieveEmploymentExpensesConnector.retrieveEmploymentExpenses(request)).leftMap(mapDesErrors(desErrorMap))
+      desResponseWrapper <- EitherT(retrieveEmploymentsExpensesConnector.retrieveEmploymentExpenses(request)).leftMap(mapDesErrors(desErrorMap))
     } yield desResponseWrapper
     result.value
   }
