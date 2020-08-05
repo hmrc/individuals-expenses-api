@@ -16,11 +16,15 @@
 
 package v1.controllers.requestParsers.validators
 
+import config.AppConfig
+import javax.inject.Inject
+import utils.{CurrentDateTime, CurrentTaxYear}
 import v1.controllers.requestParsers.validators.validations.{MtdTaxYearValidation, NinoValidation, SourceValidation, TaxYearValidation}
 import v1.models.errors.{MtdError, RuleTaxYearNotSupportedError}
 import v1.models.request.retrieveEmploymentExpenses.RetrieveEmploymentsExpensesRawData
 
-class RetrieveEmploymentExpensesValidator extends Validator[RetrieveEmploymentsExpensesRawData] {
+class RetrieveEmploymentExpensesValidator @Inject()(implicit currentDateTime: CurrentDateTime, appConfig: AppConfig, currentTaxYear: CurrentTaxYear)
+  extends Validator[RetrieveEmploymentsExpensesRawData] {
 
   private val validationSet = List(parameterFormatValidation, parameterRuleValidation)
 
@@ -34,7 +38,7 @@ class RetrieveEmploymentExpensesValidator extends Validator[RetrieveEmploymentsE
 
   private def parameterRuleValidation: RetrieveEmploymentsExpensesRawData => List[List[MtdError]] = (data: RetrieveEmploymentsExpensesRawData) => {
     List(
-      MtdTaxYearValidation.validate(data.taxYear, RuleTaxYearNotSupportedError)
+      MtdTaxYearValidation.validate(data.taxYear)
     )
   }
 
