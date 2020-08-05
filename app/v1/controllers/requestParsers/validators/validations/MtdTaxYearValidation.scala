@@ -18,7 +18,6 @@ package v1.controllers.requestParsers.validators.validations
 
 import config.AppConfig
 import org.joda.time.DateTime
-import org.joda.time.format.DateTimeFormat
 import utils.{CurrentDateTime, CurrentTaxYear}
 import v1.models.errors.{MtdError, RuleTaxYearNotEndedError, RuleTaxYearNotSupportedError}
 import v1.models.request.DesTaxYear
