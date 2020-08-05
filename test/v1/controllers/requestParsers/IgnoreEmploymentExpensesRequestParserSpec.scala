@@ -29,7 +29,7 @@ class IgnoreEmploymentExpensesRequestParserSpec extends UnitSpec {
 
   private val requestBodyJson = Json.parse(
     """{
-      |  "ignoreExpenses": "true"
+      |  "ignoreExpenses": true
       |}
       |""".stripMargin)
 
