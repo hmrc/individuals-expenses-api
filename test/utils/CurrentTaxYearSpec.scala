@@ -47,7 +47,7 @@ class CurrentTaxYearSpec extends UnitSpec {
       }
       "a date on the last day of the tax year is given" in {
         val currentTaxYear = new TestTaxYear()
-        currentTaxYear.getCurrentTaxYear(dateFirstDayOfTaxYear) shouldBe thisYear
+        currentTaxYear.getCurrentTaxYear(dateLastDayOfTaxYear) shouldBe thisYear
       }
       "a date on the first day of the year is given" in {
         val currentTaxYear = new TestTaxYear()
