@@ -46,8 +46,10 @@ class RetrieveEmploymentExpensesService @Inject()(retrieveEmploymentsExpensesCon
   private def desErrorMap: Map[String, MtdError] =
     Map(
       "INVALID_TAXABLE_ENTITY_ID" -> NinoFormatError,
-      "FORMAT_TAX_YEAR" -> TaxYearFormatError,
-      "INVALID_VIEW" -> NotFoundError,
+      "INVALID_TAX_YEAR" -> NotFoundError,
+      "INVALID_CORRELATIONID" -> DownstreamError,
+      "INVALID_PAYLOAD" -> DownstreamError,
+      "INVALID_REQUEST_BEFORE_TAX_YEAR_END" -> RuleTaxYearNotEndedError,
       "SERVER_ERROR" -> DownstreamError,
       "SERVICE_UNAVAILABLE" -> DownstreamError
     )
