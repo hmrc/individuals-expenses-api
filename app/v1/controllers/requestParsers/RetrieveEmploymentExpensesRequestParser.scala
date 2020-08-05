@@ -19,11 +19,17 @@ package v1.controllers.requestParsers
 import javax.inject.Inject
 import uk.gov.hmrc.domain.Nino
 import v1.controllers.requestParsers.validators.RetrieveEmploymentExpensesValidator
+import v1.models.domain.MtdSource
+import v1.models.request.retrieveEmploymentExpenses.{RetrieveEmploymentsExpensesRawData, RetrieveEmploymentsExpensesRequest}
 
 class RetrieveEmploymentExpensesRequestParser @Inject()(val validator: RetrieveEmploymentExpensesValidator)
-  extends RequestParser[RetrieveEmploymentExpensesRawData, RetrieveEmploymentExpensesRequest] {
+  extends RequestParser[RetrieveEmploymentsExpensesRawData, RetrieveEmploymentsExpensesRequest] {
 
-  override protected def requestFor(data: RetrieveEmploymentExpensesRawData): RetrieveEmploymentExpensesRequest =
-    RetrieveEmploymentExpensesRequest(Nino(data.nino), data.taxYear)
+  override protected def requestFor(data: RetrieveEmploymentsExpensesRawData): RetrieveEmploymentsExpensesRequest = {
+
+    val source: MtdSource = MtdSource.parser(data.source)
+
+    RetrieveEmploymentsExpensesRequest(Nino(data.nino), data.taxYear, source)
+  }
 
 }

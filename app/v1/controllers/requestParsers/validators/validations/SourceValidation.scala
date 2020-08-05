@@ -14,10 +14,20 @@
  * limitations under the License.
  */
 
-package v1.models.request.retrieveEmploymentExpenses
+package v1.controllers.requestParsers.validators.validations
 
-import uk.gov.hmrc.domain.Nino
-import v1.models.des.DesSource
 import v1.models.domain.MtdSource
+import v1.models.errors.{MtdError, SourceFormatError}
 
-case class RetrieveEmploymentsExpensesRequest(nino: Nino, taxYear: String, source: MtdSource)
+import scala.util.{Failure, Success, Try}
+
+object SourceValidation {
+  def validate(source: String): List[MtdError] = {
+   Try {
+     Option(source).map(MtdSource.parser)
+   } match {
+     case Failure(_) => List(SourceFormatError)
+     case Success(_) => NoValidationErrors
+   }
+  }
+}
