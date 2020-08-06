@@ -17,7 +17,6 @@
 package v1.endpoints
 
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import play.api.http.HeaderNames.ACCEPT
@@ -36,7 +35,7 @@ class IgnoreEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
     val nino: String = "AA123456A"
     val taxYear: String = "2019-20"
 
-    val requestBodyJson: JsValue = Json.parse(
+    val requestBody: JsValue = Json.parse(
       s"""
          |{
          |  "ignoreExpenses": true
@@ -96,7 +95,7 @@ class IgnoreEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
           DesStub.onSuccess(DesStub.PUT, desUri, NO_CONTENT, JsObject.empty)
         }
 
-        val response: WSResponse = await(request().put(requestBodyJson))
+        val response: WSResponse = await(request().put(requestBody))
         response.status shouldBe OK
         response.json shouldBe responseBody
         response.header("X-CorrelationId").nonEmpty shouldBe true
@@ -115,7 +114,7 @@ class IgnoreEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
             MtdIdLookupStub.ninoFound(nino)
           }
 
-          val response: WSResponse = await(request().put(requestBodyJson))
+          val response: WSResponse = await(request().put(requestBody))
           response.status shouldBe BAD_REQUEST
           response.json shouldBe Json.toJson(NinoFormatError)
         }
@@ -128,7 +127,7 @@ class IgnoreEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
             MtdIdLookupStub.ninoFound(nino)
           }
 
-          val response: WSResponse = await(request().put(requestBodyJson))
+          val response: WSResponse = await(request().put(requestBody))
           response.status shouldBe BAD_REQUEST
           response.json shouldBe Json.toJson(TaxYearFormatError)
         }
@@ -138,7 +137,7 @@ class IgnoreEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
 
             override val nino: String = newNino
             override val taxYear: String = newTaxYear
-            override val responseBody: JsValue = newBody
+            override val requestBody: JsValue = newBody
 
             override def setupStubs(): StubMapping = {
               AuditStub.audit()
@@ -146,7 +145,7 @@ class IgnoreEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
               MtdIdLookupStub.ninoFound(nino)
             }
 
-            val response: WSResponse = await(request().put(requestBodyJson))
+            val response: WSResponse = await(request().put(requestBody))
             response.status shouldBe expectedStatus
             response.json shouldBe Json.toJson(expectedBody)
           }
@@ -154,9 +153,8 @@ class IgnoreEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
 
         def currentYear: String = {
           val currentDate = LocalDate.now()
-          def limit: LocalDate = LocalDate.parse(s"${currentDate.getYear}-04-06", DateTimeFormatter.ISO_DATE)
 
-          val taxYear: Int = if(currentDate.isBefore(limit)) currentDate.getYear else currentDate.getYear - 1
+          val taxYear: Int = currentDate.getYear + 1
 
           DesTaxYear.fromDesIntToString(taxYear)
         }
@@ -185,7 +183,7 @@ class IgnoreEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
               DesStub.onError(DesStub.PUT, desUri, desStatus, errorBody(desCode))
             }
 
-            val response: WSResponse = await(request().put(requestBodyJson))
+            val response: WSResponse = await(request().put(requestBody))
             response.status shouldBe expectedStatus
             response.json shouldBe Json.toJson(expectedBody)
           }
