@@ -62,7 +62,7 @@ class IgnoreEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
          |}
          |""".stripMargin)
 
-    def uri: String = s"/employments/$nino/$taxYear"
+    def uri: String = s"/employments/$nino/$taxYear/ignore"
 
     def desUri: String = s"/income-tax/expenses/employments/$nino/$taxYear"
 
