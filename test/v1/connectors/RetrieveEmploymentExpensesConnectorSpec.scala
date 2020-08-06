@@ -63,7 +63,7 @@ class RetrieveEmploymentExpensesConnectorSpec extends ConnectorSpec {
           ))
         )))
         MockedHttpClient.get(
-          url = s"$baseUrl/income-tax/expenses/employments/${request.nino}/${request.taxYear}?view=${request.source}",
+          url = s"$baseUrl/income-tax/expenses/employments/${request.nino}/${request.taxYear}?view=${request.source.toDes}",
           requiredHeaders = "Environment" -> "des-environment", "Authorization" -> s"Bearer des-token"
         ).returns(Future.successful(outcome))
         await(connector.retrieveEmploymentExpenses(request)) shouldBe outcome
