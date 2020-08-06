@@ -28,11 +28,11 @@ class AmendOtherExpensesValidator @Inject()(implicit currentDateTime: CurrentDat
   private val validationSet = List(parameterFormatValidation, bodyFormatValidation, parameterRuleValidation, bodyFieldValidation)
 
   private def parameterFormatValidation: AmendOtherExpensesRawData => List[List[MtdError]] = (data: AmendOtherExpensesRawData) => {
-  List(
-  NinoValidation.validate(data.nino),
-  TaxYearValidation.validate(data.taxYear),
-  )
-}
+    List(
+      NinoValidation.validate(data.nino),
+      TaxYearValidation.validate(data.taxYear),
+    )
+  }
 
   private def bodyFormatValidation: AmendOtherExpensesRawData => List[List[MtdError]] = { data =>
     List(
@@ -41,10 +41,10 @@ class AmendOtherExpensesValidator @Inject()(implicit currentDateTime: CurrentDat
   }
 
   private def parameterRuleValidation: AmendOtherExpensesRawData => List[List[MtdError]] = { data =>
-  List(
-  MtdTaxYearValidation.validate(data.taxYear)
-  )
-}
+    List(
+      MtdTaxYearValidation.validate(data.taxYear)
+    )
+  }
 
   private def bodyFieldValidation: AmendOtherExpensesRawData => List[List[MtdError]] = { data =>
     val body = data.body.as[AmendOtherExpensesBody]
@@ -52,7 +52,7 @@ class AmendOtherExpensesValidator @Inject()(implicit currentDateTime: CurrentDat
     List(flattenErrors(
       List(
         body.paymentsToTradeUnionsForDeathBenefits.map(validatePaymentsToTradeUnionsForDeathBenefits).getOrElse(NoValidationErrors),
-          body.patentRoyaltiesPayments.map(validatePatentRoyaltiesPayments).getOrElse(NoValidationErrors)
+        body.patentRoyaltiesPayments.map(validatePatentRoyaltiesPayments).getOrElse(NoValidationErrors)
       )
     ))
   }
@@ -84,6 +84,6 @@ class AmendOtherExpensesValidator @Inject()(implicit currentDateTime: CurrentDat
   }
 
   override def validate(data: AmendOtherExpensesRawData): List[MtdError] = {
-  run(validationSet, data).distinct
-}
+    run(validationSet, data).distinct
+  }
 }
