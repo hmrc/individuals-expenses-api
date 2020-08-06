@@ -19,6 +19,7 @@ package v1.connectors
 import mocks.MockAppConfig
 import uk.gov.hmrc.domain.Nino
 import v1.mocks.MockHttpClient
+import v1.models.des.DesSource
 import v1.models.domain.MtdSource
 import v1.models.outcomes.ResponseWrapper
 import v1.models.request.retrieveEmploymentExpenses.RetrieveEmploymentsExpensesRequest
@@ -63,7 +64,7 @@ class RetrieveEmploymentExpensesConnectorSpec extends ConnectorSpec {
           ))
         )))
         MockedHttpClient.get(
-          url = s"$baseUrl/income-tax/expenses/employments/${request.nino}/${request.taxYear}?view=${request.source.toDes}",
+          url = s"$baseUrl/income-tax/expenses/employments/${nino}/${taxYear}?view=${DesSource.`CUSTOMER`}",
           requiredHeaders = "Environment" -> "des-environment", "Authorization" -> s"Bearer des-token"
         ).returns(Future.successful(outcome))
         await(connector.retrieveEmploymentExpenses(request)) shouldBe outcome
