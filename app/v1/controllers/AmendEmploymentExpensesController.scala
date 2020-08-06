@@ -72,13 +72,14 @@ class AmendEmploymentExpensesController @Inject()(val authService: EnrolmentsAut
     (errorWrapper.error: @unchecked) match {
       case NinoFormatError
            | BadRequestError
+           | TaxYearFormatError
            | RuleTaxYearRangeInvalidError
            | RuleIncorrectOrEmptyBodyError
            | RuleTaxYearNotSupportedError
            | RuleTaxYearNotEndedError
-           | MtdErrorWithCustomMessage(ValueFormatError.code )=> BadRequest(Json.toJson(errorWrapper))
+           | MtdErrorWithCustomMessage(ValueFormatError.code) => BadRequest(Json.toJson(errorWrapper))
       case DownstreamError => InternalServerError(Json.toJson(errorWrapper))
-      case NotFoundError | TaxYearFormatError => NotFound(Json.toJson(errorWrapper))
+      case NotFoundError => NotFound(Json.toJson(errorWrapper))
     }
   }
 }

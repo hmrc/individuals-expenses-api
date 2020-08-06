@@ -16,7 +16,7 @@
 
 package v1.models.request.amendEmploymentExpenses
 
-import play.api.libs.json.Json
+import play.api.libs.json.{JsValue, Json}
 import support.UnitSpec
 import v1.models.utils.JsonErrorValidators
 
@@ -39,6 +39,13 @@ class ExpensesSpec extends UnitSpec with JsonErrorValidators {
       |""".stripMargin
   )
 
+  val minJson: JsValue = Json.parse(
+    """
+      |{}
+      |""".stripMargin)
+
+  val minModel: Expenses = Expenses(None, None, None, None, None, None, None, None)
+
   "reads" when {
     "passed valid JSON" should {
       "return a valid model" in {
@@ -51,6 +58,40 @@ class ExpensesSpec extends UnitSpec with JsonErrorValidators {
     "passed valid model" should {
       "return valid JSON" in {
         Json.toJson(expensesBody) shouldBe json
+      }
+    }
+  }
+
+  "isEmpty" should {
+    "return true" when {
+      "all fields are empty" in {
+        minModel.isEmpty shouldBe true
+      }
+    }
+    "return false" when {
+      "businessTravelCosts is not empty" in {
+        minModel.copy(businessTravelCosts = Some(1)).isEmpty shouldBe false
+      }
+      "jobExpenses is not empty" in {
+        minModel.copy(jobExpenses = Some(1)).isEmpty shouldBe false
+      }
+      "flatRateJobExpenses is not empty" in {
+        minModel.copy(flatRateJobExpenses = Some(1)).isEmpty shouldBe false
+      }
+      "professionalSubscriptions is not empty" in {
+        minModel.copy(professionalSubscriptions = Some(1)).isEmpty shouldBe false
+      }
+      "hotelAndMealExpenses is not empty" in {
+        minModel.copy(hotelAndMealExpenses = Some(1)).isEmpty shouldBe false
+      }
+      "otherAndCapitalAllowances is not empty" in {
+        minModel.copy(otherAndCapitalAllowances = Some(1)).isEmpty shouldBe false
+      }
+      "vehicleExpenses is not empty" in {
+        minModel.copy(vehicleExpenses = Some(1)).isEmpty shouldBe false
+      }
+      "mileageAllowanceRelief is not empty" in {
+        minModel.copy(mileageAllowanceRelief = Some(1)).isEmpty shouldBe false
       }
     }
   }

@@ -18,7 +18,9 @@ package v1.models.request.amendEmploymentExpenses
 
 import play.api.libs.json.{Json, OFormat}
 
-case class AmendEmploymentExpensesBody(expenses: Expenses)
+case class AmendEmploymentExpensesBody(expenses: Expenses) {
+  def isIncorrectOrEmptyBody: Boolean = expenses.isEmpty
+}
 
 object AmendEmploymentExpensesBody {
   implicit val format: OFormat[AmendEmploymentExpensesBody] = Json.format[AmendEmploymentExpensesBody]

@@ -24,14 +24,13 @@ import support.IntegrationBaseSpec
 import v1.models.errors._
 import v1.stubs.{AuditStub, AuthStub, DesStub, MtdIdLookupStub}
 import play.api.http.HeaderNames.ACCEPT
-import play.api.http.Status
 
 class AmendEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
 
   private trait Test {
 
     val nino: String = "AA123456A"
-    val taxYear: String = "2021-22"
+    val taxYear: String = "2019-20"
 
     val amount: BigDecimal = 123.12
 
@@ -277,11 +276,13 @@ class AmendEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
         }
 
         val input = Seq(
+          (BAD_REQUEST, "INVALID_TAXABLE_ENTITY_ID", BAD_REQUEST, NinoFormatError),
+          (BAD_REQUEST, "INVALID_TAX_YEAR", NOT_FOUND, NotFoundError),
           (BAD_REQUEST, "INVALID_CORRELATIONID", INTERNAL_SERVER_ERROR, DownstreamError),
-          (BAD_REQUEST, "FORMAT_TAX_YEAR", BAD_REQUEST, TaxYearFormatError),
-          (INTERNAL_SERVER_ERROR, "SERVERT_ERROR", )
-          (SERVICE_UNAVAILABLE, "SERVICE_UNAVAILABLE", INTERNAL_SERVER_ERROR, DownstreamError),
-          (INTERNAL_SERVER_ERROR, "SERVER_ERROR", INTERNAL_SERVER_ERROR, DownstreamError))
+          (BAD_REQUEST, "INVALID_PAYLOAD", INTERNAL_SERVER_ERROR, DownstreamError),
+          (UNPROCESSABLE_ENTITY, "INVALID_REQUEST_BEFORE_TAX_YEAR_END", BAD_REQUEST, RuleTaxYearNotEndedError),
+          (INTERNAL_SERVER_ERROR, "SERVER_ERROR", INTERNAL_SERVER_ERROR, DownstreamError),
+          (SERVICE_UNAVAILABLE, "SERVICE_UNAVAILABLE", INTERNAL_SERVER_ERROR, DownstreamError))
 
         input.foreach(args => (serviceErrorTest _).tupled(args))
       }

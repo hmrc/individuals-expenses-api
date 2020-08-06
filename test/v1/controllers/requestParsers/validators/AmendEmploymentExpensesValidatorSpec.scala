@@ -239,10 +239,6 @@ class AmendEmploymentExpensesValidatorSpec extends UnitSpec {
       "a valid request is supplied without mileageAllowanceRelief in the JSON" in new Test {
         validator.validate(AmendEmploymentExpensesRawData(validNino, validTaxYear, requestBodyJsonNoMileageAllowanceRelief)) shouldBe Nil
       }
-      "an empty expenses object is submitted" in new Test {
-        validator.validate(AmendEmploymentExpensesRawData
-        (validNino, validTaxYear, requestBodyJsonEmptyExpensesObject))shouldBe Nil
-      }
     }
 
     "return a path parameter error" when {
@@ -268,6 +264,10 @@ class AmendEmploymentExpensesValidatorSpec extends UnitSpec {
     "return RuleIncorrectOrEmptyBodyError error" when {
       "an empty JSON body is submitted" in new Test {
         validator.validate(AmendEmploymentExpensesRawData(validNino, validTaxYear, emptyJson)) shouldBe List(RuleIncorrectOrEmptyBodyError)
+      }
+      "an empty expenses object is submitted" in new Test {
+        validator.validate(AmendEmploymentExpensesRawData
+        (validNino, validTaxYear, requestBodyJsonEmptyExpensesObject))shouldBe List(RuleIncorrectOrEmptyBodyError)
       }
     }
     "return a FORMAT_VALUE error" when {

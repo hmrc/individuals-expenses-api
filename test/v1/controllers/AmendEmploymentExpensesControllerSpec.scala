@@ -136,7 +136,7 @@ class AmendEmploymentExpensesControllerSpec
           val input = Seq(
             (BadRequestError, BAD_REQUEST),
             (NinoFormatError, BAD_REQUEST),
-            (TaxYearFormatError, NOT_FOUND),
+            (TaxYearFormatError, BAD_REQUEST),
             (RuleTaxYearRangeInvalidError, BAD_REQUEST),
             (RuleIncorrectOrEmptyBodyError, BAD_REQUEST),
             (RuleTaxYearNotSupportedError, BAD_REQUEST),
@@ -169,8 +169,7 @@ class AmendEmploymentExpensesControllerSpec
 
           val input = Seq(
             (NinoFormatError, BAD_REQUEST),
-            (TaxYearFormatError, NOT_FOUND),
-            (RuleTaxYearNotEndedError, UNPROCESSABLE_ENTITY),
+            (RuleTaxYearNotEndedError, BAD_REQUEST),
             (NotFoundError, NOT_FOUND),
             (DownstreamError, INTERNAL_SERVER_ERROR)
           )

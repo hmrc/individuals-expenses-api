@@ -56,5 +56,18 @@ class AmendEmploymentExpensesBodySpec extends UnitSpec with JsonErrorValidators 
       }
     }
   }
+
+  "isIncorrectOrEmptyBody" should {
+    "return true" when {
+      "expenses is empty" in {
+        val expenses = Expenses(None, None, None, None, None, None, None, None)
+        AmendEmploymentExpensesBody(expenses).isIncorrectOrEmptyBody shouldBe true
+      }
+      "expenses is not empty" in {
+        val expenses = Expenses(Some(1), None, None, None, None, None, None, None)
+        AmendEmploymentExpensesBody(expenses).isIncorrectOrEmptyBody shouldBe false
+      }
+    }
+  }
 }
 
