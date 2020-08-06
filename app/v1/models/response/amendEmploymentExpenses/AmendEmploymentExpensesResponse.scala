@@ -20,7 +20,7 @@ import config.AppConfig
 import v1.hateoas.{HateoasLinks, HateoasLinksFactory}
 import v1.models.hateoas.{HateoasData, Link}
 
-class AmendEmploymentExpensesResponse extends HateoasLinks {
+object AmendEmploymentExpensesResponse extends HateoasLinks {
 
   implicit object AmendOrderLinksFactory extends HateoasLinksFactory[Unit, AmendEmploymentExpensesHateoasData] {
     override def links(appConfig: AppConfig, data: AmendEmploymentExpensesHateoasData): Seq[Link] = {
