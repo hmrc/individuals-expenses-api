@@ -28,11 +28,11 @@ class IgnoreEmploymentExpensesValidator @Inject()(implicit currentDateTime: Curr
   private val validationSet = List(parameterFormatValidation, bodyFormatValidation, parameterRuleValidation)
 
   private def parameterFormatValidation: IgnoreEmploymentExpensesRawData => List[List[MtdError]] = (data: IgnoreEmploymentExpensesRawData) => {
-  List(
-  NinoValidation.validate(data.nino),
-  TaxYearValidation.validate(data.taxYear),
-  )
-}
+    List(
+      NinoValidation.validate(data.nino),
+      TaxYearValidation.validate(data.taxYear),
+    )
+  }
 
   private def bodyFormatValidation: IgnoreEmploymentExpensesRawData => List[List[MtdError]] = { data =>
     List(
@@ -41,12 +41,12 @@ class IgnoreEmploymentExpensesValidator @Inject()(implicit currentDateTime: Curr
   }
 
   private def parameterRuleValidation: IgnoreEmploymentExpensesRawData => List[List[MtdError]] = { data =>
-  List(
-  MtdTaxYearValidation.validate(data.taxYear, true)
-  )
-}
+    List(
+      MtdTaxYearValidation.validate(data.taxYear, true)
+    )
+  }
 
   override def validate(data: IgnoreEmploymentExpensesRawData): List[MtdError] = {
-  run(validationSet, data).distinct
-}
+    run(validationSet, data).distinct
+  }
 }
