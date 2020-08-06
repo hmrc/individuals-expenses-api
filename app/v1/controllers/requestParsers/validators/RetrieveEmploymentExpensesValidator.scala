@@ -19,29 +19,30 @@ package v1.controllers.requestParsers.validators
 import config.AppConfig
 import javax.inject.Inject
 import utils.{CurrentDateTime, CurrentTaxYear}
-import v1.controllers.requestParsers.validators.validations.{MtdTaxYearValidation, NinoValidation, TaxYearValidation}
+import v1.controllers.requestParsers.validators.validations.{MtdTaxYearValidation, NinoValidation, SourceValidation, TaxYearValidation}
 import v1.models.errors.MtdError
-import v1.models.request.deleteEmploymentExpenses.DeleteEmploymentExpensesRawData
+import v1.models.request.retrieveEmploymentExpenses.RetrieveEmploymentsExpensesRawData
 
-class DeleteEmploymentExpensesValidator @Inject()(implicit currentDateTime: CurrentDateTime, appConfig: AppConfig, currentTaxYear: CurrentTaxYear)
-  extends Validator[DeleteEmploymentExpensesRawData] {
+class RetrieveEmploymentExpensesValidator @Inject()(implicit currentDateTime: CurrentDateTime, appConfig: AppConfig, currentTaxYear: CurrentTaxYear)
+  extends Validator[RetrieveEmploymentsExpensesRawData] {
 
   private val validationSet = List(parameterFormatValidation, parameterRuleValidation)
 
-  private def parameterFormatValidation: DeleteEmploymentExpensesRawData => List[List[MtdError]] = (data: DeleteEmploymentExpensesRawData) => {
+  private def parameterFormatValidation: RetrieveEmploymentsExpensesRawData => List[List[MtdError]] = (data: RetrieveEmploymentsExpensesRawData) => {
     List(
       NinoValidation.validate(data.nino),
-      TaxYearValidation.validate(data.taxYear)
+      TaxYearValidation.validate(data.taxYear),
+      SourceValidation.validate(data.source)
     )
   }
 
-  private def parameterRuleValidation: DeleteEmploymentExpensesRawData => List[List[MtdError]] = (data: DeleteEmploymentExpensesRawData) => {
+  private def parameterRuleValidation: RetrieveEmploymentsExpensesRawData => List[List[MtdError]] = (data: RetrieveEmploymentsExpensesRawData) => {
     List(
       MtdTaxYearValidation.validate(data.taxYear)
     )
   }
 
-  override def validate(data: DeleteEmploymentExpensesRawData): List[MtdError] = {
+  override def validate(data: RetrieveEmploymentsExpensesRawData): List[MtdError] = {
     run(validationSet, data).distinct
   }
 }

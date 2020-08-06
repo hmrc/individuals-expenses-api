@@ -16,25 +16,18 @@
 
 package v1.controllers.requestParsers.validators.validations
 
-import v1.models.errors._
+import v1.models.domain.MtdSource
+import v1.models.errors.{MtdError, SourceFormatError}
 
-object TaxYearValidation {
+import scala.util.{Failure, Success, Try}
 
-  val taxYearFormat = "20[1-9][0-9]\\-[1-9][0-9]"
-
-  def validate(taxYear: String): List[MtdError] = {
-    if (taxYear.matches(taxYearFormat)) {
-
-      val start = taxYear.substring(2, 4).toInt
-      val end   = taxYear.substring(5, 7).toInt
-
-      if (end - start == 1) {
-        NoValidationErrors
-      } else {
-        List(RuleTaxYearRangeInvalidError)
-      }
-    } else {
-      List(TaxYearFormatError)
-    }
+object SourceValidation {
+  def validate(source: String): List[MtdError] = {
+   Try {
+     Option(source).map(MtdSource.parser)
+   } match {
+     case Failure(_) => List(SourceFormatError)
+     case Success(_) => NoValidationErrors
+   }
   }
 }

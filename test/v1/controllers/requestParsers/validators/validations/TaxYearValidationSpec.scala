@@ -75,14 +75,5 @@ class TaxYearValidationSpec extends UnitSpec with JsonErrorValidators {
 
     }
 
-    "the start year is below the minimum value" in {
-
-      val invalidTaxYear = "2020-21"
-      val validationResult = TaxYearValidation.validateWithMinimum(invalidTaxYear)
-      validationResult.isEmpty shouldBe false
-      validationResult.length shouldBe 1
-      validationResult.head shouldBe RuleTaxYearNotSupportedError
-    }
-
   }
 }
