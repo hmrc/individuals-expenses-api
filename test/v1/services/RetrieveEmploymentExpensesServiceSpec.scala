@@ -21,7 +21,6 @@ import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
 import v1.controllers.EndpointLogContext
 import v1.mocks.connectors.MockRetrieveEmploymentExpensesConnector
-import v1.models.des.DesSource
 import v1.models.domain.MtdSource
 import v1.models.errors._
 import v1.models.outcomes.ResponseWrapper
@@ -36,7 +35,7 @@ class RetrieveEmploymentExpensesServiceSpec extends UnitSpec {
   val taxYear = "2017-18"
   val nino = Nino("AA123456A")
   val correlationId = "X-123"
-  val source = DesSource.`CUSTOMER`
+  val source = MtdSource.`user`
 
   val body = RetrieveEmploymentExpensesResponse(
     Some("2019-04-06"),

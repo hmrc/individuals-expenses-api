@@ -19,7 +19,6 @@ package v1.connectors
 import mocks.MockAppConfig
 import uk.gov.hmrc.domain.Nino
 import v1.mocks.MockHttpClient
-import v1.models.des.DesSource
 import v1.models.domain.MtdSource
 import v1.models.outcomes.ResponseWrapper
 import v1.models.request.retrieveEmploymentExpenses.RetrieveEmploymentsExpensesRequest
@@ -31,7 +30,7 @@ class RetrieveEmploymentExpensesConnectorSpec extends ConnectorSpec {
 
   private val nino = Nino("AA123456A")
   private val taxYear = "2019-20"
-  val source = DesSource.`CUSTOMER`
+  val source = MtdSource.`user`
 
 
 
