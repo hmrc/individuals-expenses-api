@@ -32,7 +32,7 @@ class RetrieveEmploymentExpensesConnector @Inject()(val http: HttpClient,
   def retrieveEmploymentExpenses(request: RetrieveEmploymentsExpensesRequest)
                                 (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[DesOutcome[RetrieveEmploymentExpensesResponse]] = {
 
-    val url = s"expenses/employments/${request.nino}/${request.taxYear}"
+    val url = s"income-tax/expenses/employments/${request.nino}/${request.taxYear}?view=${request.source}"
     get(
       DesUri[RetrieveEmploymentExpensesResponse](s"$url")
     )
