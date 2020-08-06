@@ -17,7 +17,6 @@
 package v1.models.request.retrieveEmploymentExpenses
 
 import uk.gov.hmrc.domain.Nino
-import v1.models.des.DesSource
 import v1.models.domain.MtdSource
 
 case class RetrieveEmploymentsExpensesRequest(nino: Nino, taxYear: String, source: MtdSource)

@@ -20,7 +20,7 @@ import config.AppConfig
 import javax.inject.Inject
 import utils.{CurrentDateTime, CurrentTaxYear}
 import v1.controllers.requestParsers.validators.validations.{MtdTaxYearValidation, NinoValidation, TaxYearValidation}
-import v1.models.errors.{MtdError, RuleTaxYearNotSupportedError}
+import v1.models.errors.MtdError
 import v1.models.request.deleteEmploymentExpenses.DeleteEmploymentExpensesRawData
 
 class DeleteEmploymentExpensesValidator @Inject()(implicit currentDateTime: CurrentDateTime, appConfig: AppConfig, currentTaxYear: CurrentTaxYear)
