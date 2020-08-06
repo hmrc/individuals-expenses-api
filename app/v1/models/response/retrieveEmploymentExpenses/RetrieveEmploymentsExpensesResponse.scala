@@ -21,21 +21,21 @@ import play.api.libs.json.{JsPath, Json, OWrites, Reads}
 import v1.models.des.DesSource
 import v1.models.domain.MtdSource
 
-case class RetrieveEmploymentExpensesResponse(submittedOn: Option[String],
-                                              totalExpenses: Option[BigDecimal],
-                                              source: Option[MtdSource],
-                                              dateIgnored: Option[String],
-                                              expenses: Option[Expenses])
+case class RetrieveEmploymentsExpensesResponse(submittedOn: Option[String],
+                                               totalExpenses: Option[BigDecimal],
+                                               source: Option[MtdSource],
+                                               dateIgnored: Option[String],
+                                               expenses: Option[Expenses])
 
-object RetrieveEmploymentExpensesResponse {
+object RetrieveEmploymentsExpensesResponse {
 
-  implicit val reads: Reads[RetrieveEmploymentExpensesResponse] = (
+  implicit val reads: Reads[RetrieveEmploymentsExpensesResponse] = (
     (JsPath \ "submittedOn").readNullable[String] and
       (JsPath \ "totalExpenses").readNullable[BigDecimal] and
       (JsPath \ "source").readNullable[DesSource].map(_.map(_.toMtd)) and
       (JsPath \ "dateIgnored").readNullable[String] and
       (JsPath \ "expenses").readNullable[Expenses]
-    ) (RetrieveEmploymentExpensesResponse.apply _)
+    ) (RetrieveEmploymentsExpensesResponse.apply _)
 
-  implicit  val writes: OWrites[RetrieveEmploymentExpensesResponse] = Json.writes[RetrieveEmploymentExpensesResponse]
+  implicit  val writes: OWrites[RetrieveEmploymentsExpensesResponse] = Json.writes[RetrieveEmploymentsExpensesResponse]
 }

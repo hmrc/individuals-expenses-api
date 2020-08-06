@@ -25,7 +25,7 @@ import support.IntegrationBaseSpec
 import v1.models.errors.{DownstreamError, MtdError, NinoFormatError, NotFoundError, RuleTaxYearNotSupportedError, RuleTaxYearRangeInvalidError, TaxYearFormatError}
 import v1.stubs.{AuditStub, AuthStub, DesStub, MtdIdLookupStub}
 
-class RetrieveEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
+class RetrieveEmploymentsExpensesControllerISpec extends IntegrationBaseSpec {
 
   private trait Test {
 

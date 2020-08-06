@@ -22,24 +22,24 @@ import v1.models.domain.MtdSource
 import v1.models.response.retrieveEmploymentExpenses._
 import v1.models.utils.JsonErrorValidators
 
-class RetrieveEmploymentExpensesSpec extends UnitSpec with JsonErrorValidators {
+class RetrieveEmploymentsExpensesSpec extends UnitSpec with JsonErrorValidators {
 
   val retrieveEmploymentExpensesBodyLatest =
-    RetrieveEmploymentExpensesResponse(Some("2020-07-13T20:37:27Z"),
+    RetrieveEmploymentsExpensesResponse(Some("2020-07-13T20:37:27Z"),
       Some(1000.25),
       Some(MtdSource.`latest`),
       Some("2020-07-13T20:37:27Z"),
       Some(Expenses(Some(1000.25),Some(1000.25),Some(1000.25),Some(1000.25),Some(1000.25),Some(1000.25),Some(1000.25),Some(1000.25))))
 
   val retrieveEmploymentExpensesBodyCustomer =
-    RetrieveEmploymentExpensesResponse(Some("2020-07-13T20:37:27Z"),
+    RetrieveEmploymentsExpensesResponse(Some("2020-07-13T20:37:27Z"),
       Some(1000.25),
       Some(MtdSource.`user`),
       Some("2020-07-13T20:37:27Z"),
       Some(Expenses(Some(1000.25),Some(1000.25),Some(1000.25),Some(1000.25),Some(1000.25),Some(1000.25),Some(1000.25),Some(1000.25))))
 
   val retrieveEmploymentExpensesBodyHmrcHeld =
-    RetrieveEmploymentExpensesResponse(Some("2020-07-13T20:37:27Z"),
+    RetrieveEmploymentsExpensesResponse(Some("2020-07-13T20:37:27Z"),
       Some(1000.25),
       Some(MtdSource.`hmrcHeld`),
       Some("2020-07-13T20:37:27Z"),
@@ -163,13 +163,13 @@ class RetrieveEmploymentExpensesSpec extends UnitSpec with JsonErrorValidators {
   "reads" when {
     "passed valid JSON" should {
       "return a valid model for latest" in {
-        retrieveEmploymentExpensesBodyLatest shouldBe latestDesJson.as[RetrieveEmploymentExpensesResponse]
+        retrieveEmploymentExpensesBodyLatest shouldBe latestDesJson.as[RetrieveEmploymentsExpensesResponse]
       }
       "return a valid model for customer" in {
-        retrieveEmploymentExpensesBodyCustomer shouldBe customerDesJson.as[RetrieveEmploymentExpensesResponse]
+        retrieveEmploymentExpensesBodyCustomer shouldBe customerDesJson.as[RetrieveEmploymentsExpensesResponse]
       }
       "return a valid model for hmrcHeld" in {
-        retrieveEmploymentExpensesBodyHmrcHeld shouldBe hmrcHeldDesJson.as[RetrieveEmploymentExpensesResponse]
+        retrieveEmploymentExpensesBodyHmrcHeld shouldBe hmrcHeldDesJson.as[RetrieveEmploymentsExpensesResponse]
       }
     }
   }

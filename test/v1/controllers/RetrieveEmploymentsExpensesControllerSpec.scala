@@ -22,14 +22,18 @@ import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
 import v1.mocks.hateoas.MockHateoasFactory
 import v1.mocks.services.{MockAuditService, MockEnrolmentsAuthService, MockMtdIdLookupService}
+import v1.models.des.DesSource
+import v1.models.domain.MtdSource
 import v1.models.errors.{BadRequestError, DownstreamError, ErrorWrapper, MtdError, NinoFormatError, NotFoundError, RuleTaxYearRangeInvalidError, TaxYearFormatError}
 import v1.models.hateoas.{HateoasWrapper, Link}
 import v1.models.hateoas.Method.GET
 import v1.models.outcomes.ResponseWrapper
+import v1.models.request.retrieveEmploymentExpenses.{RetrieveEmploymentsExpensesRawData, RetrieveEmploymentsExpensesRequest}
+import v1.models.response.retrieveEmploymentExpenses.{Expenses, RetrieveEmploymentsExpensesResponse}
 
 import scala.concurrent.Future
 
-class RetrieveEmploymentExpensesControllerSpec
+class RetrieveEmploymentsExpensesControllerSpec
   extends ControllerBaseSpec
   with MockEnrolmentsAuthService
   with MockMtdIdLookupService
@@ -45,8 +49,8 @@ class RetrieveEmploymentExpensesControllerSpec
     val controller = new RetrieveOtherExpensesController(
       authService = mockEnrolmentsAuthService,
       lookupService = mockMtdIdLookupService,
-      parser = mockRetrieveEmploymentExpensesRequestParser,
-      service = mockRetrieveEmploymentExpensesService,
+      parser = mockRetrieveEmploymentsExpensesRequestParser,
+      service = mockRetrieveEmploymentsExpensesService,
       hateoasFactory = mockHateoasFactory,
       cc = cc,
     )
@@ -57,17 +61,19 @@ class RetrieveEmploymentExpensesControllerSpec
 
   private val nino = "AA123456A"
   private val taxYear = "2019-20"
-  private val source = "latest"
+  private val source = DesSource.`LATEST`
   private val correlationId = "X-123"
 
-  private val rawData = RetrieveEmploymentExpensesRawData(nino, taxYear, source)
-  private val requestData = RetrieveEmploymentExpensesRequest(Nino(nino), taxYear, source)
+  private val rawData = RetrieveEmploymentsExpensesRawData(nino, taxYear, source.toString)
+  private val requestData = RetrieveEmploymentsExpensesRequest(Nino(nino), taxYear, source)
 
   private val testHateoasLink = Link(href = s"individuals/expenses/employment/$nino/$taxYear?source=$source", method = GET, rel = "self")
 
-  private val responseBody = RetrieveEmploymentExpensesBody(
-    Some(PaymentsToTradeUnionsForDeathBenefits(Some("TRADE UNION PAYMENTS"), 4528.99)),
-    Some(PatentRoyaltiesPayments(Some("ROYALTIES PAYMENTS"), 2000.10))
+  private val responseBody = RetrieveEmploymentsExpensesResponse(Some("2020-07-13T20:37:27Z"),
+    Some(1000.25),
+    Some(MtdSource.`latest`),
+    Some("2020-07-13T20:37:27Z"),
+    Some(Expenses(Some(1000.25),Some(1000.25),Some(1000.25),Some(1000.25),Some(1000.25),Some(1000.25),Some(1000.25),Some(1000.25)))
   )
 
   "handleRequest" should {
@@ -83,7 +89,7 @@ class RetrieveEmploymentExpensesControllerSpec
           .returns(Future.successful(Right(ResponseWrapper(correlationId, responseBody))))
 
         MockHateoasFactory
-          .wrap(responseBody, RetrieveOtherExpensesHateoasData(nino, taxYear))
+          .wrap(responseBody, RetrieveEmploymentsExpensesHateoasData(nino, taxYear, source))
           .returns(HateoasWrapper(responseBody, Seq(testHateoasLink)))
 
         val result: Future[Result] = controller.handleRequest(nino, taxYear)(fakeRequest)
@@ -96,7 +102,7 @@ class RetrieveEmploymentExpensesControllerSpec
         def errorsFromParserTester(error: MtdError, expectedStatus: Int): Unit = {
           s"a ${error.code} error is returned from the parser" in new Test {
 
-            MockRetrieveOtherExpensesRequestParser
+            MockRetrieveEmploymentsExpensesRequestParser
               .parse(rawData)
               .returns(Left(ErrorWrapper(Some(correlationId), error, None)))
 
@@ -112,6 +118,7 @@ class RetrieveEmploymentExpensesControllerSpec
           (BadRequestError, BAD_REQUEST),
           (NinoFormatError, BAD_REQUEST),
           (TaxYearFormatError, BAD_REQUEST),
+          (SourceFormatError, BAD_REQUEST),
           (RuleTaxYearRangeInvalidError, BAD_REQUEST)
         )
 
@@ -122,12 +129,12 @@ class RetrieveEmploymentExpensesControllerSpec
         def serviceErrors(mtdError: MtdError, expectedStatus: Int): Unit = {
           s"a $mtdError error is returned from the service" in new Test {
 
-            MockRetrieveOtherExpensesRequestParser
+            MockRetrieveEmploymentsExpensesRequestParser
               .parse(rawData)
               .returns(Right(requestData))
 
-            MockRetrieveOtherExpensesService
-              .retrieveOtherExpenses(requestData)
+            MockRetrieveEmploymentsExpensesService
+              .retrieveEmploymentsExpenses(requestData)
               .returns(Future.successful(Left(ErrorWrapper(Some(correlationId), mtdError))))
 
             val result: Future[Result] = controller.handleRequest(nino, taxYear)(fakeRequest)
