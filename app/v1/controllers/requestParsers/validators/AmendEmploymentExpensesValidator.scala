@@ -25,7 +25,7 @@ import v1.models.request.amendEmploymentExpenses.{AmendEmploymentExpensesBody, A
 
 class AmendEmploymentExpensesValidator @Inject()(implicit currentDateTime: CurrentDateTime, appConfig: AppConfig, currentTaxYear: CurrentTaxYear)
   extends Validator[AmendEmploymentExpensesRawData] {
-  private val validationSet = List(parameterFormatValidation, bodyFormatValidation, parameterRuleValidation, bodyFieldValidation)
+  private val validationSet = List(parameterFormatValidation, bodyFormatValidation, parameterRuleValidation, incorrectOrEmptyBodySubmittedValidation, bodyFieldValidation)
 
   private def parameterFormatValidation: AmendEmploymentExpensesRawData => List[List[MtdError]] = (data: AmendEmploymentExpensesRawData) => {
     List(
@@ -44,6 +44,11 @@ class AmendEmploymentExpensesValidator @Inject()(implicit currentDateTime: Curre
     List(
       MtdTaxYearValidation.validate(data.taxYear, true)
     )
+  }
+
+  private def incorrectOrEmptyBodySubmittedValidation: AmendEmploymentExpensesRawData => List[List[MtdError]] = { data =>
+    val body = data.body.as[AmendEmploymentExpensesBody]
+    if (body.isIncorrectOrEmptyBody) List(List(RuleIncorrectOrEmptyBodyError)) else NoValidationErrors
   }
 
   private def bodyFieldValidation: AmendEmploymentExpensesRawData => List[List[MtdError]] = { data =>
