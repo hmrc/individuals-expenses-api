@@ -32,7 +32,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class IgnoreEmploymentExpensesService @Inject()(connector: IgnoreEmploymentExpensesConnector) extends DesResponseMappingSupport with Logging {
 
-  def amend(request: IgnoreEmploymentExpensesRequest)(
+  def ignore(request: IgnoreEmploymentExpensesRequest)(
     implicit hc: HeaderCarrier,
     ec: ExecutionContext,
     logContext: EndpointLogContext): Future[IgnoreEmploymentExpensesServiceOutcome] = {

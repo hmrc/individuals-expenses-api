@@ -22,37 +22,37 @@ import javax.inject.{Inject, Singleton}
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, ControllerComponents}
 import utils.Logging
-import v1.controllers.requestParsers.AmendOtherExpensesRequestParser
+import v1.controllers.requestParsers.IgnoreEmploymentExpensesRequestParser
 import v1.hateoas.HateoasFactory
 import v1.models.errors._
-import v1.models.request.amendOtherExpenses.AmendOtherExpensesRawData
-import v1.models.response.amendOtherExpenses.AmendOtherExpensesHateoasData
-import v1.models.response.amendOtherExpenses.AmendOtherExpensesResponse.AmendOtherExpensesLinksFactory
-import v1.services.{AmendOtherExpensesService, EnrolmentsAuthService, MtdIdLookupService}
+import v1.models.request.ignoreEmploymentExpenses.IgnoreEmploymentExpensesRawData
+import v1.models.response.ignoreEmploymentExpenses.IgnoreEmploymentExpensesHateoasData
+import v1.models.response.ignoreEmploymentExpenses.IgnoreEmploymentExpensesResponse.IgnoreEmploymentExpensesLinksFactory
+import v1.services.{IgnoreEmploymentExpensesService, EnrolmentsAuthService, MtdIdLookupService}
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class AmendOtherExpensesController @Inject()(val authService: EnrolmentsAuthService,
-                                             val lookupService: MtdIdLookupService,
-                                             parser: AmendOtherExpensesRequestParser,
-                                             service: AmendOtherExpensesService,
-                                             hateoasFactory: HateoasFactory,
-                                             cc: ControllerComponents)(implicit ec: ExecutionContext)
+class IgnoreEmploymentExpensesController @Inject()(val authService: EnrolmentsAuthService,
+                                                   val lookupService: MtdIdLookupService,
+                                                   parser: IgnoreEmploymentExpensesRequestParser,
+                                                   service: IgnoreEmploymentExpensesService,
+                                                   hateoasFactory: HateoasFactory,
+                                                   cc: ControllerComponents)(implicit ec: ExecutionContext)
   extends AuthorisedController(cc) with BaseController with Logging {
 
   implicit val endpointLogContext: EndpointLogContext =
-    EndpointLogContext(controllerName = "AmendOtherExpensesController", endpointName = "amendOtherExpenses")
+    EndpointLogContext(controllerName = "IgnoreEmploymentExpensesController", endpointName = "ignoreEmploymentExpenses")
 
   def handleRequest(nino: String, taxYear: String): Action[JsValue] =
     authorisedAction(nino).async(parse.json) { implicit request =>
-      val rawData = AmendOtherExpensesRawData(nino, taxYear, request.body)
+      val rawData = IgnoreEmploymentExpensesRawData(nino, taxYear, request.body)
       val result =
         for {
           parsedRequest <- EitherT.fromEither[Future](parser.parseRequest(rawData))
-          serviceResponse <- EitherT(service.amend(parsedRequest))
+          serviceResponse <- EitherT(service.ignore(parsedRequest))
           vendorResponse <- EitherT.fromEither[Future](
-            hateoasFactory.wrap(serviceResponse.responseData, AmendOtherExpensesHateoasData(nino, taxYear)).asRight[ErrorWrapper])
+            hateoasFactory.wrap(serviceResponse.responseData, IgnoreEmploymentExpensesHateoasData(nino, taxYear)).asRight[ErrorWrapper])
         } yield {
           logger.info(
             s"[${endpointLogContext.controllerName}][${endpointLogContext.endpointName}] - " +
@@ -70,14 +70,15 @@ class AmendOtherExpensesController @Inject()(val authService: EnrolmentsAuthServ
 
   private def errorResult(errorWrapper: ErrorWrapper) = {
     (errorWrapper.error: @unchecked) match {
-      case NinoFormatError | BadRequestError
-                           | TaxYearFormatError
-                           | MtdErrorWithCustomMessage(CustomerReferenceFormatError.code)
-                           | RuleTaxYearRangeInvalidError
-                           | RuleIncorrectOrEmptyBodyError
-                           | MtdErrorWithCustomMessage(ValueFormatError.code )=> BadRequest(Json.toJson(errorWrapper))
-      case DownstreamError => InternalServerError(Json.toJson(errorWrapper))
-      case NotFoundError => NotFound(Json.toJson(errorWrapper))
+      case NinoFormatError
+           | BadRequestError
+           | TaxYearFormatError
+           | RuleTaxYearRangeInvalidError
+           | RuleTaxYearNotSupportedError
+           | RuleTaxYearNotEndedError
+           | RuleIncorrectOrEmptyBodyError => BadRequest(Json.toJson(errorWrapper))
+      case DownstreamError                 => InternalServerError(Json.toJson(errorWrapper))
+      case NotFoundError                   => NotFound(Json.toJson(errorWrapper))
     }
   }
 }
