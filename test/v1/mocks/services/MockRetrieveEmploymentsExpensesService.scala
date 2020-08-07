@@ -24,6 +24,7 @@ import v1.models.errors.ErrorWrapper
 import v1.models.outcomes.ResponseWrapper
 import v1.models.request.retrieveEmploymentExpenses.RetrieveEmploymentsExpensesRequest
 import v1.models.response.retrieveEmploymentExpenses.RetrieveEmploymentsExpensesResponse
+import v1.services.RetrieveEmploymentsExpensesService
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -31,9 +32,10 @@ trait MockRetrieveEmploymentsExpensesService extends MockFactory {
 
   val mockRetrieveEmploymentsExpensesService: RetrieveEmploymentsExpensesService = mock[RetrieveEmploymentsExpensesService]
 
-  object MockRetrieveOtherExpensesService {
+  object MockRetrieveEmploymentsExpensesService {
 
-    def retrieveEmploymentsExpenses(requestData: RetrieveEmploymentsExpensesRequest): CallHandler[Future[Either[ErrorWrapper, ResponseWrapper[RetrieveEmploymentsExpensesResponse]]]] = {
+    def retrieveEmploymentsExpenses(requestData: RetrieveEmploymentsExpensesRequest):
+    CallHandler[Future[Either[ErrorWrapper, ResponseWrapper[RetrieveEmploymentsExpensesResponse]]]] = {
       (mockRetrieveEmploymentsExpensesService
         .retrieveEmploymentsExpenses(_: RetrieveEmploymentsExpensesRequest)(_: HeaderCarrier, _: ExecutionContext, _: EndpointLogContext))
         .expects(requestData, *, *, *)

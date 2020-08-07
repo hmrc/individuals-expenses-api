@@ -30,10 +30,10 @@ import v1.support.DesResponseMappingSupport
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class RetrieveEmploymentExpensesService @Inject()(retrieveEmploymentsExpensesConnector: RetrieveEmploymentExpensesConnector)
+class RetrieveEmploymentsExpensesService @Inject()(retrieveEmploymentsExpensesConnector: RetrieveEmploymentExpensesConnector)
   extends DesResponseMappingSupport with Logging {
 
-  def retrieveEmploymentExpenses(request: RetrieveEmploymentsExpensesRequest)(
+  def retrieveEmploymentsExpenses(request: RetrieveEmploymentsExpensesRequest)(
     implicit hc: HeaderCarrier,
     ec: ExecutionContext,
     logContext: EndpointLogContext): Future[RetrieveEmploymentExpensesServiceOutcome] = {

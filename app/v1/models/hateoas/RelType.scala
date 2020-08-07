@@ -24,5 +24,10 @@ object RelType {
   val AMEND_EMPLOYMENT_EXPENSES = "amend-employment-expenses"
   val DELETE_EMPLOYMENT_EXPENSES = "delete-employment-expenses"
 
+  val RETRIEVE_EXPENSES_EMPLOYMENTS = "retrieve-expenses-employments"
+  val AMEND_EXPENSES_EMPLOYMENTS = "amend-expenses-employments"
+  val IGNORE_EXPENSES_EMPLOYMENTS = "ignore-expenses-employments"
+  val DELETE_EXPENSES_EMPLOYMENTS = "delete-expenses-employments"
+
   val SELF = "self"
 }

@@ -25,19 +25,19 @@ import v1.models.domain.MtdSource
 import v1.models.errors._
 import v1.models.outcomes.ResponseWrapper
 import v1.models.request.retrieveEmploymentExpenses.RetrieveEmploymentsExpensesRequest
-import v1.models.response.retrieveEmploymentExpenses.{Expenses, RetrieveEmploymentExpensesResponse}
+import v1.models.response.retrieveEmploymentExpenses.{Expenses, RetrieveEmploymentsExpensesResponse}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class RetrieveEmploymentExpensesServiceSpec extends UnitSpec {
+class RetrieveEmploymentsExpensesServiceSpec extends UnitSpec {
 
   val taxYear = "2017-18"
   val nino = Nino("AA123456A")
   val correlationId = "X-123"
   val source = MtdSource.`user`
 
-  val body = RetrieveEmploymentExpensesResponse(
+  val body = RetrieveEmploymentsExpensesResponse(
     Some("2019-04-06"),
     Some(2000.99),
     Some(MtdSource.`user`),
@@ -61,7 +61,7 @@ class RetrieveEmploymentExpensesServiceSpec extends UnitSpec {
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val logContext: EndpointLogContext = EndpointLogContext("c", "ep")
 
-    val service = new RetrieveEmploymentExpensesService(
+    val service = new RetrieveEmploymentsExpensesService(
       retrieveEmploymentsExpensesConnector = mockRetrieveEmploymentExpensesConnector
     )
   }

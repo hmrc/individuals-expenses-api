@@ -17,15 +17,17 @@
 package v1.controllers
 
 import cats.data.EitherT
+import cats.implicits._
 import javax.inject.{Inject, Singleton}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import utils.Logging
+import v1.controllers.requestParsers.RetrieveEmploymentsExpensesRequestParser
 import v1.hateoas.HateoasFactory
-import v1.models.des.DesSource
-import v1.models.errors.{BadRequestError, DownstreamError, ErrorWrapper, NinoFormatError, NotFoundError, RuleTaxYearRangeInvalidError, TaxYearFormatError}
+import v1.models.errors._
 import v1.models.request.retrieveEmploymentExpenses.RetrieveEmploymentsExpensesRawData
-import v1.services.{EnrolmentsAuthService, MtdIdLookupService}
+import v1.models.response.retrieveEmploymentExpenses.RetrieveEmploymentsExpensesHateoasData
+import v1.services.{EnrolmentsAuthService, MtdIdLookupService, RetrieveEmploymentsExpensesService}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -47,9 +49,9 @@ class RetrieveEmploymentsExpensesController @Inject()(val authService: Enrolment
       val result =
         for {
           parsedRequest <- EitherT.fromEither[Future](parser.parseRequest(rawData))
-          serviceResponse <- EitherT(service.retrieveEmploymentExpenses(parsedRequest))
+          serviceResponse <- EitherT(service.retrieveEmploymentsExpenses(parsedRequest))
           vendorResponse <- EitherT.fromEither[Future](
-            hateoasFactory.wrap(serviceResponse.responseData, RetrieveEmploymentsExpensesHateoasData(nino, taxYear)).asRight[ErrorWrapper])
+            hateoasFactory.wrap(serviceResponse.responseData, RetrieveEmploymentsExpensesHateoasData(nino, taxYear, source)).asRight[ErrorWrapper])
         } yield {
           logger.info(
             s"[${endpointLogContext.controllerName}][${endpointLogContext.endpointName}] - " +
@@ -67,7 +69,7 @@ class RetrieveEmploymentsExpensesController @Inject()(val authService: Enrolment
 
   private def errorResult(errorWrapper: ErrorWrapper) = {
     (errorWrapper.error: @unchecked) match {
-      case NinoFormatError | BadRequestError | TaxYearFormatError | SourceFormatError| RuleTaxYearRangeInvalidError => BadRequest(Json.toJson(errorWrapper))
+      case NinoFormatError | BadRequestError | TaxYearFormatError | SourceFormatError | RuleTaxYearRangeInvalidError => BadRequest(Json.toJson(errorWrapper))
       case DownstreamError => InternalServerError(Json.toJson(errorWrapper))
       case NotFoundError => NotFound(Json.toJson(errorWrapper))
     }

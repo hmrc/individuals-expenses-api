@@ -24,7 +24,7 @@ import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import utils.Logging
 import v1.controllers.requestParsers.RetrieveOtherExpensesRequestParser
 import v1.hateoas.HateoasFactory
-import v1.models.errors.{BadRequestError, DownstreamError, ErrorWrapper, NinoFormatError, NotFoundError, RuleTaxYearRangeInvalidError, TaxYearFormatError}
+import v1.models.errors._
 import v1.models.request.retrieveOtherExpenses.RetrieveOtherExpensesRawData
 import v1.models.response.retrieveOtherExpenses.RetrieveOtherExpensesHateoasData
 import v1.services.{EnrolmentsAuthService, MtdIdLookupService, RetrieveOtherExpensesService}

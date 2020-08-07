@@ -54,4 +54,5 @@ trait HateoasLinks {
 
   def ignoreEmploymentExpenses(appConfig: AppConfig, nino: String, taxYear: String): Link =
     Link(href = ignoreEmploymentExpensesUri(appConfig, nino, taxYear), method = PUT, rel = IGNORE_EMPLOYMENT_EXPENSES)
+
 }

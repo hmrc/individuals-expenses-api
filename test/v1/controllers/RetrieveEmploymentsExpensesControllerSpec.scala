@@ -21,24 +21,25 @@ import play.api.mvc.Result
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
 import v1.mocks.hateoas.MockHateoasFactory
-import v1.mocks.services.{MockAuditService, MockEnrolmentsAuthService, MockMtdIdLookupService}
-import v1.models.des.DesSource
+import v1.mocks.requestParsers.MockRetrieveEmploymentsExpensesRequestParser
+import v1.mocks.services.{MockAuditService, MockEnrolmentsAuthService, MockMtdIdLookupService, MockRetrieveEmploymentsExpensesService}
 import v1.models.domain.MtdSource
-import v1.models.errors.{BadRequestError, DownstreamError, ErrorWrapper, MtdError, NinoFormatError, NotFoundError, RuleTaxYearRangeInvalidError, TaxYearFormatError}
+import v1.models.errors.{BadRequestError, DownstreamError, ErrorWrapper, MtdError, NinoFormatError, NotFoundError, RuleTaxYearRangeInvalidError, SourceFormatError, TaxYearFormatError}
 import v1.models.hateoas.{HateoasWrapper, Link}
 import v1.models.hateoas.Method.GET
 import v1.models.outcomes.ResponseWrapper
 import v1.models.request.retrieveEmploymentExpenses.{RetrieveEmploymentsExpensesRawData, RetrieveEmploymentsExpensesRequest}
-import v1.models.response.retrieveEmploymentExpenses.{Expenses, RetrieveEmploymentsExpensesResponse}
+import v1.models.response.retrieveEmploymentExpenses.{Expenses, RetrieveEmploymentsExpensesHateoasData, RetrieveEmploymentsExpensesResponse}
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class RetrieveEmploymentsExpensesControllerSpec
   extends ControllerBaseSpec
   with MockEnrolmentsAuthService
   with MockMtdIdLookupService
-  with MockRetrieveEmploymentExpensesService
-  with MockRetrieveEmploymentExpensesRequestParser
+  with MockRetrieveEmploymentsExpensesService
+  with MockRetrieveEmploymentsExpensesRequestParser
   with MockHateoasFactory
   with MockAuditService {
 
@@ -46,7 +47,7 @@ class RetrieveEmploymentsExpensesControllerSpec
   trait Test {
     val hc = HeaderCarrier()
 
-    val controller = new RetrieveOtherExpensesController(
+    val controller = new RetrieveEmploymentsExpensesController(
       authService = mockEnrolmentsAuthService,
       lookupService = mockMtdIdLookupService,
       parser = mockRetrieveEmploymentsExpensesRequestParser,
@@ -61,7 +62,7 @@ class RetrieveEmploymentsExpensesControllerSpec
 
   private val nino = "AA123456A"
   private val taxYear = "2019-20"
-  private val source = DesSource.`LATEST`
+  private val source = MtdSource.`latest`
   private val correlationId = "X-123"
 
   private val rawData = RetrieveEmploymentsExpensesRawData(nino, taxYear, source.toString)
@@ -80,19 +81,19 @@ class RetrieveEmploymentsExpensesControllerSpec
     "return Ok" when {
       "the request received is valid" in new Test {
 
-        MockRetrieveOtherExpensesRequestParser
+        MockRetrieveEmploymentsExpensesRequestParser
           .parse(rawData)
           .returns(Right(requestData))
 
-        MockRetrieveOtherExpensesService
-          .retrieveOtherExpenses(requestData)
+        MockRetrieveEmploymentsExpensesService
+          .retrieveEmploymentsExpenses(requestData)
           .returns(Future.successful(Right(ResponseWrapper(correlationId, responseBody))))
 
         MockHateoasFactory
-          .wrap(responseBody, RetrieveEmploymentsExpensesHateoasData(nino, taxYear, source))
+          .wrap(responseBody, RetrieveEmploymentsExpensesHateoasData(nino, taxYear, source.toString))
           .returns(HateoasWrapper(responseBody, Seq(testHateoasLink)))
 
-        val result: Future[Result] = controller.handleRequest(nino, taxYear)(fakeRequest)
+        val result: Future[Result] = controller.handleRequest(nino, taxYear, source.toString)(fakeRequest)
         status(result) shouldBe OK
         header("X-CorrelationId", result) shouldBe Some(correlationId)
       }
@@ -106,7 +107,7 @@ class RetrieveEmploymentsExpensesControllerSpec
               .parse(rawData)
               .returns(Left(ErrorWrapper(Some(correlationId), error, None)))
 
-            val result: Future[Result] = controller.handleRequest(nino, taxYear)(fakeRequest)
+            val result: Future[Result] = controller.handleRequest(nino, taxYear, source.toString)(fakeRequest)
 
             status(result) shouldBe expectedStatus
             contentAsJson(result) shouldBe Json.toJson(error)
@@ -137,7 +138,7 @@ class RetrieveEmploymentsExpensesControllerSpec
               .retrieveEmploymentsExpenses(requestData)
               .returns(Future.successful(Left(ErrorWrapper(Some(correlationId), mtdError))))
 
-            val result: Future[Result] = controller.handleRequest(nino, taxYear)(fakeRequest)
+            val result: Future[Result] = controller.handleRequest(nino, taxYear, source.toString)(fakeRequest)
 
             status(result) shouldBe expectedStatus
             contentAsJson(result) shouldBe Json.toJson(mtdError)
