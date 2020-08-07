@@ -105,32 +105,6 @@ class IgnoreEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
     "return error according to spec" when {
 
       "validation error" when {
-        s"an invalid NINO is provided" in new Test {
-          override val nino: String = "INVALID_NINO"
-
-          override def setupStubs(): StubMapping = {
-            AuditStub.audit()
-            AuthStub.authorised()
-            MtdIdLookupStub.ninoFound(nino)
-          }
-
-          val response: WSResponse = await(request().put(requestBody))
-          response.status shouldBe BAD_REQUEST
-          response.json shouldBe Json.toJson(NinoFormatError)
-        }
-        s"an invalid taxYear is provided" in new Test {
-          override val taxYear: String = "INVALID_TAXYEAR"
-
-          override def setupStubs(): StubMapping = {
-            AuditStub.audit()
-            AuthStub.authorised()
-            MtdIdLookupStub.ninoFound(nino)
-          }
-
-          val response: WSResponse = await(request().put(requestBody))
-          response.status shouldBe BAD_REQUEST
-          response.json shouldBe Json.toJson(TaxYearFormatError)
-        }
 
         def parserErrorTest(newNino: String, newTaxYear: String, newBody: JsValue, expectedStatus: Int, expectedBody: MtdError): Unit = {
           s"parser returns ${expectedBody.code}" in new Test {
@@ -164,7 +138,7 @@ class IgnoreEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
           ("AA123456A", "201920", Json.parse(s"""{"ignoreExpenses": true}"""), BAD_REQUEST, TaxYearFormatError),
           ("AA123456A", "2016-17", Json.parse(s"""{"ignoreExpenses": true}"""), BAD_REQUEST, RuleTaxYearNotSupportedError),
           ("AA123456A", "2019-21", Json.parse(s"""{"ignoreExpenses": true}"""), BAD_REQUEST, RuleTaxYearRangeInvalidError),
-          ("AA123456A", currentYear, Json.parse(s"""{"ignoreExpenses": true}"""), FORBIDDEN, RuleTaxYearNotEndedError),
+          ("AA123456A", currentYear, Json.parse(s"""{"ignoreExpenses": true}"""), BAD_REQUEST, RuleTaxYearNotEndedError),
           ("AA123456A", "2019-20", Json.parse(s"""{}"""), BAD_REQUEST, RuleIncorrectOrEmptyBodyError),
         )
 
@@ -194,7 +168,7 @@ class IgnoreEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
           (BAD_REQUEST, "INVALID_TAX_YEAR", NOT_FOUND, NotFoundError),
           (BAD_REQUEST, "INVALID_CORRELATIONID", INTERNAL_SERVER_ERROR, DownstreamError),
           (BAD_REQUEST, "INVALID_PAYLOAD", INTERNAL_SERVER_ERROR, DownstreamError),
-          (UNPROCESSABLE_ENTITY, "INVALID_REQUEST_BEFORE_TAX_YEAR_END", FORBIDDEN, RuleTaxYearNotEndedError),
+          (UNPROCESSABLE_ENTITY, "INVALID_REQUEST_BEFORE_TAX_YEAR_END", BAD_REQUEST, RuleTaxYearNotEndedError),
           (SERVICE_UNAVAILABLE, "SERVICE_UNAVAILABLE", INTERNAL_SERVER_ERROR, DownstreamError),
           (INTERNAL_SERVER_ERROR, "SERVER_ERROR", INTERNAL_SERVER_ERROR, DownstreamError)
         )

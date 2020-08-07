@@ -46,7 +46,7 @@ class IgnoreEmploymentExpensesControllerSpec
   private val nino = "AA123456A"
   private val taxYear = "2019-20"
   private val correlationId = "X-123"
-  private val testHateoasLink = Link(href = s"individuals/expenses/other/$nino/$taxYear", method = GET, rel = "self")
+  private val testHateoasLink = Link(href = s"individuals/expenses/employments/$nino/$taxYear/ignore", method = GET, rel = "self")
   private val requestBody = IgnoreEmploymentExpensesBody(ignoreExpenses = true)
 
   private val requestBodyJson = Json.parse(
@@ -120,7 +120,7 @@ class IgnoreEmploymentExpensesControllerSpec
           (RuleIncorrectOrEmptyBodyError, BAD_REQUEST),
           (RuleTaxYearNotSupportedError, BAD_REQUEST),
           (RuleTaxYearRangeInvalidError, BAD_REQUEST),
-          (RuleTaxYearNotEndedError, FORBIDDEN)
+          (RuleTaxYearNotEndedError, BAD_REQUEST)
         )
 
         input.foreach(args => (errorsFromParserTester _).tupled(args))
@@ -149,7 +149,7 @@ class IgnoreEmploymentExpensesControllerSpec
         val input = Seq(
           (NinoFormatError, BAD_REQUEST),
           (TaxYearFormatError, BAD_REQUEST),
-          (RuleTaxYearNotEndedError, FORBIDDEN),
+          (RuleTaxYearNotEndedError, BAD_REQUEST),
           (NotFoundError, NOT_FOUND),
           (DownstreamError, INTERNAL_SERVER_ERROR)
         )

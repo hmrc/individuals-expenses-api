@@ -40,12 +40,12 @@ object StandardDesHttpParser extends HttpParser {
     (_: String, url: String, response: HttpResponse) => doRead(url, response) { correlationId =>
       response.validateJson[A] match {
         case Some(ref) => Right(ResponseWrapper(correlationId, ref))
-        case None => Left(ResponseWrapper(correlationId, OutboundError(DownstreamError)))
+        case None      => Left(ResponseWrapper(correlationId, OutboundError(DownstreamError)))
       }
     }
 
   private def doRead[A](url: String, response: HttpResponse)(successOutcomeFactory: String => DesOutcome[A])(
-      implicit successCode: SuccessCode): DesOutcome[A] = {
+    implicit successCode: SuccessCode): DesOutcome[A] = {
 
     val correlationId = retrieveCorrelationId(response)
 
@@ -57,11 +57,7 @@ object StandardDesHttpParser extends HttpParser {
     }
 
     response.status match {
-      case successCode.status =>
-        logger.info(
-          "[StandardDesHttpParser][read] - " +
-            s"Success response received from DES with correlationId: $correlationId when calling $url")
-        successOutcomeFactory(correlationId)
+      case successCode.status     => success(correlationId, url, successOutcomeFactory)
       case BAD_REQUEST
            | NOT_FOUND
            | FORBIDDEN
@@ -69,5 +65,12 @@ object StandardDesHttpParser extends HttpParser {
            | UNPROCESSABLE_ENTITY => Left(ResponseWrapper(correlationId, parseErrors(response)))
       case _                      => Left(ResponseWrapper(correlationId, OutboundError(DownstreamError)))
     }
+  }
+
+  private def success[A](correlationId: String, url: String, successOutcomeFactory: String => DesOutcome[A]): DesOutcome[A] = {
+    logger.info(
+      "[StandardDesHttpParser][read] - " +
+        s"Success response received from DES with correlationId: $correlationId when calling $url")
+    successOutcomeFactory(correlationId)
   }
 }
