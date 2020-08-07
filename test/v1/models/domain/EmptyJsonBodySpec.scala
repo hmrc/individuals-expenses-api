@@ -14,8 +14,18 @@
  * limitations under the License.
  */
 
-package v1.models.request
+package v1.models.domain
 
-import play.api.libs.json.JsValue
+import play.api.libs.json.{JsObject, Json}
+import support.UnitSpec
+import v1.models.utils.JsonErrorValidators
 
-case class SampleRawData(nino: String, taxYear: String, body: JsValue) extends RawData
+class EmptyJsonBodySpec extends UnitSpec with JsonErrorValidators {
+
+  "writes" should {
+    "return an empty json body" in {
+      Json.toJson(EmptyJsonBody) shouldBe JsObject.empty
+    }
+  }
+
+}

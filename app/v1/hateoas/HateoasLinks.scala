@@ -24,9 +24,6 @@ import v1.models.hateoas.RelType._
 trait HateoasLinks {
 
   //Domain URIs
-  private def sampleUri(appConfig: AppConfig, nino: String): String =
-    s"/${appConfig.apiGatewayContext}/$nino/sample-endpoint"
-
   private def otherExpensesUri(appConfig: AppConfig, nino: String, taxYear: String): String =
     s"/${appConfig.apiGatewayContext}/other/$nino/$taxYear"
 
@@ -37,9 +34,6 @@ trait HateoasLinks {
     s"/${appConfig.apiGatewayContext}/employments/$nino/$taxYear/ignore"
 
     //API resource links
-    def sampleLink(appConfig: AppConfig, nino: String): Link =
-      Link(href = sampleUri(appConfig, nino), method = GET, rel = SAMPLE_ENDPOINT_REL)
-
   def retrieveOtherExpenses(appConfig: AppConfig, nino: String, taxYear: String): Link =
     Link(href = otherExpensesUri(appConfig, nino, taxYear), method = GET, rel = SELF)
 

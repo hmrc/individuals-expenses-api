@@ -14,9 +14,17 @@
  * limitations under the License.
  */
 
-package v1.models.request
+package v1.models.outcomes
 
-import uk.gov.hmrc.domain.Nino
-import v1.models.domain.SampleRequestBody
+import support.UnitSpec
 
-case class SampleRequestData(nino: Nino, desTaxYear: DesTaxYear, body: SampleRequestBody)
+class ResponseWrapperSpec extends UnitSpec {
+
+  "mapping a ResponseWrapper" should {
+    "return the same response wrapper with correlationId and responseData" in {
+      val response = ResponseWrapper("X-123", "Response")
+
+      response.map(a => a) shouldBe ResponseWrapper("X-123", "Response")
+    }
+  }
+}
