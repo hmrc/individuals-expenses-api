@@ -14,8 +14,17 @@
  * limitations under the License.
  */
 
-package v1.models.request
+package v1.models.outcomes
 
-import play.api.libs.json.JsValue
+import support.UnitSpec
 
-case class SampleRawData(nino: String, taxYear: String, body: JsValue) extends RawData
+class ResponseWrapperSpec extends UnitSpec {
+
+  "mapping a ResponseWrapper" should {
+    "return the same response wrapper with correlationId and responseData" in {
+      val response = ResponseWrapper("X-123", "Response")
+
+      response.map(a => a) shouldBe ResponseWrapper("X-123", "Response")
+    }
+  }
+}
