@@ -51,24 +51,24 @@ class RetrieveEmploymentsExpensesControllerISpec extends IntegrationBaseSpec {
          |			"mileageAllowanceRelief": 123.12
          |		},
          |		"links": [{
-         |				"href": "/individuals/expenses/other/AA123456A/2019-20",
+         |				"href": "/individuals/expenses/employments/AA123456A/2019-20",
          |				"method": "PUT",
-         |				"rel": "amend-expenses-employments"
+         |				"rel": "amend-employment-expenses"
          |			},
          |			{
-         |				"href": "/individuals/expenses/other/AA123456A/2019-20",
+         |				"href": "/individuals/expenses/employments/AA123456A/2019-20",
          |				"method": "GET",
          |				"rel": "self"
          |			},
          |			{
-         |				"href": "/individuals/expenses/other/AA123456A/2019-20",
+         |				"href": "/individuals/expenses/employments/AA123456A/2019-20",
          |				"method": "DELETE",
-         |				"rel": "delete-expenses-employments"
+         |				"rel": "delete-employment-expenses"
          |			},
          |			{
-         |				"href": "/individuals/expenses/other/AA123456A/2019-20",
+         |				"href": "/individuals/expenses/employments/AA123456A/2019-20/ignore",
          |				"method": "PUT",
-         |				"rel": "ignore-expenses-employments"
+         |				"rel": "ignore-employment-expenses"
          |			}
          |		]
          |	}

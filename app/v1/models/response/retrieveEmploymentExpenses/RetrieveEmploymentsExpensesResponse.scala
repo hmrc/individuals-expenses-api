@@ -48,15 +48,15 @@ object RetrieveEmploymentsExpensesResponse extends HateoasLinks {
       import data._
       data.source match {
         case Some("latest") => Seq(
-          amendEmploymentsExpenses(appConfig, nino, taxYear),
-          retrieveEmploymentsExpenses(appConfig, nino, taxYear),
-          deleteEmploymentsExpenses(appConfig, nino, taxYear),
-          ignoreEmploymentsExpenses(appConfig,nino, taxYear))
+          amendEmploymentExpenses(appConfig, nino, taxYear),
+          retrieveEmploymentExpenses(appConfig, nino, taxYear),
+          deleteEmploymentExpenses(appConfig, nino, taxYear),
+          ignoreEmploymentExpenses(appConfig,nino, taxYear))
         case Some("hmrcHeld") => Seq(
-          ignoreEmploymentsExpenses(appConfig,nino, taxYear))
+          ignoreEmploymentExpenses(appConfig,nino, taxYear))
         case Some("user") => Seq(
-          amendEmploymentsExpenses(appConfig, nino, taxYear),
-          deleteEmploymentsExpenses(appConfig, nino, taxYear))
+          amendEmploymentExpenses(appConfig, nino, taxYear),
+          deleteEmploymentExpenses(appConfig, nino, taxYear))
       }
     }
   }

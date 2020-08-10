@@ -19,15 +19,11 @@ package v1.models.hateoas
 object RelType {
   val AMEND_EXPENSES_OTHER = "amend-expenses-other"
   val DELETE_EXPENSES_OTHER = "delete-expenses-other"
-  val IGNORE_EMPLOYMENT_EXPENSES = "ignore-employment-expenses"
 
+  val IGNORE_EMPLOYMENT_EXPENSES = "ignore-employment-expenses"
+  val RETRIEVE_EMPLOYMENT_EXPENSES = "retrieve-employment-expenses"
   val AMEND_EMPLOYMENT_EXPENSES = "amend-employment-expenses"
   val DELETE_EMPLOYMENT_EXPENSES = "delete-employment-expenses"
-
-  val RETRIEVE_EXPENSES_EMPLOYMENTS = "retrieve-expenses-employments"
-  val AMEND_EXPENSES_EMPLOYMENTS = "amend-expenses-employments"
-  val IGNORE_EXPENSES_EMPLOYMENTS = "ignore-expenses-employments"
-  val DELETE_EXPENSES_EMPLOYMENTS = "delete-expenses-employments"
 
   val SELF = "self"
 }
