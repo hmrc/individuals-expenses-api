@@ -21,7 +21,7 @@ import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.http.HeaderCarrier
 import cats.implicits._
 import utils.Logging
-import v1.connectors.RetrieveEmploymentExpensesConnector
+import v1.connectors.RetrieveEmploymentsExpensesConnector
 import v1.controllers.EndpointLogContext
 import v1.models.errors._
 import v1.models.request.retrieveEmploymentExpenses.RetrieveEmploymentsExpensesRequest
@@ -30,7 +30,7 @@ import v1.support.DesResponseMappingSupport
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class RetrieveEmploymentsExpensesService @Inject()(retrieveEmploymentsExpensesConnector: RetrieveEmploymentExpensesConnector)
+class RetrieveEmploymentsExpensesService @Inject()(retrieveEmploymentsExpensesConnector: RetrieveEmploymentsExpensesConnector)
   extends DesResponseMappingSupport with Logging {
 
   def retrieveEmploymentsExpenses(request: RetrieveEmploymentsExpensesRequest)(

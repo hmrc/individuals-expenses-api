@@ -32,24 +32,46 @@ class RetrieveEmploymentsExpensesControllerISpec extends IntegrationBaseSpec {
     val nino = "AA123456A"
     val taxYear = "2019-20"
     val source = "latest"
+    val desSource = "LATEST"
 
     val responseBody = Json.parse(
       s"""
          |{
-         |    "submittedOn": "2020-12-12T12:12:12Z",
-         |    "source": "latest",
-         |    "totalExpenses": 123.12,
-         |    "expenses": {
-         |        "businessTravelCosts": 123.12,
-         |        "jobExpenses": 123.12,
-         |        "flatRateJobExpenses": 123.12,
-         |        "professionalSubscriptions": 123.12,
-         |        "hotelAndMealExpenses": 123.12,
-         |        "otherAndCapitalAllowances": 123.12,
-         |        "vehicleExpenses": 123.12,
-         |        "mileageAllowanceRelief": 123.12
-         |    }
-         |}
+         |		"submittedOn": "2020-12-12T12:12:12Z",
+         |		"source": "latest",
+         |		"totalExpenses": 123.12,
+         |		"expenses": {
+         |			"businessTravelCosts": 123.12,
+         |			"jobExpenses": 123.12,
+         |			"flatRateJobExpenses": 123.12,
+         |			"professionalSubscriptions": 123.12,
+         |			"hotelAndMealExpenses": 123.12,
+         |			"otherAndCapitalAllowances": 123.12,
+         |			"vehicleExpenses": 123.12,
+         |			"mileageAllowanceRelief": 123.12
+         |		},
+         |		"links": [{
+         |				"href": "/individuals/expenses/other/AA123456A/2019-20",
+         |				"method": "PUT",
+         |				"rel": "amend-expenses-employments"
+         |			},
+         |			{
+         |				"href": "/individuals/expenses/other/AA123456A/2019-20",
+         |				"method": "GET",
+         |				"rel": "self"
+         |			},
+         |			{
+         |				"href": "/individuals/expenses/other/AA123456A/2019-20",
+         |				"method": "DELETE",
+         |				"rel": "delete-expenses-employments"
+         |			},
+         |			{
+         |				"href": "/individuals/expenses/other/AA123456A/2019-20",
+         |				"method": "PUT",
+         |				"rel": "ignore-expenses-employments"
+         |			}
+         |		]
+         |	}
          |""".stripMargin
     )
 
@@ -73,7 +95,7 @@ class RetrieveEmploymentsExpensesControllerISpec extends IntegrationBaseSpec {
          |""".stripMargin)
 
     def uri: String = s"/employments/$nino/$taxYear?source=$source"
-    def desUri: String = s"/expenses/employments/$nino/$taxYear?source=$source"
+    def desUri: String = s"/income-tax/expenses/employments/$nino/$taxYear"
 
     def setupStubs(): StubMapping
 
@@ -102,7 +124,7 @@ class RetrieveEmploymentsExpensesControllerISpec extends IntegrationBaseSpec {
           AuditStub.audit()
           AuthStub.authorised()
           MtdIdLookupStub.ninoFound(nino)
-          DesStub.onSuccess(DesStub.GET, desUri, Status.OK, desResponseBody)
+          DesStub.onSuccess(DesStub.GET, desUri, Map("view" -> desSource) ,Status.OK, desResponseBody)
         }
 
         val response: WSResponse = await(request().get())
@@ -121,6 +143,7 @@ class RetrieveEmploymentsExpensesControllerISpec extends IntegrationBaseSpec {
 
             override val nino: String = requestNino
             override val taxYear: String = requestTaxYear
+            override val source: String = requestSource
 
             override def setupStubs(): StubMapping = {
               AuditStub.audit()
@@ -137,7 +160,7 @@ class RetrieveEmploymentsExpensesControllerISpec extends IntegrationBaseSpec {
         val input = Seq(
           ("Walrus", "2019-20", "latest", Status.BAD_REQUEST, NinoFormatError),
           ("AA123456A", "203100", "latest", Status.BAD_REQUEST, TaxYearFormatError),
-          ("AA123456A", "2018-20", "wordsthatareincorrect", Status.BAD_REQUEST, SourceFormatError),
+          ("AA123456A", "2019-20", "Walrus", Status.BAD_REQUEST, SourceFormatError),
           ("AA123456A", "2017-18", "latest", Status.BAD_REQUEST, RuleTaxYearNotSupportedError),
           ("AA123456A", "2018-20", "latest", Status.BAD_REQUEST, RuleTaxYearRangeInvalidError)
         )
@@ -164,8 +187,8 @@ class RetrieveEmploymentsExpensesControllerISpec extends IntegrationBaseSpec {
 
         val input = Seq(
           (Status.BAD_REQUEST, "INVALID_TAXABLE_ENTITY_ID", Status.BAD_REQUEST, NinoFormatError),
-          (Status.BAD_REQUEST, "FORMAT_TAX_YEAR", Status.BAD_REQUEST, TaxYearFormatError),
-          (Status.NOT_FOUND, "NOT_FOUND", Status.NOT_FOUND, NotFoundError),
+          (Status.BAD_REQUEST, "INVALID_TAX_YEAR", Status.BAD_REQUEST, TaxYearFormatError),
+          (Status.NOT_FOUND, "NO_DATA_FOUND", Status.NOT_FOUND, NotFoundError),
           (Status.INTERNAL_SERVER_ERROR, "SERVER_ERROR", Status.INTERNAL_SERVER_ERROR, DownstreamError),
           (Status.SERVICE_UNAVAILABLE, "SERVICE_UNAVAILABLE", Status.INTERNAL_SERVER_ERROR, DownstreamError)
         )

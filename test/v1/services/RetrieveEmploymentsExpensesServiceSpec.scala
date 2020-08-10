@@ -20,7 +20,7 @@ import support.UnitSpec
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
 import v1.controllers.EndpointLogContext
-import v1.mocks.connectors.MockRetrieveEmploymentExpensesConnector
+import v1.mocks.connectors.MockRetrieveEmploymentsExpensesConnector
 import v1.models.domain.MtdSource
 import v1.models.errors._
 import v1.models.outcomes.ResponseWrapper
@@ -57,22 +57,22 @@ class RetrieveEmploymentsExpensesServiceSpec extends UnitSpec {
   private val requestData = RetrieveEmploymentsExpensesRequest(nino, taxYear, source)
 
 
-  trait Test extends MockRetrieveEmploymentExpensesConnector {
+  trait Test extends MockRetrieveEmploymentsExpensesConnector {
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val logContext: EndpointLogContext = EndpointLogContext("c", "ep")
 
     val service = new RetrieveEmploymentsExpensesService(
-      retrieveEmploymentsExpensesConnector = mockRetrieveEmploymentExpensesConnector
+      retrieveEmploymentsExpensesConnector = mockRetrieveEmploymentsExpensesConnector
     )
   }
 
   "service" should {
     "service call successful" when {
       "return mapped result" in new Test {
-        MockRetrieveEmploymentExpensesConnector.retrieveEmploymentExpenses(requestData)
+        MockRetrieveEmploymentsExpensesConnector.retrieveEmploymentsExpenses(requestData)
           .returns(Future.successful(Right(ResponseWrapper(correlationId, body))))
 
-        await(service.retrieveEmploymentExpenses(requestData)) shouldBe Right(ResponseWrapper(correlationId, body))
+        await(service.retrieveEmploymentsExpenses(requestData)) shouldBe Right(ResponseWrapper(correlationId, body))
       }
     }
   }
@@ -83,10 +83,10 @@ class RetrieveEmploymentsExpensesServiceSpec extends UnitSpec {
       def serviceError(desErrorCode: String, error: MtdError): Unit =
         s"a $desErrorCode error is returned from the service" in new Test {
 
-          MockRetrieveEmploymentExpensesConnector.retrieveEmploymentExpenses(requestData)
+          MockRetrieveEmploymentsExpensesConnector.retrieveEmploymentsExpenses(requestData)
             .returns(Future.successful(Left(ResponseWrapper(correlationId, DesErrors.single(DesErrorCode(desErrorCode))))))
 
-          await(service.retrieveEmploymentExpenses(requestData)) shouldBe Left(ErrorWrapper(Some(correlationId), error))
+          await(service.retrieveEmploymentsExpenses(requestData)) shouldBe Left(ErrorWrapper(Some(correlationId), error))
         }
 
       val input = Seq(

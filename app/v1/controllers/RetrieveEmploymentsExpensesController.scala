@@ -43,7 +43,7 @@ class RetrieveEmploymentsExpensesController @Inject()(val authService: Enrolment
   implicit val endpointLogContext: EndpointLogContext =
     EndpointLogContext(controllerName = "RetrieveEmploymentsExpensesController", endpointName = "retrieveEmploymentsExpenses")
 
-  def handleRequest(nino: String, taxYear: String, source: String): Action[AnyContent] =
+  def handleRequest(nino: String, taxYear: String, source: Option[String]): Action[AnyContent] =
     authorisedAction(nino).async { implicit request =>
       val rawData = RetrieveEmploymentsExpensesRawData(nino, taxYear, source)
       val result =
@@ -69,7 +69,12 @@ class RetrieveEmploymentsExpensesController @Inject()(val authService: Enrolment
 
   private def errorResult(errorWrapper: ErrorWrapper) = {
     (errorWrapper.error: @unchecked) match {
-      case NinoFormatError | BadRequestError | TaxYearFormatError | SourceFormatError | RuleTaxYearRangeInvalidError => BadRequest(Json.toJson(errorWrapper))
+      case NinoFormatError |
+           BadRequestError |
+           TaxYearFormatError |
+           RuleTaxYearNotSupportedError |
+           SourceFormatError |
+           RuleTaxYearRangeInvalidError => BadRequest(Json.toJson(errorWrapper))
       case DownstreamError => InternalServerError(Json.toJson(errorWrapper))
       case NotFoundError => NotFound(Json.toJson(errorWrapper))
     }

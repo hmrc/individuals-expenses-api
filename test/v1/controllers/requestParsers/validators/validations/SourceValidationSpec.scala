@@ -25,21 +25,21 @@ class SourceValidationSpec extends UnitSpec {
     "return no errors" when {
       "latest is supplied" in {
 
-        val validSource = "latest"
+        val validSource = Some("latest")
         val validationResult = SourceValidation.validate(validSource)
         validationResult.isEmpty shouldBe true
 
       }
       "hmrcHeld is supplied" in {
 
-        val validSource = "hmrcHeld"
+        val validSource = Some("hmrcHeld")
         val validationResult = SourceValidation.validate(validSource)
         validationResult.isEmpty shouldBe true
 
       }
       "user is supplied" in {
 
-        val validSource = "user"
+        val validSource = Some("user")
         val validationResult = SourceValidation.validate(validSource)
         validationResult.isEmpty shouldBe true
 
@@ -49,7 +49,7 @@ class SourceValidationSpec extends UnitSpec {
     "return an error" when {
       "an invalid source is supplied" in {
 
-        val invalidSource = "Walrus"
+        val invalidSource = Some("Walrus")
         val validationResult = SourceValidation.validate(invalidSource)
         validationResult.isEmpty shouldBe false
         validationResult.length shouldBe 1
@@ -57,7 +57,6 @@ class SourceValidationSpec extends UnitSpec {
 
       }
     }
-
   }
 }
 

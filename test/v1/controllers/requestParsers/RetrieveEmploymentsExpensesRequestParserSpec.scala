@@ -27,9 +27,9 @@ class RetrieveEmploymentsExpensesRequestParserSpec extends UnitSpec {
   val nino = "AA123456B"
   val taxYear = "2021-22"
 
-  val inputDataLatest = RetrieveEmploymentsExpensesRawData(nino, taxYear, "latest")
-  val inputDataHmrcHeld = RetrieveEmploymentsExpensesRawData(nino, taxYear, "hmrcHeld")
-  val inputDataUser = RetrieveEmploymentsExpensesRawData(nino, taxYear, "user")
+  val inputDataLatest = RetrieveEmploymentsExpensesRawData(nino, taxYear, Some("latest"))
+  val inputDataHmrcHeld = RetrieveEmploymentsExpensesRawData(nino, taxYear, Some("hmrcHeld"))
+  val inputDataUser = RetrieveEmploymentsExpensesRawData(nino, taxYear, Some("user"))
 
   trait Test extends MockRetrieveEmploymentExpensesValidator {
     lazy val parser = new RetrieveEmploymentsExpensesRequestParser(mockValidator)

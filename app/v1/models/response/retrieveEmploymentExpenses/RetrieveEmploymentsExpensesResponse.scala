@@ -47,14 +47,14 @@ object RetrieveEmploymentsExpensesResponse extends HateoasLinks {
     override def links(appConfig: AppConfig, data: RetrieveEmploymentsExpensesHateoasData): Seq[Link] = {
       import data._
       data.source match {
-        case MtdSource.`latest`.toString => Seq(
+        case Some("latest") => Seq(
           amendEmploymentsExpenses(appConfig, nino, taxYear),
           retrieveEmploymentsExpenses(appConfig, nino, taxYear),
           deleteEmploymentsExpenses(appConfig, nino, taxYear),
           ignoreEmploymentsExpenses(appConfig,nino, taxYear))
-        case MtdSource.`hmrcHeld`.toString => Seq(
+        case Some("hmrcHeld") => Seq(
           ignoreEmploymentsExpenses(appConfig,nino, taxYear))
-        case MtdSource.`user`.toString => Seq(
+        case Some("user") => Seq(
           amendEmploymentsExpenses(appConfig, nino, taxYear),
           deleteEmploymentsExpenses(appConfig, nino, taxYear))
       }
@@ -62,4 +62,4 @@ object RetrieveEmploymentsExpensesResponse extends HateoasLinks {
   }
 }
 
-case class RetrieveEmploymentsExpensesHateoasData(nino: String, taxYear: String, source: String) extends HateoasData
+case class RetrieveEmploymentsExpensesHateoasData(nino: String, taxYear: String, source: Option[String]) extends HateoasData

@@ -16,18 +16,17 @@
 
 package v1.controllers.requestParsers.validators.validations
 
-import v1.models.domain.MtdSource
 import v1.models.errors.{MtdError, SourceFormatError}
 
-import scala.util.{Failure, Success, Try}
-
 object SourceValidation {
-  def validate(source: String): List[MtdError] = {
-   Try {
-     Option(source).map(MtdSource.parser)
-   } match {
-     case Failure(_) => List(SourceFormatError)
-     case Success(_) => NoValidationErrors
-   }
-  }
+
+    val sources = Seq("latest", "user", "hmrcHeld")
+
+    def validate(source: Option[String]): List[MtdError] = {
+      source match {
+        case Some(x) if sources.contains(Some(x).get) => NoValidationErrors
+        case None => NoValidationErrors
+        case _ => List(SourceFormatError)
+      }
+    }
 }
