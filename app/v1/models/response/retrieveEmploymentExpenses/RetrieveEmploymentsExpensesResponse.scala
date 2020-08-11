@@ -53,9 +53,11 @@ object RetrieveEmploymentsExpensesResponse extends HateoasLinks {
           deleteEmploymentExpenses(appConfig, nino, taxYear),
           ignoreEmploymentExpenses(appConfig,nino, taxYear))
         case Some("hmrcHeld") => Seq(
+          retrieveEmploymentExpenses(appConfig, nino, taxYear),
           ignoreEmploymentExpenses(appConfig,nino, taxYear))
         case Some("user") => Seq(
           amendEmploymentExpenses(appConfig, nino, taxYear),
+          retrieveEmploymentExpenses(appConfig, nino, taxYear),
           deleteEmploymentExpenses(appConfig, nino, taxYear))
       }
     }
