@@ -31,10 +31,14 @@ class RetrieveEmploymentsExpensesControllerISpec extends IntegrationBaseSpec {
 
     val nino = "AA123456A"
     val taxYear = "2019-20"
-    val source = "latest"
+    val latestSource = "latest"
+    val hmrcHeldSource = "hmrcHeld"
+    val userSource = "user"
     val desSource = "LATEST"
+    val hmrcHeldDesSource = "HMRC-HELD"
+    val userDesSource = "CUSTOMER"
 
-    val responseBody = Json.parse(
+    val latestResponseBody = Json.parse(
       s"""
          |{
          |		"submittedOn": "2020-12-12T12:12:12Z",
@@ -75,6 +79,73 @@ class RetrieveEmploymentsExpensesControllerISpec extends IntegrationBaseSpec {
          |""".stripMargin
     )
 
+    val hmrcHeldResponseBody = Json.parse(
+      s"""
+         |{
+         |		"submittedOn": "2020-12-12T12:12:12Z",
+         |		"source": "hmrcHeld",
+         |		"totalExpenses": 123.12,
+         |		"expenses": {
+         |			"businessTravelCosts": 123.12,
+         |			"jobExpenses": 123.12,
+         |			"flatRateJobExpenses": 123.12,
+         |			"professionalSubscriptions": 123.12,
+         |			"hotelAndMealExpenses": 123.12,
+         |			"otherAndCapitalAllowances": 123.12,
+         |			"vehicleExpenses": 123.12,
+         |			"mileageAllowanceRelief": 123.12
+         |		},
+         |		"links": [{
+         |				"href": "/individuals/expenses/employments/AA123456A/2019-20",
+         |				"method": "GET",
+         |				"rel": "self"
+         |			},
+         |			{
+         |				"href": "/individuals/expenses/employments/AA123456A/2019-20/ignore",
+         |				"method": "PUT",
+         |				"rel": "ignore-employment-expenses"
+         |			}
+         |		]
+         |	}
+         |""".stripMargin
+    )
+
+    val userResponseBody = Json.parse(
+      s"""
+         |{
+         |		"submittedOn": "2020-12-12T12:12:12Z",
+         |		"source": "user",
+         |		"totalExpenses": 123.12,
+         |		"expenses": {
+         |			"businessTravelCosts": 123.12,
+         |			"jobExpenses": 123.12,
+         |			"flatRateJobExpenses": 123.12,
+         |			"professionalSubscriptions": 123.12,
+         |			"hotelAndMealExpenses": 123.12,
+         |			"otherAndCapitalAllowances": 123.12,
+         |			"vehicleExpenses": 123.12,
+         |			"mileageAllowanceRelief": 123.12
+         |		},
+         |		"links": [{
+         |				"href": "/individuals/expenses/employments/AA123456A/2019-20",
+         |				"method": "PUT",
+         |				"rel": "amend-employment-expenses"
+         |			},
+         |			{
+         |				"href": "/individuals/expenses/employments/AA123456A/2019-20",
+         |				"method": "GET",
+         |				"rel": "self"
+         |			},
+         |			{
+         |				"href": "/individuals/expenses/employments/AA123456A/2019-20",
+         |				"method": "DELETE",
+         |				"rel": "delete-employment-expenses"
+         |			}
+         |		]
+         |	}
+         |""".stripMargin
+    )
+
     val desResponseBody = Json.parse(
       s"""
          |{
@@ -94,12 +165,52 @@ class RetrieveEmploymentsExpensesControllerISpec extends IntegrationBaseSpec {
          |}
          |""".stripMargin)
 
-    def uri: String = s"/employments/$nino/$taxYear?source=$source"
+    val hmrcHeldDesResponseBody = Json.parse(
+      s"""
+         |{
+         |    "submittedOn": "2020-12-12T12:12:12Z",
+         |    "source": "HMRC HELD",
+         |    "totalExpenses": 123.12,
+         |    "expenses": {
+         |        "businessTravelCosts": 123.12,
+         |        "jobExpenses": 123.12,
+         |        "flatRateJobExpenses": 123.12,
+         |        "professionalSubscriptions": 123.12,
+         |        "hotelAndMealExpenses": 123.12,
+         |        "otherAndCapitalAllowances": 123.12,
+         |        "vehicleExpenses": 123.12,
+         |        "mileageAllowanceRelief": 123.12
+         |    }
+         |}
+         |""".stripMargin)
+
+    val userDesResponseBody = Json.parse(
+      s"""
+         |{
+         |    "submittedOn": "2020-12-12T12:12:12Z",
+         |    "source": "CUSTOMER",
+         |    "totalExpenses": 123.12,
+         |    "expenses": {
+         |        "businessTravelCosts": 123.12,
+         |        "jobExpenses": 123.12,
+         |        "flatRateJobExpenses": 123.12,
+         |        "professionalSubscriptions": 123.12,
+         |        "hotelAndMealExpenses": 123.12,
+         |        "otherAndCapitalAllowances": 123.12,
+         |        "vehicleExpenses": 123.12,
+         |        "mileageAllowanceRelief": 123.12
+         |    }
+         |}
+         |""".stripMargin)
+
+    def latestUri: String = s"/employments/$nino/$taxYear?source=$latestSource"
+    def hmrcHeldUri: String = s"/employments/$nino/$taxYear?source=$hmrcHeldSource"
+    def userUri: String = s"/employments/$nino/$taxYear?source=$userSource"
     def desUri: String = s"/income-tax/expenses/employments/$nino/$taxYear"
 
     def setupStubs(): StubMapping
 
-    def request(): WSRequest = {
+    def request(uri: String): WSRequest = {
       setupStubs()
       buildRequest(uri)
         .withHttpHeaders((ACCEPT, "application/vnd.hmrc.1.0+json"))
@@ -118,7 +229,7 @@ class RetrieveEmploymentsExpensesControllerISpec extends IntegrationBaseSpec {
 
     "return a 200 status code" when {
 
-      "any valid request is made" in new Test {
+      "valid latest request is made" in new Test {
 
         override def setupStubs(): StubMapping = {
           AuditStub.audit()
@@ -127,9 +238,39 @@ class RetrieveEmploymentsExpensesControllerISpec extends IntegrationBaseSpec {
           DesStub.onSuccess(DesStub.GET, desUri, Map("view" -> desSource) ,Status.OK, desResponseBody)
         }
 
-        val response: WSResponse = await(request().get())
+        val response: WSResponse = await(request(latestUri).get())
         response.status shouldBe Status.OK
-        response.json shouldBe responseBody
+        response.json shouldBe latestResponseBody
+        response.header("X-CorrelationId").nonEmpty shouldBe true
+        response.header("Content-Type") shouldBe Some("application/json")
+      }
+      "valid hmrcHeld request is made" in new Test {
+
+        override def setupStubs(): StubMapping = {
+          AuditStub.audit()
+          AuthStub.authorised()
+          MtdIdLookupStub.ninoFound(nino)
+          DesStub.onSuccess(DesStub.GET, desUri, Map("view" -> hmrcHeldDesSource) ,Status.OK, hmrcHeldDesResponseBody)
+        }
+
+        val response: WSResponse = await(request(hmrcHeldUri).get())
+        response.status shouldBe Status.OK
+        response.json shouldBe hmrcHeldResponseBody
+        response.header("X-CorrelationId").nonEmpty shouldBe true
+        response.header("Content-Type") shouldBe Some("application/json")
+      }
+      "valid user request is made" in new Test {
+
+        override def setupStubs(): StubMapping = {
+          AuditStub.audit()
+          AuthStub.authorised()
+          MtdIdLookupStub.ninoFound(nino)
+          DesStub.onSuccess(DesStub.GET, desUri, Map("view" -> userDesSource) ,Status.OK, userDesResponseBody)
+        }
+
+        val response: WSResponse = await(request(userUri).get())
+        response.status shouldBe Status.OK
+        response.json shouldBe userResponseBody
         response.header("X-CorrelationId").nonEmpty shouldBe true
         response.header("Content-Type") shouldBe Some("application/json")
       }
@@ -143,7 +284,7 @@ class RetrieveEmploymentsExpensesControllerISpec extends IntegrationBaseSpec {
 
             override val nino: String = requestNino
             override val taxYear: String = requestTaxYear
-            override val source: String = requestSource
+            override val latestSource: String = requestSource
 
             override def setupStubs(): StubMapping = {
               AuditStub.audit()
@@ -151,7 +292,7 @@ class RetrieveEmploymentsExpensesControllerISpec extends IntegrationBaseSpec {
               MtdIdLookupStub.ninoFound(requestNino)
             }
 
-            val response: WSResponse = await(request().get())
+            val response: WSResponse = await(request(latestUri).get())
             response.status shouldBe expectedStatus
             response.json shouldBe Json.toJson(expectedBody)
           }
@@ -179,7 +320,7 @@ class RetrieveEmploymentsExpensesControllerISpec extends IntegrationBaseSpec {
               DesStub.onError(DesStub.GET, desUri, desStatus, errorBody(desCode))
             }
 
-            val response: WSResponse = await(request().get())
+            val response: WSResponse = await(request(latestUri).get())
             response.status shouldBe expectedStatus
             response.json shouldBe Json.toJson(expectedBody)
           }
