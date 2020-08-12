@@ -27,10 +27,9 @@ class RetrieveEmploymentsExpensesRequestParserSpec extends UnitSpec {
   val nino = "AA123456B"
   val taxYear = "2021-22"
 
-  val inputDataLatest = RetrieveEmploymentsExpensesRawData(nino, taxYear, Some("latest"))
-  val inputDataHmrcHeld = RetrieveEmploymentsExpensesRawData(nino, taxYear, Some("hmrcHeld"))
-  val inputDataUser = RetrieveEmploymentsExpensesRawData(nino, taxYear, Some("user"))
-  val inputDataNoSource = RetrieveEmploymentsExpensesRawData(nino, taxYear, None)
+  val inputDataLatest = RetrieveEmploymentsExpensesRawData(nino, taxYear, "latest")
+  val inputDataHmrcHeld = RetrieveEmploymentsExpensesRawData(nino, taxYear, "hmrcHeld")
+  val inputDataUser = RetrieveEmploymentsExpensesRawData(nino, taxYear, "user")
 
   trait Test extends MockRetrieveEmploymentExpensesValidator {
     lazy val parser = new RetrieveEmploymentsExpensesRequestParser(mockValidator)
@@ -56,12 +55,6 @@ class RetrieveEmploymentsExpensesRequestParserSpec extends UnitSpec {
 
         parser.parseRequest(inputDataUser) shouldBe
           Right(RetrieveEmploymentsExpensesRequest(Nino(nino), "2021-22", MtdSource.`user`))
-      }
-      "valid request data is supplied with no query parameter" in new Test {
-        MockRetrieveEmploymentExpensesValidator.validate(inputDataNoSource).returns(Nil)
-
-        parser.parseRequest(inputDataNoSource) shouldBe
-          Right(RetrieveEmploymentsExpensesRequest(Nino(nino), "2021-22", MtdSource.`latest`))
       }
     }
 

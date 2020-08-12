@@ -56,33 +56,33 @@ class RetrieveEmploymentExpensesValidatorSpec extends UnitSpec {
   "running a validation" should {
     "return no errors" when {
       "a valid request is supplied with the latest data" in new Test {
-        validator.validate(RetrieveEmploymentsExpensesRawData(validNino, validTaxYear, Some("latest"))) shouldBe Nil
+        validator.validate(RetrieveEmploymentsExpensesRawData(validNino, validTaxYear, "latest")) shouldBe Nil
       }
       "a valid request is supplied with HMRC held data" in new Test {
-        validator.validate(RetrieveEmploymentsExpensesRawData(validNino, validTaxYear, Some("hmrcHeld"))) shouldBe Nil
+        validator.validate(RetrieveEmploymentsExpensesRawData(validNino, validTaxYear, "hmrcHeld")) shouldBe Nil
       }
       "a valid request is supplied with user data" in new Test {
-        validator.validate(RetrieveEmploymentsExpensesRawData(validNino, validTaxYear, Some("user"))) shouldBe Nil
+        validator.validate(RetrieveEmploymentsExpensesRawData(validNino, validTaxYear, "user")) shouldBe Nil
       }
     }
 
     "return NinoFormatError error" when {
       "an invalid nino is supplied" in new Test {
-        validator.validate(RetrieveEmploymentsExpensesRawData("A12344A", validTaxYear, Some("latest"))) shouldBe
+        validator.validate(RetrieveEmploymentsExpensesRawData("A12344A", validTaxYear, "latest")) shouldBe
           List(NinoFormatError)
       }
     }
 
     "return TaxYearFormatError error" when {
       "an invalid tax year is supplied" in new Test {
-        validator.validate(RetrieveEmploymentsExpensesRawData(validNino, "20178", Some("latest"))) shouldBe
+        validator.validate(RetrieveEmploymentsExpensesRawData(validNino, "20178", "latest")) shouldBe
           List(TaxYearFormatError)
       }
     }
 
     "return SourceFormatError error" when {
       "an invalid tax year is supplied" in new Test {
-        validator.validate(RetrieveEmploymentsExpensesRawData(validNino, validTaxYear, Some("Walrus"))) shouldBe
+        validator.validate(RetrieveEmploymentsExpensesRawData(validNino, validTaxYear, "Walrus")) shouldBe
           List(SourceFormatError)
       }
     }
@@ -90,7 +90,7 @@ class RetrieveEmploymentExpensesValidatorSpec extends UnitSpec {
     "return RuleTaxYearRangeInvalid error" when {
       "an out of range tax year is supplied" in new Test {
         validator.validate(
-          RetrieveEmploymentsExpensesRawData(validNino, "2019-21", Some("latest"))) shouldBe
+          RetrieveEmploymentsExpensesRawData(validNino, "2019-21", "latest")) shouldBe
           List(RuleTaxYearRangeInvalidError)
       }
     }
@@ -98,14 +98,14 @@ class RetrieveEmploymentExpensesValidatorSpec extends UnitSpec {
     "return RuleTaxYearNotSupportedError error" when {
       "a taxYear below the minimum required is supplied" in new Test {
         validator.validate(
-          RetrieveEmploymentsExpensesRawData(validNino, "2018-19", Some("latest"))) shouldBe
+          RetrieveEmploymentsExpensesRawData(validNino, "2018-19", "latest")) shouldBe
           List(RuleTaxYearNotSupportedError)
       }
     }
 
     "return multiple errors" when {
       "request supplied has multiple errors" in new Test {
-        validator.validate(RetrieveEmploymentsExpensesRawData("A12344A", "20178", Some("Walrus"))) shouldBe
+        validator.validate(RetrieveEmploymentsExpensesRawData("A12344A", "20178", "Walrus")) shouldBe
           List(NinoFormatError, TaxYearFormatError, SourceFormatError)
       }
     }

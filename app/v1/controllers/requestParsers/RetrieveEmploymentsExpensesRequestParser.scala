@@ -27,7 +27,7 @@ class RetrieveEmploymentsExpensesRequestParser @Inject()(val validator: Retrieve
 
   override protected def requestFor(data: RetrieveEmploymentsExpensesRawData): RetrieveEmploymentsExpensesRequest = {
 
-    val source: MtdSource = MtdSource.parser(data.source.getOrElse("latest"))
+    val source: MtdSource = MtdSource.parser(data.source)
 
     RetrieveEmploymentsExpensesRequest(Nino(data.nino), data.taxYear, source)
   }

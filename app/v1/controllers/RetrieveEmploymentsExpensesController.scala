@@ -43,7 +43,7 @@ class RetrieveEmploymentsExpensesController @Inject()(val authService: Enrolment
   implicit val endpointLogContext: EndpointLogContext =
     EndpointLogContext(controllerName = "RetrieveEmploymentsExpensesController", endpointName = "retrieveEmploymentsExpenses")
 
-  def handleRequest(nino: String, taxYear: String, source: Option[String]): Action[AnyContent] =
+  def handleRequest(nino: String, taxYear: String, source: String): Action[AnyContent] =
     authorisedAction(nino).async { implicit request =>
       val rawData = RetrieveEmploymentsExpensesRawData(nino, taxYear, source)
       val result =

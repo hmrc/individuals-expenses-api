@@ -65,7 +65,7 @@ class RetrieveEmploymentsExpensesControllerSpec
   private val source = MtdSource.`latest`
   private val correlationId = "X-123"
 
-  private val rawData = RetrieveEmploymentsExpensesRawData(nino, taxYear, Some(source.toString))
+  private val rawData = RetrieveEmploymentsExpensesRawData(nino, taxYear, source.toString)
   private val requestData = RetrieveEmploymentsExpensesRequest(Nino(nino), taxYear, source)
 
   private val testHateoasLink = Link(href = s"individuals/expenses/employment/$nino/$taxYear?source=$source", method = GET, rel = "self")
@@ -90,10 +90,10 @@ class RetrieveEmploymentsExpensesControllerSpec
           .returns(Future.successful(Right(ResponseWrapper(correlationId, responseBody))))
 
         MockHateoasFactory
-          .wrap(responseBody, RetrieveEmploymentsExpensesHateoasData(nino, taxYear, Some(source.toString)))
+          .wrap(responseBody, RetrieveEmploymentsExpensesHateoasData(nino, taxYear, source.toString))
           .returns(HateoasWrapper(responseBody, Seq(testHateoasLink)))
 
-        val result: Future[Result] = controller.handleRequest(nino, taxYear, Some(source.toString))(fakeRequest)
+        val result: Future[Result] = controller.handleRequest(nino, taxYear, source.toString)(fakeRequest)
         status(result) shouldBe OK
         header("X-CorrelationId", result) shouldBe Some(correlationId)
       }
@@ -107,7 +107,7 @@ class RetrieveEmploymentsExpensesControllerSpec
               .parse(rawData)
               .returns(Left(ErrorWrapper(Some(correlationId), error, None)))
 
-            val result: Future[Result] = controller.handleRequest(nino, taxYear, Some(source.toString))(fakeRequest)
+            val result: Future[Result] = controller.handleRequest(nino, taxYear, source.toString)(fakeRequest)
 
             status(result) shouldBe expectedStatus
             contentAsJson(result) shouldBe Json.toJson(error)
@@ -138,7 +138,7 @@ class RetrieveEmploymentsExpensesControllerSpec
               .retrieveEmploymentsExpenses(requestData)
               .returns(Future.successful(Left(ErrorWrapper(Some(correlationId), mtdError))))
 
-            val result: Future[Result] = controller.handleRequest(nino, taxYear, Some(source.toString))(fakeRequest)
+            val result: Future[Result] = controller.handleRequest(nino, taxYear, source.toString)(fakeRequest)
 
             status(result) shouldBe expectedStatus
             contentAsJson(result) shouldBe Json.toJson(mtdError)

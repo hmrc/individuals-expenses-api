@@ -22,9 +22,9 @@ object SourceValidation {
 
     val sources = Seq("latest", "user", "hmrcHeld")
 
-    def validate(source: Option[String]): List[MtdError] = {
+    def validate(source: String): List[MtdError] = {
       source match {
-        case Some(x) if sources.contains(Some(x).get) => NoValidationErrors
+        case x if sources.contains(x) => NoValidationErrors
         case _ => List(SourceFormatError)
       }
     }
