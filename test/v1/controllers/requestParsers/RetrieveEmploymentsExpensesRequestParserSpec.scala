@@ -23,7 +23,7 @@ import v1.models.domain.MtdSource
 import v1.models.errors.{BadRequestError, ErrorWrapper, NinoFormatError, TaxYearFormatError}
 import v1.models.request.retrieveEmploymentExpenses.{RetrieveEmploymentsExpensesRawData, RetrieveEmploymentsExpensesRequest}
 
-class RetrieveEmploymentExpensesRequestParserSpec extends UnitSpec {
+class RetrieveEmploymentsExpensesRequestParserSpec extends UnitSpec {
   val nino = "AA123456B"
   val taxYear = "2021-22"
 
@@ -32,7 +32,7 @@ class RetrieveEmploymentExpensesRequestParserSpec extends UnitSpec {
   val inputDataUser = RetrieveEmploymentsExpensesRawData(nino, taxYear, "user")
 
   trait Test extends MockRetrieveEmploymentExpensesValidator {
-    lazy val parser = new RetrieveEmploymentExpensesRequestParser(mockValidator)
+    lazy val parser = new RetrieveEmploymentsExpensesRequestParser(mockValidator)
   }
 
   "parse" should {

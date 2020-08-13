@@ -22,36 +22,36 @@ import javax.inject.{Inject, Singleton}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import utils.Logging
-import v1.controllers.requestParsers.RetrieveOtherExpensesRequestParser
+import v1.controllers.requestParsers.RetrieveEmploymentsExpensesRequestParser
 import v1.hateoas.HateoasFactory
 import v1.models.errors._
-import v1.models.request.retrieveOtherExpenses.RetrieveOtherExpensesRawData
-import v1.models.response.retrieveOtherExpenses.RetrieveOtherExpensesHateoasData
-import v1.services.{EnrolmentsAuthService, MtdIdLookupService, RetrieveOtherExpensesService}
+import v1.models.request.retrieveEmploymentExpenses.RetrieveEmploymentsExpensesRawData
+import v1.models.response.retrieveEmploymentExpenses.RetrieveEmploymentsExpensesHateoasData
+import v1.services.{EnrolmentsAuthService, MtdIdLookupService, RetrieveEmploymentsExpensesService}
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class RetrieveOtherExpensesController @Inject()(val authService: EnrolmentsAuthService,
-                                                val lookupService: MtdIdLookupService,
-                                                parser: RetrieveOtherExpensesRequestParser,
-                                                service: RetrieveOtherExpensesService,
-                                                hateoasFactory: HateoasFactory,
-                                                cc: ControllerComponents)(implicit ec: ExecutionContext)
+class RetrieveEmploymentsExpensesController @Inject()(val authService: EnrolmentsAuthService,
+                                                      val lookupService: MtdIdLookupService,
+                                                      parser: RetrieveEmploymentsExpensesRequestParser,
+                                                      service: RetrieveEmploymentsExpensesService,
+                                                      hateoasFactory: HateoasFactory,
+                                                      cc: ControllerComponents)(implicit ec: ExecutionContext)
   extends AuthorisedController(cc) with BaseController with Logging {
 
   implicit val endpointLogContext: EndpointLogContext =
-    EndpointLogContext(controllerName = "RetrieveOtherExpensesController", endpointName = "retrieveOtherExpenses")
+    EndpointLogContext(controllerName = "RetrieveEmploymentsExpensesController", endpointName = "retrieveEmploymentsExpenses")
 
-  def handleRequest(nino: String, taxYear: String): Action[AnyContent] =
+  def handleRequest(nino: String, taxYear: String, source: String): Action[AnyContent] =
     authorisedAction(nino).async { implicit request =>
-      val rawData = RetrieveOtherExpensesRawData(nino, taxYear)
+      val rawData = RetrieveEmploymentsExpensesRawData(nino, taxYear, source)
       val result =
         for {
           parsedRequest <- EitherT.fromEither[Future](parser.parseRequest(rawData))
-          serviceResponse <- EitherT(service.retrieveOtherExpenses(parsedRequest))
+          serviceResponse <- EitherT(service.retrieveEmploymentsExpenses(parsedRequest))
           vendorResponse <- EitherT.fromEither[Future](
-            hateoasFactory.wrap(serviceResponse.responseData, RetrieveOtherExpensesHateoasData(nino, taxYear)).asRight[ErrorWrapper])
+            hateoasFactory.wrap(serviceResponse.responseData, RetrieveEmploymentsExpensesHateoasData(nino, taxYear, source)).asRight[ErrorWrapper])
         } yield {
           logger.info(
             s"[${endpointLogContext.controllerName}][${endpointLogContext.endpointName}] - " +
@@ -69,9 +69,15 @@ class RetrieveOtherExpensesController @Inject()(val authService: EnrolmentsAuthS
 
   private def errorResult(errorWrapper: ErrorWrapper) = {
     (errorWrapper.error: @unchecked) match {
-      case NinoFormatError | BadRequestError | TaxYearFormatError | RuleTaxYearRangeInvalidError => BadRequest(Json.toJson(errorWrapper))
+      case NinoFormatError |
+           BadRequestError |
+           TaxYearFormatError |
+           RuleTaxYearNotSupportedError |
+           SourceFormatError |
+           RuleTaxYearRangeInvalidError => BadRequest(Json.toJson(errorWrapper))
       case DownstreamError => InternalServerError(Json.toJson(errorWrapper))
       case NotFoundError => NotFound(Json.toJson(errorWrapper))
     }
   }
+
 }

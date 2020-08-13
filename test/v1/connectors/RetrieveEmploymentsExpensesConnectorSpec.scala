@@ -23,11 +23,11 @@ import v1.models.des.DesSource
 import v1.models.domain.MtdSource
 import v1.models.outcomes.ResponseWrapper
 import v1.models.request.retrieveEmploymentExpenses.RetrieveEmploymentsExpensesRequest
-import v1.models.response.retrieveEmploymentExpenses.{Expenses, RetrieveEmploymentExpensesResponse}
+import v1.models.response.retrieveEmploymentExpenses.{Expenses, RetrieveEmploymentsExpensesResponse}
 
 import scala.concurrent.Future
 
-class RetrieveEmploymentExpensesConnectorSpec extends ConnectorSpec {
+class RetrieveEmploymentsExpensesConnectorSpec extends ConnectorSpec {
 
   private val nino = Nino("AA123456A")
   private val taxYear = "2019-20"
@@ -36,7 +36,7 @@ class RetrieveEmploymentExpensesConnectorSpec extends ConnectorSpec {
 
 
   class Test extends MockHttpClient with MockAppConfig {
-    val connector: RetrieveEmploymentExpensesConnector = new RetrieveEmploymentExpensesConnector(http = mockHttpClient, appConfig = mockAppConfig)
+    val connector: RetrieveEmploymentsExpensesConnector = new RetrieveEmploymentsExpensesConnector(http = mockHttpClient, appConfig = mockAppConfig)
     val desRequestHeaders: Seq[(String, String)] = Seq("Environment" -> "des-environment", "Authorization" -> s"Bearer des-token")
     MockedAppConfig.desBaseUrl returns baseUrl
     MockedAppConfig.desToken returns "des-token"
@@ -47,7 +47,7 @@ class RetrieveEmploymentExpensesConnectorSpec extends ConnectorSpec {
     val request = RetrieveEmploymentsExpensesRequest(nino, taxYear, source)
     "return a result" when {
       "the downstream call is successful" in new Test {
-        val outcome = Right(ResponseWrapper(correlationId, RetrieveEmploymentExpensesResponse(
+        val outcome = Right(ResponseWrapper(correlationId, RetrieveEmploymentsExpensesResponse(
           Some("2019-04-06"),
           Some(2000.99),
           Some(MtdSource.`user`),
