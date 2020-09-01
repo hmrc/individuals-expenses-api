@@ -4,6 +4,11 @@
   "description": "Allows the retrieval of expenses",
   "type": "object",
   "properties": {
+    "submittedOn": {
+      "description": "The date the expenses were added. It must be provided in the format YYYY-MM-DDThh:mm:ss.ssZ",
+      "type": "string",
+      "example": "2019-04-04T01:01:01Z"
+    },
     "paymentsToTradeUnionsForDeathBenefits": {
       "description": "Payments made to a Trade union or friendly society for death benefits.",
       "type": "object",
@@ -83,5 +88,8 @@
       }
     }
   },
+  "required": [
+    "submittedOn"
+  ],
   "additionalProperties": false
 }
