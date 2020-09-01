@@ -43,6 +43,7 @@ class AuthISpec extends IntegrationBaseSpec {
     val desResponse: JsValue = Json.parse(
       """
         |{
+        |  "submittedOn": "2019-04-04T01:01:01Z",
         |  "paymentsToTradeUnionsForDeathBenefits": {
         |    "customerReference": "TRADE UNION PAYMENTS",
         |    "expenseAmount": 4528.99

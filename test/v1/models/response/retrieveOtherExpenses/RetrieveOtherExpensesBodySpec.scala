@@ -24,13 +24,26 @@ import v1.models.hateoas.Method.{DELETE, GET, PUT}
 
 class RetrieveOtherExpensesBodySpec extends UnitSpec with MockAppConfig {
 
-  val retrieveOtherExpensesBody = RetrieveOtherExpensesBody(Some(PaymentsToTradeUnionsForDeathBenefits(Some("TRADE UNION PAYMENTS"), 2314.32)), Some(PatentRoyaltiesPayments(Some("ROYALTIES PAYMENTS"), 2314.32)))
-  val retrieveOtherExpensesBodyWithoutPatents = RetrieveOtherExpensesBody(Some(PaymentsToTradeUnionsForDeathBenefits(Some("TRADE UNION PAYMENTS"), 2314.32)), None)
-  val retrieveOtherExpensesBodyWithoutPayments = RetrieveOtherExpensesBody(None, Some(PatentRoyaltiesPayments(Some("ROYALTIES PAYMENTS"), 2314.32)))
+  val retrieveOtherExpensesBody = RetrieveOtherExpensesBody(
+    "2019-04-04T01:01:01Z",
+    Some(PaymentsToTradeUnionsForDeathBenefits(Some("TRADE UNION PAYMENTS"), 2314.32)),
+    Some(PatentRoyaltiesPayments(Some("ROYALTIES PAYMENTS"), 2314.32))
+  )
+  val retrieveOtherExpensesBodyWithoutPatents = RetrieveOtherExpensesBody(
+    "2019-04-04T01:01:01Z",
+    Some(PaymentsToTradeUnionsForDeathBenefits(Some("TRADE UNION PAYMENTS"), 2314.32)),
+    None
+  )
+  val retrieveOtherExpensesBodyWithoutPayments = RetrieveOtherExpensesBody(
+    "2019-04-04T01:01:01Z",
+    None,
+    Some(PatentRoyaltiesPayments(Some("ROYALTIES PAYMENTS"), 2314.32))
+  )
 
 
   val json = Json.parse(
     """{
+      |  "submittedOn": "2019-04-04T01:01:01Z",
       |  "paymentsToTradeUnionsForDeathBenefits": {
       |    "customerReference": "TRADE UNION PAYMENTS",
       |    "expenseAmount": 2314.32
@@ -44,6 +57,7 @@ class RetrieveOtherExpensesBodySpec extends UnitSpec with MockAppConfig {
 
   val patentsMissingJson = Json.parse(
     """{
+      |  "submittedOn": "2019-04-04T01:01:01Z",
       |  "paymentsToTradeUnionsForDeathBenefits": {
       |    "customerReference": "TRADE UNION PAYMENTS",
       |    "expenseAmount": 2314.32
@@ -53,6 +67,7 @@ class RetrieveOtherExpensesBodySpec extends UnitSpec with MockAppConfig {
 
   val paymentsMissingJson = Json.parse(
     """{
+      |  "submittedOn": "2019-04-04T01:01:01Z",
       |  "patentRoyaltiesPayments":{
       |    "customerReference": "ROYALTIES PAYMENTS",
       |    "expenseAmount": 2314.32

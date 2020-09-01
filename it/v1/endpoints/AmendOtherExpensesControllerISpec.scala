@@ -142,6 +142,19 @@ class AmendOtherExpensesControllerISpec extends IntegrationBaseSpec {
           response.status shouldBe BAD_REQUEST
           response.json shouldBe Json.toJson(TaxYearFormatError)
         }
+        s"a taxYear before the minimum in sandbox of 2019-20 is provided" in new Test {
+          override val taxYear: String = "2018-19"
+
+          override def setupStubs(): StubMapping = {
+            AuditStub.audit()
+            AuthStub.authorised()
+            MtdIdLookupStub.ninoFound(nino)
+          }
+
+          val response: WSResponse = await(request().put(requestBodyJson))
+          response.status shouldBe BAD_REQUEST
+          response.json shouldBe Json.toJson(RuleTaxYearNotSupportedError)
+        }
         s"an invalid amount is provided" in new Test {
           override val requestBodyJson: JsValue = Json.parse(
             s"""

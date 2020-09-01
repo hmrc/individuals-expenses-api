@@ -36,6 +36,7 @@ class RetrieveOtherExpensesServiceSpec extends UnitSpec {
   private val correlationId = "X-123"
 
   val body = RetrieveOtherExpensesBody(
+    "2019-04-04T01:01:01Z",
     Some(PaymentsToTradeUnionsForDeathBenefits(Some("TRADE UNION PAYMENTS"), 76543.32)),
     Some(PatentRoyaltiesPayments(Some("ROYALTIES PAYMENTS"), 5423.65))
   )

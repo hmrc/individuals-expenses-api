@@ -43,6 +43,7 @@ class RetrieveOtherExpensesConnectorSpec extends ConnectorSpec {
     "return a result" when {
       "the downstream call is successful" in new Test {
         val outcome = Right(ResponseWrapper(correlationId, RetrieveOtherExpensesBody(
+          "2019-04-04T01:01:01Z",
           Some(PaymentsToTradeUnionsForDeathBenefits(Some("TRADE UNION PAYMENTS"), 5433.54)),
           Some(PatentRoyaltiesPayments(Some("ROYALTIES PAYMENTS"), 98765.12))
         )))

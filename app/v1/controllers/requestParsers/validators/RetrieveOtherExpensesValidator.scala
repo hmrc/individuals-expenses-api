@@ -16,18 +16,28 @@
 
 package v1.controllers.requestParsers.validators
 
-import v1.controllers.requestParsers.validators.validations.{NinoValidation, TaxYearValidation}
+import config.AppConfig
+import javax.inject.Inject
+import utils.{CurrentDateTime, CurrentTaxYear}
+import v1.controllers.requestParsers.validators.validations.{MtdTaxYearValidation, NinoValidation, TaxYearValidation}
 import v1.models.errors.MtdError
 import v1.models.request.retrieveOtherExpenses.RetrieveOtherExpensesRawData
 
-class RetrieveOtherExpensesValidator extends Validator[RetrieveOtherExpensesRawData] {
+class RetrieveOtherExpensesValidator @Inject()(implicit currentDateTime: CurrentDateTime, appConfig: AppConfig, currentTaxYear: CurrentTaxYear)
+  extends Validator[RetrieveOtherExpensesRawData] {
 
-  private val validationSet = List(parameterFormatValidation)
+  private val validationSet = List(parameterFormatValidation, parameterRuleValidation)
 
   private def parameterFormatValidation: RetrieveOtherExpensesRawData => List[List[MtdError]] = (data: RetrieveOtherExpensesRawData) => {
     List(
       NinoValidation.validate(data.nino),
       TaxYearValidation.validate(data.taxYear)
+    )
+  }
+
+  private def parameterRuleValidation: RetrieveOtherExpensesRawData => List[List[MtdError]] = { data =>
+    List(
+      MtdTaxYearValidation.validate(data.taxYear)
     )
   }
 
