@@ -21,8 +21,9 @@ import play.api.libs.json.{Json, OFormat}
 import v1.hateoas.{HateoasLinks, HateoasLinksFactory}
 import v1.models.hateoas.{HateoasData, Link}
 
-case class RetrieveOtherExpensesBody(paymentsToTradeUnionsForDeathBenefits: Option[PaymentsToTradeUnionsForDeathBenefits],
-                                      patentRoyaltiesPayments: Option[PatentRoyaltiesPayments])
+case class RetrieveOtherExpensesBody(submittedOn: String,
+                                     paymentsToTradeUnionsForDeathBenefits: Option[PaymentsToTradeUnionsForDeathBenefits],
+                                     patentRoyaltiesPayments: Option[PatentRoyaltiesPayments])
 
 object RetrieveOtherExpensesBody extends HateoasLinks {
   implicit val format: OFormat[RetrieveOtherExpensesBody] = Json.format[RetrieveOtherExpensesBody]

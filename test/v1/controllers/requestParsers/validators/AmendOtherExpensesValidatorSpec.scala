@@ -98,7 +98,7 @@ class AmendOtherExpensesValidatorSpec extends UnitSpec {
       .anyNumberOfTimes()
 
     MockedAppConfig.minimumPermittedTaxYear
-      .returns(2019)
+      .returns(2020)
 
     MockCurrentTaxYear.getCurrentTaxYear(date)
       .returns(2021)
@@ -129,6 +129,9 @@ class AmendOtherExpensesValidatorSpec extends UnitSpec {
       }
       "the taxYear range is invalid" in new Test {
         validator.validate(AmendOtherExpensesRawData(validNino, "2017-20", requestBodyJson)) shouldBe List(RuleTaxYearRangeInvalidError)
+      }
+      "the taxYear is below the minimum" in new Test {
+        validator.validate(AmendOtherExpensesRawData(validNino, "2018-19", requestBodyJson)) shouldBe List(RuleTaxYearNotSupportedError)
       }
       "all path parameters are invalid" in new Test {
         validator.validate(AmendOtherExpensesRawData("Walrus", "2000", requestBodyJson)) shouldBe List(NinoFormatError, TaxYearFormatError)

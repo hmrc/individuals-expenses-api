@@ -16,48 +16,81 @@
 
 package v1.controllers.requestParsers.validators
 
+import config.AppConfig
+import mocks.MockAppConfig
+import org.joda.time.DateTime
+import org.joda.time.format.{DateTimeFormat, DateTimeFormatter}
 import support.UnitSpec
-import v1.models.errors.{NinoFormatError, RuleTaxYearRangeInvalidError, TaxYearFormatError}
+import utils.{CurrentDateTime, CurrentTaxYear}
+import v1.mocks.{MockCurrentDateTime, MockCurrentTaxYear}
+import v1.models.errors.{NinoFormatError, RuleTaxYearNotSupportedError, RuleTaxYearRangeInvalidError, TaxYearFormatError}
 import v1.models.request.retrieveOtherExpenses.RetrieveOtherExpensesRawData
 
 class RetrieveOtherExpensesValidatorSpec extends UnitSpec {
 
   private val validNino = "AA123456A"
-  private val validTaxYear = "2018-19"
+  private val validTaxYear = "2019-20"
+  private val date = DateTime.parse("2020-08-05")
 
-  val validator = new RetrieveOtherExpensesValidator()
+  class Test extends MockCurrentDateTime with MockCurrentTaxYear with MockAppConfig {
+
+    implicit val dateTimeProvider: CurrentDateTime = mockCurrentDateTime
+    val dateTimeFormatter: DateTimeFormatter = DateTimeFormat.forPattern("yyyy-MM-dd")
+
+    implicit val appConfig: AppConfig = mockAppConfig
+    implicit val currentTaxYear: CurrentTaxYear = mockCurrentTaxYear
+
+    val validator = new RetrieveOtherExpensesValidator()
+
+    MockCurrentDateTime.getCurrentDate
+      .returns(DateTime.parse("2020-07-11", dateTimeFormatter))
+      .anyNumberOfTimes()
+
+    MockedAppConfig.minimumPermittedTaxYear
+      .returns(2020)
+
+    MockCurrentTaxYear.getCurrentTaxYear(date)
+      .returns(2021)
+  }
 
   "running a validation" should {
     "return no errors" when {
-      "a valid request is supplied" in {
+      "a valid request is supplied" in new Test {
         validator.validate(RetrieveOtherExpensesRawData(validNino, validTaxYear)) shouldBe Nil
       }
     }
 
     "return NinoFormatError error" when {
-      "an invalid nino is supplied" in {
+      "an invalid nino is supplied" in new Test {
         validator.validate(RetrieveOtherExpensesRawData("A12344A", validTaxYear)) shouldBe
           List(NinoFormatError)
       }
     }
 
     "return TaxYearFormatError error" when {
-      "an invalid tax year is supplied" in {
+      "an invalid tax year is supplied" in new Test {
         validator.validate(RetrieveOtherExpensesRawData(validNino, "20178")) shouldBe
           List(TaxYearFormatError)
       }
     }
 
     "return RuleTaxYearRangeInvalid error" when {
-      "an out of range tax year is supplied" in {
+      "an out of range tax year is supplied" in new Test {
         validator.validate(
           RetrieveOtherExpensesRawData(validNino, "2019-21")) shouldBe
           List(RuleTaxYearRangeInvalidError)
       }
     }
 
+    "return RuleTaxYearNotSupportedError error" when {
+      "a below minimum taxYear is provided" in new Test {
+        validator.validate(RetrieveOtherExpensesRawData(validNino, "2018-19")) shouldBe
+          List(RuleTaxYearNotSupportedError)
+      }
+    }
+
     "return multiple errors" when {
-      "request supplied has multiple errors" in {
+      "request supplied has multiple errors" in new Test {
         validator.validate(RetrieveOtherExpensesRawData("A12344A", "20178")) shouldBe
           List(NinoFormatError, TaxYearFormatError)
       }

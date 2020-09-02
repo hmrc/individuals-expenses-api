@@ -23,7 +23,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import v1.mocks.hateoas.MockHateoasFactory
 import v1.mocks.requestParsers.MockAmendOtherExpensesRequestParser
 import v1.mocks.services.{MockAmendOtherExpensesService, MockAuditService, MockEnrolmentsAuthService, MockMtdIdLookupService}
-import v1.models.errors.{BadRequestError, CustomerReferenceFormatError, DownstreamError, ErrorWrapper, MtdError, NinoFormatError, NotFoundError, RuleIncorrectOrEmptyBodyError, RuleTaxYearRangeInvalidError, TaxYearFormatError}
+import v1.models.errors.{BadRequestError, CustomerReferenceFormatError, DownstreamError, ErrorWrapper, MtdError, NinoFormatError, NotFoundError, RuleIncorrectOrEmptyBodyError, RuleTaxYearNotSupportedError, RuleTaxYearRangeInvalidError, TaxYearFormatError}
 import v1.models.hateoas.{HateoasWrapper, Link}
 import v1.models.hateoas.Method.GET
 import v1.models.outcomes.ResponseWrapper
@@ -127,6 +127,7 @@ class AmendOtherExpensesControllerSpec
           (BadRequestError, BAD_REQUEST),
           (NinoFormatError, BAD_REQUEST),
           (RuleTaxYearRangeInvalidError, BAD_REQUEST),
+          (RuleTaxYearNotSupportedError, BAD_REQUEST),
           (RuleIncorrectOrEmptyBodyError, BAD_REQUEST),
           (TaxYearFormatError, BAD_REQUEST),
           (CustomerReferenceFormatError, BAD_REQUEST)

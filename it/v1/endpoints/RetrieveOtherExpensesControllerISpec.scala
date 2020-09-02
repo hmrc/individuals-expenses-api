@@ -22,7 +22,7 @@ import play.api.http.Status
 import play.api.libs.json.Json
 import play.api.libs.ws.{WSRequest, WSResponse}
 import support.IntegrationBaseSpec
-import v1.models.errors.{DownstreamError, MtdError, NinoFormatError, NotFoundError, RuleTaxYearRangeInvalidError, TaxYearFormatError}
+import v1.models.errors.{DownstreamError, MtdError, NinoFormatError, NotFoundError, RuleTaxYearNotSupportedError, RuleTaxYearRangeInvalidError, TaxYearFormatError}
 import v1.stubs.{AuditStub, AuthStub, DesStub, MtdIdLookupStub}
 
 class RetrieveOtherExpensesControllerISpec extends IntegrationBaseSpec {
@@ -35,6 +35,7 @@ class RetrieveOtherExpensesControllerISpec extends IntegrationBaseSpec {
     val responseBody = Json.parse(
       s"""
          |{
+         |  "submittedOn": "2019-04-04T01:01:01Z",
          |  "paymentsToTradeUnionsForDeathBenefits": {
          |    "customerReference": "TRADE UNION PAYMENTS",
          |    "expenseAmount": 4528.99
@@ -67,6 +68,7 @@ class RetrieveOtherExpensesControllerISpec extends IntegrationBaseSpec {
     val desResponseBody = Json.parse(
       s"""
          |{
+         |  "submittedOn": "2019-04-04T01:01:01Z",
          |  "paymentsToTradeUnionsForDeathBenefits": {
          |    "customerReference": "TRADE UNION PAYMENTS",
          |    "expenseAmount": 4528.99
@@ -143,7 +145,8 @@ class RetrieveOtherExpensesControllerISpec extends IntegrationBaseSpec {
         val input = Seq(
           ("Walrus", "2019-20", Status.BAD_REQUEST, NinoFormatError),
           ("AA123456A", "203100", Status.BAD_REQUEST, TaxYearFormatError),
-          ("AA123456A", "2018-20", Status.BAD_REQUEST, RuleTaxYearRangeInvalidError)
+          ("AA123456A", "2018-20", Status.BAD_REQUEST, RuleTaxYearRangeInvalidError),
+          ("AA123456A", "2018-19", Status.BAD_REQUEST, RuleTaxYearNotSupportedError)
         )
 
 
