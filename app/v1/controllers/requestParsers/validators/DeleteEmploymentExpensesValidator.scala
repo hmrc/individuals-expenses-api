@@ -23,7 +23,7 @@ import v1.controllers.requestParsers.validators.validations.{MtdTaxYearValidatio
 import v1.models.errors.MtdError
 import v1.models.request.deleteEmploymentExpenses.DeleteEmploymentExpensesRawData
 
-class DeleteEmploymentExpensesValidator @Inject()(implicit currentDateTime: CurrentDateTime, appConfig: AppConfig, currentTaxYear: CurrentTaxYear)
+class DeleteEmploymentExpensesValidator @Inject()(implicit currentDateTime: CurrentDateTime, currentTaxYear: CurrentTaxYear)
   extends Validator[DeleteEmploymentExpensesRawData] with FixedConfig {
 
   private val validationSet = List(parameterFormatValidation, parameterRuleValidation)

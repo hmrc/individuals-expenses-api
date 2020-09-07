@@ -37,6 +37,8 @@ class MtdTaxYearValidationSpec extends UnitSpec with JsonErrorValidators with Fi
     implicit val appConfig: AppConfig = mockAppConfig
     implicit val currentTaxYear: CurrentTaxYear = mockCurrentTaxYear
 
+    MockedAppConfig.otherExpensesMinimumTaxYear.returns(2021)
+
     def setupTimeProvider(date: String): CallHandler[DateTime] =
       MockCurrentDateTime.getCurrentDate
         .returns(DateTime.parse(date, dateTimeFormatter))
@@ -60,7 +62,7 @@ class MtdTaxYearValidationSpec extends UnitSpec with JsonErrorValidators with Fi
         setupTimeProvider("2022-04-06")
 
         val validTaxYear = "2021-22"
-        val validationResult = MtdTaxYearValidation.validate(validTaxYear, otherExpensesMinimumTaxYear)
+        val validationResult = MtdTaxYearValidation.validate(validTaxYear, appConfig.otherExpensesMinimumTaxYear)
         validationResult.isEmpty shouldBe true
       }
       "the minimum allowed tax year is supplied with checkCurrentTaxYear to true" in new Test {

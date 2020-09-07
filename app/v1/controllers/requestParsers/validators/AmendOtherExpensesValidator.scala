@@ -42,7 +42,7 @@ class AmendOtherExpensesValidator @Inject()(implicit currentDateTime: CurrentDat
 
   private def parameterRuleValidation: AmendOtherExpensesRawData => List[List[MtdError]] = { data =>
     List(
-      MtdTaxYearValidation.validate(data.taxYear, otherExpensesMinimumTaxYear)
+      MtdTaxYearValidation.validate(data.taxYear, appConfig.otherExpensesMinimumTaxYear)
     )
   }
 

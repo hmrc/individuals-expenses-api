@@ -23,7 +23,7 @@ import v1.controllers.requestParsers.validators.validations.{MtdTaxYearValidatio
 import v1.models.errors.MtdError
 import v1.models.request.retrieveEmploymentExpenses.RetrieveEmploymentsExpensesRawData
 
-class RetrieveEmploymentExpensesValidator @Inject()(implicit currentDateTime: CurrentDateTime, appConfig: AppConfig, currentTaxYear: CurrentTaxYear)
+class RetrieveEmploymentExpensesValidator @Inject()(implicit currentDateTime: CurrentDateTime, currentTaxYear: CurrentTaxYear)
   extends Validator[RetrieveEmploymentsExpensesRawData] with FixedConfig {
 
   private val validationSet = List(parameterFormatValidation, parameterRuleValidation)

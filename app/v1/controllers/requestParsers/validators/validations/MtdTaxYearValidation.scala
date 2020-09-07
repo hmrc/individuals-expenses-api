@@ -16,7 +16,6 @@
 
 package v1.controllers.requestParsers.validators.validations
 
-import config.AppConfig
 import org.joda.time.DateTime
 import utils.{CurrentDateTime, CurrentTaxYear}
 import v1.models.errors.{MtdError, RuleTaxYearNotEndedError, RuleTaxYearNotSupportedError}
@@ -26,7 +25,7 @@ object MtdTaxYearValidation {
 
   // @param taxYear In format YYYY-YY
   def validate(taxYear: String, minimumTaxYear: Int, checkCurrentTaxYear: Boolean = false)
-              (implicit dateTimeProvider: CurrentDateTime, appConfig: AppConfig,  currentTaxYear: CurrentTaxYear): List[MtdError] = {
+              (implicit dateTimeProvider: CurrentDateTime,  currentTaxYear: CurrentTaxYear): List[MtdError] = {
 
     val desTaxYear = Integer.parseInt(DesTaxYear.fromMtd(taxYear).value)
     val currentDate: DateTime = dateTimeProvider.getDateTime
