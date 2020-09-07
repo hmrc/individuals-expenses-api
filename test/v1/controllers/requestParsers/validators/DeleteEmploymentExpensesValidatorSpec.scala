@@ -46,9 +46,6 @@ class DeleteEmploymentExpensesValidatorSpec extends UnitSpec {
       .returns(DateTime.parse("2020-08-05", dateTimeFormatter))
       .anyNumberOfTimes()
 
-    MockedAppConfig.minimumPermittedTaxYear
-      .returns(2020)
-
     MockCurrentTaxYear.getCurrentTaxYear(date)
       .returns(2021)
   }

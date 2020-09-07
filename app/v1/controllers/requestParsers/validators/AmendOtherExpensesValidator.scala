@@ -17,14 +17,14 @@
 package v1.controllers.requestParsers.validators
 
 import v1.controllers.requestParsers.validators.validations._
-import config.AppConfig
+import config.{AppConfig, FixedConfig}
 import javax.inject.Inject
 import utils.{CurrentDateTime, CurrentTaxYear}
 import v1.models.errors._
 import v1.models.request.amendOtherExpenses._
 
 class AmendOtherExpensesValidator @Inject()(implicit currentDateTime: CurrentDateTime, appConfig: AppConfig, currentTaxYear: CurrentTaxYear)
-  extends Validator[AmendOtherExpensesRawData] {
+  extends Validator[AmendOtherExpensesRawData] with FixedConfig {
   private val validationSet = List(parameterFormatValidation, bodyFormatValidation, parameterRuleValidation, bodyFieldValidation)
 
   private def parameterFormatValidation: AmendOtherExpensesRawData => List[List[MtdError]] = (data: AmendOtherExpensesRawData) => {
@@ -42,7 +42,7 @@ class AmendOtherExpensesValidator @Inject()(implicit currentDateTime: CurrentDat
 
   private def parameterRuleValidation: AmendOtherExpensesRawData => List[List[MtdError]] = { data =>
     List(
-      MtdTaxYearValidation.validate(data.taxYear)
+      MtdTaxYearValidation.validate(data.taxYear, otherExpensesMinimumTaxYear)
     )
   }
 

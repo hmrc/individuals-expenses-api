@@ -16,7 +16,7 @@
 
 package v1.controllers.requestParsers.validators.validations
 
-import config.AppConfig
+import config.{AppConfig, FixedConfig}
 import mocks.MockAppConfig
 import org.joda.time.DateTime
 import org.joda.time.format.{DateTimeFormat, DateTimeFormatter}
@@ -27,7 +27,7 @@ import v1.mocks.{MockCurrentDateTime, MockCurrentTaxYear}
 import v1.models.errors.{RuleTaxYearNotEndedError, RuleTaxYearNotSupportedError}
 import v1.models.utils.JsonErrorValidators
 
-class MtdTaxYearValidationSpec extends UnitSpec with JsonErrorValidators {
+class MtdTaxYearValidationSpec extends UnitSpec with JsonErrorValidators with FixedConfig {
 
   class Test extends MockCurrentDateTime with MockCurrentTaxYear with MockAppConfig {
     implicit val dateTimeProvider: CurrentDateTime = mockCurrentDateTime
@@ -41,21 +41,26 @@ class MtdTaxYearValidationSpec extends UnitSpec with JsonErrorValidators {
       MockCurrentDateTime.getCurrentDate
         .returns(DateTime.parse(date, dateTimeFormatter))
 
-    MockedAppConfig.minimumPermittedTaxYear
-      .returns(2019)
-
     MockCurrentTaxYear.getCurrentTaxYear(date)
       .returns(2021)
   }
 
   "validate" should {
     "return no errors" when {
-      "the minimum allowed tax year is supplied" in new Test {
+      "the minimum allowed tax year for employment expenses is supplied" in new Test {
 
         setupTimeProvider("2020-04-06")
 
         val validTaxYear = "2019-20"
-        val validationResult = MtdTaxYearValidation.validate(validTaxYear)
+        val validationResult = MtdTaxYearValidation.validate(validTaxYear, employmentExpensesMinimumTaxYear)
+        validationResult.isEmpty shouldBe true
+      }
+      "the minimum allowed tax year for other expenses is supplied" in new Test {
+
+        setupTimeProvider("2022-04-06")
+
+        val validTaxYear = "2021-22"
+        val validationResult = MtdTaxYearValidation.validate(validTaxYear, otherExpensesMinimumTaxYear)
         validationResult.isEmpty shouldBe true
       }
       "the minimum allowed tax year is supplied with checkCurrentTaxYear to true" in new Test {
@@ -63,7 +68,7 @@ class MtdTaxYearValidationSpec extends UnitSpec with JsonErrorValidators {
         setupTimeProvider("2020-04-06")
 
         val validTaxYear = "2019-20"
-        val validationResult = MtdTaxYearValidation.validate(validTaxYear, true)
+        val validationResult = MtdTaxYearValidation.validate(validTaxYear, employmentExpensesMinimumTaxYear, true)
         validationResult.isEmpty shouldBe true
       }
       "the supplied tax year has not yet ended, with checkCurrentTaxYear set to false" in new Test {
@@ -71,7 +76,7 @@ class MtdTaxYearValidationSpec extends UnitSpec with JsonErrorValidators {
         setupTimeProvider("2020-04-06")
 
         private val invalidTaxYear = "2019-20"
-        private val validationResult = MtdTaxYearValidation.validate(invalidTaxYear, false)
+        private val validationResult = MtdTaxYearValidation.validate(invalidTaxYear, employmentExpensesMinimumTaxYear,  false)
 
         validationResult.isEmpty shouldBe true
       }
@@ -83,7 +88,7 @@ class MtdTaxYearValidationSpec extends UnitSpec with JsonErrorValidators {
         setupTimeProvider("2020-04-06")
 
         val invalidTaxYear = "2015-16"
-        val validationResult = MtdTaxYearValidation.validate(invalidTaxYear)
+        val validationResult = MtdTaxYearValidation.validate(invalidTaxYear, employmentExpensesMinimumTaxYear)
         validationResult.isEmpty shouldBe false
         validationResult.length shouldBe 1
         validationResult.head shouldBe RuleTaxYearNotSupportedError
@@ -93,7 +98,7 @@ class MtdTaxYearValidationSpec extends UnitSpec with JsonErrorValidators {
         setupTimeProvider("2020-04-06")
 
         private val invalidTaxYear = "2020-21"
-        private val validationResult = MtdTaxYearValidation.validate(invalidTaxYear, true)
+        private val validationResult = MtdTaxYearValidation.validate(invalidTaxYear, employmentExpensesMinimumTaxYear, true)
 
         validationResult.isEmpty shouldBe false
         validationResult.length shouldBe 1

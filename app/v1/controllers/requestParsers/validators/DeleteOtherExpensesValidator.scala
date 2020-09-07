@@ -16,7 +16,7 @@
 
 package v1.controllers.requestParsers.validators
 
-import config.AppConfig
+import config.{AppConfig, FixedConfig}
 import javax.inject.Inject
 import utils.{CurrentDateTime, CurrentTaxYear}
 import v1.controllers.requestParsers.validators.validations.{MtdTaxYearValidation, NinoValidation, TaxYearValidation}
@@ -24,7 +24,7 @@ import v1.models.errors.MtdError
 import v1.models.request.deleteOtherExpenses.DeleteOtherExpensesRawData
 
 class DeleteOtherExpensesValidator @Inject()(implicit currentDateTime: CurrentDateTime, appConfig: AppConfig, currentTaxYear: CurrentTaxYear)
-  extends Validator[DeleteOtherExpensesRawData] {
+  extends Validator[DeleteOtherExpensesRawData] with FixedConfig {
 
   private val validationSet = List(parameterFormatValidation, parameterRuleValidation)
 
@@ -37,7 +37,7 @@ class DeleteOtherExpensesValidator @Inject()(implicit currentDateTime: CurrentDa
 
   private def parameterRuleValidation: DeleteOtherExpensesRawData => List[List[MtdError]] = { data =>
     List(
-      MtdTaxYearValidation.validate(data.taxYear)
+      MtdTaxYearValidation.validate(data.taxYear, otherExpensesMinimumTaxYear)
     )
   }
 
