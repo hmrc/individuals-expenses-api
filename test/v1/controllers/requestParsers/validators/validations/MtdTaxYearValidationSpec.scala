@@ -37,7 +37,7 @@ class MtdTaxYearValidationSpec extends UnitSpec with JsonErrorValidators with Fi
     implicit val appConfig: AppConfig = mockAppConfig
     implicit val currentTaxYear: CurrentTaxYear = mockCurrentTaxYear
 
-    MockedAppConfig.otherExpensesMinimumTaxYear.returns(2021)
+    MockedAppConfig.otherExpensesMinimumTaxYear.returns(2020)
 
     def setupTimeProvider(date: String): CallHandler[DateTime] =
       MockCurrentDateTime.getCurrentDate
