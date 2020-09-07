@@ -16,14 +16,14 @@
 
 package v1.controllers.requestParsers.validators
 
-import config.{AppConfig, FixedConfig}
+import config.FixedConfig
 import javax.inject.Inject
 import utils.{CurrentDateTime, CurrentTaxYear}
 import v1.controllers.requestParsers.validators.validations._
 import v1.models.errors._
 import v1.models.request.ignoreEmploymentExpenses._
 
-class IgnoreEmploymentExpensesValidator @Inject()(implicit currentDateTime: CurrentDateTime, appConfig: AppConfig, currentTaxYear: CurrentTaxYear)
+class IgnoreEmploymentExpensesValidator @Inject()(implicit currentDateTime: CurrentDateTime, currentTaxYear: CurrentTaxYear)
   extends Validator[IgnoreEmploymentExpensesRawData] with FixedConfig {
   private val validationSet = List(parameterFormatValidation, bodyFormatValidation, parameterRuleValidation)
 

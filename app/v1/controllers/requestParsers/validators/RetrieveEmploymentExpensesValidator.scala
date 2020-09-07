@@ -16,7 +16,7 @@
 
 package v1.controllers.requestParsers.validators
 
-import config.{AppConfig, FixedConfig}
+import config.FixedConfig
 import javax.inject.Inject
 import utils.{CurrentDateTime, CurrentTaxYear}
 import v1.controllers.requestParsers.validators.validations.{MtdTaxYearValidation, NinoValidation, SourceValidation, TaxYearValidation}
