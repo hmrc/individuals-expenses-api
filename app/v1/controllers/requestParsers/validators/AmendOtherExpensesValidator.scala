@@ -17,7 +17,7 @@
 package v1.controllers.requestParsers.validators
 
 import v1.controllers.requestParsers.validators.validations._
-import config.{AppConfig, FixedConfig}
+import config.AppConfig
 import javax.inject.Inject
 import utils.{CurrentDateTime, CurrentTaxYear}
 import v1.models.errors._
