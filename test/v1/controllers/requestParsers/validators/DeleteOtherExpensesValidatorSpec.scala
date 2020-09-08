@@ -42,12 +42,11 @@ class DeleteOtherExpensesValidatorSpec extends UnitSpec {
 
     val validator = new DeleteOtherExpensesValidator()
 
+    MockedAppConfig.otherExpensesMinimumTaxYear.returns(2020)
+
     MockCurrentDateTime.getCurrentDate
       .returns(DateTime.parse("2020-07-11", dateTimeFormatter))
       .anyNumberOfTimes()
-
-    MockedAppConfig.minimumPermittedTaxYear
-      .returns(2020)
 
     MockCurrentTaxYear.getCurrentTaxYear(date)
       .returns(2021)
