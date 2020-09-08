@@ -24,7 +24,7 @@ import v1.models.errors.MtdError
 import v1.models.request.deleteOtherExpenses.DeleteOtherExpensesRawData
 
 class DeleteOtherExpensesValidator @Inject()(implicit currentDateTime: CurrentDateTime, appConfig: AppConfig, currentTaxYear: CurrentTaxYear)
-  extends Validator[DeleteOtherExpensesRawData] with FixedConfig {
+  extends Validator[DeleteOtherExpensesRawData] {
 
   private val validationSet = List(parameterFormatValidation, parameterRuleValidation)
 

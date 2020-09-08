@@ -24,7 +24,7 @@ import v1.models.errors.MtdError
 import v1.models.request.retrieveOtherExpenses.RetrieveOtherExpensesRawData
 
 class RetrieveOtherExpensesValidator @Inject()(implicit currentDateTime: CurrentDateTime, appConfig: AppConfig, currentTaxYear: CurrentTaxYear)
-  extends Validator[RetrieveOtherExpensesRawData] with FixedConfig {
+  extends Validator[RetrieveOtherExpensesRawData] {
 
   private val validationSet = List(parameterFormatValidation, parameterRuleValidation)
 

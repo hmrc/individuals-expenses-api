@@ -24,7 +24,7 @@ import v1.models.errors._
 import v1.models.request.amendOtherExpenses._
 
 class AmendOtherExpensesValidator @Inject()(implicit currentDateTime: CurrentDateTime, appConfig: AppConfig, currentTaxYear: CurrentTaxYear)
-  extends Validator[AmendOtherExpensesRawData] with FixedConfig {
+  extends Validator[AmendOtherExpensesRawData] {
   private val validationSet = List(parameterFormatValidation, bodyFormatValidation, parameterRuleValidation, bodyFieldValidation)
 
   private def parameterFormatValidation: AmendOtherExpensesRawData => List[List[MtdError]] = (data: AmendOtherExpensesRawData) => {
