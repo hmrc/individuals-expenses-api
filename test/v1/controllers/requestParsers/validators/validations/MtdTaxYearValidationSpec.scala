@@ -103,7 +103,6 @@ class MtdTaxYearValidationSpec extends UnitSpec with JsonErrorValidators {
         private val invalidTaxYear = "2020-21"
         private val validationResult = MtdTaxYearValidation.validate(invalidTaxYear, appConfig.employmentExpensesMinimumTaxYear, true)
 
-        print(validationResult)
         validationResult.isEmpty shouldBe false
         validationResult.length shouldBe 1
         validationResult.head shouldBe RuleTaxYearNotEndedError
