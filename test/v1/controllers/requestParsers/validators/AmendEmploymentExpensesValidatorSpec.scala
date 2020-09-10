@@ -196,6 +196,8 @@ class AmendEmploymentExpensesValidatorSpec extends UnitSpec {
 
     val validator = new AmendEmploymentExpensesValidator()
 
+    MockedAppConfig.employmentExpensesMinimumTaxYear.returns(2020)
+
     MockCurrentDateTime.getCurrentDate
       .returns(DateTime.parse("2020-08-05", dateTimeFormatter))
       .anyNumberOfTimes()

@@ -30,7 +30,7 @@ class AmendOtherExpensesControllerISpec extends IntegrationBaseSpec {
   private trait Test {
 
     val nino: String = "AA123456A"
-    val taxYear: String = "2019-20"
+    val taxYear: String = "2021-22"
 
     val amount: BigDecimal = 5000.99
 
