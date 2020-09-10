@@ -17,8 +17,5 @@
 package v1.controllers.requestParsers.validators
 
 package object validations {
-
-  val minimumTaxYear = 2021
   val NoValidationErrors = List()
-
 }

@@ -29,7 +29,7 @@ import v1.models.request.deleteOtherExpenses.DeleteOtherExpensesRawData
 class DeleteOtherExpensesValidatorSpec extends UnitSpec {
 
   private val validNino = "AA123456A"
-  private val validTaxYear = "2019-20"
+  private val validTaxYear = "2021-22"
   private val date = DateTime.parse("2020-08-05")
 
   class Test extends MockCurrentDateTime with MockCurrentTaxYear with MockAppConfig {
@@ -42,7 +42,7 @@ class DeleteOtherExpensesValidatorSpec extends UnitSpec {
 
     val validator = new DeleteOtherExpensesValidator()
 
-    MockedAppConfig.otherExpensesMinimumTaxYear.returns(2020)
+    MockedAppConfig.otherExpensesMinimumTaxYear.returns(2022)
 
     MockCurrentDateTime.getCurrentDate
       .returns(DateTime.parse("2020-07-11", dateTimeFormatter))

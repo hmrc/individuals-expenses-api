@@ -16,15 +16,15 @@
 
 package v1.controllers.requestParsers.validators
 
-import config.FixedConfig
+import config.AppConfig
 import javax.inject.Inject
 import utils.{CurrentDateTime, CurrentTaxYear}
 import v1.controllers.requestParsers.validators.validations._
 import v1.models.errors._
 import v1.models.request.ignoreEmploymentExpenses._
 
-class IgnoreEmploymentExpensesValidator @Inject()(implicit currentDateTime: CurrentDateTime, currentTaxYear: CurrentTaxYear)
-  extends Validator[IgnoreEmploymentExpensesRawData] with FixedConfig {
+class IgnoreEmploymentExpensesValidator @Inject()(implicit currentDateTime: CurrentDateTime, appConfig: AppConfig, currentTaxYear: CurrentTaxYear)
+  extends Validator[IgnoreEmploymentExpensesRawData] {
   private val validationSet = List(parameterFormatValidation, bodyFormatValidation, parameterRuleValidation)
 
   private def parameterFormatValidation: IgnoreEmploymentExpensesRawData => List[List[MtdError]] = (data: IgnoreEmploymentExpensesRawData) => {
@@ -42,7 +42,7 @@ class IgnoreEmploymentExpensesValidator @Inject()(implicit currentDateTime: Curr
 
   private def parameterRuleValidation: IgnoreEmploymentExpensesRawData => List[List[MtdError]] = { data =>
     List(
-      MtdTaxYearValidation.validate(data.taxYear, employmentExpensesMinimumTaxYear, checkCurrentTaxYear = true)
+      MtdTaxYearValidation.validate(data.taxYear, appConfig.employmentExpensesMinimumTaxYear, checkCurrentTaxYear = true)
     )
   }
 

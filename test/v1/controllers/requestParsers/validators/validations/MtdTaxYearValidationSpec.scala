@@ -16,7 +16,7 @@
 
 package v1.controllers.requestParsers.validators.validations
 
-import config.{AppConfig, FixedConfig}
+import config.AppConfig
 import mocks.MockAppConfig
 import org.joda.time.DateTime
 import org.joda.time.format.{DateTimeFormat, DateTimeFormatter}
@@ -27,7 +27,7 @@ import v1.mocks.{MockCurrentDateTime, MockCurrentTaxYear}
 import v1.models.errors.{RuleTaxYearNotEndedError, RuleTaxYearNotSupportedError}
 import v1.models.utils.JsonErrorValidators
 
-class MtdTaxYearValidationSpec extends UnitSpec with JsonErrorValidators with FixedConfig {
+class MtdTaxYearValidationSpec extends UnitSpec with JsonErrorValidators {
 
   class Test extends MockCurrentDateTime with MockCurrentTaxYear with MockAppConfig {
     implicit val dateTimeProvider: CurrentDateTime = mockCurrentDateTime
@@ -37,7 +37,8 @@ class MtdTaxYearValidationSpec extends UnitSpec with JsonErrorValidators with Fi
     implicit val appConfig: AppConfig = mockAppConfig
     implicit val currentTaxYear: CurrentTaxYear = mockCurrentTaxYear
 
-    MockedAppConfig.otherExpensesMinimumTaxYear.returns(2020)
+    MockedAppConfig.otherExpensesMinimumTaxYear.returns(2022)
+    MockedAppConfig.employmentExpensesMinimumTaxYear.returns(2020)
 
     def setupTimeProvider(date: String): CallHandler[DateTime] =
       MockCurrentDateTime.getCurrentDate
@@ -54,7 +55,7 @@ class MtdTaxYearValidationSpec extends UnitSpec with JsonErrorValidators with Fi
         setupTimeProvider("2020-04-06")
 
         val validTaxYear = "2019-20"
-        val validationResult = MtdTaxYearValidation.validate(validTaxYear, employmentExpensesMinimumTaxYear)
+        val validationResult = MtdTaxYearValidation.validate(validTaxYear, appConfig.employmentExpensesMinimumTaxYear)
         validationResult.isEmpty shouldBe true
       }
       "the minimum allowed tax year for other expenses is supplied" in new Test {
@@ -70,7 +71,7 @@ class MtdTaxYearValidationSpec extends UnitSpec with JsonErrorValidators with Fi
         setupTimeProvider("2020-04-06")
 
         val validTaxYear = "2019-20"
-        val validationResult = MtdTaxYearValidation.validate(validTaxYear, employmentExpensesMinimumTaxYear, true)
+        val validationResult = MtdTaxYearValidation.validate(validTaxYear, appConfig.employmentExpensesMinimumTaxYear, true)
         validationResult.isEmpty shouldBe true
       }
       "the supplied tax year has not yet ended, with checkCurrentTaxYear set to false" in new Test {
@@ -78,7 +79,7 @@ class MtdTaxYearValidationSpec extends UnitSpec with JsonErrorValidators with Fi
         setupTimeProvider("2020-04-06")
 
         private val invalidTaxYear = "2019-20"
-        private val validationResult = MtdTaxYearValidation.validate(invalidTaxYear, employmentExpensesMinimumTaxYear,  false)
+        private val validationResult = MtdTaxYearValidation.validate(invalidTaxYear, appConfig.employmentExpensesMinimumTaxYear,  false)
 
         validationResult.isEmpty shouldBe true
       }
@@ -90,7 +91,7 @@ class MtdTaxYearValidationSpec extends UnitSpec with JsonErrorValidators with Fi
         setupTimeProvider("2020-04-06")
 
         val invalidTaxYear = "2015-16"
-        val validationResult = MtdTaxYearValidation.validate(invalidTaxYear, employmentExpensesMinimumTaxYear)
+        val validationResult = MtdTaxYearValidation.validate(invalidTaxYear, appConfig.employmentExpensesMinimumTaxYear)
         validationResult.isEmpty shouldBe false
         validationResult.length shouldBe 1
         validationResult.head shouldBe RuleTaxYearNotSupportedError
@@ -100,8 +101,9 @@ class MtdTaxYearValidationSpec extends UnitSpec with JsonErrorValidators with Fi
         setupTimeProvider("2020-04-06")
 
         private val invalidTaxYear = "2020-21"
-        private val validationResult = MtdTaxYearValidation.validate(invalidTaxYear, employmentExpensesMinimumTaxYear, true)
+        private val validationResult = MtdTaxYearValidation.validate(invalidTaxYear, appConfig.employmentExpensesMinimumTaxYear, true)
 
+        print(validationResult)
         validationResult.isEmpty shouldBe false
         validationResult.length shouldBe 1
         validationResult.head shouldBe RuleTaxYearNotEndedError
