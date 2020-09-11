@@ -27,7 +27,7 @@ import v1.models.audit.{AuditError, AuditEvent, AuditResponse, EmploymentExpense
 import v1.models.domain.MtdSource
 import v1.models.errors._
 import v1.models.hateoas.{HateoasWrapper, Link}
-import v1.models.hateoas.Method.GET
+import v1.models.hateoas.Method.{DELETE, GET, PUT}
 import v1.models.outcomes.ResponseWrapper
 import v1.models.request.retrieveEmploymentExpenses.{RetrieveEmploymentsExpensesRawData, RetrieveEmploymentsExpensesRequest}
 import v1.models.response.retrieveEmploymentExpenses.{Expenses, RetrieveEmploymentsExpensesHateoasData, RetrieveEmploymentsExpensesResponse}
@@ -70,21 +70,27 @@ class RetrieveEmploymentsExpensesControllerSpec
   private val rawData = RetrieveEmploymentsExpensesRawData(nino, taxYear, source.toString)
   private val requestData = RetrieveEmploymentsExpensesRequest(Nino(nino), taxYear, source)
 
-  private val testHateoasLink = Link(href = s"individuals/expenses/employment/$nino/$taxYear?source=$source", method = GET, rel = "self")
+  private val testHateoasLinks = Seq(
+    Link(href = s"/individuals/expenses/employments/$nino/$taxYear", method = PUT, rel = "amend-employment-expenses"),
+    Link(href = s"/individuals/expenses/employments/$nino/$taxYear", method = GET, rel = "self"),
+    Link(href = s"/individuals/expenses/employments/$nino/$taxYear", method = DELETE, rel = "delete-employment-expenses"),
+    Link(href = s"/individuals/expenses/employments/$nino/$taxYear/ignore", method = PUT, rel = "ignore-employment-expenses")
+  )
 
-  private val responseBody = RetrieveEmploymentsExpensesResponse(Some("2020-07-13T20:37:27Z"),
-    Some(1000.25),
+  private val responseBody = RetrieveEmploymentsExpensesResponse(Some("2020-12-12T12:12:12Z"),
+    Some(123.12),
     Some(MtdSource.`latest`),
     Some("2020-07-13T20:37:27Z"),
-    Some(Expenses(Some(1000.25),Some(1000.25),Some(1000.25),Some(1000.25),Some(1000.25),Some(1000.25),Some(1000.25),Some(1000.25)))
+    Some(Expenses(Some(123.12),Some(123.12),Some(123.12),Some(123.12),Some(123.12),Some(123.12),Some(123.12),Some(123.12)))
   )
 
   val latestResponseBody = Json.parse(
     s"""
        |{
        |		"submittedOn": "2020-12-12T12:12:12Z",
-       |		"source": "latest",
        |		"totalExpenses": 123.12,
+       |  	"source": "latest",
+       |    "dateIgnored": "2020-07-13T20:37:27Z",
        |		"expenses": {
        |			"businessTravelCosts": 123.12,
        |			"jobExpenses": 123.12,
@@ -148,7 +154,7 @@ class RetrieveEmploymentsExpensesControllerSpec
 
         MockHateoasFactory
           .wrap(responseBody, RetrieveEmploymentsExpensesHateoasData(nino, taxYear, source.toString))
-          .returns(HateoasWrapper(responseBody, Seq(testHateoasLink)))
+          .returns(HateoasWrapper(responseBody, testHateoasLinks))
 
         val result: Future[Result] = controller.handleRequest(nino, taxYear, source.toString)(fakeRequest)
         status(result) shouldBe OK

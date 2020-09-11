@@ -25,7 +25,7 @@ import v1.mocks.requestParsers.MockIgnoreEmploymentExpensesRequestParser
 import v1.mocks.services.{MockAuditService, MockEnrolmentsAuthService, MockIgnoreEmploymentExpensesService, MockMtdIdLookupService}
 import v1.models.audit.{AuditError, AuditEvent, AuditResponse, EmploymentExpensesAuditDetail}
 import v1.models.errors._
-import v1.models.hateoas.Method.GET
+import v1.models.hateoas.Method.{GET, PUT}
 import v1.models.hateoas.{HateoasWrapper, Link}
 import v1.models.outcomes.ResponseWrapper
 import v1.models.request.ignoreEmploymentExpenses._
@@ -47,7 +47,10 @@ class IgnoreEmploymentExpensesControllerSpec
   private val nino = "AA123456A"
   private val taxYear = "2019-20"
   private val correlationId = "X-123"
-  private val testHateoasLink = Link(href = s"individuals/expenses/employments/$nino/$taxYear/ignore", method = GET, rel = "self")
+  private val testHateoasLinks = Seq(
+    Link(href = s"/individuals/expenses/employments/$nino/$taxYear", method = GET, rel = "self"),
+    Link(href = s"/individuals/expenses/employments/$nino/$taxYear/ignore", method = PUT, rel = "ignore-employment-expenses")
+  )
   private val requestBody = IgnoreEmploymentExpensesBody(ignoreExpenses = true)
 
   private val requestBodyJson = Json.parse(
@@ -123,7 +126,7 @@ class IgnoreEmploymentExpensesControllerSpec
 
         MockHateoasFactory
           .wrap((), IgnoreEmploymentExpensesHateoasData(nino, taxYear))
-          .returns(HateoasWrapper((), Seq(testHateoasLink)))
+          .returns(HateoasWrapper((), testHateoasLinks))
 
         val result: Future[Result] = controller.handleRequest(nino, taxYear)(fakePostRequest(requestBodyJson))
         status(result) shouldBe OK
