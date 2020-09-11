@@ -23,8 +23,9 @@ import uk.gov.hmrc.http.HeaderCarrier
 import v1.mocks.hateoas.MockHateoasFactory
 import v1.mocks.requestParsers.MockRetrieveEmploymentsExpensesRequestParser
 import v1.mocks.services.{MockAuditService, MockEnrolmentsAuthService, MockMtdIdLookupService, MockRetrieveEmploymentsExpensesService}
+import v1.models.audit.{AuditError, AuditEvent, AuditResponse, EmploymentExpensesAuditDetail}
 import v1.models.domain.MtdSource
-import v1.models.errors.{BadRequestError, DownstreamError, ErrorWrapper, MtdError, NinoFormatError, NotFoundError, RuleTaxYearRangeInvalidError, SourceFormatError, TaxYearFormatError}
+import v1.models.errors._
 import v1.models.hateoas.{HateoasWrapper, Link}
 import v1.models.hateoas.Method.GET
 import v1.models.outcomes.ResponseWrapper
@@ -53,6 +54,7 @@ class RetrieveEmploymentsExpensesControllerSpec
       parser = mockRetrieveEmploymentsExpensesRequestParser,
       service = mockRetrieveEmploymentsExpensesService,
       hateoasFactory = mockHateoasFactory,
+      auditService = mockAuditService,
       cc = cc,
     )
 
@@ -77,6 +79,61 @@ class RetrieveEmploymentsExpensesControllerSpec
     Some(Expenses(Some(1000.25),Some(1000.25),Some(1000.25),Some(1000.25),Some(1000.25),Some(1000.25),Some(1000.25),Some(1000.25)))
   )
 
+  val latestResponseBody = Json.parse(
+    s"""
+       |{
+       |		"submittedOn": "2020-12-12T12:12:12Z",
+       |		"source": "latest",
+       |		"totalExpenses": 123.12,
+       |		"expenses": {
+       |			"businessTravelCosts": 123.12,
+       |			"jobExpenses": 123.12,
+       |			"flatRateJobExpenses": 123.12,
+       |			"professionalSubscriptions": 123.12,
+       |			"hotelAndMealExpenses": 123.12,
+       |			"otherAndCapitalAllowances": 123.12,
+       |			"vehicleExpenses": 123.12,
+       |			"mileageAllowanceRelief": 123.12
+       |		},
+       |		"links": [{
+       |				"href": "/individuals/expenses/employments/AA123456A/2019-20",
+       |				"method": "PUT",
+       |				"rel": "amend-employment-expenses"
+       |			},
+       |			{
+       |				"href": "/individuals/expenses/employments/AA123456A/2019-20",
+       |				"method": "GET",
+       |				"rel": "self"
+       |			},
+       |			{
+       |				"href": "/individuals/expenses/employments/AA123456A/2019-20",
+       |				"method": "DELETE",
+       |				"rel": "delete-employment-expenses"
+       |			},
+       |			{
+       |				"href": "/individuals/expenses/employments/AA123456A/2019-20/ignore",
+       |				"method": "PUT",
+       |				"rel": "ignore-employment-expenses"
+       |			}
+       |		]
+       |	}
+       |""".stripMargin
+  )
+
+  def event(auditResponse: AuditResponse): AuditEvent[EmploymentExpensesAuditDetail] =
+    AuditEvent(
+      auditType = "RetrieveEmploymentExpenses",
+      transactionName = "retrieve-employment-expenses",
+      detail = EmploymentExpensesAuditDetail(
+        userType = "Individual",
+        agentReferenceNumber = None,
+        params = Map("nino" -> nino, "taxYear" -> taxYear),
+        requestBody = None,
+        `X-CorrelationId` = correlationId,
+        auditResponse = auditResponse
+      )
+    )
+
   "handleRequest" should {
     "return Ok" when {
       "the request received is valid" in new Test {
@@ -96,6 +153,9 @@ class RetrieveEmploymentsExpensesControllerSpec
         val result: Future[Result] = controller.handleRequest(nino, taxYear, source.toString)(fakeRequest)
         status(result) shouldBe OK
         header("X-CorrelationId", result) shouldBe Some(correlationId)
+
+        val auditResponse: AuditResponse = AuditResponse(OK, None, Some(latestResponseBody))
+        MockedAuditService.verifyAuditEvent(event(auditResponse)).once
       }
     }
     "return the error as per spec" when {
@@ -112,6 +172,9 @@ class RetrieveEmploymentsExpensesControllerSpec
             status(result) shouldBe expectedStatus
             contentAsJson(result) shouldBe Json.toJson(error)
             header("X-CorrelationId", result) shouldBe Some(correlationId)
+
+            val auditResponse: AuditResponse = AuditResponse(expectedStatus, Some(Seq(AuditError(error.code))), None)
+            MockedAuditService.verifyAuditEvent(event(auditResponse)).once
           }
         }
 
@@ -143,6 +206,9 @@ class RetrieveEmploymentsExpensesControllerSpec
             status(result) shouldBe expectedStatus
             contentAsJson(result) shouldBe Json.toJson(mtdError)
             header("X-CorrelationId", result) shouldBe Some(correlationId)
+
+            val auditResponse: AuditResponse = AuditResponse(expectedStatus, Some(Seq(AuditError(mtdError.code))), None)
+            MockedAuditService.verifyAuditEvent(event(auditResponse)).once
           }
         }
 

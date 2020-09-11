@@ -23,6 +23,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import v1.mocks.hateoas.MockHateoasFactory
 import v1.mocks.requestParsers.MockDeleteEmploymentExpensesRequestParser
 import v1.mocks.services.{MockAuditService, MockDeleteEmploymentExpensesService, MockEnrolmentsAuthService, MockMtdIdLookupService}
+import v1.models.audit.{AuditEvent, AuditResponse, EmploymentExpensesAuditDetail}
 import v1.models.errors.{BadRequestError, DownstreamError, ErrorWrapper, MtdError, NinoFormatError, NotFoundError, RuleTaxYearNotSupportedError, RuleTaxYearRangeInvalidError, TaxYearFormatError}
 import v1.models.outcomes.ResponseWrapper
 import v1.models.request.deleteEmploymentExpenses.{DeleteEmploymentExpensesRawData, DeleteEmploymentExpensesRequest}
@@ -48,6 +49,7 @@ class DeleteEmploymentExpensesControllerSpec
       lookupService = mockMtdIdLookupService,
       parser = mockRequestDataParser,
       service = mockDeleteEmploymentExpensesService,
+      auditService = mockAuditService,
       cc = cc
     )
 
@@ -58,6 +60,20 @@ class DeleteEmploymentExpensesControllerSpec
   private val nino = "AA123456A"
   private val taxYear = "2019-20"
   private val correlationId = "X-123"
+
+  def event(auditResponse: AuditResponse): AuditEvent[EmploymentExpensesAuditDetail] =
+    AuditEvent(
+      auditType = "DeleteEmploymentExpenses",
+      transactionName = "delete-employment-expenses",
+      detail = EmploymentExpensesAuditDetail(
+        userType = "Individual",
+        agentReferenceNumber = None,
+        params = Map("nino" -> nino, "taxYear" -> taxYear),
+        requestBody = None,
+        `X-CorrelationId` = correlationId,
+        auditResponse = auditResponse
+      )
+    )
 
   private val rawData = DeleteEmploymentExpensesRawData(nino, taxYear)
   private val requestData = DeleteEmploymentExpensesRequest(Nino(nino), taxYear)
@@ -78,6 +94,9 @@ class DeleteEmploymentExpensesControllerSpec
 
         status(result) shouldBe NO_CONTENT
         header("X-CorrelationId", result) shouldBe Some(correlationId)
+
+        val auditResponse: AuditResponse = AuditResponse(NO_CONTENT, None, None)
+        MockedAuditService.verifyAuditEvent(event(auditResponse)).once
       }
     }
     "return the error as per spec" when {
