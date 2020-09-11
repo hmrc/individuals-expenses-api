@@ -16,16 +16,17 @@
 
 package v1.controllers
 
-import play.api.libs.json.Json
+import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Result
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
 import v1.mocks.hateoas.MockHateoasFactory
 import v1.mocks.requestParsers.MockAmendEmploymentExpensesRequestParser
 import v1.mocks.services.{MockAmendEmploymentExpensesService, MockAuditService, MockEnrolmentsAuthService, MockMtdIdLookupService}
+import v1.models.audit.{AuditError, AuditEvent, AuditResponse, EmploymentExpensesAuditDetail}
 import v1.models.errors._
 import v1.models.hateoas.{HateoasWrapper, Link}
-import v1.models.hateoas.Method.GET
+import v1.models.hateoas.Method.{DELETE, GET, PUT}
 import v1.models.outcomes.ResponseWrapper
 import v1.models.request.amendEmploymentExpenses._
 import v1.models.response.amendEmploymentExpenses.AmendEmploymentExpensesHateoasData
@@ -46,7 +47,11 @@ class AmendEmploymentExpensesControllerSpec
     private val nino = "AA123456A"
     private val taxYear = "2021-22"
     private val correlationId = "X-123"
-    private val testHateoasLink = Link(href = s"individuals/expenses/employments/$nino/$taxYear", method = GET, rel = "self")
+    private val testHateoasLinks = Seq(
+      Link(href = s"/individuals/expenses/employments/$nino/$taxYear", method = GET, rel = "self"),
+      Link(href = s"/individuals/expenses/employments/$nino/$taxYear", method = PUT, rel = "amend-employment-expenses"),
+      Link(href = s"/individuals/expenses/employments/$nino/$taxYear", method = DELETE, rel = "delete-employment-expenses")
+    )
     private val requestBody = AmendEmploymentExpensesBody(
       Expenses(
         Some(123.12),
@@ -76,6 +81,43 @@ class AmendEmploymentExpensesControllerSpec
         |}
         |""".stripMargin)
 
+  val responseBody = Json.parse(
+    s"""
+       |{
+       |  "links": [
+       |    {
+       |      "href": "/individuals/expenses/employments/$nino/$taxYear",
+       |      "method": "GET",
+       |      "rel": "self"
+       |    },
+       |    {
+       |      "href": "/individuals/expenses/employments/$nino/$taxYear",
+       |      "method": "PUT",
+       |      "rel": "amend-employment-expenses"
+       |    },
+       |    {
+       |      "href": "/individuals/expenses/employments/$nino/$taxYear",
+       |      "method": "DELETE",
+       |      "rel": "delete-employment-expenses"
+       |    }
+       |  ]
+       |}
+       |""".stripMargin)
+
+  def event(auditResponse: AuditResponse, requestBody: Option[JsValue]): AuditEvent[EmploymentExpensesAuditDetail] =
+    AuditEvent(
+      auditType = "AmendEmploymentExpenses",
+      transactionName = "amend-employment-expenses",
+      detail = EmploymentExpensesAuditDetail(
+        userType = "Individual",
+        agentReferenceNumber = None,
+        params = Map("nino" -> nino, "taxYear" -> taxYear),
+        requestBody = requestBody,
+        `X-CorrelationId` = correlationId,
+        auditResponse = auditResponse
+      )
+    )
+
     private val rawData = AmendEmploymentExpensesRawData(nino, taxYear, requestBodyJson)
     private val requestData = AmendEmploymentExpensesRequest(Nino(nino), taxYear , requestBody)
 
@@ -87,6 +129,7 @@ class AmendEmploymentExpensesControllerSpec
         lookupService = mockMtdIdLookupService,
         parser = mockRequestParser,
         service = mockService,
+        auditService = mockAuditService,
         hateoasFactory = mockHateoasFactory,
         cc = cc,
       )
@@ -109,11 +152,14 @@ class AmendEmploymentExpensesControllerSpec
 
           MockHateoasFactory
             .wrap((), AmendEmploymentExpensesHateoasData(nino, taxYear))
-            .returns(HateoasWrapper((), Seq(testHateoasLink)))
+            .returns(HateoasWrapper((), testHateoasLinks))
 
           val result: Future[Result] = controller.handleRequest(nino, taxYear)(fakePostRequest(requestBodyJson))
           status(result) shouldBe OK
           header("X-CorrelationId", result) shouldBe Some(correlationId)
+
+          val auditResponse: AuditResponse = AuditResponse(OK, None, Some(responseBody))
+          MockedAuditService.verifyAuditEvent(event(auditResponse, Some(requestBodyJson))).once
         }
       }
       "return the error as per spec" when {
@@ -130,6 +176,9 @@ class AmendEmploymentExpensesControllerSpec
               status(result) shouldBe expectedStatus
               contentAsJson(result) shouldBe Json.toJson(error)
               header("X-CorrelationId", result) shouldBe Some(correlationId)
+
+              val auditResponse: AuditResponse = AuditResponse(expectedStatus, Some(Seq(AuditError(error.code))), None)
+              MockedAuditService.verifyAuditEvent(event(auditResponse, Some(requestBodyJson))).once
             }
           }
 
@@ -164,6 +213,9 @@ class AmendEmploymentExpensesControllerSpec
               status(result) shouldBe expectedStatus
               contentAsJson(result) shouldBe Json.toJson(mtdError)
               header("X-CorrelationId", result) shouldBe Some(correlationId)
+
+              val auditResponse: AuditResponse = AuditResponse(expectedStatus, Some(Seq(AuditError(mtdError.code))), None)
+              MockedAuditService.verifyAuditEvent(event(auditResponse, Some(requestBodyJson))).once
             }
           }
 
