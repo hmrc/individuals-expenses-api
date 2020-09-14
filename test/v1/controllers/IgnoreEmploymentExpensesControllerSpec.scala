@@ -23,7 +23,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import v1.mocks.hateoas.MockHateoasFactory
 import v1.mocks.requestParsers.MockIgnoreEmploymentExpensesRequestParser
 import v1.mocks.services.{MockAuditService, MockEnrolmentsAuthService, MockIgnoreEmploymentExpensesService, MockMtdIdLookupService}
-import v1.models.audit.{AuditError, AuditEvent, AuditResponse, EmploymentExpensesAuditDetail}
+import v1.models.audit.{AuditError, AuditEvent, AuditResponse, ExpensesAuditDetail}
 import v1.models.errors._
 import v1.models.hateoas.Method.{GET, PUT}
 import v1.models.hateoas.{HateoasWrapper, Link}
@@ -78,11 +78,11 @@ class IgnoreEmploymentExpensesControllerSpec
        |}
        |""".stripMargin)
 
-  def event(auditResponse: AuditResponse, requestBody: Option[JsValue]): AuditEvent[EmploymentExpensesAuditDetail] =
+  def event(auditResponse: AuditResponse, requestBody: Option[JsValue]): AuditEvent[ExpensesAuditDetail] =
     AuditEvent(
       auditType = "IgnoreEmploymentExpenses",
       transactionName = "ignore-employment-expenses",
-      detail = EmploymentExpensesAuditDetail(
+      detail = ExpensesAuditDetail(
         userType = "Individual",
         agentReferenceNumber = None,
         params = Map("nino" -> nino, "taxYear" -> taxYear),

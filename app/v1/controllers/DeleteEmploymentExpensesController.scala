@@ -25,7 +25,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.http.connector.AuditResult
 import utils.Logging
 import v1.controllers.requestParsers.DeleteEmploymentExpensesRequestParser
-import v1.models.audit.{AuditEvent, AuditResponse, EmploymentExpensesAuditDetail}
+import v1.models.audit.{AuditEvent, AuditResponse, ExpensesAuditDetail}
 import v1.models.errors._
 import v1.models.request.deleteEmploymentExpenses.DeleteEmploymentExpensesRawData
 import v1.services.{AuditService, DeleteEmploymentExpensesService, EnrolmentsAuthService, MtdIdLookupService}
@@ -57,7 +57,7 @@ class DeleteEmploymentExpensesController @Inject()(val authService: EnrolmentsAu
               s"Success response received with CorrelationId: ${serviceResponse.correlationId}")
 
           auditSubmission(
-            EmploymentExpensesAuditDetail(
+            ExpensesAuditDetail(
               userDetails = request.userDetails,
               params = Map("nino" -> nino, "taxYear" -> taxYear),
               requestBody = None,
@@ -73,7 +73,7 @@ class DeleteEmploymentExpensesController @Inject()(val authService: EnrolmentsAu
         val result = errorResult(errorWrapper).withApiHeaders(correlationId)
 
         auditSubmission(
-          EmploymentExpensesAuditDetail(
+          ExpensesAuditDetail(
             userDetails = request.userDetails,
             params = Map("nino" -> nino, "taxYear" -> taxYear),
             requestBody = None,
@@ -95,7 +95,7 @@ class DeleteEmploymentExpensesController @Inject()(val authService: EnrolmentsAu
     }
   }
 
-  private def auditSubmission(details: EmploymentExpensesAuditDetail)
+  private def auditSubmission(details: ExpensesAuditDetail)
                              (implicit hc: HeaderCarrier,
                               ec: ExecutionContext): Future[AuditResult] = {
 

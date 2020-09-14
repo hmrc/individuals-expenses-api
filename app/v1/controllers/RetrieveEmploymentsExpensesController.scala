@@ -26,7 +26,7 @@ import uk.gov.hmrc.play.audit.http.connector.AuditResult
 import utils.Logging
 import v1.controllers.requestParsers.RetrieveEmploymentsExpensesRequestParser
 import v1.hateoas.HateoasFactory
-import v1.models.audit.{AuditEvent, AuditResponse, EmploymentExpensesAuditDetail}
+import v1.models.audit.{AuditEvent, AuditResponse, ExpensesAuditDetail}
 import v1.models.errors._
 import v1.models.request.retrieveEmploymentExpenses.RetrieveEmploymentsExpensesRawData
 import v1.models.response.retrieveEmploymentExpenses.RetrieveEmploymentsExpensesHateoasData
@@ -62,7 +62,7 @@ class RetrieveEmploymentsExpensesController @Inject()(val authService: Enrolment
               s"Success response received with CorrelationId: ${serviceResponse.correlationId}")
 
           auditSubmission(
-            EmploymentExpensesAuditDetail(
+            ExpensesAuditDetail(
               userDetails = request.userDetails,
               params = Map("nino" -> nino, "taxYear" -> taxYear),
               requestBody = None,
@@ -80,7 +80,7 @@ class RetrieveEmploymentsExpensesController @Inject()(val authService: Enrolment
         val result = errorResult(errorWrapper).withApiHeaders(correlationId)
 
         auditSubmission(
-          EmploymentExpensesAuditDetail(
+          ExpensesAuditDetail(
             userDetails = request.userDetails,
             params = Map("nino" -> nino, "taxYear" -> taxYear),
             requestBody = None,
@@ -106,7 +106,7 @@ class RetrieveEmploymentsExpensesController @Inject()(val authService: Enrolment
     }
   }
 
-  private def auditSubmission(details: EmploymentExpensesAuditDetail)
+  private def auditSubmission(details: ExpensesAuditDetail)
                              (implicit hc: HeaderCarrier,
                               ec: ExecutionContext): Future[AuditResult] = {
 

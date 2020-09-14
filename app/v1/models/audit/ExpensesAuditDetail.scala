@@ -20,31 +20,31 @@ import play.api.libs.functional.syntax._
 import play.api.libs.json.{JsPath, JsValue, OWrites}
 import v1.models.auth.UserDetails
 
-case class EmploymentExpensesAuditDetail(userType: String,
-                                         agentReferenceNumber: Option[String],
-                                         params: Map[String, String],
-                                         requestBody: Option[JsValue],
-                                         `X-CorrelationId`: String,
-                                         auditResponse: AuditResponse)
+case class ExpensesAuditDetail(userType: String,
+                               agentReferenceNumber: Option[String],
+                               params: Map[String, String],
+                               requestBody: Option[JsValue],
+                               `X-CorrelationId`: String,
+                               auditResponse: AuditResponse)
 
-object EmploymentExpensesAuditDetail {
+object ExpensesAuditDetail {
 
-  implicit val writes: OWrites[EmploymentExpensesAuditDetail] = (
+  implicit val writes: OWrites[ExpensesAuditDetail] = (
     (JsPath \ "userType").write[String] and
       (JsPath \ "agentReferenceNumber").writeNullable[String] and
       JsPath.write[Map[String, String]] and
       (JsPath \ "request").writeNullable[JsValue] and
       (JsPath \ "X-CorrelationId").write[String] and
       (JsPath \ "response").write[AuditResponse]
-    ) (unlift(EmploymentExpensesAuditDetail.unapply))
+    ) (unlift(ExpensesAuditDetail.unapply))
 
   def apply(userDetails: UserDetails,
             params: Map[String, String],
             requestBody: Option[JsValue],
             `X-CorrelationId`: String,
-            auditResponse: AuditResponse): EmploymentExpensesAuditDetail = {
+            auditResponse: AuditResponse): ExpensesAuditDetail = {
 
-    EmploymentExpensesAuditDetail(
+    ExpensesAuditDetail(
       userType = userDetails.userType,
       agentReferenceNumber = userDetails.agentReferenceNumber,
       params = params,
