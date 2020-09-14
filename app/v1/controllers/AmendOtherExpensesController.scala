@@ -115,7 +115,7 @@ class AmendOtherExpensesController @Inject()(val authService: EnrolmentsAuthServ
 
     val event = AuditEvent(
       auditType = "CreateAmendOtherExpenses",
-      transactionName = "create-amend-expenses-other",
+      transactionName = "create-amend-other-expenses",
       detail = details
     )
 
