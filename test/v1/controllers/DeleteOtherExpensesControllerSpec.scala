@@ -64,7 +64,7 @@ class DeleteOtherExpensesControllerSpec
   def event(auditResponse: AuditResponse): AuditEvent[ExpensesAuditDetail] =
     AuditEvent(
       auditType = "DeleteOtherExpenses",
-      transactionName = "delete-expenses-other",
+      transactionName = "delete-other-expenses",
       detail = ExpensesAuditDetail(
         userType = "Individual",
         agentReferenceNumber = None,

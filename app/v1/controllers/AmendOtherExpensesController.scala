@@ -114,8 +114,8 @@ class AmendOtherExpensesController @Inject()(val authService: EnrolmentsAuthServ
                               ec: ExecutionContext): Future[AuditResult] = {
 
     val event = AuditEvent(
-      auditType = "AmendOtherExpenses",
-      transactionName = "amend-expenses-other",
+      auditType = "CreateAmendOtherExpenses",
+      transactionName = "create-amend-expenses-other",
       detail = details
     )
 

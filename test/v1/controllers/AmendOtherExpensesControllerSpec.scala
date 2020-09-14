@@ -116,8 +116,8 @@ class AmendOtherExpensesControllerSpec
 
   def event(auditResponse: AuditResponse, requestBody: Option[JsValue]): AuditEvent[ExpensesAuditDetail] =
     AuditEvent(
-      auditType = "AmendOtherExpenses",
-      transactionName = "amend-expenses-other",
+      auditType = "CreateAmendOtherExpenses",
+      transactionName = "create-amend-expenses-other",
       detail = ExpensesAuditDetail(
         userType = "Individual",
         agentReferenceNumber = None,

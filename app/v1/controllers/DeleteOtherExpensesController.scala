@@ -104,7 +104,7 @@ class DeleteOtherExpensesController @Inject()(val authService: EnrolmentsAuthSer
 
     val event = AuditEvent(
       auditType = "DeleteOtherExpenses",
-      transactionName = "delete-expenses-other",
+      transactionName = "delete-other-expenses",
       detail = details
     )
 

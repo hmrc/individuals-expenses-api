@@ -23,10 +23,9 @@ import uk.gov.hmrc.http.HeaderCarrier
 import v1.mocks.hateoas.MockHateoasFactory
 import v1.mocks.requestParsers.MockRetrieveOtherExpensesRequestParser
 import v1.mocks.services.{MockAuditService, MockEnrolmentsAuthService, MockMtdIdLookupService, MockRetrieveOtherExpensesService}
-import v1.models.audit.{AuditError, AuditEvent, AuditResponse, ExpensesAuditDetail}
 import v1.models.errors.{BadRequestError, DownstreamError, ErrorWrapper, MtdError, NinoFormatError, NotFoundError, RuleTaxYearNotSupportedError, RuleTaxYearRangeInvalidError, TaxYearFormatError}
 import v1.models.hateoas.{HateoasWrapper, Link}
-import v1.models.hateoas.Method.{DELETE, GET, PUT}
+import v1.models.hateoas.Method.GET
 import v1.models.outcomes.ResponseWrapper
 import v1.models.response.retrieveOtherExpenses.{PatentRoyaltiesPayments, PaymentsToTradeUnionsForDeathBenefits, RetrieveOtherExpensesBody, RetrieveOtherExpensesHateoasData}
 import v1.models.request.retrieveOtherExpenses.{RetrieveOtherExpensesRawData, RetrieveOtherExpensesRequest}
@@ -52,7 +51,6 @@ class RetrieveOtherExpensesControllerSpec
       parser = mockRetrieveOtherExpensesRequestParser,
       service = mockRetrieveOtherExpensesService,
       hateoasFactory = mockHateoasFactory,
-      auditService = mockAuditService,
       cc = cc,
     )
 
@@ -67,64 +65,13 @@ class RetrieveOtherExpensesControllerSpec
   private val rawData = RetrieveOtherExpensesRawData(nino, taxYear)
   private val requestData = RetrieveOtherExpensesRequest(Nino(nino), taxYear)
 
-  private val testHateoasLinks = Seq(
-    Link(href = s"/individuals/expenses/other/$nino/$taxYear", method = PUT, rel = "amend-expenses-other"),
-    Link(href = s"/individuals/expenses/other/$nino/$taxYear", method = GET, rel = "self"),
-    Link(href = s"/individuals/expenses/other/$nino/$taxYear", method = DELETE, rel = "delete-expenses-other")
-  )
+  private val testHateoasLink = Link(href = s"individuals/expenses/other/$nino/$taxYear", method = GET, rel = "self")
 
   private val responseBody = RetrieveOtherExpensesBody(
     "2019-04-04T01:01:01Z",
     Some(PaymentsToTradeUnionsForDeathBenefits(Some("TRADE UNION PAYMENTS"), 4528.99)),
     Some(PatentRoyaltiesPayments(Some("ROYALTIES PAYMENTS"), 2000.10))
   )
-
-  val responseBodyJson = Json.parse(
-    s"""
-       |{
-       |  "submittedOn": "2019-04-04T01:01:01Z",
-       |  "paymentsToTradeUnionsForDeathBenefits": {
-       |    "customerReference": "TRADE UNION PAYMENTS",
-       |    "expenseAmount": 4528.99
-       |  },
-       |  "patentRoyaltiesPayments": {
-       |    "customerReference": "ROYALTIES PAYMENTS",
-       |    "expenseAmount": 2000.10
-       |  },
-       |  "links":[
-       |      {
-       |         "href":"/individuals/expenses/other/$nino/$taxYear",
-       |         "method":"PUT",
-       |         "rel":"amend-expenses-other"
-       |      },
-       |      {
-       |         "href":"/individuals/expenses/other/$nino/$taxYear",
-       |         "method":"GET",
-       |         "rel":"self"
-       |      },
-       |      {
-       |         "href":"/individuals/expenses/other/$nino/$taxYear",
-       |         "method":"DELETE",
-       |         "rel":"delete-expenses-other"
-       |      }
-       |   ]
-       |}
-       |""".stripMargin
-  )
-
-  def event(auditResponse: AuditResponse): AuditEvent[ExpensesAuditDetail] =
-    AuditEvent(
-      auditType = "RetrieveOtherExpenses",
-      transactionName = "retrieve-expenses-other",
-      detail = ExpensesAuditDetail(
-        userType = "Individual",
-        agentReferenceNumber = None,
-        params = Map("nino" -> nino, "taxYear" -> taxYear),
-        requestBody = None,
-        `X-CorrelationId` = correlationId,
-        auditResponse = auditResponse
-      )
-    )
 
   "handleRequest" should {
     "return Ok" when {
@@ -140,14 +87,11 @@ class RetrieveOtherExpensesControllerSpec
 
         MockHateoasFactory
           .wrap(responseBody, RetrieveOtherExpensesHateoasData(nino, taxYear))
-          .returns(HateoasWrapper(responseBody, testHateoasLinks))
+          .returns(HateoasWrapper(responseBody, Seq(testHateoasLink)))
 
         val result: Future[Result] = controller.handleRequest(nino, taxYear)(fakeRequest)
         status(result) shouldBe OK
         header("X-CorrelationId", result) shouldBe Some(correlationId)
-
-        val auditResponse: AuditResponse = AuditResponse(OK, None, Some(responseBodyJson))
-        MockedAuditService.verifyAuditEvent(event(auditResponse)).once
       }
     }
     "return the error as per spec" when {
@@ -164,9 +108,6 @@ class RetrieveOtherExpensesControllerSpec
             status(result) shouldBe expectedStatus
             contentAsJson(result) shouldBe Json.toJson(error)
             header("X-CorrelationId", result) shouldBe Some(correlationId)
-
-            val auditResponse: AuditResponse = AuditResponse(expectedStatus, Some(Seq(AuditError(error.code))), None)
-            MockedAuditService.verifyAuditEvent(event(auditResponse)).once
           }
         }
 
@@ -198,9 +139,6 @@ class RetrieveOtherExpensesControllerSpec
             status(result) shouldBe expectedStatus
             contentAsJson(result) shouldBe Json.toJson(mtdError)
             header("X-CorrelationId", result) shouldBe Some(correlationId)
-
-            val auditResponse: AuditResponse = AuditResponse(expectedStatus, Some(Seq(AuditError(mtdError.code))), None)
-            MockedAuditService.verifyAuditEvent(event(auditResponse)).once
           }
         }
 
