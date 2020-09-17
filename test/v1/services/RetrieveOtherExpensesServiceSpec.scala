@@ -35,7 +35,7 @@ class RetrieveOtherExpensesServiceSpec extends UnitSpec {
   val nino = Nino("AA123456A")
   private val correlationId = "X-123"
 
-  val body = RetrieveOtherExpensesBody(
+  val body = RetrieveOtherExpensesResponse(
     "2019-04-04T01:01:01Z",
     Some(PaymentsToTradeUnionsForDeathBenefits(Some("TRADE UNION PAYMENTS"), 76543.32)),
     Some(PatentRoyaltiesPayments(Some("ROYALTIES PAYMENTS"), 5423.65))

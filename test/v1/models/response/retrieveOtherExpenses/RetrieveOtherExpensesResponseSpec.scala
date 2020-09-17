@@ -22,19 +22,19 @@ import support.UnitSpec
 import v1.models.hateoas.Link
 import v1.models.hateoas.Method.{DELETE, GET, PUT}
 
-class RetrieveOtherExpensesBodySpec extends UnitSpec with MockAppConfig {
+class RetrieveOtherExpensesResponseSpec extends UnitSpec with MockAppConfig {
 
-  val retrieveOtherExpensesBody = RetrieveOtherExpensesBody(
+  val retrieveOtherExpensesBody = RetrieveOtherExpensesResponse(
     "2019-04-04T01:01:01Z",
     Some(PaymentsToTradeUnionsForDeathBenefits(Some("TRADE UNION PAYMENTS"), 2314.32)),
     Some(PatentRoyaltiesPayments(Some("ROYALTIES PAYMENTS"), 2314.32))
   )
-  val retrieveOtherExpensesBodyWithoutPatents = RetrieveOtherExpensesBody(
+  val retrieveOtherExpensesBodyWithoutPatents = RetrieveOtherExpensesResponse(
     "2019-04-04T01:01:01Z",
     Some(PaymentsToTradeUnionsForDeathBenefits(Some("TRADE UNION PAYMENTS"), 2314.32)),
     None
   )
-  val retrieveOtherExpensesBodyWithoutPayments = RetrieveOtherExpensesBody(
+  val retrieveOtherExpensesBodyWithoutPayments = RetrieveOtherExpensesResponse(
     "2019-04-04T01:01:01Z",
     None,
     Some(PatentRoyaltiesPayments(Some("ROYALTIES PAYMENTS"), 2314.32))
@@ -78,17 +78,17 @@ class RetrieveOtherExpensesBodySpec extends UnitSpec with MockAppConfig {
   "reads" when {
     "passed valid JSON" should {
       "return a valid model" in {
-        retrieveOtherExpensesBody shouldBe json.as[RetrieveOtherExpensesBody]
+        retrieveOtherExpensesBody shouldBe json.as[RetrieveOtherExpensesResponse]
       }
     }
     "passed empty JSON with missing Patents" should {
       "convert JSON into an empty AmendOtherExpensesBody object" in {
-        retrieveOtherExpensesBodyWithoutPatents shouldBe patentsMissingJson.as[RetrieveOtherExpensesBody]
+        retrieveOtherExpensesBodyWithoutPatents shouldBe patentsMissingJson.as[RetrieveOtherExpensesResponse]
       }
     }
     "passed empty JSON with missing Payments" should {
       "convert JSON into an empty AmendOtherExpensesBody object" in {
-        retrieveOtherExpensesBodyWithoutPayments shouldBe paymentsMissingJson.as[RetrieveOtherExpensesBody]
+        retrieveOtherExpensesBodyWithoutPayments shouldBe paymentsMissingJson.as[RetrieveOtherExpensesResponse]
       }
     }
   }
@@ -116,7 +116,7 @@ class RetrieveOtherExpensesBodySpec extends UnitSpec with MockAppConfig {
       val taxYear = "mytaxyear"
 
       MockedAppConfig.apiGatewayContext.returns("my/context").anyNumberOfTimes
-      RetrieveOtherExpensesBody.RetrieveOtherExpensesLinksFactory.links(mockAppConfig, RetrieveOtherExpensesHateoasData(nino, taxYear)) shouldBe
+      RetrieveOtherExpensesResponse.RetrieveOtherExpensesLinksFactory.links(mockAppConfig, RetrieveOtherExpensesHateoasData(nino, taxYear)) shouldBe
         Seq(
           Link(s"/my/context/other/$nino/$taxYear", PUT, "amend-expenses-other"),
           Link(s"/my/context/other/$nino/$taxYear", GET, "self"),

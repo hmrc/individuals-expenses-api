@@ -23,7 +23,7 @@ import v1.controllers.EndpointLogContext
 import v1.models.errors.ErrorWrapper
 import v1.models.outcomes.ResponseWrapper
 import v1.models.request.retrieveOtherExpenses.RetrieveOtherExpensesRequest
-import v1.models.response.retrieveOtherExpenses.RetrieveOtherExpensesBody
+import v1.models.response.retrieveOtherExpenses.RetrieveOtherExpensesResponse
 import v1.services.RetrieveOtherExpensesService
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -34,7 +34,7 @@ trait MockRetrieveOtherExpensesService extends MockFactory {
 
   object MockRetrieveOtherExpensesService {
 
-    def retrieveOtherExpenses(requestData: RetrieveOtherExpensesRequest): CallHandler[Future[Either[ErrorWrapper, ResponseWrapper[RetrieveOtherExpensesBody]]]] = {
+    def retrieveOtherExpenses(requestData: RetrieveOtherExpensesRequest): CallHandler[Future[Either[ErrorWrapper, ResponseWrapper[RetrieveOtherExpensesResponse]]]] = {
       (mockRetrieveOtherExpensesService
         .retrieveOtherExpenses(_: RetrieveOtherExpensesRequest)(_: HeaderCarrier, _: ExecutionContext, _: EndpointLogContext))
         .expects(requestData, *, *, *)

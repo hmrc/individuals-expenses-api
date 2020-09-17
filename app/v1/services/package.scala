@@ -19,7 +19,7 @@ package v1
 import v1.models.errors.ErrorWrapper
 import v1.models.outcomes.ResponseWrapper
 import v1.models.response.retrieveEmploymentExpenses.RetrieveEmploymentsExpensesResponse
-import v1.models.response.retrieveOtherExpenses.RetrieveOtherExpensesBody
+import v1.models.response.retrieveOtherExpenses.RetrieveOtherExpensesResponse
 
 package object services {
 
@@ -27,7 +27,7 @@ package object services {
 
   type AmendOtherExpensesServiceOutcome = ServiceOutcome[Unit]
 
-  type RetrieveOtherExpensesServiceOutcome = ServiceOutcome[RetrieveOtherExpensesBody]
+  type RetrieveOtherExpensesServiceOutcome = ServiceOutcome[RetrieveOtherExpensesResponse]
 
   type RetrieveEmploymentExpensesServiceOutcome = ServiceOutcome[RetrieveEmploymentsExpensesResponse]
 
