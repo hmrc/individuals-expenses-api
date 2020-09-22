@@ -27,7 +27,7 @@ import v1.models.errors.{BadRequestError, DownstreamError, ErrorWrapper, MtdErro
 import v1.models.hateoas.{HateoasWrapper, Link}
 import v1.models.hateoas.Method.GET
 import v1.models.outcomes.ResponseWrapper
-import v1.models.response.retrieveOtherExpenses.{PatentRoyaltiesPayments, PaymentsToTradeUnionsForDeathBenefits, RetrieveOtherExpensesBody, RetrieveOtherExpensesHateoasData}
+import v1.models.response.retrieveOtherExpenses.{PatentRoyaltiesPayments, PaymentsToTradeUnionsForDeathBenefits, RetrieveOtherExpensesResponse, RetrieveOtherExpensesHateoasData}
 import v1.models.request.retrieveOtherExpenses.{RetrieveOtherExpensesRawData, RetrieveOtherExpensesRequest}
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -67,7 +67,7 @@ class RetrieveOtherExpensesControllerSpec
 
   private val testHateoasLink = Link(href = s"individuals/expenses/other/$nino/$taxYear", method = GET, rel = "self")
 
-  private val responseBody = RetrieveOtherExpensesBody(
+  private val responseBody = RetrieveOtherExpensesResponse(
     "2019-04-04T01:01:01Z",
     Some(PaymentsToTradeUnionsForDeathBenefits(Some("TRADE UNION PAYMENTS"), 4528.99)),
     Some(PatentRoyaltiesPayments(Some("ROYALTIES PAYMENTS"), 2000.10))

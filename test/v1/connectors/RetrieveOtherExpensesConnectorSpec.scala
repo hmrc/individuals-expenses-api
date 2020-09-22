@@ -21,7 +21,7 @@ import uk.gov.hmrc.domain.Nino
 import v1.mocks.MockHttpClient
 import v1.models.outcomes.ResponseWrapper
 import v1.models.request.retrieveOtherExpenses.RetrieveOtherExpensesRequest
-import v1.models.response.retrieveOtherExpenses.{PatentRoyaltiesPayments, PaymentsToTradeUnionsForDeathBenefits, RetrieveOtherExpensesBody}
+import v1.models.response.retrieveOtherExpenses.{PatentRoyaltiesPayments, PaymentsToTradeUnionsForDeathBenefits, RetrieveOtherExpensesResponse}
 
 import scala.concurrent.Future
 
@@ -42,7 +42,7 @@ class RetrieveOtherExpensesConnectorSpec extends ConnectorSpec {
     val request = RetrieveOtherExpensesRequest(nino, taxYear)
     "return a result" when {
       "the downstream call is successful" in new Test {
-        val outcome = Right(ResponseWrapper(correlationId, RetrieveOtherExpensesBody(
+        val outcome = Right(ResponseWrapper(correlationId, RetrieveOtherExpensesResponse(
           "2019-04-04T01:01:01Z",
           Some(PaymentsToTradeUnionsForDeathBenefits(Some("TRADE UNION PAYMENTS"), 5433.54)),
           Some(PatentRoyaltiesPayments(Some("ROYALTIES PAYMENTS"), 98765.12))
