@@ -105,7 +105,6 @@ class AmendOtherExpensesController @Inject()(val authService: EnrolmentsAuthServ
            RuleIncorrectOrEmptyBodyError |
            MtdErrorWithCustomMessage(ValueFormatError.code )=> BadRequest(Json.toJson(errorWrapper))
       case DownstreamError => InternalServerError(Json.toJson(errorWrapper))
-      case NotFoundError => NotFound(Json.toJson(errorWrapper))
     }
   }
 
