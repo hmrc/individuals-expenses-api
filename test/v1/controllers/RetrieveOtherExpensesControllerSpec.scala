@@ -20,27 +20,29 @@ import play.api.libs.json.Json
 import play.api.mvc.Result
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
+import v1.mocks.MockIdGenerator
 import v1.mocks.hateoas.MockHateoasFactory
 import v1.mocks.requestParsers.MockRetrieveOtherExpensesRequestParser
 import v1.mocks.services.{MockAuditService, MockEnrolmentsAuthService, MockMtdIdLookupService, MockRetrieveOtherExpensesService}
-import v1.models.errors.{BadRequestError, DownstreamError, ErrorWrapper, MtdError, NinoFormatError, NotFoundError, RuleTaxYearNotSupportedError, RuleTaxYearRangeInvalidError, TaxYearFormatError}
-import v1.models.hateoas.{HateoasWrapper, Link}
+import v1.models.errors._
 import v1.models.hateoas.Method.GET
+import v1.models.hateoas.{HateoasWrapper, Link}
 import v1.models.outcomes.ResponseWrapper
-import v1.models.response.retrieveOtherExpenses.{PatentRoyaltiesPayments, PaymentsToTradeUnionsForDeathBenefits, RetrieveOtherExpensesResponse, RetrieveOtherExpensesHateoasData}
 import v1.models.request.retrieveOtherExpenses.{RetrieveOtherExpensesRawData, RetrieveOtherExpensesRequest}
+import v1.models.response.retrieveOtherExpenses._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class RetrieveOtherExpensesControllerSpec
   extends ControllerBaseSpec
-  with MockEnrolmentsAuthService
-  with MockMtdIdLookupService
-  with MockRetrieveOtherExpensesService
-  with MockRetrieveOtherExpensesRequestParser
-  with MockHateoasFactory
-  with MockAuditService {
+    with MockEnrolmentsAuthService
+    with MockMtdIdLookupService
+    with MockRetrieveOtherExpensesService
+    with MockRetrieveOtherExpensesRequestParser
+    with MockHateoasFactory
+    with MockAuditService
+    with MockIdGenerator {
 
   trait Test {
     val hc = HeaderCarrier()
@@ -52,6 +54,7 @@ class RetrieveOtherExpensesControllerSpec
       service = mockRetrieveOtherExpensesService,
       hateoasFactory = mockHateoasFactory,
       cc = cc,
+      idGenerator = mockIdGenerator
     )
 
     MockedMtdIdLookupService.lookup(nino).returns(Future.successful(Right("test-mtd-id")))

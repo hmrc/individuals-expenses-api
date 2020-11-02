@@ -21,7 +21,7 @@ import cats.implicits._
 import javax.inject.{Inject, Singleton}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
-import utils.Logging
+import utils.{IdGenerator, Logging}
 import v1.controllers.requestParsers.RetrieveOtherExpensesRequestParser
 import v1.hateoas.HateoasFactory
 import v1.models.errors._
@@ -37,7 +37,8 @@ class RetrieveOtherExpensesController @Inject()(val authService: EnrolmentsAuthS
                                                 parser: RetrieveOtherExpensesRequestParser,
                                                 service: RetrieveOtherExpensesService,
                                                 hateoasFactory: HateoasFactory,
-                                                cc: ControllerComponents)(implicit ec: ExecutionContext)
+                                                cc: ControllerComponents,
+                                                val idGenerator: IdGenerator)(implicit ec: ExecutionContext)
   extends AuthorisedController(cc) with BaseController with Logging {
 
   implicit val endpointLogContext: EndpointLogContext =

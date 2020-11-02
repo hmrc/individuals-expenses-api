@@ -23,7 +23,7 @@ import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, ControllerComponents}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.http.connector.AuditResult
-import utils.Logging
+import utils.{IdGenerator, Logging}
 import v1.controllers.requestParsers.IgnoreEmploymentExpensesRequestParser
 import v1.hateoas.HateoasFactory
 import v1.models.audit.{AuditEvent, AuditResponse, ExpensesAuditDetail}
@@ -42,7 +42,8 @@ class IgnoreEmploymentExpensesController @Inject()(val authService: EnrolmentsAu
                                                    service: IgnoreEmploymentExpensesService,
                                                    hateoasFactory: HateoasFactory,
                                                    auditService: AuditService,
-                                                   cc: ControllerComponents)(implicit ec: ExecutionContext)
+                                                   cc: ControllerComponents,
+                                                   val idGenerator: IdGenerator)(implicit ec: ExecutionContext)
   extends AuthorisedController(cc) with BaseController with Logging {
 
   implicit val endpointLogContext: EndpointLogContext =

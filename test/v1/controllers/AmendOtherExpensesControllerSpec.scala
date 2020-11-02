@@ -20,6 +20,7 @@ import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Result
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
+import v1.mocks.MockIdGenerator
 import v1.mocks.hateoas.MockHateoasFactory
 import v1.mocks.requestParsers.MockAmendOtherExpensesRequestParser
 import v1.mocks.services.{MockAmendOtherExpensesService, MockAuditService, MockEnrolmentsAuthService, MockMtdIdLookupService}
@@ -41,7 +42,8 @@ class AmendOtherExpensesControllerSpec
     with MockAmendOtherExpensesService
     with MockAmendOtherExpensesRequestParser
     with MockHateoasFactory
-    with MockAuditService {
+    with MockAuditService
+    with MockIdGenerator {
 
 
   private val nino = "AA123456A"
@@ -85,13 +87,14 @@ class AmendOtherExpensesControllerSpec
       hateoasFactory = mockHateoasFactory,
       auditService = mockAuditService,
       cc = cc,
+      idGenerator = mockIdGenerator
     )
 
     MockedMtdIdLookupService.lookup(nino).returns(Future.successful(Right("test-mtd-id")))
     MockedEnrolmentsAuthService.authoriseUser()
   }
 
-  val responseBodyJson = Json.parse(
+  private val responseBodyJson = Json.parse(
     s"""
        |{
        |  "links": [

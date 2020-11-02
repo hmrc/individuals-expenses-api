@@ -20,6 +20,7 @@ import play.api.libs.json.Json
 import play.api.mvc.Result
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
+import v1.mocks.MockIdGenerator
 import v1.mocks.hateoas.MockHateoasFactory
 import v1.mocks.requestParsers.MockDeleteOtherExpensesRequestDataParser
 import v1.mocks.services._
@@ -38,7 +39,8 @@ class DeleteOtherExpensesControllerSpec
     with MockDeleteOtherExpensesService
     with MockDeleteOtherExpensesRequestDataParser
     with MockHateoasFactory
-    with MockAuditService {
+    with MockAuditService
+    with MockIdGenerator {
 
 
   trait Test {
@@ -50,7 +52,8 @@ class DeleteOtherExpensesControllerSpec
       parser = mockRequestDataParser,
       service = mockDeleteOtherExpensesService,
       auditService = mockAuditService,
-      cc = cc
+      cc = cc,
+      idGenerator = mockIdGenerator
     )
 
     MockedMtdIdLookupService.lookup(nino).returns(Future.successful(Right("test-mtd-id")))

@@ -20,7 +20,7 @@ import cats.data.EitherT
 import javax.inject.{Inject, Singleton}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
-import utils.Logging
+import utils.{IdGenerator, Logging}
 import v1.controllers.requestParsers.DeleteOtherExpensesRequestParser
 import v1.models.errors._
 import v1.models.request.deleteOtherExpenses.DeleteOtherExpensesRawData
@@ -38,7 +38,8 @@ class DeleteOtherExpensesController @Inject()(val authService: EnrolmentsAuthSer
                                               parser: DeleteOtherExpensesRequestParser,
                                               service: DeleteOtherExpensesService,
                                               auditService: AuditService,
-                                              cc: ControllerComponents)(implicit ec: ExecutionContext)
+                                              cc: ControllerComponents,
+                                              val idGenerator: IdGenerator)(implicit ec: ExecutionContext)
   extends AuthorisedController(cc) with BaseController with Logging {
 
   implicit val endpointLogContext: EndpointLogContext =
