@@ -51,6 +51,9 @@ class AmendOtherExpensesController @Inject()(val authService: EnrolmentsAuthServ
 
   def handleRequest(nino: String, taxYear: String): Action[JsValue] =
     authorisedAction(nino).async(parse.json) { implicit request =>
+
+      implicit val correlationId: String = idGenerator.generateCorrelationId
+
       val rawData = AmendOtherExpensesRawData(nino, taxYear, request.body)
       val result =
         for {

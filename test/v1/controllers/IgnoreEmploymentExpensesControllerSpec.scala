@@ -45,10 +45,10 @@ class IgnoreEmploymentExpensesControllerSpec
     with MockAuditService
     with MockIdGenerator {
 
-
   private val nino = "AA123456A"
   private val taxYear = "2019-20"
   private val correlationId = "X-123"
+
   private val testHateoasLinks = Seq(
     Link(href = s"/individuals/expenses/employments/$nino/$taxYear", method = GET, rel = "self"),
     Link(href = s"/individuals/expenses/employments/$nino/$taxYear/ignore", method = PUT, rel = "ignore-employment-expenses")
@@ -113,6 +113,7 @@ class IgnoreEmploymentExpensesControllerSpec
 
     MockedMtdIdLookupService.lookup(nino).returns(Future.successful(Right("test-mtd-id")))
     MockedEnrolmentsAuthService.authoriseUser()
+    MockIdGenerator.generateCorrelationId.returns(correlationId)
   }
 
   "handleRequest" should {

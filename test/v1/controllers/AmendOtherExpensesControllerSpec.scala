@@ -49,6 +49,7 @@ class AmendOtherExpensesControllerSpec
   private val nino = "AA123456A"
   private val taxYear = "2019-20"
   private val correlationId = "X-123"
+
   private val testHateoasLinks = Seq(
     Link(href = s"/individuals/expenses/other/$nino/$taxYear", method = GET, rel = "self"),
     Link(href = s"/individuals/expenses/other/$nino/$taxYear", method = PUT, rel = "amend-expenses-other"),
@@ -92,6 +93,7 @@ class AmendOtherExpensesControllerSpec
 
     MockedMtdIdLookupService.lookup(nino).returns(Future.successful(Right("test-mtd-id")))
     MockedEnrolmentsAuthService.authoriseUser()
+    MockIdGenerator.generateCorrelationId.returns(correlationId)
   }
 
   private val responseBodyJson = Json.parse(

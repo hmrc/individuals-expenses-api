@@ -47,6 +47,9 @@ class DeleteOtherExpensesController @Inject()(val authService: EnrolmentsAuthSer
 
   def handleRequest(nino: String, taxYear: String): Action[AnyContent] =
     authorisedAction(nino).async { implicit request =>
+
+      implicit val correlationId: String = idGenerator.generateCorrelationId
+
       val rawData = DeleteOtherExpensesRawData(nino, taxYear)
       val result =
         for {

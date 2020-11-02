@@ -47,7 +47,7 @@ class AmendEmploymentExpensesControllerSpec
 
     private val nino = "AA123456A"
     private val taxYear = "2021-22"
-    private val correlationId = "X-123"
+    private val correlationId: String = "X-123"
 
     private val testHateoasLinks = Seq(
       Link(href = s"/individuals/expenses/employments/$nino/$taxYear", method = GET, rel = "self"),
@@ -140,6 +140,7 @@ class AmendEmploymentExpensesControllerSpec
 
       MockedMtdIdLookupService.lookup(nino).returns(Future.successful(Right("test-mtd-id")))
       MockedEnrolmentsAuthService.authoriseUser()
+      MockIdGenerator.generateCorrelationId.returns(correlationId)
     }
 
     "handleRequest" should {
