@@ -36,7 +36,8 @@ class RetrieveEmploymentsExpensesService @Inject()(retrieveEmploymentsExpensesCo
   def retrieveEmploymentsExpenses(request: RetrieveEmploymentsExpensesRequest)(
     implicit hc: HeaderCarrier,
     ec: ExecutionContext,
-    logContext: EndpointLogContext): Future[RetrieveEmploymentExpensesServiceOutcome] = {
+    logContext: EndpointLogContext,
+    correlationId: String): Future[RetrieveEmploymentExpensesServiceOutcome] = {
 
     val result = for {
       desResponseWrapper <- EitherT(retrieveEmploymentsExpensesConnector.retrieveEmploymentExpenses(request)).leftMap(mapDesErrors(desErrorMap))

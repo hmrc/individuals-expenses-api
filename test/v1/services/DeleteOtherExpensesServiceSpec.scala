@@ -16,30 +16,22 @@
 
 package v1.services
 
-import support.UnitSpec
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.http.HeaderCarrier
-import v1.controllers.EndpointLogContext
 import v1.mocks.connectors.MockDeleteOtherExpensesConnector
 import v1.models.errors._
 import v1.models.outcomes.ResponseWrapper
 import v1.models.request.deleteOtherExpenses.DeleteOtherExpensesRequest
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class DeleteOtherExpensesServiceSpec extends UnitSpec {
+class DeleteOtherExpensesServiceSpec extends ServiceSpec {
 
   val taxYear = "2017-18"
   val nino = Nino("AA123456A")
-  private val correlationId = "X-123"
 
   private val requestData = DeleteOtherExpensesRequest(nino, taxYear)
 
   trait Test extends MockDeleteOtherExpensesConnector {
-    implicit val hc: HeaderCarrier = HeaderCarrier()
-    implicit val logContext: EndpointLogContext = EndpointLogContext("c", "ep")
-
     val service = new DeleteOtherExpensesService(
       deleteOtherExpensesConnector = mockDeleteOtherExpensesConnector
     )

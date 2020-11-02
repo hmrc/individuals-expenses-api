@@ -36,7 +36,8 @@ class DeleteOtherExpensesService @Inject()(deleteOtherExpensesConnector: DeleteO
   def deleteOtherExpenses(request: DeleteOtherExpensesRequest)(
     implicit hc: HeaderCarrier,
     ec: ExecutionContext,
-    logContext: EndpointLogContext): Future[DeleteOtherExpensesServiceOutcome] = {
+    logContext: EndpointLogContext,
+    correlationId: String): Future[DeleteOtherExpensesServiceOutcome] = {
 
     val result = for {
       desResponseWrapper <- EitherT(deleteOtherExpensesConnector.deleteOtherExpenses(request)).leftMap(mapDesErrors(desErrorMap))

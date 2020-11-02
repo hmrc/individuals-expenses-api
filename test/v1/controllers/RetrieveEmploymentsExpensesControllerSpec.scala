@@ -168,6 +168,7 @@ class RetrieveEmploymentsExpensesControllerSpec
         MockedAuditService.verifyAuditEvent(event(auditResponse)).once
       }
     }
+
     "return the error as per spec" when {
       "parser errors occur" should {
         def errorsFromParserTester(error: MtdError, expectedStatus: Int): Unit = {

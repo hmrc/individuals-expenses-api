@@ -16,30 +16,22 @@
 
 package v1.services
 
-import support.UnitSpec
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.http.HeaderCarrier
-import v1.controllers.EndpointLogContext
 import v1.mocks.connectors.MockDeleteEmploymentExpensesConnector
-import v1.models.errors.{DesErrorCode, DesErrors, DownstreamError, ErrorWrapper, MtdError, NinoFormatError, NotFoundError, TaxYearFormatError}
+import v1.models.errors._
 import v1.models.outcomes.ResponseWrapper
 import v1.models.request.deleteEmploymentExpenses.DeleteEmploymentExpensesRequest
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class DeleteEmploymentExpensesServiceSpec extends UnitSpec {
+class DeleteEmploymentExpensesServiceSpec extends ServiceSpec {
 
   val taxYear = "2021-22"
   val nino = Nino("AA123456A")
-  private val correlationId = "X-123"
 
   private val requestData = DeleteEmploymentExpensesRequest(nino, taxYear)
 
   trait Test extends MockDeleteEmploymentExpensesConnector {
-    implicit val hc: HeaderCarrier = HeaderCarrier()
-    implicit val logContext: EndpointLogContext = EndpointLogContext("c", "ep")
-
     val service = new DeleteEmploymentExpensesService(
       deleteEmploymentExpensesConnector = mockDeleteEmploymentExpensesConnector
     )

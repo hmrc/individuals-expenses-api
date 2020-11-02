@@ -36,7 +36,8 @@ class RetrieveOtherExpensesService @Inject()(retrieveOtherExpensesConnector: Ret
   def retrieveOtherExpenses(request: RetrieveOtherExpensesRequest)(
     implicit hc: HeaderCarrier,
     ec: ExecutionContext,
-    logContext: EndpointLogContext): Future[RetrieveOtherExpensesServiceOutcome] = {
+    logContext: EndpointLogContext,
+    correlationId: String): Future[RetrieveOtherExpensesServiceOutcome] = {
 
     val result = for {
       desResponseWrapper <- EitherT(retrieveOtherExpensesConnector.retrieveOtherExpenses(request)).leftMap(mapDesErrors(desErrorMap))

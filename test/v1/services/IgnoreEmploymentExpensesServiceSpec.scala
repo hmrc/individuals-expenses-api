@@ -16,32 +16,24 @@
 
 package v1.services
 
-import support.UnitSpec
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.http.HeaderCarrier
-import v1.controllers.EndpointLogContext
 import v1.mocks.connectors.MockIgnoreEmploymentExpensesConnector
-import v1.models.errors.{DesErrorCode, DesErrors, DownstreamError, ErrorWrapper, MtdError, NinoFormatError, NotFoundError, RuleTaxYearNotEndedError}
+import v1.models.errors._
 import v1.models.outcomes.ResponseWrapper
 import v1.models.request.ignoreEmploymentExpenses.{IgnoreEmploymentExpensesBody, IgnoreEmploymentExpensesRequest}
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class IgnoreEmploymentExpensesServiceSpec extends UnitSpec {
+class IgnoreEmploymentExpensesServiceSpec extends ServiceSpec {
 
   val taxYear = "2021-22"
   val nino = Nino("AA123456A")
-  private val correlationId = "X-123"
 
   val body = IgnoreEmploymentExpensesBody(true)
 
   private val requestData = IgnoreEmploymentExpensesRequest(nino, taxYear, body)
 
   trait Test extends MockIgnoreEmploymentExpensesConnector {
-    implicit val hc: HeaderCarrier = HeaderCarrier()
-    implicit val logContext: EndpointLogContext = EndpointLogContext("c", "ep")
-
     val service = new IgnoreEmploymentExpensesService(
       connector = mockIgnoreEmploymentExpensesConnector
     )

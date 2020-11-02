@@ -16,10 +16,7 @@
 
 package v1.services
 
-import support.UnitSpec
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.http.HeaderCarrier
-import v1.controllers.EndpointLogContext
 import v1.mocks.connectors.MockRetrieveEmploymentsExpensesConnector
 import v1.models.domain.MtdSource
 import v1.models.errors._
@@ -27,15 +24,13 @@ import v1.models.outcomes.ResponseWrapper
 import v1.models.request.retrieveEmploymentExpenses.RetrieveEmploymentsExpensesRequest
 import v1.models.response.retrieveEmploymentExpenses.{Expenses, RetrieveEmploymentsExpensesResponse}
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class RetrieveEmploymentsExpensesServiceSpec extends UnitSpec {
+class RetrieveEmploymentsExpensesServiceSpec extends ServiceSpec {
 
   val taxYear = "2017-18"
   val nino = Nino("AA123456A")
-  val correlationId = "X-123"
-  val source = MtdSource.`user`
+  val source: MtdSource.`user`.type = MtdSource.`user`
 
   val body = RetrieveEmploymentsExpensesResponse(
     Some("2019-04-06"),
@@ -56,11 +51,7 @@ class RetrieveEmploymentsExpensesServiceSpec extends UnitSpec {
 
   private val requestData = RetrieveEmploymentsExpensesRequest(nino, taxYear, source)
 
-
   trait Test extends MockRetrieveEmploymentsExpensesConnector {
-    implicit val hc: HeaderCarrier = HeaderCarrier()
-    implicit val logContext: EndpointLogContext = EndpointLogContext("c", "ep")
-
     val service = new RetrieveEmploymentsExpensesService(
       retrieveEmploymentsExpensesConnector = mockRetrieveEmploymentsExpensesConnector
     )

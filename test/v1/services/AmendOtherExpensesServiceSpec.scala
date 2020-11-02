@@ -16,23 +16,18 @@
 
 package v1.services
 
-import support.UnitSpec
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.http.HeaderCarrier
-import v1.controllers.EndpointLogContext
 import v1.mocks.connectors.MockAmendOtherExpensesConnector
 import v1.models.errors._
 import v1.models.outcomes.ResponseWrapper
 import v1.models.request.amendOtherExpenses.{AmendOtherExpensesBody, AmendOtherExpensesRequest, PatentRoyaltiesPayments, PaymentsToTradeUnionsForDeathBenefits}
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class AmendOtherExpensesServiceSpec extends UnitSpec {
+class AmendOtherExpensesServiceSpec extends ServiceSpec {
 
   val taxYear = "2017-18"
   val nino = Nino("AA123456A")
-  private val correlationId = "X-123"
 
   val body = AmendOtherExpensesBody(
     Some(PaymentsToTradeUnionsForDeathBenefits(Some("TRADE UNION PAYMENTS"), 2000.99)),
@@ -42,9 +37,6 @@ class AmendOtherExpensesServiceSpec extends UnitSpec {
   private val requestData = AmendOtherExpensesRequest(nino, taxYear, body)
 
   trait Test extends MockAmendOtherExpensesConnector {
-    implicit val hc: HeaderCarrier = HeaderCarrier()
-    implicit val logContext: EndpointLogContext = EndpointLogContext("c", "ep")
-
     val service = new AmendOtherExpensesService(
       connector = mockAmendOtherExpensesConnector
     )

@@ -35,7 +35,8 @@ class AmendOtherExpensesService @Inject()(connector: AmendOtherExpensesConnector
   def amend(request: AmendOtherExpensesRequest)(
     implicit hc: HeaderCarrier,
     ec: ExecutionContext,
-    logContext: EndpointLogContext): Future[AmendOtherExpensesServiceOutcome] = {
+    logContext: EndpointLogContext,
+    correlationId: String): Future[AmendOtherExpensesServiceOutcome] = {
 
     val result = for {
       desResponseWrapper <- EitherT(connector.amend(request)).leftMap(mapDesErrors(desErrorMap))
@@ -44,7 +45,7 @@ class AmendOtherExpensesService @Inject()(connector: AmendOtherExpensesConnector
     result.value
   }
 
-  private def desErrorMap =
+  private def desErrorMap: Map[String, MtdError] =
     Map(
       "INVALID_TAXABLE_ENTITY_ID" -> NinoFormatError,
       "FORMAT_TAX_YEAR" -> TaxYearFormatError,

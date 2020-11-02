@@ -32,10 +32,11 @@ trait MockDeleteEmploymentExpensesService extends MockFactory {
   val mockDeleteEmploymentExpensesService: DeleteEmploymentExpensesService = mock[DeleteEmploymentExpensesService]
 
   object MockDeleteEmploymentExpensesService {
+
     def delete(requestData: DeleteEmploymentExpensesRequest): CallHandler[Future[Either[ErrorWrapper, ResponseWrapper[Unit]]]] = {
       (mockDeleteEmploymentExpensesService
-        .deleteEmploymentExpenses(_: DeleteEmploymentExpensesRequest)(_: HeaderCarrier, _: ExecutionContext, _: EndpointLogContext))
-        .expects(requestData, *, *, *)
+        .deleteEmploymentExpenses(_: DeleteEmploymentExpensesRequest)(_: HeaderCarrier, _: ExecutionContext, _: EndpointLogContext, _: String))
+        .expects(requestData, *, *, *, *)
     }
   }
 }
