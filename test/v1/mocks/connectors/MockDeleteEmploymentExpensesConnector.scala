@@ -32,8 +32,8 @@ trait MockDeleteEmploymentExpensesConnector extends MockFactory {
 
     def deleteEmploymentExpenses(requestData: DeleteEmploymentExpensesRequest): CallHandler[Future[DesOutcome[Unit]]] = {
       (mockDeleteEmploymentExpensesConnector
-        .deleteEmploymentExpenses(_: DeleteEmploymentExpensesRequest)(_: HeaderCarrier, _: ExecutionContext))
-        .expects(requestData, *, *)
+        .deleteEmploymentExpenses(_: DeleteEmploymentExpensesRequest)(_: HeaderCarrier, _: ExecutionContext, _: String))
+        .expects(requestData, *, *, *)
     }
   }
 
