@@ -176,7 +176,7 @@ class RetrieveEmploymentsExpensesControllerSpec
 
             MockRetrieveEmploymentsExpensesRequestParser
               .parse(rawData)
-              .returns(Left(ErrorWrapper(Some(correlationId), error, None)))
+              .returns(Left(ErrorWrapper(correlationId, error, None)))
 
             val result: Future[Result] = controller.handleRequest(nino, taxYear, source.toString)(fakeRequest)
 
@@ -210,7 +210,7 @@ class RetrieveEmploymentsExpensesControllerSpec
 
             MockRetrieveEmploymentsExpensesService
               .retrieveEmploymentsExpenses(requestData)
-              .returns(Future.successful(Left(ErrorWrapper(Some(correlationId), mtdError))))
+              .returns(Future.successful(Left(ErrorWrapper(correlationId, mtdError))))
 
             val result: Future[Result] = controller.handleRequest(nino, taxYear, source.toString)(fakeRequest)
 

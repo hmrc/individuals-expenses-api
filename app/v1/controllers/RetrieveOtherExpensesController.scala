@@ -48,6 +48,8 @@ class RetrieveOtherExpensesController @Inject()(val authService: EnrolmentsAuthS
     authorisedAction(nino).async { implicit request =>
 
       implicit val correlationId: String = idGenerator.generateCorrelationId
+      logger.info(message = s"[${endpointLogContext.controllerName}][${endpointLogContext.endpointName}] " +
+        s"with correlationId : $correlationId")
 
       val rawData = RetrieveOtherExpensesRawData(nino, taxYear)
       val result =
@@ -66,8 +68,13 @@ class RetrieveOtherExpensesController @Inject()(val authService: EnrolmentsAuthS
         }
 
       result.leftMap { errorWrapper =>
-        val correlationId = getCorrelationId(errorWrapper)
-        errorResult(errorWrapper).withApiHeaders(correlationId)
+        val resCorrelationId = errorWrapper.correlationId
+        val result = errorResult(errorWrapper).withApiHeaders(resCorrelationId)
+        logger.info(
+          s"[${endpointLogContext.controllerName}][${endpointLogContext.endpointName}] - " +
+            s"Error response received with CorrelationId: $resCorrelationId")
+
+        result
       }.merge
     }
 

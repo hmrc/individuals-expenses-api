@@ -77,7 +77,7 @@ class RetrieveEmploymentsExpensesServiceSpec extends ServiceSpec {
           MockRetrieveEmploymentsExpensesConnector.retrieveEmploymentsExpenses(requestData)
             .returns(Future.successful(Left(ResponseWrapper(correlationId, DesErrors.single(DesErrorCode(desErrorCode))))))
 
-          await(service.retrieveEmploymentsExpenses(requestData)) shouldBe Left(ErrorWrapper(Some(correlationId), error))
+          await(service.retrieveEmploymentsExpenses(requestData)) shouldBe Left(ErrorWrapper(correlationId, error))
         }
 
       val input = Seq(

@@ -17,18 +17,18 @@
 package v1.controllers
 
 import cats.data.EitherT
+import cats.instances.future._
 import javax.inject.{Inject, Singleton}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.audit.http.connector.AuditResult
 import utils.{IdGenerator, Logging}
 import v1.controllers.requestParsers.DeleteOtherExpensesRequestParser
+import v1.models.audit.{AuditEvent, AuditResponse, ExpensesAuditDetail}
 import v1.models.errors._
 import v1.models.request.deleteOtherExpenses.DeleteOtherExpensesRawData
 import v1.services.{AuditService, DeleteOtherExpensesService, EnrolmentsAuthService, MtdIdLookupService}
-import cats.instances.future._
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.audit.http.connector.AuditResult
-import v1.models.audit.{AuditEvent, AuditResponse, ExpensesAuditDetail}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -49,6 +49,8 @@ class DeleteOtherExpensesController @Inject()(val authService: EnrolmentsAuthSer
     authorisedAction(nino).async { implicit request =>
 
       implicit val correlationId: String = idGenerator.generateCorrelationId
+      logger.info(message = s"[${endpointLogContext.controllerName}][${endpointLogContext.endpointName}] " +
+        s"with correlationId : $correlationId")
 
       val rawData = DeleteOtherExpensesRawData(nino, taxYear)
       val result =
@@ -73,18 +75,19 @@ class DeleteOtherExpensesController @Inject()(val authService: EnrolmentsAuthSer
 
         }
       result.leftMap { errorWrapper =>
-        val correlationId = getCorrelationId(errorWrapper)
-        val result = errorResult(errorWrapper).withApiHeaders(correlationId)
+        val resCorrelationId = errorWrapper.correlationId
+        val result = errorResult(errorWrapper).withApiHeaders(resCorrelationId)
+        logger.info(
+          s"[${endpointLogContext.controllerName}][${endpointLogContext.endpointName}] - " +
+            s"Error response received with CorrelationId: $resCorrelationId")
 
-        auditSubmission(
-          ExpensesAuditDetail(
-            userDetails = request.userDetails,
-            params = Map("nino" -> nino, "taxYear" -> taxYear),
-            requestBody = None,
-            `X-CorrelationId` = correlationId,
-            auditResponse = AuditResponse(httpStatus = result.header.status, response = Left(errorWrapper.auditErrors))
-          )
-        )
+        auditSubmission(ExpensesAuditDetail(
+          userDetails = request.userDetails,
+          params = Map("nino" -> nino, "taxYear" -> taxYear),
+          requestBody = None,
+          `X-CorrelationId` = resCorrelationId,
+          auditResponse = AuditResponse(httpStatus = result.header.status, response = Left(errorWrapper.auditErrors))
+        ))
 
         result
       }.merge

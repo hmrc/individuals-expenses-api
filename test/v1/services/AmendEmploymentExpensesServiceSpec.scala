@@ -70,7 +70,7 @@ class AmendEmploymentExpensesServiceSpec extends ServiceSpec {
           MockAmendEmploymentExpensesConnector.amend(requestData)
             .returns(Future.successful(Left(ResponseWrapper(correlationId, DesErrors.single(DesErrorCode(desErrorCode))))))
 
-          await(service.amend(requestData)) shouldBe Left(ErrorWrapper(Some(correlationId), error))
+          await(service.amend(requestData)) shouldBe Left(ErrorWrapper(correlationId, error))
         }
 
       val input = Seq(

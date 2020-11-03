@@ -27,8 +27,9 @@ trait MockRetrieveEmploymentsExpensesRequestParser extends MockFactory {
   val mockRetrieveEmploymentsExpensesRequestParser: RetrieveEmploymentsExpensesRequestParser = mock[RetrieveEmploymentsExpensesRequestParser]
 
   object MockRetrieveEmploymentsExpensesRequestParser {
+
     def parse(data: RetrieveEmploymentsExpensesRawData): CallHandler[Either[ErrorWrapper, RetrieveEmploymentsExpensesRequest]] = {
-      (mockRetrieveEmploymentsExpensesRequestParser.parseRequest(_: RetrieveEmploymentsExpensesRawData)).expects(data)
+      (mockRetrieveEmploymentsExpensesRequestParser.parseRequest(_: RetrieveEmploymentsExpensesRawData)(_: String)).expects(data, *)
     }
   }
 

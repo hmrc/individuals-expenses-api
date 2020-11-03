@@ -175,7 +175,7 @@ class AmendEmploymentExpensesControllerSpec
 
               MockAmendEmploymentExpensesRequestParser
                 .parseRequest(rawData)
-                .returns(Left(ErrorWrapper(Some(correlationId), error, None)))
+                .returns(Left(ErrorWrapper(correlationId, error, None)))
 
               val result: Future[Result] = controller.handleRequest(nino, taxYear)(fakePostRequest(requestBodyJson))
 
@@ -212,7 +212,7 @@ class AmendEmploymentExpensesControllerSpec
 
               MockAmendEmploymentExpensesService
                 .amend(requestData)
-                .returns(Future.successful(Left(ErrorWrapper(Some(correlationId), mtdError))))
+                .returns(Future.successful(Left(ErrorWrapper(correlationId, mtdError))))
 
               val result: Future[Result] = controller.handleRequest(nino, taxYear)(fakePostRequest(requestBodyJson))
 

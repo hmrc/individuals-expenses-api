@@ -64,7 +64,7 @@ class RetrieveOtherExpensesServiceSpec extends ServiceSpec {
           MockRetrieveOtherExpensesConnector.retrieveOtherExpenses(requestData)
             .returns(Future.successful(Left(ResponseWrapper(correlationId, DesErrors.single(DesErrorCode(desErrorCode))))))
 
-          await(service.retrieveOtherExpenses(requestData)) shouldBe Left(ErrorWrapper(Some(correlationId), error))
+          await(service.retrieveOtherExpenses(requestData)) shouldBe Left(ErrorWrapper(correlationId, error))
         }
 
       val input = Seq(

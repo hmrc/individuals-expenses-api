@@ -59,7 +59,7 @@ class IgnoreEmploymentExpensesServiceSpec extends ServiceSpec {
           MockIgnoreEmploymentExpensesConnector.ignore(requestData)
             .returns(Future.successful(Left(ResponseWrapper(correlationId, DesErrors.single(DesErrorCode(desErrorCode))))))
 
-          await(service.ignore(requestData)) shouldBe Left(ErrorWrapper(Some(correlationId), error))
+          await(service.ignore(requestData)) shouldBe Left(ErrorWrapper(correlationId, error))
         }
 
       val input = Seq(
