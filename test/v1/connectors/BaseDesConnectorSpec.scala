@@ -45,6 +45,7 @@ class BaseDesConnectorSpec extends ConnectorSpec {
       val http: HttpClient = mockHttpClient
       val appConfig: AppConfig = mockAppConfig
     }
+
     MockedAppConfig.desBaseUrl returns baseUrl
     MockedAppConfig.desToken returns "des-token"
     MockedAppConfig.desEnvironment returns "des-environment"
@@ -53,7 +54,7 @@ class BaseDesConnectorSpec extends ConnectorSpec {
   "post" must {
     "posts with the required des headers and returns the result" in new Test {
       MockedHttpClient
-        .post(absoluteUrl, body, "Environment" -> "des-environment", "Authorization" -> s"Bearer des-token")
+        .post(absoluteUrl, body, requiredHeaders :_*)
         .returns(Future.successful(outcome))
 
       await(connector.post(body, DesUri[Result](url))) shouldBe outcome
@@ -63,7 +64,7 @@ class BaseDesConnectorSpec extends ConnectorSpec {
   "get" must {
     "get with the requred des headers and return the result" in new Test {
       MockedHttpClient
-        .get(absoluteUrl, "Environment" -> "des-environment", "Authorization" -> s"Bearer des-token")
+        .get(absoluteUrl, requiredHeaders :_*)
         .returns(Future.successful(outcome))
 
       await(connector.get(DesUri[Result](url))) shouldBe outcome

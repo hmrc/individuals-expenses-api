@@ -26,13 +26,15 @@ import scala.concurrent.Future
 
 class DeleteOtherExpensesConnectorSpec extends ConnectorSpec {
 
-  val taxYear = "2017-18"
-  val nino = Nino("AA123456A")
+  val taxYear: String = "2017-18"
+  val nino: Nino = Nino("AA123456A")
 
   class Test extends MockHttpClient with MockAppConfig {
-    val connector: DeleteOtherExpensesConnector = new DeleteOtherExpensesConnector(http = mockHttpClient, appConfig = mockAppConfig)
+    val connector: DeleteOtherExpensesConnector = new DeleteOtherExpensesConnector(
+      http = mockHttpClient,
+      appConfig = mockAppConfig
+    )
 
-    val desRequestHeaders: Seq[(String, String)] = Seq("Environment" -> "des-environment", "Authorization" -> s"Bearer des-token")
     MockedAppConfig.desBaseUrl returns baseUrl
     MockedAppConfig.desToken returns "des-token"
     MockedAppConfig.desEnvironment returns "des-environment"
@@ -45,11 +47,12 @@ class DeleteOtherExpensesConnectorSpec extends ConnectorSpec {
       "the downstream call is successful" in new Test {
         val outcome = Right(ResponseWrapper(correlationId, ()))
 
-        MockedHttpClient.
-          delete(
+        MockedHttpClient
+          .delete(
             url = s"$baseUrl/expenses/other/${request.nino}/${request.taxYear}",
-            requiredHeaders = "Environment" -> "des-environment", "Authorization" -> s"Bearer des-token"
-          ).returns(Future.successful(outcome))
+            requiredHeaders = requiredHeaders :_*
+          )
+          .returns(Future.successful(outcome))
 
         await(connector.deleteOtherExpenses(request)) shouldBe outcome
       }

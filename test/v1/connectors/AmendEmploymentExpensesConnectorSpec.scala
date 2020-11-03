@@ -26,14 +26,28 @@ import scala.concurrent.Future
 
 class AmendEmploymentExpensesConnectorSpec extends ConnectorSpec {
 
-  val taxYear = "2021-22"
-  val nino = Nino("AA123456A")
-  val body = AmendEmploymentExpensesBody(Expenses(Some(123.12), Some(123.12), Some(123.12), Some(123.12), Some(123.12), Some(123.12), Some(123.12), Some(123.12)))
+  val taxYear: String = "2021-22"
+  val nino: Nino = Nino("AA123456A")
+
+  val body: AmendEmploymentExpensesBody = AmendEmploymentExpensesBody(
+    Expenses(
+      Some(123.12),
+      Some(123.12),
+      Some(123.12),
+      Some(123.12),
+      Some(123.12),
+      Some(123.12),
+      Some(123.12),
+      Some(123.12)
+    )
+  )
 
   class Test extends MockHttpClient with MockAppConfig {
-    val connector: AmendEmploymentExpensesConnector = new AmendEmploymentExpensesConnector(http = mockHttpClient, appConfig = mockAppConfig)
+    val connector: AmendEmploymentExpensesConnector = new AmendEmploymentExpensesConnector(
+      http = mockHttpClient,
+      appConfig = mockAppConfig
+    )
 
-    val desRequestHeaders: Seq[(String, String)] = Seq("Environment" -> "des-environment", "Authorization" -> s"Bearer des-token")
     MockedAppConfig.desBaseUrl returns baseUrl
     MockedAppConfig.desToken returns "des-token"
     MockedAppConfig.desEnvironment returns "des-environment"
@@ -44,11 +58,12 @@ class AmendEmploymentExpensesConnectorSpec extends ConnectorSpec {
 
     "put a body and return 204 no body" in new Test {
       val outcome = Right(ResponseWrapper(correlationId, ()))
+
       MockedHttpClient
         .put(
           url = s"$baseUrl/income-tax/expenses/employments/$nino/$taxYear",
           body = body,
-          requiredHeaders = "Environment" -> "des-environment", "Authorization" -> s"Bearer des-token"
+          requiredHeaders = requiredHeaders: _*
         )
         .returns(Future.successful(outcome))
 
