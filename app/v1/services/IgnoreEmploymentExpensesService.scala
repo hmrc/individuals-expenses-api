@@ -35,7 +35,8 @@ class IgnoreEmploymentExpensesService @Inject()(connector: IgnoreEmploymentExpen
   def ignore(request: IgnoreEmploymentExpensesRequest)(
     implicit hc: HeaderCarrier,
     ec: ExecutionContext,
-    logContext: EndpointLogContext): Future[IgnoreEmploymentExpensesServiceOutcome] = {
+    logContext: EndpointLogContext,
+    correlationId: String): Future[IgnoreEmploymentExpensesServiceOutcome] = {
 
     val result = for {
       desResponseWrapper <- EitherT(connector.ignore(request)).leftMap(mapDesErrors(desErrorMap))

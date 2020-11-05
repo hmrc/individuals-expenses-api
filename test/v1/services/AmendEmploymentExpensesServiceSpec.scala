@@ -16,32 +16,35 @@
 
 package v1.services
 
-import support.UnitSpec
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.http.HeaderCarrier
-import v1.controllers.EndpointLogContext
 import v1.mocks.connectors.MockAmendEmploymentExpensesConnector
-import v1.models.errors.{DesErrorCode, DesErrors, DownstreamError, ErrorWrapper, MtdError, NinoFormatError, NotFoundError, RuleTaxYearNotEndedError}
+import v1.models.errors._
 import v1.models.outcomes.ResponseWrapper
 import v1.models.request.amendEmploymentExpenses.{AmendEmploymentExpensesBody, AmendEmploymentExpensesRequest, Expenses}
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class AmendEmploymentExpensesServiceSpec extends UnitSpec {
+class AmendEmploymentExpensesServiceSpec extends ServiceSpec {
 
   val taxYear = "2021-22"
   val nino = Nino("AA123456A")
-  private val correlationId = "X-123"
 
-  val body = AmendEmploymentExpensesBody(Expenses(Some(123.12), Some(123.12), Some(123.12), Some(123.12), Some(123.12), Some(123.12), Some(123.12), Some(123.12)))
+  val body = AmendEmploymentExpensesBody(
+    Expenses(
+      Some(123.12),
+      Some(123.12),
+      Some(123.12),
+      Some(123.12),
+      Some(123.12),
+      Some(123.12),
+      Some(123.12),
+      Some(123.12)
+    )
+  )
 
   private val requestData = AmendEmploymentExpensesRequest(nino, taxYear, body)
 
   trait Test extends MockAmendEmploymentExpensesConnector {
-    implicit val hc: HeaderCarrier = HeaderCarrier()
-    implicit val logContext: EndpointLogContext = EndpointLogContext("c", "ep")
-
     val service = new AmendEmploymentExpensesService(
       connector = mockAmendEmploymentExpensesConnector
     )
@@ -67,7 +70,7 @@ class AmendEmploymentExpensesServiceSpec extends UnitSpec {
           MockAmendEmploymentExpensesConnector.amend(requestData)
             .returns(Future.successful(Left(ResponseWrapper(correlationId, DesErrors.single(DesErrorCode(desErrorCode))))))
 
-          await(service.amend(requestData)) shouldBe Left(ErrorWrapper(Some(correlationId), error))
+          await(service.amend(requestData)) shouldBe Left(ErrorWrapper(correlationId, error))
         }
 
       val input = Seq(

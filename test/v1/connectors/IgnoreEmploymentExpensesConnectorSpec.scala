@@ -26,14 +26,16 @@ import scala.concurrent.Future
 
 class IgnoreEmploymentExpensesConnectorSpec extends ConnectorSpec {
 
-  val taxYear = "2021-22"
-  val nino = Nino("AA123456A")
-  val body = IgnoreEmploymentExpensesBody(true)
+  val taxYear: String = "2021-22"
+  val nino: Nino = Nino("AA123456A")
+  val body: IgnoreEmploymentExpensesBody = IgnoreEmploymentExpensesBody(true)
 
   class Test extends MockHttpClient with MockAppConfig {
-    val connector: IgnoreEmploymentExpensesConnector = new IgnoreEmploymentExpensesConnector(http = mockHttpClient, appConfig = mockAppConfig)
+    val connector: IgnoreEmploymentExpensesConnector = new IgnoreEmploymentExpensesConnector(
+      http = mockHttpClient,
+      appConfig = mockAppConfig
+    )
 
-    val desRequestHeaders: Seq[(String, String)] = Seq("Environment" -> "des-environment", "Authorization" -> s"Bearer des-token")
     MockedAppConfig.desBaseUrl returns baseUrl
     MockedAppConfig.desToken returns "des-token"
     MockedAppConfig.desEnvironment returns "des-environment"
@@ -48,7 +50,7 @@ class IgnoreEmploymentExpensesConnectorSpec extends ConnectorSpec {
         .put(
           url = s"$baseUrl/income-tax/expenses/employments/$nino/$taxYear",
           body = body,
-          requiredHeaders = "Environment" -> "des-environment", "Authorization" -> s"Bearer des-token"
+          requiredHeaders = requiredHeaders :_*
         )
         .returns(Future.successful(outcome))
 

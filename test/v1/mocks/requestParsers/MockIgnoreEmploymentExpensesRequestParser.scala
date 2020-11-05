@@ -27,8 +27,10 @@ trait MockIgnoreEmploymentExpensesRequestParser extends MockFactory {
   val mockRequestParser: IgnoreEmploymentExpensesRequestParser = mock[IgnoreEmploymentExpensesRequestParser]
 
   object MockIgnoreEmploymentExpensesRequestParser {
+
     def parseRequest(data: IgnoreEmploymentExpensesRawData): CallHandler[Either[ErrorWrapper, IgnoreEmploymentExpensesRequest]] = {
-      (mockRequestParser.parseRequest(_: IgnoreEmploymentExpensesRawData)).expects(data)
+      (mockRequestParser.parseRequest(_: IgnoreEmploymentExpensesRawData)(_: String)).expects(data, *)
     }
   }
+
 }

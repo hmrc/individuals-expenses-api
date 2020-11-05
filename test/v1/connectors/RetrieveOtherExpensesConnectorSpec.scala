@@ -31,8 +31,11 @@ class RetrieveOtherExpensesConnectorSpec extends ConnectorSpec {
   private val taxYear = "2019-20"
 
   class Test extends MockHttpClient with MockAppConfig {
-    val connector: RetrieveOtherExpensesConnector = new RetrieveOtherExpensesConnector(http = mockHttpClient, appConfig = mockAppConfig)
-    val desRequestHeaders: Seq[(String, String)] = Seq("Environment" -> "des-environment", "Authorization" -> s"Bearer des-token")
+    val connector: RetrieveOtherExpensesConnector = new RetrieveOtherExpensesConnector(
+      http = mockHttpClient,
+      appConfig = mockAppConfig
+    )
+
     MockedAppConfig.desBaseUrl returns baseUrl
     MockedAppConfig.desToken returns "des-token"
     MockedAppConfig.desEnvironment returns "des-environment"
@@ -47,14 +50,16 @@ class RetrieveOtherExpensesConnectorSpec extends ConnectorSpec {
           Some(PaymentsToTradeUnionsForDeathBenefits(Some("TRADE UNION PAYMENTS"), 5433.54)),
           Some(PatentRoyaltiesPayments(Some("ROYALTIES PAYMENTS"), 98765.12))
         )))
-        MockedHttpClient.
-          get(
+
+        MockedHttpClient
+          .get(
             url = s"$baseUrl/expenses/other/${request.nino}/${request.taxYear}",
-            requiredHeaders = "Environment" -> "des-environment", "Authorization" -> s"Bearer des-token"
-          ).returns(Future.successful(outcome))
+            requiredHeaders = requiredHeaders :_*
+          )
+          .returns(Future.successful(outcome))
+
         await(connector.retrieveOtherExpenses(request)) shouldBe outcome
       }
     }
   }
-
 }

@@ -23,7 +23,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import utils.Logging
 import v1.connectors.AmendEmploymentExpensesConnector
 import v1.controllers.EndpointLogContext
-import v1.models.errors.{DownstreamError, NinoFormatError, NotFoundError, RuleTaxYearNotEndedError}
+import v1.models.errors.{DownstreamError, MtdError, NinoFormatError, NotFoundError, RuleTaxYearNotEndedError}
 import v1.models.request.amendEmploymentExpenses.AmendEmploymentExpensesRequest
 import v1.support.DesResponseMappingSupport
 
@@ -35,7 +35,8 @@ class AmendEmploymentExpensesService @Inject()(connector: AmendEmploymentExpense
   def amend(request: AmendEmploymentExpensesRequest)(
     implicit hc: HeaderCarrier,
     ec: ExecutionContext,
-    logContext: EndpointLogContext): Future[AmendEmploymentExpensesServiceOutcome] = {
+    logContext: EndpointLogContext,
+    correlationId: String): Future[AmendEmploymentExpensesServiceOutcome] = {
 
     val result = for {
       desResponseWrapper <- EitherT(connector.amend(request)).leftMap(mapDesErrors(desErrorMap))
@@ -44,7 +45,7 @@ class AmendEmploymentExpensesService @Inject()(connector: AmendEmploymentExpense
     result.value
   }
 
-  private def desErrorMap =
+  private def desErrorMap: Map[String, MtdError] =
     Map(
       "INVALID_TAXABLE_ENTITY_ID" -> NinoFormatError,
       "INVALID_TAX_YEAR" -> NotFoundError,

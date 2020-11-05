@@ -31,13 +31,14 @@ class RetrieveEmploymentsExpensesConnectorSpec extends ConnectorSpec {
 
   private val nino = Nino("AA123456A")
   private val taxYear = "2019-20"
-  val source = MtdSource.`user`
-
-
+  val source: MtdSource.`user`.type = MtdSource.`user`
 
   class Test extends MockHttpClient with MockAppConfig {
-    val connector: RetrieveEmploymentsExpensesConnector = new RetrieveEmploymentsExpensesConnector(http = mockHttpClient, appConfig = mockAppConfig)
-    val desRequestHeaders: Seq[(String, String)] = Seq("Environment" -> "des-environment", "Authorization" -> s"Bearer des-token")
+    val connector: RetrieveEmploymentsExpensesConnector = new RetrieveEmploymentsExpensesConnector(
+      http = mockHttpClient,
+      appConfig = mockAppConfig
+    )
+
     MockedAppConfig.desBaseUrl returns baseUrl
     MockedAppConfig.desToken returns "des-token"
     MockedAppConfig.desEnvironment returns "des-environment"
@@ -45,6 +46,7 @@ class RetrieveEmploymentsExpensesConnectorSpec extends ConnectorSpec {
 
   "retrieve employment expenses" should {
     val request = RetrieveEmploymentsExpensesRequest(nino, taxYear, source)
+
     "return a result" when {
       "the downstream call is successful" in new Test {
         val outcome = Right(ResponseWrapper(correlationId, RetrieveEmploymentsExpensesResponse(
@@ -63,10 +65,14 @@ class RetrieveEmploymentsExpensesConnectorSpec extends ConnectorSpec {
             Some(2000.99)
           ))
         )))
-        MockedHttpClient.get(
-          url = s"$baseUrl/income-tax/expenses/employments/${nino}/${taxYear}?view=${DesSource.`CUSTOMER`}",
-          requiredHeaders = "Environment" -> "des-environment", "Authorization" -> s"Bearer des-token"
-        ).returns(Future.successful(outcome))
+
+        MockedHttpClient
+          .get(
+            url = s"$baseUrl/income-tax/expenses/employments/$nino/$taxYear?view=${DesSource.`CUSTOMER`}",
+            requiredHeaders = requiredHeaders :_*
+          )
+          .returns(Future.successful(outcome))
+
         await(connector.retrieveEmploymentExpenses(request)) shouldBe outcome
       }
     }

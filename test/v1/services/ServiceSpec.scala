@@ -19,6 +19,7 @@ package v1.services
 import play.api.http.{HeaderNames, MimeTypes, Status}
 import support.UnitSpec
 import uk.gov.hmrc.http.HeaderCarrier
+import v1.controllers.EndpointLogContext
 
 import scala.concurrent.ExecutionContext
 
@@ -29,5 +30,6 @@ trait ServiceSpec extends UnitSpec
 
   implicit val hc: HeaderCarrier = HeaderCarrier()
   implicit val ec: ExecutionContext = scala.concurrent.ExecutionContext.global
-
+  implicit val logContext: EndpointLogContext = EndpointLogContext("c", "ep")
+  implicit val correlationId: String = "X-123"
 }

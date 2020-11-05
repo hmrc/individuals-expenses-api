@@ -29,16 +29,16 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class RetrieveOtherExpensesConnector @Inject()(val http: HttpClient,
                                                val appConfig: AppConfig) extends BaseDesConnector {
-  def retrieveOtherExpenses(request: RetrieveOtherExpensesRequest)
-                           (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[DesOutcome[RetrieveOtherExpensesResponse]] = {
+
+  def retrieveOtherExpenses(request: RetrieveOtherExpensesRequest)(
+    implicit hc: HeaderCarrier,
+    ec: ExecutionContext,
+    correlationId: String): Future[DesOutcome[RetrieveOtherExpensesResponse]] = {
 
     val url = s"expenses/other/${request.nino}/${request.taxYear}"
+
     get(
-      DesUri[RetrieveOtherExpensesResponse](s"$url")
+      uri = DesUri[RetrieveOtherExpensesResponse](s"$url")
     )
-
-
   }
-
-
 }

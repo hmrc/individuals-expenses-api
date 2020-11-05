@@ -31,11 +31,12 @@ class AmendOtherExpensesConnector @Inject()(val http: HttpClient,
 
   def amend(request: AmendOtherExpensesRequest)(
     implicit hc: HeaderCarrier,
-    ec: ExecutionContext): Future[DesOutcome[Unit]] = {
+    ec: ExecutionContext,
+    correlationId: String): Future[DesOutcome[Unit]] = {
 
     put(
       body = request.body,
-      DesUri[Unit](s"expenses/other/${request.nino}/${request.taxYear}")
+      uri = DesUri[Unit](s"expenses/other/${request.nino}/${request.taxYear}")
     )
   }
 }

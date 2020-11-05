@@ -16,24 +16,19 @@
 
 package v1.services
 
-import support.UnitSpec
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.http.HeaderCarrier
-import v1.controllers.EndpointLogContext
 import v1.mocks.connectors.MockRetrieveOtherExpensesConnector
 import v1.models.errors._
 import v1.models.outcomes.ResponseWrapper
 import v1.models.request.retrieveOtherExpenses.RetrieveOtherExpensesRequest
 import v1.models.response.retrieveOtherExpenses._
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class RetrieveOtherExpensesServiceSpec extends UnitSpec {
+class RetrieveOtherExpensesServiceSpec extends ServiceSpec {
 
   val taxYear = "2017-18"
   val nino = Nino("AA123456A")
-  private val correlationId = "X-123"
 
   val body = RetrieveOtherExpensesResponse(
     "2019-04-04T01:01:01Z",
@@ -44,9 +39,6 @@ class RetrieveOtherExpensesServiceSpec extends UnitSpec {
   private val requestData = RetrieveOtherExpensesRequest(nino, taxYear)
 
   trait Test extends MockRetrieveOtherExpensesConnector {
-    implicit val hc: HeaderCarrier = HeaderCarrier()
-    implicit val logContext: EndpointLogContext = EndpointLogContext("c", "ep")
-
     val service = new RetrieveOtherExpensesService(
       retrieveOtherExpensesConnector = mockRetrieveOtherExpensesConnector
     )
@@ -72,7 +64,7 @@ class RetrieveOtherExpensesServiceSpec extends UnitSpec {
           MockRetrieveOtherExpensesConnector.retrieveOtherExpenses(requestData)
             .returns(Future.successful(Left(ResponseWrapper(correlationId, DesErrors.single(DesErrorCode(desErrorCode))))))
 
-          await(service.retrieveOtherExpenses(requestData)) shouldBe Left(ErrorWrapper(Some(correlationId), error))
+          await(service.retrieveOtherExpenses(requestData)) shouldBe Left(ErrorWrapper(correlationId, error))
         }
 
       val input = Seq(

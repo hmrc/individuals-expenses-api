@@ -20,6 +20,7 @@ import play.api.libs.json.Json
 import play.api.mvc.Result
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
+import v1.mocks.MockIdGenerator
 import v1.mocks.hateoas.MockHateoasFactory
 import v1.mocks.requestParsers.MockDeleteEmploymentExpensesRequestParser
 import v1.mocks.services.{MockAuditService, MockDeleteEmploymentExpensesService, MockEnrolmentsAuthService, MockMtdIdLookupService}
@@ -38,7 +39,8 @@ class DeleteEmploymentExpensesControllerSpec
     with MockDeleteEmploymentExpensesService
     with MockDeleteEmploymentExpensesRequestParser
     with MockHateoasFactory
-    with MockAuditService {
+    with MockAuditService
+    with MockIdGenerator {
 
 
   trait Test {
@@ -50,11 +52,13 @@ class DeleteEmploymentExpensesControllerSpec
       parser = mockRequestDataParser,
       service = mockDeleteEmploymentExpensesService,
       auditService = mockAuditService,
-      cc = cc
+      cc = cc,
+      idGenerator = mockIdGenerator
     )
 
     MockedMtdIdLookupService.lookup(nino).returns(Future.successful(Right("test-mtd-id")))
     MockedEnrolmentsAuthService.authoriseUser()
+    MockIdGenerator.generateCorrelationId.returns(correlationId)
   }
 
   private val nino = "AA123456A"
@@ -99,6 +103,7 @@ class DeleteEmploymentExpensesControllerSpec
         MockedAuditService.verifyAuditEvent(event(auditResponse)).once
       }
     }
+
     "return the error as per spec" when {
       "parser errors occur" should {
         def errorsFromParserTester(error: MtdError, expectedStatus: Int): Unit = {
@@ -106,7 +111,7 @@ class DeleteEmploymentExpensesControllerSpec
 
             MockDeleteEmploymentExpensesRequestParser
               .parse(rawData)
-              .returns(Left(ErrorWrapper(Some(correlationId), error, None)))
+              .returns(Left(ErrorWrapper(correlationId, error, None)))
 
             val result: Future[Result] = controller.handleRequest(nino, taxYear)(fakeRequest)
 
@@ -140,7 +145,7 @@ class DeleteEmploymentExpensesControllerSpec
 
             MockDeleteEmploymentExpensesService
               .delete(requestData)
-              .returns(Future.successful(Left(ErrorWrapper(Some(correlationId), mtdError))))
+              .returns(Future.successful(Left(ErrorWrapper(correlationId, mtdError))))
 
             val result: Future[Result] = controller.handleRequest(nino, taxYear)(fakeRequest)
 

@@ -26,17 +26,26 @@ import scala.concurrent.Future
 
 class AmendOtherExpensesConnectorSpec extends ConnectorSpec {
 
-  val taxYear = "2017-18"
-  val nino = Nino("AA123456A")
-  val body = AmendOtherExpensesBody(
-    Some(PaymentsToTradeUnionsForDeathBenefits(Some("TRADE UNION PAYMENTS"), 2000.99)),
-    Some(PatentRoyaltiesPayments(Some("ROYALTIES PAYMENTS"), 2000.99))
+  val taxYear: String = "2017-18"
+  val nino: Nino = Nino("AA123456A")
+
+  val body: AmendOtherExpensesBody = AmendOtherExpensesBody(
+    Some(PaymentsToTradeUnionsForDeathBenefits(
+      Some("TRADE UNION PAYMENTS"),
+      2000.99
+    )),
+    Some(PatentRoyaltiesPayments(
+      Some("ROYALTIES PAYMENTS"),
+      2000.99
+    ))
   )
 
   class Test extends MockHttpClient with MockAppConfig {
-    val connector: AmendOtherExpensesConnector = new AmendOtherExpensesConnector(http = mockHttpClient, appConfig = mockAppConfig)
+    val connector: AmendOtherExpensesConnector = new AmendOtherExpensesConnector(
+      http = mockHttpClient,
+      appConfig = mockAppConfig
+    )
 
-    val desRequestHeaders: Seq[(String, String)] = Seq("Environment" -> "des-environment", "Authorization" -> s"Bearer des-token")
     MockedAppConfig.desBaseUrl returns baseUrl
     MockedAppConfig.desToken returns "des-token"
     MockedAppConfig.desEnvironment returns "des-environment"
@@ -51,7 +60,7 @@ class AmendOtherExpensesConnectorSpec extends ConnectorSpec {
         .put(
           url = s"$baseUrl/expenses/other/$nino/$taxYear",
           body = body,
-          requiredHeaders = "Environment" -> "des-environment", "Authorization" -> s"Bearer des-token"
+          requiredHeaders = requiredHeaders :_*
         )
         .returns(Future.successful(outcome))
 

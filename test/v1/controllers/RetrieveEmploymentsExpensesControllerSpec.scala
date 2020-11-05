@@ -20,14 +20,15 @@ import play.api.libs.json.Json
 import play.api.mvc.Result
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
+import v1.mocks.MockIdGenerator
 import v1.mocks.hateoas.MockHateoasFactory
 import v1.mocks.requestParsers.MockRetrieveEmploymentsExpensesRequestParser
 import v1.mocks.services.{MockAuditService, MockEnrolmentsAuthService, MockMtdIdLookupService, MockRetrieveEmploymentsExpensesService}
 import v1.models.audit.{AuditError, AuditEvent, AuditResponse, ExpensesAuditDetail}
 import v1.models.domain.MtdSource
 import v1.models.errors._
-import v1.models.hateoas.{HateoasWrapper, Link}
 import v1.models.hateoas.Method.{DELETE, GET, PUT}
+import v1.models.hateoas.{HateoasWrapper, Link}
 import v1.models.outcomes.ResponseWrapper
 import v1.models.request.retrieveEmploymentExpenses.{RetrieveEmploymentsExpensesRawData, RetrieveEmploymentsExpensesRequest}
 import v1.models.response.retrieveEmploymentExpenses.{Expenses, RetrieveEmploymentsExpensesHateoasData, RetrieveEmploymentsExpensesResponse}
@@ -37,12 +38,13 @@ import scala.concurrent.Future
 
 class RetrieveEmploymentsExpensesControllerSpec
   extends ControllerBaseSpec
-  with MockEnrolmentsAuthService
-  with MockMtdIdLookupService
-  with MockRetrieveEmploymentsExpensesService
-  with MockRetrieveEmploymentsExpensesRequestParser
-  with MockHateoasFactory
-  with MockAuditService {
+    with MockEnrolmentsAuthService
+    with MockMtdIdLookupService
+    with MockRetrieveEmploymentsExpensesService
+    with MockRetrieveEmploymentsExpensesRequestParser
+    with MockHateoasFactory
+    with MockAuditService
+    with MockIdGenerator {
 
 
   trait Test {
@@ -56,10 +58,12 @@ class RetrieveEmploymentsExpensesControllerSpec
       hateoasFactory = mockHateoasFactory,
       auditService = mockAuditService,
       cc = cc,
+      idGenerator = mockIdGenerator
     )
 
     MockedMtdIdLookupService.lookup(nino).returns(Future.successful(Right("test-mtd-id")))
     MockedEnrolmentsAuthService.authoriseUser()
+    MockIdGenerator.generateCorrelationId.returns(correlationId)
   }
 
   private val nino = "AA123456A"
@@ -84,7 +88,7 @@ class RetrieveEmploymentsExpensesControllerSpec
     Some(Expenses(Some(123.12),Some(123.12),Some(123.12),Some(123.12),Some(123.12),Some(123.12),Some(123.12),Some(123.12)))
   )
 
-  val latestResponseBody = Json.parse(
+  private val latestResponseBody = Json.parse(
     s"""
        |{
        |		"submittedOn": "2020-12-12T12:12:12Z",
@@ -164,6 +168,7 @@ class RetrieveEmploymentsExpensesControllerSpec
         MockedAuditService.verifyAuditEvent(event(auditResponse)).once
       }
     }
+
     "return the error as per spec" when {
       "parser errors occur" should {
         def errorsFromParserTester(error: MtdError, expectedStatus: Int): Unit = {
@@ -171,7 +176,7 @@ class RetrieveEmploymentsExpensesControllerSpec
 
             MockRetrieveEmploymentsExpensesRequestParser
               .parse(rawData)
-              .returns(Left(ErrorWrapper(Some(correlationId), error, None)))
+              .returns(Left(ErrorWrapper(correlationId, error, None)))
 
             val result: Future[Result] = controller.handleRequest(nino, taxYear, source.toString)(fakeRequest)
 
@@ -205,7 +210,7 @@ class RetrieveEmploymentsExpensesControllerSpec
 
             MockRetrieveEmploymentsExpensesService
               .retrieveEmploymentsExpenses(requestData)
-              .returns(Future.successful(Left(ErrorWrapper(Some(correlationId), mtdError))))
+              .returns(Future.successful(Left(ErrorWrapper(correlationId, mtdError))))
 
             val result: Future[Result] = controller.handleRequest(nino, taxYear, source.toString)(fakeRequest)
 

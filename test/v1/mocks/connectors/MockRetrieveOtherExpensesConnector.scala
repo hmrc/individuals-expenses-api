@@ -33,8 +33,8 @@ trait MockRetrieveOtherExpensesConnector extends MockFactory {
 
     def retrieveOtherExpenses(requestData: RetrieveOtherExpensesRequest): CallHandler[Future[DesOutcome[RetrieveOtherExpensesResponse]]] = {
       (mockRetrieveOtherExpensesConnector
-        .retrieveOtherExpenses(_: RetrieveOtherExpensesRequest)(_: HeaderCarrier, _: ExecutionContext))
-        .expects(requestData, *, *)
+        .retrieveOtherExpenses(_: RetrieveOtherExpensesRequest)(_: HeaderCarrier, _: ExecutionContext, _: String))
+        .expects(requestData, *, *, *)
     }
   }
 
