@@ -16,7 +16,9 @@ Requirements
     
 Development Setup
 
-Run from the console using: `sbt "~run 7795"`
+Run from the console using: `sbt run` (starts on port 7795 by default)
+
+Start the service manager profile: `sm --start MTDFB_SA`
  
 ### Run tests
 ```
