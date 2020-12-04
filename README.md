@@ -8,13 +8,13 @@ These API endpoints allow software packages to retrieve, amend and delete expens
 
 An endpoint also exists that allows software packages to ignore HMRC provided employment expenses for a user.
     
-##Requirements
+## Requirements
 - Scala 2.12.x
 - Java 8
 - sbt 1.3.7
 - [Service Manager](https://github.com/hmrc/service-manager)
     
-##Development Setup
+## Development Setup
 
 Run from the console using: `sbt run` (starts on port 7795 by default)
 
@@ -26,7 +26,7 @@ sbt test
 sbt it:test
 ```
 
-##To view the RAML
+## To view the RAML
 
 Start api definition services
 
