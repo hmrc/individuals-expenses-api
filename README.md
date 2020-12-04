@@ -1,13 +1,49 @@
 API Example Microservice
 ========================
+Individuals-expenses-api has seven endpoints:
+  - GET other expenses
+  - PUT other expenses
+  - DELETE other expenses
+  - DELETE employment expenses
+  - PUT employment expenses
+  - PUT (ignore) employment expenses
+  - GET employment expenses
+    
+Requirements
+- Scala 2.12.x
+- Java 8
+- sbt 1.3.7
+- [Service Manager](https://github.com/hmrc/service-manager)
+    
+Development Setup
 
-TODO Describe microservice / API
+Run from the console using: `sbt "~run 7795"`
  
 # Run tests
 ```
 sbt test
 sbt it:test
 ```
+
+To view the RAML
+
+Start api definition services
+
+```
+sm --start COMBINED_API_DEFINITION API_DEFINITION API_EXAMPLE_MICROSERVICE API_DOCUMENTATION_FRONTEND -f
+sm --start ASSETS_FRONTEND -r 3.11.0 -f
+```
+
+Go to http://localhost:9680/api-documentation/docs/api/preview and enter http://localhost:7795/api/conf/1.0/application.raml 
+
+### Reporting Issues
+
+You can create a GitHub issue [here](https://github.com/hmrc/individuals-expenses-api/issues)
+
+
+## API Reference / Documentation 
+Available on the [HMRC Developer Hub](https://developer.service.hmrc.gov.uk/api-documentation)
+
 
 # License
 
