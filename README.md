@@ -1,13 +1,12 @@
 API Example Microservice
 ========================
-Individuals-expenses-api has seven endpoints:
-  - GET other expenses
-  - PUT other expenses
-  - DELETE other expenses
-  - DELETE employment expenses
-  - PUT employment expenses
-  - PUT (ignore) employment expenses
-  - GET employment expenses
+These API endpoints allow software packages to retrieve, amend and delete expenses for:
+
+·       income for trade union and patent royalties
+
+·       existing employment expense
+
+An endpoint also exists that allows software packages to ignore HMRC provided employment expenses for a user.
     
 Requirements
 - Scala 2.12.x
@@ -19,13 +18,13 @@ Development Setup
 
 Run from the console using: `sbt "~run 7795"`
  
-# Run tests
+### Run tests
 ```
 sbt test
 sbt it:test
 ```
 
-To view the RAML
+###To view the RAML
 
 Start api definition services
 
@@ -41,10 +40,10 @@ Go to http://localhost:9680/api-documentation/docs/api/preview and enter http://
 You can create a GitHub issue [here](https://github.com/hmrc/individuals-expenses-api/issues)
 
 
-## API Reference / Documentation 
+### API Reference / Documentation 
 Available on the [HMRC Developer Hub](https://developer.service.hmrc.gov.uk/api-documentation)
 
 
-# License
+### License
 
 This code is open source software licensed under the [Apache 2.0 License]("http://www.apache.org/licenses/LICENSE-2.0.html")
