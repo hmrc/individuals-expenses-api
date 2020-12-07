@@ -1,4 +1,4 @@
-API Example Microservice
+Individuals Expenses API
 ========================
 These API endpoints allow software packages to retrieve, amend and delete expenses for:
 
@@ -28,14 +28,11 @@ sbt it:test
 
 ## To view the RAML
 
-Start api definition services
+To view documentation locally ensure the Obligations API is running, and run api-documentation-frontend:
+`./run_local_with_dependencies.sh`
 
-```
-sm --start COMBINED_API_DEFINITION API_DEFINITION API_EXAMPLE_MICROSERVICE API_DOCUMENTATION_FRONTEND -f
-sm --start ASSETS_FRONTEND -r 3.11.0 -f
-```
-
-Go to http://localhost:9680/api-documentation/docs/api/preview and enter http://localhost:7795/api/conf/1.0/application.raml 
+Then go to http://localhost:9680/api-documentation/docs/api/preview and use this port and version:
+`http://localhost:7795/api/conf/1.0/application.raml`
 
 ## Reporting Issues
 
@@ -43,7 +40,7 @@ You can create a GitHub issue [here](https://github.com/hmrc/individuals-expense
 
 
 ## API Reference / Documentation 
-Available on the [HMRC Developer Hub](https://developer.service.hmrc.gov.uk/api-documentation)
+Available on the [Individuals Expenses Documentation](https://developer.service.hmrc.gov.uk/api-documentation/docs/api/service/individuals-expenses-api/1.0)
 
 
 ## License
