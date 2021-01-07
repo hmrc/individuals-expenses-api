@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ class DeleteOtherExpensesConnector @Inject()(val http: HttpClient,
     correlationId: String): Future[DesOutcome[Unit]] = {
 
     delete(
-      uri = DesUri[Unit](s"expenses/other/${request.nino}/${request.taxYear}")
+      uri = DesUri[Unit](s"income-tax/expenses/other/${request.nino}/${request.taxYear}")
     )
   }
 }

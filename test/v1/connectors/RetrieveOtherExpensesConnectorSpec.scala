@@ -53,7 +53,7 @@ class RetrieveOtherExpensesConnectorSpec extends ConnectorSpec {
 
         MockedHttpClient
           .get(
-            url = s"$baseUrl/expenses/other/${request.nino}/${request.taxYear}",
+            url = s"$baseUrl/income-tax/expenses/other/${request.nino}/${request.taxYear}",
             requiredHeaders = requiredHeaders :_*
           )
           .returns(Future.successful(outcome))

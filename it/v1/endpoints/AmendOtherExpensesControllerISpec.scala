@@ -74,7 +74,7 @@ class AmendOtherExpensesControllerISpec extends IntegrationBaseSpec {
 
     def uri: String = s"/other/$nino/$taxYear"
 
-    def desUri: String = s"/expenses/other/$nino/$taxYear"
+    def desUri: String = s"/income-tax/expenses/other/$nino/$taxYear"
 
     def setupStubs(): StubMapping
 

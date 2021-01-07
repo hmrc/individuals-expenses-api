@@ -49,7 +49,7 @@ class DeleteOtherExpensesConnectorSpec extends ConnectorSpec {
 
         MockedHttpClient
           .delete(
-            url = s"$baseUrl/expenses/other/${request.nino}/${request.taxYear}",
+            url = s"$baseUrl/income-tax/expenses/other/${request.nino}/${request.taxYear}",
             requiredHeaders = requiredHeaders :_*
           )
           .returns(Future.successful(outcome))

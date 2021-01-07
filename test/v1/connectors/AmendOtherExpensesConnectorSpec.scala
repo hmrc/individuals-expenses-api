@@ -58,7 +58,7 @@ class AmendOtherExpensesConnectorSpec extends ConnectorSpec {
       val outcome = Right(ResponseWrapper(correlationId, ()))
       MockedHttpClient
         .put(
-          url = s"$baseUrl/expenses/other/$nino/$taxYear",
+          url = s"$baseUrl/income-tax/expenses/other/$nino/$taxYear",
           body = body,
           requiredHeaders = requiredHeaders :_*
         )
