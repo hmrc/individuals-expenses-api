@@ -38,7 +38,7 @@ class AuthISpec extends IntegrationBaseSpec {
         .withHttpHeaders((ACCEPT, "application/vnd.hmrc.1.0+json"))
     }
 
-    def desUri: String = s"/expenses/other/$nino/$taxYear"
+    def desUri: String = s"/income-tax/expenses/other/$nino/$taxYear"
 
     val desResponse: JsValue = Json.parse(
       """
