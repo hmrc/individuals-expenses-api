@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,7 +58,7 @@ class AmendOtherExpensesConnectorSpec extends ConnectorSpec {
       val outcome = Right(ResponseWrapper(correlationId, ()))
       MockedHttpClient
         .put(
-          url = s"$baseUrl/expenses/other/$nino/$taxYear",
+          url = s"$baseUrl/income-tax/expenses/other/$nino/$taxYear",
           body = body,
           requiredHeaders = requiredHeaders :_*
         )

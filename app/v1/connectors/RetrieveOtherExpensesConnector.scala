@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ class RetrieveOtherExpensesConnector @Inject()(val http: HttpClient,
     ec: ExecutionContext,
     correlationId: String): Future[DesOutcome[RetrieveOtherExpensesResponse]] = {
 
-    val url = s"expenses/other/${request.nino}/${request.taxYear}"
+    val url = s"income-tax/expenses/other/${request.nino}/${request.taxYear}"
 
     get(
       uri = DesUri[RetrieveOtherExpensesResponse](s"$url")
