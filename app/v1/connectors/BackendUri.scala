@@ -14,19 +14,16 @@
  * limitations under the License.
  */
 
-package v1.stubs
+package v1.connectors
 
-import com.github.tomakehurst.wiremock.stubbing.StubMapping
-import play.api.http.Status._
-import support.WireMockMethods
+trait BackendUri[Resp] {
+  val value: String
+}
 
-object AuditStub extends WireMockMethods {
+object BackendUri {
 
-  private val auditUri: String = s"/write/audit.*"
+  case class DesUri[Resp](value: String) extends BackendUri[Resp]
 
-  def audit(): StubMapping = {
-    when(method = POST, uri = auditUri)
-      .thenReturn(status = NO_CONTENT)
-  }
+  case class IfsUri[Resp](value: String) extends BackendUri[Resp]
 
 }

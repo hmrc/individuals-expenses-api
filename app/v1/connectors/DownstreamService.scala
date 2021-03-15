@@ -16,4 +16,12 @@
 
 package v1.connectors
 
-case class DesUri[Resp](value: String)
+sealed trait DownstreamService
+
+object DownstreamService {
+
+  case object DES extends DownstreamService
+
+  case object IFS extends DownstreamService
+
+}

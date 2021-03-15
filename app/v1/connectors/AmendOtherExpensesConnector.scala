@@ -27,16 +27,16 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class AmendOtherExpensesConnector @Inject()(val http: HttpClient,
-                                            val appConfig: AppConfig) extends BaseDesConnector {
+                                            val appConfig: AppConfig) extends BaseDownstreamConnector {
 
   def amend(request: AmendOtherExpensesRequest)(
     implicit hc: HeaderCarrier,
     ec: ExecutionContext,
-    correlationId: String): Future[DesOutcome[Unit]] = {
+    correlationId: String): Future[DownstreamOutcome[Unit]] = {
 
     put(
       body = request.body,
-      uri = DesUri[Unit](s"income-tax/expenses/other/${request.nino}/${request.taxYear}")
+      uri = BackendUri.IfsUri[Unit](s"income-tax/expenses/other/${request.nino}/${request.taxYear}")
     )
   }
 }

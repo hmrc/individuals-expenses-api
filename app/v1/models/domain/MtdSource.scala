@@ -18,24 +18,24 @@ package v1.models.domain
 
 import play.api.libs.json._
 import utils.enums.Enums
-import v1.models.des.DesSource
+import v1.models.downstream.DownstreamSource
 
 sealed trait MtdSource {
-  def toDes: DesSource
+  def toDes: DownstreamSource
 }
 
 object MtdSource {
 
   case object `hmrcHeld` extends MtdSource {
-    override def toDes: DesSource = DesSource.`HMRC-HELD`
+    override def toDes: DownstreamSource = DownstreamSource.`HMRC-HELD`
   }
 
   case object `user` extends MtdSource {
-    override def toDes: DesSource = DesSource.`CUSTOMER`
+    override def toDes: DownstreamSource = DownstreamSource.`CUSTOMER`
   }
 
   case object `latest` extends MtdSource {
-    override def toDes: DesSource = DesSource.`LATEST`
+    override def toDes: DownstreamSource = DownstreamSource.`LATEST`
   }
 
   implicit val format: Format[MtdSource] = Enums.format[MtdSource]

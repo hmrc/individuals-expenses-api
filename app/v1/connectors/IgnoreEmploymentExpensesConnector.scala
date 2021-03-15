@@ -27,16 +27,16 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class IgnoreEmploymentExpensesConnector @Inject()(val http: HttpClient,
-                                                  val appConfig: AppConfig) extends BaseDesConnector {
+                                                  val appConfig: AppConfig) extends BaseDownstreamConnector {
 
   def ignore(request: IgnoreEmploymentExpensesRequest)(
     implicit hc: HeaderCarrier,
     ec: ExecutionContext,
-    correlationId: String): Future[DesOutcome[Unit]] = {
+    correlationId: String): Future[DownstreamOutcome[Unit]] = {
 
     put(
       body = request.body,
-      uri = DesUri[Unit](s"income-tax/expenses/employments/${request.nino}/${request.taxYear}")
+      uri = BackendUri.DesUri[Unit](s"income-tax/expenses/employments/${request.nino}/${request.taxYear}")
     )
   }
 }
