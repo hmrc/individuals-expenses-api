@@ -40,35 +40,104 @@ class BaseDownstreamConnectorSpec extends ConnectorSpec {
 
   implicit val httpReads: HttpReads[DownstreamOutcome[Result]] = mock[HttpReads[DownstreamOutcome[Result]]]
 
-  class Test extends MockHttpClient with MockAppConfig {
+  trait Test extends MockHttpClient with MockAppConfig {
     val connector: BaseDownstreamConnector = new BaseDownstreamConnector {
       val http: HttpClient = mockHttpClient
       val appConfig: AppConfig = mockAppConfig
-      override val downstreamService: DownstreamService = DownstreamService.DES
     }
-
+  }
+  class DesTest extends Test {
     MockedAppConfig.desBaseUrl returns baseUrl
     MockedAppConfig.desToken returns "des-token"
     MockedAppConfig.desEnv returns "des-environment"
   }
+  class IfsTest extends Test {
+    MockedAppConfig.ifsBaseUrl returns baseUrl
+    MockedAppConfig.ifsToken returns "des-token"
+    MockedAppConfig.ifsEnv returns "des-environment"
+  }
 
-  "post" must {
-    "posts with the required des headers and returns the result" in new Test {
-      MockedHttpClient
-        .post(absoluteUrl, body, requiredHeaders :_*)
-        .returns(Future.successful(outcome))
+  "calls to DES" when {
+    "post" must {
+      "posts with the required des headers and returns the result" in new DesTest {
+        MockedHttpClient
+          .post(absoluteUrl, body, requiredHeaders: _*)
+          .returns(Future.successful(outcome))
 
-      await(connector.post(body, DownstreamUri[Result](url))) shouldBe outcome
+        await(connector.post(body, BackendUri.DesUri[Result](url))) shouldBe outcome
+      }
+    }
+
+    "get" must {
+      "get with the required des headers and return the result" in new DesTest {
+        MockedHttpClient
+          .get(absoluteUrl, requiredHeaders: _*)
+          .returns(Future.successful(outcome))
+
+        await(connector.get(BackendUri.DesUri[Result](url))) shouldBe outcome
+      }
+    }
+
+    "put" must {
+      "put with the required des headers and return the result" in new DesTest {
+        MockedHttpClient
+          .put(absoluteUrl, body, requiredHeaders: _*)
+          .returns(Future.successful(outcome))
+
+        await(connector.put(body, BackendUri.DesUri[Result](url))) shouldBe outcome
+      }
+    }
+
+    "delete" must {
+      "delete with the required des headers and return the result" in new DesTest {
+        MockedHttpClient
+          .delete(absoluteUrl, requiredHeaders: _*)
+          .returns(Future.successful(outcome))
+
+        await(connector.delete(BackendUri.DesUri[Result](url))) shouldBe outcome
+      }
     }
   }
 
-  "get" must {
-    "get with the required des headers and return the result" in new Test {
-      MockedHttpClient
-        .get(absoluteUrl, requiredHeaders :_*)
-        .returns(Future.successful(outcome))
+  "calls to IFS" when {
+    "post" must {
+      "posts with the required des headers and returns the result" in new IfsTest {
+        MockedHttpClient
+          .post(absoluteUrl, body, requiredHeaders: _*)
+          .returns(Future.successful(outcome))
 
-      await(connector.get(DownstreamUri[Result](url))) shouldBe outcome
+        await(connector.post(body, BackendUri.IfsUri[Result](url))) shouldBe outcome
+      }
+    }
+
+    "get" must {
+      "get with the required des headers and return the result" in new IfsTest {
+        MockedHttpClient
+          .get(absoluteUrl, requiredHeaders: _*)
+          .returns(Future.successful(outcome))
+
+        await(connector.get(BackendUri.IfsUri[Result](url))) shouldBe outcome
+      }
+    }
+
+    "put" must {
+      "put with the required des headers and return the result" in new IfsTest {
+        MockedHttpClient
+          .put(absoluteUrl, body, requiredHeaders: _*)
+          .returns(Future.successful(outcome))
+
+        await(connector.put(body, BackendUri.IfsUri[Result](url))) shouldBe outcome
+      }
+    }
+
+    "delete" must {
+      "delete with the required des headers and return the result" in new IfsTest {
+        MockedHttpClient
+          .delete(absoluteUrl, requiredHeaders: _*)
+          .returns(Future.successful(outcome))
+
+        await(connector.delete(BackendUri.IfsUri[Result](url))) shouldBe outcome
+      }
     }
   }
 }

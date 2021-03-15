@@ -14,6 +14,16 @@
  * limitations under the License.
  */
 
-package v1.models.downstream
+package v1.connectors
 
-case class DownstreamConfig(token: String, environment: String, baseUrl: String)
+trait BackendUri[Resp] {
+  val value: String
+}
+
+object BackendUri {
+
+  case class DesUri[Resp](value: String) extends BackendUri[Resp]
+
+  case class IfsUri[Resp](value: String) extends BackendUri[Resp]
+
+}

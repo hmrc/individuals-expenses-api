@@ -29,15 +29,13 @@ import scala.concurrent.{ExecutionContext, Future}
 class DeleteEmploymentExpensesConnector @Inject()(val http: HttpClient,
                                                   val appConfig: AppConfig) extends BaseDownstreamConnector {
 
-  override def downstreamService: DownstreamService = DownstreamService.DES
-
   def deleteEmploymentExpenses(request: DeleteEmploymentExpensesRequest)(
     implicit hc: HeaderCarrier,
     ec: ExecutionContext,
     correlationId: String): Future[DownstreamOutcome[Unit]] = {
 
     delete(
-      uri = DownstreamUri[Unit](s"income-tax/expenses/employments/${request.nino}/${request.taxYear}")
+      uri = BackendUri.DesUri[Unit](s"income-tax/expenses/employments/${request.nino}/${request.taxYear}")
     )
   }
 }

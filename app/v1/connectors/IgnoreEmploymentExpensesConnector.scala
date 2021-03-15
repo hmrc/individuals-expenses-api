@@ -29,8 +29,6 @@ import scala.concurrent.{ExecutionContext, Future}
 class IgnoreEmploymentExpensesConnector @Inject()(val http: HttpClient,
                                                   val appConfig: AppConfig) extends BaseDownstreamConnector {
 
-  override def downstreamService: DownstreamService = DownstreamService.DES
-
   def ignore(request: IgnoreEmploymentExpensesRequest)(
     implicit hc: HeaderCarrier,
     ec: ExecutionContext,
@@ -38,7 +36,7 @@ class IgnoreEmploymentExpensesConnector @Inject()(val http: HttpClient,
 
     put(
       body = request.body,
-      uri = DownstreamUri[Unit](s"income-tax/expenses/employments/${request.nino}/${request.taxYear}")
+      uri = BackendUri.DesUri[Unit](s"income-tax/expenses/employments/${request.nino}/${request.taxYear}")
     )
   }
 }

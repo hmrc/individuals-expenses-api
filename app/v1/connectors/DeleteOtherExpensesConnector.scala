@@ -29,15 +29,13 @@ import scala.concurrent.{ExecutionContext, Future}
 class DeleteOtherExpensesConnector @Inject()(val http: HttpClient,
                                              val appConfig: AppConfig) extends BaseDownstreamConnector {
 
-  override def downstreamService: DownstreamService = DownstreamService.IFS
-
   def deleteOtherExpenses(request: DeleteOtherExpensesRequest)(
     implicit hc: HeaderCarrier,
     ec: ExecutionContext,
     correlationId: String): Future[DownstreamOutcome[Unit]] = {
 
     delete(
-      uri = DownstreamUri[Unit](s"income-tax/expenses/other/${request.nino}/${request.taxYear}")
+      uri = BackendUri.IfsUri[Unit](s"income-tax/expenses/other/${request.nino}/${request.taxYear}")
     )
   }
 }

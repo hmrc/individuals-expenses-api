@@ -29,8 +29,6 @@ import scala.concurrent.{ExecutionContext, Future}
 class AmendOtherExpensesConnector @Inject()(val http: HttpClient,
                                             val appConfig: AppConfig) extends BaseDownstreamConnector {
 
-  override def downstreamService: DownstreamService = DownstreamService.IFS
-
   def amend(request: AmendOtherExpensesRequest)(
     implicit hc: HeaderCarrier,
     ec: ExecutionContext,
@@ -38,7 +36,7 @@ class AmendOtherExpensesConnector @Inject()(val http: HttpClient,
 
     put(
       body = request.body,
-      uri = DownstreamUri[Unit](s"income-tax/expenses/other/${request.nino}/${request.taxYear}")
+      uri = BackendUri.IfsUri[Unit](s"income-tax/expenses/other/${request.nino}/${request.taxYear}")
     )
   }
 }

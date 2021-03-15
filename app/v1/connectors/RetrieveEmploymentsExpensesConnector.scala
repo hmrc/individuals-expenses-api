@@ -30,8 +30,6 @@ import scala.concurrent.{ExecutionContext, Future}
 class RetrieveEmploymentsExpensesConnector @Inject()(val http: HttpClient,
                                                      val appConfig: AppConfig) extends BaseDownstreamConnector {
 
-  override def downstreamService: DownstreamService = DownstreamService.DES
-
   def retrieveEmploymentExpenses(request: RetrieveEmploymentsExpensesRequest)(
     implicit hc: HeaderCarrier,
     ec: ExecutionContext,
@@ -40,7 +38,7 @@ class RetrieveEmploymentsExpensesConnector @Inject()(val http: HttpClient,
     val url = s"income-tax/expenses/employments/${request.nino}/${request.taxYear}?view=${request.source.toDes}"
 
     get(
-      uri = DownstreamUri[RetrieveEmploymentsExpensesResponse](s"$url")
+      uri = BackendUri.DesUri[RetrieveEmploymentsExpensesResponse](s"$url")
     )
   }
 }
