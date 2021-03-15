@@ -18,7 +18,7 @@ package v1.models.domain
 
 import support.UnitSpec
 import utils.enums.EnumJsonSpecSupport
-import v1.models.des.DesSource
+import v1.models.downstream.DownstreamSource
 
 class MtdSourceSpec extends UnitSpec with EnumJsonSpecSupport {
 
@@ -26,9 +26,9 @@ class MtdSourceSpec extends UnitSpec with EnumJsonSpecSupport {
   val mtdCustomer = MtdSource.`user`
   val mtdHmrc = MtdSource.`hmrcHeld`
 
-  val desLatest = DesSource.`LATEST`
-  val desCustomer = DesSource.`CUSTOMER`
-  val desOutgoingHmrc = DesSource.`HMRC-HELD`
+  val desLatest = DownstreamSource.`LATEST`
+  val desCustomer = DownstreamSource.`CUSTOMER`
+  val desOutgoingHmrc = DownstreamSource.`HMRC-HELD`
 
   testRoundTrip[MtdSource](
     ("latest",MtdSource.`latest`),

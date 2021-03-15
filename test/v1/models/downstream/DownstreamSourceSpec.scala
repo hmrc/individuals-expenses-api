@@ -14,28 +14,28 @@
  * limitations under the License.
  */
 
-package v1.models.des
+package v1.models.downstream
 
 import support.UnitSpec
 import utils.enums.EnumJsonSpecSupport
 import v1.models.domain.MtdSource
 
-class DesSourceSpec extends UnitSpec with EnumJsonSpecSupport{
+class DownstreamSourceSpec extends UnitSpec with EnumJsonSpecSupport{
 
   val mtdLatest = MtdSource.`latest`
   val mtdCustomer = MtdSource.`user`
   val mtdHmrc = MtdSource.`hmrcHeld`
 
-  val desLatest = DesSource.`LATEST`
-  val desCustomer = DesSource.`CUSTOMER`
-  val desHmrc = DesSource.`HMRC HELD`
-  val desOutgoingHmrc = DesSource.`HMRC-HELD`
+  val desLatest = DownstreamSource.`LATEST`
+  val desCustomer = DownstreamSource.`CUSTOMER`
+  val desHmrc = DownstreamSource.`HMRC HELD`
+  val desOutgoingHmrc = DownstreamSource.`HMRC-HELD`
 
-  testRoundTrip[DesSource](
-    ("LATEST",DesSource.`LATEST`),
-    ("CUSTOMER",DesSource.`CUSTOMER`),
-    ("HMRC HELD", DesSource.`HMRC HELD`),
-    ("HMRC-HELD", DesSource.`HMRC-HELD`)
+  testRoundTrip[DownstreamSource](
+    ("LATEST",DownstreamSource.`LATEST`),
+    ("CUSTOMER",DownstreamSource.`CUSTOMER`),
+    ("HMRC HELD", DownstreamSource.`HMRC HELD`),
+    ("HMRC-HELD", DownstreamSource.`HMRC-HELD`)
   )
 
   "mtdSources" when {

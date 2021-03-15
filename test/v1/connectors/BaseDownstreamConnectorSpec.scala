@@ -25,7 +25,7 @@ import v1.models.outcomes.ResponseWrapper
 
 import scala.concurrent.Future
 
-class BaseDesConnectorSpec extends ConnectorSpec {
+class BaseDownstreamConnectorSpec extends ConnectorSpec {
 
   // WLOG
   case class Result(value: Int)
@@ -38,17 +38,18 @@ class BaseDesConnectorSpec extends ConnectorSpec {
   val url = "some/url?param=value"
   val absoluteUrl = s"$baseUrl/$url"
 
-  implicit val httpReads: HttpReads[DesOutcome[Result]] = mock[HttpReads[DesOutcome[Result]]]
+  implicit val httpReads: HttpReads[DownstreamOutcome[Result]] = mock[HttpReads[DownstreamOutcome[Result]]]
 
   class Test extends MockHttpClient with MockAppConfig {
-    val connector: BaseDesConnector = new BaseDesConnector {
+    val connector: BaseDownstreamConnector = new BaseDownstreamConnector {
       val http: HttpClient = mockHttpClient
       val appConfig: AppConfig = mockAppConfig
+      override val downstreamService: DownstreamService = DownstreamService.DES
     }
 
     MockedAppConfig.desBaseUrl returns baseUrl
     MockedAppConfig.desToken returns "des-token"
-    MockedAppConfig.desEnvironment returns "des-environment"
+    MockedAppConfig.desEnv returns "des-environment"
   }
 
   "post" must {
@@ -57,17 +58,17 @@ class BaseDesConnectorSpec extends ConnectorSpec {
         .post(absoluteUrl, body, requiredHeaders :_*)
         .returns(Future.successful(outcome))
 
-      await(connector.post(body, DesUri[Result](url))) shouldBe outcome
+      await(connector.post(body, DownstreamUri[Result](url))) shouldBe outcome
     }
   }
 
   "get" must {
-    "get with the requred des headers and return the result" in new Test {
+    "get with the required des headers and return the result" in new Test {
       MockedHttpClient
         .get(absoluteUrl, requiredHeaders :_*)
         .returns(Future.successful(outcome))
 
-      await(connector.get(DesUri[Result](url))) shouldBe outcome
+      await(connector.get(DownstreamUri[Result](url))) shouldBe outcome
     }
   }
 }

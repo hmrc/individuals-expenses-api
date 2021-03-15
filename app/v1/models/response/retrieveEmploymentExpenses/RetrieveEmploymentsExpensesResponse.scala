@@ -20,7 +20,7 @@ import config.AppConfig
 import play.api.libs.functional.syntax._
 import play.api.libs.json.{JsPath, Json, OWrites, Reads}
 import v1.hateoas.{HateoasLinks, HateoasLinksFactory}
-import v1.models.des.DesSource
+import v1.models.downstream.DownstreamSource
 import v1.models.domain.MtdSource
 import v1.models.hateoas.{HateoasData, Link}
 
@@ -35,7 +35,7 @@ object RetrieveEmploymentsExpensesResponse extends HateoasLinks {
   implicit val reads: Reads[RetrieveEmploymentsExpensesResponse] = (
     (JsPath \ "submittedOn").readNullable[String] and
       (JsPath \ "totalExpenses").readNullable[BigDecimal] and
-      (JsPath \ "source").readNullable[DesSource].map(_.map(_.toMtd)) and
+      (JsPath \ "source").readNullable[DownstreamSource].map(_.map(_.toMtd)) and
       (JsPath \ "dateIgnored").readNullable[String] and
       (JsPath \ "expenses").readNullable[Expenses]
     ) (RetrieveEmploymentsExpensesResponse.apply _)

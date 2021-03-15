@@ -23,11 +23,17 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 trait AppConfig {
 
-  def desBaseUrl: String
-
   def mtdIdBaseUrl: String
 
+  def desBaseUrl: String
+
   def desEnv: String
+
+  def ifsToken: String
+
+  def ifsBaseUrl: String
+
+  def ifsEnv: String
 
   def desToken: String
 
@@ -56,6 +62,12 @@ class AppConfigImpl @Inject()(config: ServicesConfig, configuration: Configurati
   val desEnv: String = config.getString("microservice.services.des.env")
 
   val desToken: String = config.getString("microservice.services.des.token")
+
+  val ifsBaseUrl: String = config.baseUrl("ifs")
+
+  val ifsEnv: String = config.getString("microservice.services.ifs.env")
+
+  val ifsToken: String = config.getString("microservice.services.ifs.token")
 
   val apiGatewayContext: String = config.getString("api.gateway.context")
 

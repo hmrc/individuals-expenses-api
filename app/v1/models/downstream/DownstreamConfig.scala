@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 
-package v1.connectors
+package v1.models.downstream
 
-case class DesUri[Resp](value: String)
+case class DownstreamConfig(token: String, environment: String, baseUrl: String)

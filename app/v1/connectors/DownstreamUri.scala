@@ -14,14 +14,6 @@
  * limitations under the License.
  */
 
-package v1
+package v1.connectors
 
-import v1.models.errors.{DesError, MtdError}
-import v1.models.outcomes.ResponseWrapper
-
-package object connectors {
-
-  type MtdIdLookupOutcome = Either[MtdError, String]
-
-  type DownstreamOutcome[A] = Either[ResponseWrapper[DesError], ResponseWrapper[A]]
-}
+case class DownstreamUri[Resp](value: String)

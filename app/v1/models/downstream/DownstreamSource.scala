@@ -14,35 +14,35 @@
  * limitations under the License.
  */
 
-package v1.models.des
+package v1.models.downstream
 
 import play.api.libs.json._
 import utils.enums.Enums
 import v1.models.domain.MtdSource
 
-sealed trait DesSource {
+sealed trait DownstreamSource {
   def toMtd: MtdSource
 }
 
-object DesSource {
+object DownstreamSource {
 
-  case object `HMRC HELD` extends DesSource {
+  case object `HMRC HELD` extends DownstreamSource {
     override def toMtd: MtdSource = MtdSource.`hmrcHeld`
   }
 
-  case object `CUSTOMER` extends DesSource {
+  case object `CUSTOMER` extends DownstreamSource {
     override def toMtd: MtdSource = MtdSource.`user`
   }
 
-  case object `LATEST` extends DesSource {
+  case object `LATEST` extends DownstreamSource {
     override def toMtd: MtdSource = MtdSource.`latest`
   }
   
-  case object `HMRC-HELD` extends DesSource {
+  case object `HMRC-HELD` extends DownstreamSource {
     override def toMtd: MtdSource = MtdSource.`hmrcHeld`
   }
 
-  implicit val format: Format[DesSource] = Enums.format[DesSource]
-  val parser: PartialFunction[String, DesSource] = Enums.parser[DesSource]
+  implicit val format: Format[DownstreamSource] = Enums.format[DownstreamSource]
+  val parser: PartialFunction[String, DownstreamSource] = Enums.parser[DownstreamSource]
 }
 
