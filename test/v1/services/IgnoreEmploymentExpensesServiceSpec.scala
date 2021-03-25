@@ -20,7 +20,7 @@ import uk.gov.hmrc.domain.Nino
 import v1.mocks.connectors.MockIgnoreEmploymentExpensesConnector
 import v1.models.errors._
 import v1.models.outcomes.ResponseWrapper
-import v1.models.request.ignoreEmploymentExpenses.{IgnoreEmploymentExpensesBody, IgnoreEmploymentExpensesRequest}
+import v1.models.request.ignoreEmploymentExpenses.IgnoreEmploymentExpensesRequest
 
 import scala.concurrent.Future
 
@@ -29,9 +29,7 @@ class IgnoreEmploymentExpensesServiceSpec extends ServiceSpec {
   val taxYear = "2021-22"
   val nino = Nino("AA123456A")
 
-  val body = IgnoreEmploymentExpensesBody(true)
-
-  private val requestData = IgnoreEmploymentExpensesRequest(nino, taxYear, body)
+  private val requestData = IgnoreEmploymentExpensesRequest(nino, taxYear)
 
   trait Test extends MockIgnoreEmploymentExpensesConnector {
     val service = new IgnoreEmploymentExpensesService(
@@ -64,7 +62,7 @@ class IgnoreEmploymentExpensesServiceSpec extends ServiceSpec {
 
       val input = Seq(
         "INVALID_TAXABLE_ENTITY_ID" -> NinoFormatError,
-        "INVALID_TAX_YEAR" -> NotFoundError,
+        "INVALID_TAX_YEAR" -> TaxYearFormatError,
         "INVALID_CORRELATIONID" -> DownstreamError,
         "INVALID_PAYLOAD" -> DownstreamError,
         "INVALID_REQUEST_BEFORE_TAX_YEAR_END" -> RuleTaxYearNotEndedError,

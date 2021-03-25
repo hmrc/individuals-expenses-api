@@ -29,14 +29,8 @@ class IgnoreEmploymentExpensesRequestParserSpec extends UnitSpec {
   val taxYear = "2019-20"
   implicit val correlationId: String = "a1e8057e-fbbc-47a8-a8b4-78d9f015c253"
 
-  private val requestBodyJson = Json.parse(
-    """{
-      |  "ignoreExpenses": true
-      |}
-      |""".stripMargin)
-
   val inputData =
-    IgnoreEmploymentExpensesRawData(nino, taxYear, requestBodyJson)
+    IgnoreEmploymentExpensesRawData(nino, taxYear)
 
   trait Test extends MockIgnoreEmploymentExpensesValidator {
     lazy val parser = new IgnoreEmploymentExpensesRequestParser(mockValidator)
@@ -49,7 +43,7 @@ class IgnoreEmploymentExpensesRequestParserSpec extends UnitSpec {
         MockIgnoreEmploymentExpensesValidator.validate(inputData).returns(Nil)
 
         parser.parseRequest(inputData) shouldBe
-          Right(IgnoreEmploymentExpensesRequest(Nino(nino), taxYear, IgnoreEmploymentExpensesBody(true)))
+          Right(IgnoreEmploymentExpensesRequest(Nino(nino), taxYear))
       }
     }
 

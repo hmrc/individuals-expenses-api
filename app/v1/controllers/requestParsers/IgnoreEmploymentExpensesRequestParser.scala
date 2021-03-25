@@ -19,11 +19,11 @@ package v1.controllers.requestParsers
 import javax.inject.Inject
 import uk.gov.hmrc.domain.Nino
 import v1.controllers.requestParsers.validators.IgnoreEmploymentExpensesValidator
-import v1.models.request.ignoreEmploymentExpenses.{IgnoreEmploymentExpensesBody, IgnoreEmploymentExpensesRawData, IgnoreEmploymentExpensesRequest}
+import v1.models.request.ignoreEmploymentExpenses.{IgnoreEmploymentExpensesRawData, IgnoreEmploymentExpensesRequest}
 
 class IgnoreEmploymentExpensesRequestParser @Inject()(val validator: IgnoreEmploymentExpensesValidator)
   extends RequestParser[IgnoreEmploymentExpensesRawData, IgnoreEmploymentExpensesRequest] {
 
   override protected def requestFor(data: IgnoreEmploymentExpensesRawData): IgnoreEmploymentExpensesRequest =
-    IgnoreEmploymentExpensesRequest(Nino(data.nino), data.taxYear, data.body.as[IgnoreEmploymentExpensesBody])
+    IgnoreEmploymentExpensesRequest(Nino(data.nino), data.taxYear)
 }

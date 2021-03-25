@@ -56,7 +56,7 @@ class IgnoreEmploymentExpensesController @Inject()(val authService: EnrolmentsAu
       logger.info(message = s"[${endpointLogContext.controllerName}][${endpointLogContext.endpointName}] " +
         s"with correlationId : $correlationId")
 
-      val rawData = IgnoreEmploymentExpensesRawData(nino, taxYear, request.body)
+      val rawData = IgnoreEmploymentExpensesRawData(nino, taxYear)
       val result =
         for {
           parsedRequest <- EitherT.fromEither[Future](parser.parseRequest(rawData))
@@ -72,7 +72,7 @@ class IgnoreEmploymentExpensesController @Inject()(val authService: EnrolmentsAu
             ExpensesAuditDetail(
               userDetails = request.userDetails,
               params = Map("nino" -> nino, "taxYear" -> taxYear),
-              requestBody = Some(request.body),
+              requestBody = None,
               `X-CorrelationId` = serviceResponse.correlationId,
               auditResponse = AuditResponse(httpStatus = OK, response = Right(Some(Json.toJson(vendorResponse))))
             )
@@ -92,7 +92,7 @@ class IgnoreEmploymentExpensesController @Inject()(val authService: EnrolmentsAu
         auditSubmission(ExpensesAuditDetail(
           userDetails = request.userDetails,
           params = Map("nino" -> nino, "taxYear" -> taxYear),
-          requestBody = Some(request.body),
+          requestBody = None,
           `X-CorrelationId` = resCorrelationId,
           auditResponse = AuditResponse(httpStatus = result.header.status, response = Left(errorWrapper.auditErrors))
         ))
@@ -108,10 +108,8 @@ class IgnoreEmploymentExpensesController @Inject()(val authService: EnrolmentsAu
            | TaxYearFormatError
            | RuleTaxYearRangeInvalidError
            | RuleTaxYearNotSupportedError
-           | RuleTaxYearNotEndedError
-           | RuleIncorrectOrEmptyBodyError => BadRequest(Json.toJson(errorWrapper))
+           | RuleTaxYearNotEndedError => BadRequest(Json.toJson(errorWrapper))
       case DownstreamError                 => InternalServerError(Json.toJson(errorWrapper))
-      case NotFoundError                   => NotFound(Json.toJson(errorWrapper))
     }
   }
 

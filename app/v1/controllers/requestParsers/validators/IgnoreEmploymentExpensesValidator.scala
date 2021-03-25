@@ -25,18 +25,12 @@ import v1.models.request.ignoreEmploymentExpenses._
 
 class IgnoreEmploymentExpensesValidator @Inject()(implicit currentDateTime: CurrentDateTime, appConfig: AppConfig, currentTaxYear: CurrentTaxYear)
   extends Validator[IgnoreEmploymentExpensesRawData] {
-  private val validationSet = List(parameterFormatValidation, bodyFormatValidation, parameterRuleValidation)
+  private val validationSet = List(parameterFormatValidation, parameterRuleValidation)
 
   private def parameterFormatValidation: IgnoreEmploymentExpensesRawData => List[List[MtdError]] = (data: IgnoreEmploymentExpensesRawData) => {
     List(
       NinoValidation.validate(data.nino),
       TaxYearValidation.validate(data.taxYear),
-    )
-  }
-
-  private def bodyFormatValidation: IgnoreEmploymentExpensesRawData => List[List[MtdError]] = { data =>
-    List(
-      JsonFormatValidation.validate[IgnoreEmploymentExpensesBody](data.body, RuleIncorrectOrEmptyBodyError)
     )
   }
 

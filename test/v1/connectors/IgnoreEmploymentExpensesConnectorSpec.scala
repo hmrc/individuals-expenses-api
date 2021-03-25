@@ -42,7 +42,7 @@ class IgnoreEmploymentExpensesConnectorSpec extends ConnectorSpec {
   }
 
   "ignore" should {
-    val request = IgnoreEmploymentExpensesRequest(nino, taxYear, body)
+    val request = IgnoreEmploymentExpensesRequest(nino, taxYear)
 
     "put a body and return 204 no body" in new Test {
       val outcome = Right(ResponseWrapper(correlationId, ()))
