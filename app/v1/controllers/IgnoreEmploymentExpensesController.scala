@@ -20,7 +20,7 @@ import cats.data.EitherT
 import cats.implicits._
 import javax.inject.{Inject, Singleton}
 import play.api.libs.json.{JsValue, Json}
-import play.api.mvc.{Action, ControllerComponents}
+import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.http.connector.AuditResult
 import utils.{IdGenerator, Logging}
@@ -49,8 +49,8 @@ class IgnoreEmploymentExpensesController @Inject()(val authService: EnrolmentsAu
   implicit val endpointLogContext: EndpointLogContext =
     EndpointLogContext(controllerName = "IgnoreEmploymentExpensesController", endpointName = "ignoreEmploymentExpenses")
 
-  def handleRequest(nino: String, taxYear: String): Action[JsValue] =
-    authorisedAction(nino).async(parse.json) { implicit request =>
+  def handleRequest(nino: String, taxYear: String): Action[AnyContent] =
+    authorisedAction(nino).async { implicit request =>
 
       implicit val correlationId: String = idGenerator.generateCorrelationId
       logger.info(message = s"[${endpointLogContext.controllerName}][${endpointLogContext.endpointName}] " +
