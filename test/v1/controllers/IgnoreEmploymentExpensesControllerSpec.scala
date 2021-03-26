@@ -80,7 +80,7 @@ class IgnoreEmploymentExpensesControllerSpec
        |}
        |""".stripMargin)
 
-  def event(auditResponse: AuditResponse, requestBody: Option[JsValue]): AuditEvent[ExpensesAuditDetail] =
+  def event(auditResponse: AuditResponse): AuditEvent[ExpensesAuditDetail] =
     AuditEvent(
       auditType = "IgnoreEmploymentExpenses",
       transactionName = "ignore-employment-expenses",
@@ -88,14 +88,14 @@ class IgnoreEmploymentExpensesControllerSpec
         userType = "Individual",
         agentReferenceNumber = None,
         params = Map("nino" -> nino, "taxYear" -> taxYear),
-        requestBody = requestBody,
+        requestBody = None,
         `X-CorrelationId` = correlationId,
         auditResponse = auditResponse
       )
     )
 
-  private val rawData = IgnoreEmploymentExpensesRawData(nino, taxYear, requestBodyJson)
-  private val requestData = IgnoreEmploymentExpensesRequest(Nino(nino), taxYear , requestBody)
+  private val rawData = IgnoreEmploymentExpensesRawData(nino, taxYear)
+  private val requestData = IgnoreEmploymentExpensesRequest(Nino(nino), taxYear)
 
   trait Test {
     val hc = HeaderCarrier()
@@ -132,12 +132,12 @@ class IgnoreEmploymentExpensesControllerSpec
           .wrap((), IgnoreEmploymentExpensesHateoasData(nino, taxYear))
           .returns(HateoasWrapper((), testHateoasLinks))
 
-        val result: Future[Result] = controller.handleRequest(nino, taxYear)(fakePostRequest(requestBodyJson))
+        val result: Future[Result] = controller.handleRequest(nino, taxYear)(fakeRequest)
         status(result) shouldBe OK
         header("X-CorrelationId", result) shouldBe Some(correlationId)
 
         val auditResponse: AuditResponse = AuditResponse(OK, None, Some(responseBody))
-        MockedAuditService.verifyAuditEvent(event(auditResponse, Some(requestBodyJson))).once
+        MockedAuditService.verifyAuditEvent(event(auditResponse)).once
       }
     }
 
@@ -150,14 +150,14 @@ class IgnoreEmploymentExpensesControllerSpec
               .parseRequest(rawData)
               .returns(Left(ErrorWrapper(correlationId, error, None)))
 
-            val result: Future[Result] = controller.handleRequest(nino, taxYear)(fakePostRequest(requestBodyJson))
+            val result: Future[Result] = controller.handleRequest(nino, taxYear)(fakeRequest)
 
             status(result) shouldBe expectedStatus
             contentAsJson(result) shouldBe Json.toJson(error)
             header("X-CorrelationId", result) shouldBe Some(correlationId)
 
             val auditResponse: AuditResponse = AuditResponse(expectedStatus, Some(Seq(AuditError(error.code))), None)
-            MockedAuditService.verifyAuditEvent(event(auditResponse, Some(requestBodyJson))).once
+            MockedAuditService.verifyAuditEvent(event(auditResponse)).once
           }
         }
 
@@ -165,7 +165,6 @@ class IgnoreEmploymentExpensesControllerSpec
           (BadRequestError, BAD_REQUEST),
           (NinoFormatError, BAD_REQUEST),
           (TaxYearFormatError, BAD_REQUEST),
-          (RuleIncorrectOrEmptyBodyError, BAD_REQUEST),
           (RuleTaxYearNotSupportedError, BAD_REQUEST),
           (RuleTaxYearRangeInvalidError, BAD_REQUEST),
           (RuleTaxYearNotEndedError, BAD_REQUEST)
@@ -186,14 +185,14 @@ class IgnoreEmploymentExpensesControllerSpec
               .ignore(requestData)
               .returns(Future.successful(Left(ErrorWrapper(correlationId, mtdError))))
 
-            val result: Future[Result] = controller.handleRequest(nino, taxYear)(fakePostRequest(requestBodyJson))
+            val result: Future[Result] = controller.handleRequest(nino, taxYear)(fakeRequest)
 
             status(result) shouldBe expectedStatus
             contentAsJson(result) shouldBe Json.toJson(mtdError)
             header("X-CorrelationId", result) shouldBe Some(correlationId)
 
             val auditResponse: AuditResponse = AuditResponse(expectedStatus, Some(Seq(AuditError(mtdError.code))), None)
-            MockedAuditService.verifyAuditEvent(event(auditResponse, Some(requestBodyJson))).once
+            MockedAuditService.verifyAuditEvent(event(auditResponse)).once
           }
         }
 
@@ -201,7 +200,6 @@ class IgnoreEmploymentExpensesControllerSpec
           (NinoFormatError, BAD_REQUEST),
           (TaxYearFormatError, BAD_REQUEST),
           (RuleTaxYearNotEndedError, BAD_REQUEST),
-          (NotFoundError, NOT_FOUND),
           (DownstreamError, INTERNAL_SERVER_ERROR)
         )
 

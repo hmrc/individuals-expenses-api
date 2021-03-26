@@ -23,7 +23,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import utils.Logging
 import v1.connectors.IgnoreEmploymentExpensesConnector
 import v1.controllers.EndpointLogContext
-import v1.models.errors.{DownstreamError, NinoFormatError, NotFoundError, RuleTaxYearNotEndedError}
+import v1.models.errors._
 import v1.models.request.ignoreEmploymentExpenses.IgnoreEmploymentExpensesRequest
 import v1.support.DesResponseMappingSupport
 
@@ -48,7 +48,7 @@ class IgnoreEmploymentExpensesService @Inject()(connector: IgnoreEmploymentExpen
   private def desErrorMap =
     Map(
       "INVALID_TAXABLE_ENTITY_ID" -> NinoFormatError,
-      "INVALID_TAX_YEAR" -> NotFoundError,
+      "INVALID_TAX_YEAR" -> TaxYearFormatError,
       "INVALID_CORRELATIONID" -> DownstreamError,
       "INVALID_PAYLOAD" -> DownstreamError,
       "INVALID_REQUEST_BEFORE_TAX_YEAR_END" -> RuleTaxYearNotEndedError,

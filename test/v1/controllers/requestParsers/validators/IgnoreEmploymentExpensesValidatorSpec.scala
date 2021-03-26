@@ -32,17 +32,6 @@ class IgnoreEmploymentExpensesValidatorSpec extends UnitSpec {
   private val validNino = "AA123456A"
   private val validTaxYear = "2019-20"
   private val date = DateTime.parse("2020-08-05")
-  private val requestBodyJson = Json.parse(
-    """
-      |{
-      |  "ignoreExpenses": true
-      |}
-      |""".stripMargin)
-
-  private val emptyJson = Json.parse(
-    """{}""".stripMargin
-  )
-
 
   class Test extends MockCurrentDateTime with MockCurrentTaxYear with MockAppConfig {
 
@@ -66,42 +55,28 @@ class IgnoreEmploymentExpensesValidatorSpec extends UnitSpec {
   "running a validation" should {
     "return no errors" when {
       "a valid request is supplied" in new Test {
-        validator.validate(IgnoreEmploymentExpensesRawData(validNino, validTaxYear, requestBodyJson)) shouldBe Nil
+        validator.validate(IgnoreEmploymentExpensesRawData(validNino, validTaxYear)) shouldBe Nil
       }
     }
 
     "return a path parameter error" when {
       "the nino is invalid" in new Test {
-        validator.validate(IgnoreEmploymentExpensesRawData("Walrus", validTaxYear, requestBodyJson)) shouldBe List(NinoFormatError)
+        validator.validate(IgnoreEmploymentExpensesRawData("Walrus", validTaxYear)) shouldBe List(NinoFormatError)
       }
       "the taxYear format is invalid" in new Test {
-        validator.validate(IgnoreEmploymentExpensesRawData(validNino, "2000", requestBodyJson)) shouldBe List(TaxYearFormatError)
+        validator.validate(IgnoreEmploymentExpensesRawData(validNino, "2000")) shouldBe List(TaxYearFormatError)
       }
       "the taxYear range is invalid" in new Test {
-        validator.validate(IgnoreEmploymentExpensesRawData(validNino, "2017-20", requestBodyJson)) shouldBe List(RuleTaxYearRangeInvalidError)
+        validator.validate(IgnoreEmploymentExpensesRawData(validNino, "2017-20")) shouldBe List(RuleTaxYearRangeInvalidError)
       }
       "the taxYear is too early" in new Test {
-        validator.validate(IgnoreEmploymentExpensesRawData(validNino, "2017-18", requestBodyJson)) shouldBe List(RuleTaxYearNotSupportedError)
+        validator.validate(IgnoreEmploymentExpensesRawData(validNino, "2017-18")) shouldBe List(RuleTaxYearNotSupportedError)
       }
       "the taxYear has not ended" in new Test {
-        validator.validate(IgnoreEmploymentExpensesRawData(validNino, "2023-24", requestBodyJson)) shouldBe List(RuleTaxYearNotEndedError)
+        validator.validate(IgnoreEmploymentExpensesRawData(validNino, "2023-24")) shouldBe List(RuleTaxYearNotEndedError)
       }
       "all path parameters are invalid" in new Test {
-        validator.validate(IgnoreEmploymentExpensesRawData("Walrus", "2000", requestBodyJson)) shouldBe List(NinoFormatError, TaxYearFormatError)
-      }
-    }
-
-    "return RuleIncorrectOrEmptyBodyError error" when {
-      "an empty JSON body is submitted" in new Test {
-        validator.validate(IgnoreEmploymentExpensesRawData(validNino, validTaxYear, emptyJson)) shouldBe List(RuleIncorrectOrEmptyBodyError)
-      }
-      "an incorrect JSON body is submitted" in new Test {
-        validator.validate(IgnoreEmploymentExpensesRawData(validNino, validTaxYear, Json.parse(
-          """
-            |{
-            |  "ignoreExpenses": "342345.34"
-            |}
-            |""".stripMargin))) shouldBe List(RuleIncorrectOrEmptyBodyError)
+        validator.validate(IgnoreEmploymentExpensesRawData("Walrus", "2000")) shouldBe List(NinoFormatError, TaxYearFormatError)
       }
     }
   }
