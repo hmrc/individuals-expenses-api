@@ -132,7 +132,7 @@ class IgnoreEmploymentExpensesControllerSpec
           .wrap((), IgnoreEmploymentExpensesHateoasData(nino, taxYear))
           .returns(HateoasWrapper((), testHateoasLinks))
 
-        val result: Future[Result] = controller.handleRequest(nino, taxYear)(fakePostRequest(requestBodyJson))
+        val result: Future[Result] = controller.handleRequest(nino, taxYear)(fakeRequest)
         status(result) shouldBe OK
         header("X-CorrelationId", result) shouldBe Some(correlationId)
 
@@ -150,7 +150,7 @@ class IgnoreEmploymentExpensesControllerSpec
               .parseRequest(rawData)
               .returns(Left(ErrorWrapper(correlationId, error, None)))
 
-            val result: Future[Result] = controller.handleRequest(nino, taxYear)(fakePostRequest(requestBodyJson))
+            val result: Future[Result] = controller.handleRequest(nino, taxYear)(fakeRequest)
 
             status(result) shouldBe expectedStatus
             contentAsJson(result) shouldBe Json.toJson(error)
@@ -185,7 +185,7 @@ class IgnoreEmploymentExpensesControllerSpec
               .ignore(requestData)
               .returns(Future.successful(Left(ErrorWrapper(correlationId, mtdError))))
 
-            val result: Future[Result] = controller.handleRequest(nino, taxYear)(fakePostRequest(requestBodyJson))
+            val result: Future[Result] = controller.handleRequest(nino, taxYear)(fakeRequest)
 
             status(result) shouldBe expectedStatus
             contentAsJson(result) shouldBe Json.toJson(mtdError)
