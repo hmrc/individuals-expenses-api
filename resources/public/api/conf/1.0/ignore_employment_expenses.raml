@@ -1,27 +1,17 @@
 is:
   - headers.acceptJson
-  - headers.contentTypeJson
   - headers.testScenarioHeader
   - errors.formatNino
   - errors.formatTaxYear
-  - errors.incorrectOrEmptyBody
   - errors.ruleTaxYearNotSupported
   - errors.ruleTaxYearRangeInvalid
   - errors.ruleTaxYearNotEnded
   - errors.clientOrAgentNotAuthorised
-  - errors.notFound
 displayName: Ignore Employment Expenses [test only]
 description: This endpoint allows a developer to ignore HMRC provided employment expenses for this user. <strong>This endpoint can only be used after the tax year has ended.</strong> A National Insurance number and Tax year must be provided.
 (annotations.sandboxData): !include scenarios/ignore_employment_expenses.md
 (annotations.scope): "write:self-assessment"
 securedBy: [ sec.oauth_2_0: { scopes: [ "write:self-assessment" ] } ]
-body:
-  application/json:
-    type: !include schemas/ignore_employment_expenses/request.json
-    examples:
-     example-1:
-      description: Default Example
-      value: !include examples/ignore_employment_expenses/request.json
 responses:
   200:
     body:

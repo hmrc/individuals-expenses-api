@@ -1,7 +1,7 @@
-These API endpoints allow software packages to retrieve, amend and delete expenses for:
+This API allows developers to retrieve, amend and delete expenses related to: 
 <br>
 ·       income for trade union and patent royalties
 <br>
-·       existing employment expense
+·       existing employment
 
-An endpoint also exists that allows software packages to ignore HMRC provided employment expenses for a user.
+Using this API developers can also ignore HMRC provided employment expenses for a user.
