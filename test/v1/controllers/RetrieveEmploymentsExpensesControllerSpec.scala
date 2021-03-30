@@ -27,7 +27,7 @@ import v1.mocks.services.{MockAuditService, MockEnrolmentsAuthService, MockMtdId
 import v1.models.audit.{AuditError, AuditEvent, AuditResponse, ExpensesAuditDetail}
 import v1.models.domain.MtdSource
 import v1.models.errors._
-import v1.models.hateoas.Method.{DELETE, GET, PUT}
+import v1.models.hateoas.Method.{DELETE, GET, POST, PUT}
 import v1.models.hateoas.{HateoasWrapper, Link}
 import v1.models.outcomes.ResponseWrapper
 import v1.models.request.retrieveEmploymentExpenses.{RetrieveEmploymentsExpensesRawData, RetrieveEmploymentsExpensesRequest}
@@ -78,7 +78,7 @@ class RetrieveEmploymentsExpensesControllerSpec
     Link(href = s"/individuals/expenses/employments/$nino/$taxYear", method = PUT, rel = "amend-employment-expenses"),
     Link(href = s"/individuals/expenses/employments/$nino/$taxYear", method = GET, rel = "self"),
     Link(href = s"/individuals/expenses/employments/$nino/$taxYear", method = DELETE, rel = "delete-employment-expenses"),
-    Link(href = s"/individuals/expenses/employments/$nino/$taxYear/ignore", method = PUT, rel = "ignore-employment-expenses")
+    Link(href = s"/individuals/expenses/employments/$nino/$taxYear/ignore", method = POST, rel = "ignore-employment-expenses")
   )
 
   private val responseBody = RetrieveEmploymentsExpensesResponse(Some("2020-12-12T12:12:12Z"),
@@ -122,7 +122,7 @@ class RetrieveEmploymentsExpensesControllerSpec
        |			},
        |			{
        |				"href": "/individuals/expenses/employments/AA123456A/2019-20/ignore",
-       |				"method": "PUT",
+       |				"method": "POST",
        |				"rel": "ignore-employment-expenses"
        |			}
        |		]

@@ -71,7 +71,7 @@ class RetrieveEmploymentsExpensesControllerISpec extends IntegrationBaseSpec {
          |			},
          |			{
          |				"href": "/individuals/expenses/employments/AA123456A/2019-20/ignore",
-         |				"method": "PUT",
+         |				"method": "POST",
          |				"rel": "ignore-employment-expenses"
          |			}
          |		]
@@ -102,7 +102,7 @@ class RetrieveEmploymentsExpensesControllerISpec extends IntegrationBaseSpec {
          |			},
          |			{
          |				"href": "/individuals/expenses/employments/AA123456A/2019-20/ignore",
-         |				"method": "PUT",
+         |				"method": "POST",
          |				"rel": "ignore-employment-expenses"
          |			}
          |		]
