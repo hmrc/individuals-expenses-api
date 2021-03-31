@@ -53,14 +53,6 @@ class IgnoreEmploymentExpensesControllerSpec
     Link(href = s"/individuals/expenses/employments/$nino/$taxYear", method = GET, rel = "self"),
     Link(href = s"/individuals/expenses/employments/$nino/$taxYear/ignore", method = POST, rel = "ignore-employment-expenses")
   )
-  private val requestBody = IgnoreEmploymentExpensesBody(ignoreExpenses = true)
-
-  private val requestBodyJson = Json.parse(
-    """
-      |{
-      |  "ignoreExpenses": true
-      |}
-      |""".stripMargin)
 
   val responseBody: JsValue = Json.parse(
     s"""
