@@ -9,11 +9,11 @@
     <tbody>
         <tr>
             <td><p>N/A - DEFAULT</p></td>
-            <td><p>Simulate success response.</p></td>
+            <td><p>Simulates success response.</p></td>
         </tr>
         <tr>
             <td><p>NOT_FOUND</p></td>
-            <td><p>Simulate a scenario where no data is found.</p></td>
+            <td><p>Simulates the scenario where no data is found.</p></td>
         </tr>
     </tbody>
 </table>
