@@ -1,4 +1,4 @@
-This API allows developers to retrieve, amend and delete expenses related to:
+This API allows developers to retrieve, amend and delete expenses related to: 
 
 - income for trade union and patent royalties
 - existing employment

@@ -21,7 +21,7 @@
     },
     {
       "href":"/individuals/expenses/employments/TC663795B/2019-20/ignore",
-      "method":"PUT",
+      "method":"POST",
       "rel":"ignore-employment-expenses"
     }
   ]

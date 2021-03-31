@@ -28,7 +28,7 @@
             "type": "string",
             "enum": [
               "GET",
-              "PUT"
+              "POST"
             ]
           }
         },

@@ -53,6 +53,6 @@ trait HateoasLinks {
     Link(href = employmentExpensesUri(appConfig, nino, taxYear), method = DELETE, rel = DELETE_EMPLOYMENT_EXPENSES)
 
   def ignoreEmploymentExpenses(appConfig: AppConfig, nino: String, taxYear: String): Link =
-    Link(href = ignoreEmploymentExpensesUri(appConfig, nino, taxYear), method = PUT, rel = IGNORE_EMPLOYMENT_EXPENSES)
+    Link(href = ignoreEmploymentExpensesUri(appConfig, nino, taxYear), method = POST, rel = IGNORE_EMPLOYMENT_EXPENSES)
 
 }

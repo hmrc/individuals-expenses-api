@@ -20,7 +20,7 @@ import cats.data.EitherT
 import cats.implicits._
 import javax.inject.{Inject, Singleton}
 import play.api.libs.json.{JsValue, Json}
-import play.api.mvc.{Action, ControllerComponents}
+import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.http.connector.AuditResult
 import utils.{IdGenerator, Logging}
@@ -49,14 +49,14 @@ class IgnoreEmploymentExpensesController @Inject()(val authService: EnrolmentsAu
   implicit val endpointLogContext: EndpointLogContext =
     EndpointLogContext(controllerName = "IgnoreEmploymentExpensesController", endpointName = "ignoreEmploymentExpenses")
 
-  def handleRequest(nino: String, taxYear: String): Action[JsValue] =
-    authorisedAction(nino).async(parse.json) { implicit request =>
+  def handleRequest(nino: String, taxYear: String): Action[AnyContent] =
+    authorisedAction(nino).async { implicit request =>
 
       implicit val correlationId: String = idGenerator.generateCorrelationId
       logger.info(message = s"[${endpointLogContext.controllerName}][${endpointLogContext.endpointName}] " +
         s"with correlationId : $correlationId")
 
-      val rawData = IgnoreEmploymentExpensesRawData(nino, taxYear, request.body)
+      val rawData = IgnoreEmploymentExpensesRawData(nino, taxYear)
       val result =
         for {
           parsedRequest <- EitherT.fromEither[Future](parser.parseRequest(rawData))
@@ -72,7 +72,7 @@ class IgnoreEmploymentExpensesController @Inject()(val authService: EnrolmentsAu
             ExpensesAuditDetail(
               userDetails = request.userDetails,
               params = Map("nino" -> nino, "taxYear" -> taxYear),
-              requestBody = Some(request.body),
+              requestBody = None,
               `X-CorrelationId` = serviceResponse.correlationId,
               auditResponse = AuditResponse(httpStatus = OK, response = Right(Some(Json.toJson(vendorResponse))))
             )
@@ -92,7 +92,7 @@ class IgnoreEmploymentExpensesController @Inject()(val authService: EnrolmentsAu
         auditSubmission(ExpensesAuditDetail(
           userDetails = request.userDetails,
           params = Map("nino" -> nino, "taxYear" -> taxYear),
-          requestBody = Some(request.body),
+          requestBody = None,
           `X-CorrelationId` = resCorrelationId,
           auditResponse = AuditResponse(httpStatus = result.header.status, response = Left(errorWrapper.auditErrors))
         ))
@@ -108,10 +108,8 @@ class IgnoreEmploymentExpensesController @Inject()(val authService: EnrolmentsAu
            | TaxYearFormatError
            | RuleTaxYearRangeInvalidError
            | RuleTaxYearNotSupportedError
-           | RuleTaxYearNotEndedError
-           | RuleIncorrectOrEmptyBodyError => BadRequest(Json.toJson(errorWrapper))
+           | RuleTaxYearNotEndedError => BadRequest(Json.toJson(errorWrapper))
       case DownstreamError                 => InternalServerError(Json.toJson(errorWrapper))
-      case NotFoundError                   => NotFound(Json.toJson(errorWrapper))
     }
   }
 

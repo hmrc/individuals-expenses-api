@@ -18,4 +18,4 @@ package v1.models.request.ignoreEmploymentExpenses
 
 import uk.gov.hmrc.domain.Nino
 
-case class IgnoreEmploymentExpensesRequest(nino: Nino, taxYear: String, body: IgnoreEmploymentExpensesBody)
+case class IgnoreEmploymentExpensesRequest(nino: Nino, taxYear: String)

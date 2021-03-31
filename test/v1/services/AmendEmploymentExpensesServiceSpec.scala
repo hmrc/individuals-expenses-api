@@ -75,7 +75,7 @@ class AmendEmploymentExpensesServiceSpec extends ServiceSpec {
 
       val input = Seq(
         "INVALID_TAXABLE_ENTITY_ID" -> NinoFormatError,
-        "INVALID_TAX_YEAR" -> NotFoundError,
+        "INVALID_TAX_YEAR" -> TaxYearFormatError,
         "INVALID_CORRELATIONID" -> DownstreamError,
         "INVALID_PAYLOAD" -> DownstreamError,
         "INVALID_REQUEST_BEFORE_TAX_YEAR_END" -> RuleTaxYearNotEndedError,

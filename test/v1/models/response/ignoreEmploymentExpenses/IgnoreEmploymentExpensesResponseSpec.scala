@@ -19,7 +19,7 @@ package v1.models.response.ignoreEmploymentExpenses
 import mocks.MockAppConfig
 import support.UnitSpec
 import v1.models.hateoas.Link
-import v1.models.hateoas.Method.{GET, PUT}
+import v1.models.hateoas.Method.{GET, POST}
 
 class IgnoreEmploymentExpensesResponseSpec extends UnitSpec with MockAppConfig {
   "LinksFactory" should {
@@ -31,7 +31,7 @@ class IgnoreEmploymentExpensesResponseSpec extends UnitSpec with MockAppConfig {
       IgnoreEmploymentExpensesResponse.IgnoreEmploymentExpensesLinksFactory.links(mockAppConfig, IgnoreEmploymentExpensesHateoasData(nino, taxYear)) shouldBe
         Seq(
           Link(s"/my/context/employments/$nino/$taxYear", GET, "self"),
-          Link(s"/my/context/employments/$nino/$taxYear/ignore", PUT, "ignore-employment-expenses")
+          Link(s"/my/context/employments/$nino/$taxYear/ignore", POST, "ignore-employment-expenses")
         )
     }
   }

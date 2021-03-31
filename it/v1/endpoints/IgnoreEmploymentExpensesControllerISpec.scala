@@ -35,13 +35,7 @@ class IgnoreEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
     val nino: String = "AA123456A"
     val taxYear: String = "2019-20"
 
-    val requestBody: JsValue = Json.parse(
-      s"""
-         |{
-         |  "ignoreExpenses": true
-         |}
-         |""".stripMargin
-    )
+    val requestBody: JsValue = Json.parse("{}")
 
     val responseBody: JsValue = Json.parse(
       s"""
@@ -54,7 +48,7 @@ class IgnoreEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
          |    },
          |    {
          |      "href": "/individuals/expenses/employments/$nino/$taxYear/ignore",
-         |      "method": "PUT",
+         |      "method": "POST",
          |      "rel": "ignore-employment-expenses"
          |    }
          |  ]
@@ -95,7 +89,7 @@ class IgnoreEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
           DesStub.onSuccess(DesStub.PUT, desUri, NO_CONTENT, JsObject.empty)
         }
 
-        val response: WSResponse = await(request().put(requestBody))
+        val response: WSResponse = await(request().post(requestBody))
         response.status shouldBe OK
         response.json shouldBe responseBody
         response.header("X-CorrelationId").nonEmpty shouldBe true
@@ -106,12 +100,11 @@ class IgnoreEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
 
       "validation error" when {
 
-        def parserErrorTest(newNino: String, newTaxYear: String, newBody: JsValue, expectedStatus: Int, expectedBody: MtdError): Unit = {
+        def parserErrorTest(newNino: String, newTaxYear: String, expectedStatus: Int, expectedBody: MtdError): Unit = {
           s"parser returns ${expectedBody.code}" in new Test {
 
             override val nino: String = newNino
             override val taxYear: String = newTaxYear
-            override val requestBody: JsValue = newBody
 
             override def setupStubs(): StubMapping = {
               AuditStub.audit()
@@ -119,7 +112,7 @@ class IgnoreEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
               MtdIdLookupStub.ninoFound(nino)
             }
 
-            val response: WSResponse = await(request().put(requestBody))
+            val response: WSResponse = await(request().post(requestBody))
             response.status shouldBe expectedStatus
             response.json shouldBe Json.toJson(expectedBody)
           }
@@ -134,12 +127,11 @@ class IgnoreEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
         }
 
         val input = Seq(
-          ("AA123456ABCDEF", "2019-20", Json.parse(s"""{"ignoreExpenses": true}"""), BAD_REQUEST, NinoFormatError),
-          ("AA123456A", "201920", Json.parse(s"""{"ignoreExpenses": true}"""), BAD_REQUEST, TaxYearFormatError),
-          ("AA123456A", "2016-17", Json.parse(s"""{"ignoreExpenses": true}"""), BAD_REQUEST, RuleTaxYearNotSupportedError),
-          ("AA123456A", "2019-21", Json.parse(s"""{"ignoreExpenses": true}"""), BAD_REQUEST, RuleTaxYearRangeInvalidError),
-          ("AA123456A", currentYear, Json.parse(s"""{"ignoreExpenses": true}"""), BAD_REQUEST, RuleTaxYearNotEndedError),
-          ("AA123456A", "2019-20", Json.parse(s"""{}"""), BAD_REQUEST, RuleIncorrectOrEmptyBodyError),
+          ("AA123456ABCDEF", "2019-20", BAD_REQUEST, NinoFormatError),
+          ("AA123456A", "201920", BAD_REQUEST, TaxYearFormatError),
+          ("AA123456A", "2016-17", BAD_REQUEST, RuleTaxYearNotSupportedError),
+          ("AA123456A", "2019-21", BAD_REQUEST, RuleTaxYearRangeInvalidError),
+          ("AA123456A", currentYear, BAD_REQUEST, RuleTaxYearNotEndedError)
         )
 
         input.foreach(args => (parserErrorTest _).tupled(args))
@@ -157,7 +149,7 @@ class IgnoreEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
               DesStub.onError(DesStub.PUT, desUri, desStatus, errorBody(desCode))
             }
 
-            val response: WSResponse = await(request().put(requestBody))
+            val response: WSResponse = await(request().post(requestBody))
             response.status shouldBe expectedStatus
             response.json shouldBe Json.toJson(expectedBody)
           }
@@ -165,7 +157,7 @@ class IgnoreEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
 
         val input = Seq(
           (BAD_REQUEST, "INVALID_TAXABLE_ENTITY_ID", BAD_REQUEST, NinoFormatError),
-          (BAD_REQUEST, "INVALID_TAX_YEAR", NOT_FOUND, NotFoundError),
+          (BAD_REQUEST, "INVALID_TAX_YEAR", BAD_REQUEST, TaxYearFormatError),
           (BAD_REQUEST, "INVALID_CORRELATIONID", INTERNAL_SERVER_ERROR, DownstreamError),
           (BAD_REQUEST, "INVALID_PAYLOAD", INTERNAL_SERVER_ERROR, DownstreamError),
           (UNPROCESSABLE_ENTITY, "INVALID_REQUEST_BEFORE_TAX_YEAR_END", BAD_REQUEST, RuleTaxYearNotEndedError),
