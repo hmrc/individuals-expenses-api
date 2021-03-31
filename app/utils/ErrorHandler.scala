@@ -28,7 +28,6 @@ import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import uk.gov.hmrc.play.bootstrap.backend.http.JsonErrorHandler
 import uk.gov.hmrc.play.bootstrap.config.HttpAuditEvent
-import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import v1.models.errors._
 
 import scala.concurrent._
