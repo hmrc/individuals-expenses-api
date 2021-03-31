@@ -26,8 +26,9 @@ import uk.gov.hmrc.auth.core.AuthorisationException
 import uk.gov.hmrc.http._
 import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
-import uk.gov.hmrc.play.bootstrap.config.HttpAuditEvent
 import uk.gov.hmrc.play.bootstrap.backend.http.JsonErrorHandler
+import uk.gov.hmrc.play.bootstrap.config.HttpAuditEvent
+import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import v1.models.errors._
 
 import scala.concurrent._
@@ -37,11 +38,9 @@ class ErrorHandler @Inject()(
                               config: Configuration,
                               auditConnector: AuditConnector,
                               httpAuditEvent: HttpAuditEvent
-                            )(implicit ec: ExecutionContext) extends JsonErrorHandler(auditConnector, httpAuditEvent, config) {
+                            )(implicit ec: ExecutionContext) extends JsonErrorHandler(auditConnector, httpAuditEvent, config) with Logging {
 
   import httpAuditEvent.dataEvent
-
-  private val logger: Logger = Logger(this.getClass)
 
   override def onClientError(request: RequestHeader, statusCode: Int, message: String): Future[Result] = {
 
@@ -105,4 +104,3 @@ class ErrorHandler @Inject()(
     Future.successful(Status(status)(Json.toJson(errorCode)))
   }
 }
-
