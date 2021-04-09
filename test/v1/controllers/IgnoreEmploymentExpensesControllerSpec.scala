@@ -26,7 +26,7 @@ import v1.mocks.requestParsers.MockIgnoreEmploymentExpensesRequestParser
 import v1.mocks.services.{MockAuditService, MockEnrolmentsAuthService, MockIgnoreEmploymentExpensesService, MockMtdIdLookupService}
 import v1.models.audit.{AuditError, AuditEvent, AuditResponse, ExpensesAuditDetail}
 import v1.models.errors._
-import v1.models.hateoas.Method.{GET, PUT}
+import v1.models.hateoas.Method.{GET, DELETE}
 import v1.models.hateoas.{HateoasWrapper, Link}
 import v1.models.outcomes.ResponseWrapper
 import v1.models.request.ignoreEmploymentExpenses._
@@ -51,7 +51,7 @@ class IgnoreEmploymentExpensesControllerSpec
 
   private val testHateoasLinks = Seq(
     Link(href = s"/individuals/expenses/employments/$nino/$taxYear", method = GET, rel = "self"),
-    Link(href = s"/individuals/expenses/employments/$nino/$taxYear/ignore", method = PUT, rel = "ignore-employment-expenses")
+    Link(href = s"/individuals/expenses/employments/$nino/$taxYear", method = DELETE, rel = "delete-employment-expenses")
   )
   private val requestBody = IgnoreEmploymentExpensesBody(ignoreExpenses = true)
 
@@ -72,9 +72,9 @@ class IgnoreEmploymentExpensesControllerSpec
        |      "rel": "self"
        |    },
        |    {
-       |      "href": "/individuals/expenses/employments/$nino/$taxYear/ignore",
-       |      "method": "PUT",
-       |      "rel": "ignore-employment-expenses"
+       |      "href": "/individuals/expenses/employments/$nino/$taxYear",
+       |      "method": "DELETE",
+       |      "rel": "delete-employment-expenses"
        |    }
        |  ]
        |}

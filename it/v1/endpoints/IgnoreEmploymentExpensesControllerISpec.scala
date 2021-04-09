@@ -53,9 +53,9 @@ class IgnoreEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
          |      "rel": "self"
          |    },
          |    {
-         |      "href": "/individuals/expenses/employments/$nino/$taxYear/ignore",
-         |      "method": "PUT",
-         |      "rel": "ignore-employment-expenses"
+         |      "href": "/individuals/expenses/employments/$nino/$taxYear",
+         |      "method": "DELETE",
+         |      "rel": "delete-employment-expenses"
          |    }
          |  ]
          |}
