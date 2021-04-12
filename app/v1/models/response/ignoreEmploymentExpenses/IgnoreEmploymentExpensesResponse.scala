@@ -27,7 +27,7 @@ object IgnoreEmploymentExpensesResponse extends HateoasLinks {
       import data._
       Seq(
         retrieveEmploymentExpenses(appConfig, nino, taxYear),
-        ignoreEmploymentExpenses(appConfig, nino, taxYear)
+        deleteEmploymentExpenses(appConfig, nino, taxYear)
       )
     }
   }
