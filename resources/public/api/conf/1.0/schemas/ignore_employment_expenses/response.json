@@ -20,7 +20,7 @@
             "type": "string",
             "enum": [
               "self",
-              "ignore-employment-expenses"
+              "delete-employment-expenses"
             ]
           },
           "method": {
@@ -28,7 +28,7 @@
             "type": "string",
             "enum": [
               "GET",
-              "POST"
+              "DELETE"
             ]
           }
         },

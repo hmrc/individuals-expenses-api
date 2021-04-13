@@ -6,9 +6,9 @@
       "rel":"self"
     },
     {
-      "href":"/individuals/expenses/employments/TC663795B/2021-22/ignore",
-      "method":"POST",
-      "rel":"ignore-employment-expenses"
+      "href":"/individuals/expenses/employments/TC663795B/2021-22",
+      "method":"DELETE",
+      "rel":"delete-employment-expenses"
     }
   ]
 }
