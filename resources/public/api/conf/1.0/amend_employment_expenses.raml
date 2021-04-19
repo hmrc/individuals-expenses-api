@@ -10,7 +10,7 @@ is:
   - errors.ruleTaxYearRangeInvalid
   - errors.ruleTaxYearNotEnded
   - errors.clientOrAgentNotAuthorised
-displayName: Amend Employment Expenses [test only]
+displayName: Amend Employment Expenses
 description: 'This endpoint allows a developer to add or update existing employment expenses and can only be used after the tax year has ended.<br>Making an amendment will override the expense and remove the "dateIgnored" flag from HMRC expenses.<br>This endpoint requires a National Insurance number and tax year.'
 (annotations.sandboxData): !include scenarios/amend_employment_expenses.md
 (annotations.scope): "write:self-assessment"

@@ -7,7 +7,7 @@ is:
   - errors.ruleTaxYearRangeInvalid
   - errors.clientOrAgentNotAuthorised
   - errors.notFound
-displayName: Delete Employment Expenses [test only]
+displayName: Delete Employment Expenses
 description: 'This endpoint allows a developer to delete employment expenses for a user and can only be used after the tax year has ended.<br>Deleting an expense will remove the amended expense and remove the "dateIgnored" flag from HMRC expenses.<br>This endpoint requires a National Insurance number and tax year.'
 (annotations.sandboxData): !include scenarios/delete_employment_expenses.md
 (annotations.scope): "write:self-assessment"
