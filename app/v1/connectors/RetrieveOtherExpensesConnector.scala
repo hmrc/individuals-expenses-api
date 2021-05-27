@@ -35,7 +35,7 @@ class RetrieveOtherExpensesConnector @Inject()(val http: HttpClient,
     ec: ExecutionContext,
     correlationId: String): Future[DownstreamOutcome[RetrieveOtherExpensesResponse]] = {
 
-    val url = s"income-tax/expenses/other/${request.nino}/${request.taxYear}"
+    val url = s"income-tax/expenses/other/${request.nino.nino}/${request.taxYear}"
 
     get(
       uri = BackendUri.IfsUri[RetrieveOtherExpensesResponse](s"$url")

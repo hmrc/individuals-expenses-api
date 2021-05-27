@@ -35,7 +35,7 @@ class DeleteOtherExpensesConnector @Inject()(val http: HttpClient,
     correlationId: String): Future[DownstreamOutcome[Unit]] = {
 
     delete(
-      uri = BackendUri.IfsUri[Unit](s"income-tax/expenses/other/${request.nino}/${request.taxYear}")
+      uri = BackendUri.IfsUri[Unit](s"income-tax/expenses/other/${request.nino.nino}/${request.taxYear}")
     )
   }
 }
