@@ -16,7 +16,7 @@
 
 package v1.services
 
-import uk.gov.hmrc.domain.Nino
+import v1.models.domain.Nino
 import v1.mocks.connectors.MockRetrieveOtherExpensesConnector
 import v1.models.errors._
 import v1.models.outcomes.ResponseWrapper
@@ -28,9 +28,9 @@ import scala.concurrent.Future
 class RetrieveOtherExpensesServiceSpec extends ServiceSpec {
 
   val taxYear = "2017-18"
-  val nino = Nino("AA123456A")
+  val nino: Nino = Nino("AA123456A")
 
-  val body = RetrieveOtherExpensesResponse(
+  val body: RetrieveOtherExpensesResponse = RetrieveOtherExpensesResponse(
     "2019-04-04T01:01:01Z",
     Some(PaymentsToTradeUnionsForDeathBenefits(Some("TRADE UNION PAYMENTS"), 76543.32)),
     Some(PatentRoyaltiesPayments(Some("ROYALTIES PAYMENTS"), 5423.65))

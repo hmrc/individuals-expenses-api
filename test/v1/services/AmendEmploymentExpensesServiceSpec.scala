@@ -16,7 +16,7 @@
 
 package v1.services
 
-import uk.gov.hmrc.domain.Nino
+import v1.models.domain.Nino
 import v1.mocks.connectors.MockAmendEmploymentExpensesConnector
 import v1.models.errors._
 import v1.models.outcomes.ResponseWrapper
@@ -27,9 +27,9 @@ import scala.concurrent.Future
 class AmendEmploymentExpensesServiceSpec extends ServiceSpec {
 
   val taxYear = "2021-22"
-  val nino = Nino("AA123456A")
+  val nino: Nino = Nino("AA123456A")
 
-  val body = AmendEmploymentExpensesBody(
+  val body: AmendEmploymentExpensesBody = AmendEmploymentExpensesBody(
     Expenses(
       Some(123.12),
       Some(123.12),

@@ -17,7 +17,7 @@
 package v1.connectors
 
 import mocks.MockAppConfig
-import uk.gov.hmrc.domain.Nino
+import v1.models.domain.Nino
 import v1.mocks.MockHttpClient
 import v1.models.downstream.DownstreamSource
 import v1.models.domain.MtdSource
@@ -39,9 +39,10 @@ class RetrieveEmploymentsExpensesConnectorSpec extends ConnectorSpec {
       appConfig = mockAppConfig
     )
 
-    MockedAppConfig.desBaseUrl returns baseUrl
-    MockedAppConfig.desToken returns "des-token"
-    MockedAppConfig.desEnv returns "des-environment"
+    MockAppConfig.desBaseUrl returns baseUrl
+    MockAppConfig.desToken returns "des-token"
+    MockAppConfig.desEnv returns "des-environment"
+    MockAppConfig.desEnvironmentHeaders returns Some(allowedHeaders)
   }
 
   "retrieve employment expenses" should {
@@ -69,7 +70,9 @@ class RetrieveEmploymentsExpensesConnectorSpec extends ConnectorSpec {
         MockedHttpClient
           .get(
             url = s"$baseUrl/income-tax/expenses/employments/$nino/$taxYear?view=${DownstreamSource.`CUSTOMER`}",
-            requiredHeaders = requiredHeaders :_*
+            config = dummyHeaderCarrierConfig,
+            requiredHeaders = requiredDesHeaders,
+            excludedHeaders = Seq("AnotherHeader" -> "HeaderValue")
           )
           .returns(Future.successful(outcome))
 

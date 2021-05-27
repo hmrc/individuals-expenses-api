@@ -16,7 +16,7 @@
 
 package v1.services
 
-import uk.gov.hmrc.domain.Nino
+import v1.models.domain.Nino
 import v1.mocks.connectors.MockDeleteEmploymentExpensesConnector
 import v1.models.errors._
 import v1.models.outcomes.ResponseWrapper
@@ -27,7 +27,7 @@ import scala.concurrent.Future
 class DeleteEmploymentExpensesServiceSpec extends ServiceSpec {
 
   val taxYear = "2021-22"
-  val nino = Nino("AA123456A")
+  val nino: Nino = Nino("AA123456A")
 
   private val requestData = DeleteEmploymentExpensesRequest(nino, taxYear)
 

@@ -17,7 +17,7 @@
 package v1.connectors
 
 import mocks.MockAppConfig
-import uk.gov.hmrc.domain.Nino
+import v1.models.domain.Nino
 import v1.mocks.MockHttpClient
 import v1.models.outcomes.ResponseWrapper
 import v1.models.request.deleteOtherExpenses.DeleteOtherExpensesRequest
@@ -35,9 +35,10 @@ class DeleteOtherExpensesConnectorSpec extends ConnectorSpec {
       appConfig = mockAppConfig
     )
 
-    MockedAppConfig.ifsBaseUrl returns baseUrl
-    MockedAppConfig.ifsToken returns "des-token"
-    MockedAppConfig.ifsEnv returns "des-environment"
+    MockAppConfig.ifsBaseUrl returns baseUrl
+    MockAppConfig.ifsToken returns "ifs-token"
+    MockAppConfig.ifsEnv returns "ifs-environment"
+    MockAppConfig.ifsEnvironmentHeaders returns Some(allowedHeaders)
   }
 
   "delete" should {
@@ -50,7 +51,9 @@ class DeleteOtherExpensesConnectorSpec extends ConnectorSpec {
         MockedHttpClient
           .delete(
             url = s"$baseUrl/income-tax/expenses/other/${request.nino}/${request.taxYear}",
-            requiredHeaders = requiredHeaders :_*
+            config = dummyHeaderCarrierConfig,
+            requiredHeaders = requiredIfsHeaders,
+            excludedHeaders = Seq("AnotherHeader" -> "HeaderValue")
           )
           .returns(Future.successful(outcome))
 

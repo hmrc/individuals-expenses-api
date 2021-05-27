@@ -18,8 +18,7 @@ package v1.connectors
 
 import config.AppConfig
 import mocks.MockAppConfig
-import uk.gov.hmrc.http.HttpReads
-import uk.gov.hmrc.http.HttpClient
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads}
 import v1.mocks.MockHttpClient
 import v1.models.outcomes.ResponseWrapper
 
@@ -40,104 +39,161 @@ class BaseDownstreamConnectorSpec extends ConnectorSpec {
 
   implicit val httpReads: HttpReads[DownstreamOutcome[Result]] = mock[HttpReads[DownstreamOutcome[Result]]]
 
-  trait Test extends MockHttpClient with MockAppConfig {
+  class DesTest(desEnvironmentHeaders: Option[Seq[String]]) extends MockHttpClient with MockAppConfig {
     val connector: BaseDownstreamConnector = new BaseDownstreamConnector {
       val http: HttpClient = mockHttpClient
       val appConfig: AppConfig = mockAppConfig
     }
-  }
-  class DesTest extends Test {
-    MockedAppConfig.desBaseUrl returns baseUrl
-    MockedAppConfig.desToken returns "des-token"
-    MockedAppConfig.desEnv returns "des-environment"
-  }
-  class IfsTest extends Test {
-    MockedAppConfig.ifsBaseUrl returns baseUrl
-    MockedAppConfig.ifsToken returns "des-token"
-    MockedAppConfig.ifsEnv returns "des-environment"
+
+    MockAppConfig.desBaseUrl returns baseUrl
+    MockAppConfig.desToken returns "des-token"
+    MockAppConfig.desEnv returns "des-environment"
+    MockAppConfig.desEnvironmentHeaders returns desEnvironmentHeaders
   }
 
-  "calls to DES" when {
-    "post" must {
-      "posts with the required des headers and returns the result" in new DesTest {
+  class IfsTest(ifsEnvironmentHeaders: Option[Seq[String]]) extends MockHttpClient with MockAppConfig {
+    val connector: BaseDownstreamConnector = new BaseDownstreamConnector {
+      val http: HttpClient = mockHttpClient
+      val appConfig: AppConfig = mockAppConfig
+    }
+
+    MockAppConfig.ifsBaseUrl returns baseUrl
+    MockAppConfig.ifsToken returns "ifs-token"
+    MockAppConfig.ifsEnv returns "ifs-environment"
+    MockAppConfig.ifsEnvironmentHeaders returns ifsEnvironmentHeaders
+  }
+
+  "BaseDownstreamConnector" when {
+    val requiredHeaders: Seq[(String, String)] = Seq(
+      "Environment" -> "des-environment",
+      "Authorization" -> s"Bearer des-token",
+      "User-Agent" -> "individual-disclosures-api",
+      "CorrelationId" -> correlationId,
+      "Gov-Test-Scenario" -> "DEFAULT"
+    )
+
+    val excludedHeaders: Seq[(String, String)] = Seq(
+      "AnotherHeader" -> "HeaderValue"
+    )
+
+    "making a HTTP request to a downstream service DES" must {
+      testDesHttpMethods(dummyHeaderCarrierConfig, requiredHeaders, excludedHeaders, Some(allowedHeaders))
+
+      "exclude all `otherHeaders` when no external service header allow-list is found" should {
+        val requiredHeaders: Seq[(String, String)] = Seq(
+          "Environment" -> "des-environment",
+          "Authorization" -> s"Bearer des-token",
+          "User-Agent" -> "individual-expenses-api",
+          "CorrelationId" -> correlationId,
+        )
+
+        testDesHttpMethods(dummyHeaderCarrierConfig, requiredHeaders, otherHeaders, None)
+      }
+    }
+
+    "making a HTTP request to a downstream service IFS" must {
+      testIfsHttpMethods(dummyHeaderCarrierConfig, requiredHeaders, excludedHeaders, Some(allowedHeaders))
+
+      "exclude all `otherHeaders` when no external service header allow-list is found" should {
+        val requiredHeaders: Seq[(String, String)] = Seq(
+          "Environment" -> "ifs-environment",
+          "Authorization" -> s"Bearer ifs-token",
+          "User-Agent" -> "individual-expenses-api",
+          "CorrelationId" -> correlationId,
+        )
+
+        testIfsHttpMethods(dummyHeaderCarrierConfig, requiredHeaders, otherHeaders, None)
+      }
+    }
+
+  }
+
+  def testDesHttpMethods(config: HeaderCarrier.Config,
+                         requiredHeaders: Seq[(String, String)],
+                         excludedHeaders: Seq[(String, String)],
+                         desEnvironmentHeaders: Option[Seq[String]]): Unit = {
+
+    "complete the request successfully with the required headers" when {
+      "GET" in new DesTest(desEnvironmentHeaders) {
         MockedHttpClient
-          .post(absoluteUrl, body, requiredHeaders: _*)
+          .get(absoluteUrl, config, requiredHeaders, excludedHeaders)
+          .returns(Future.successful(outcome))
+
+        await(connector.get(BackendUri.DesUri[Result](url))) shouldBe outcome
+      }
+
+      "DELETE" in new DesTest(desEnvironmentHeaders) {
+        MockedHttpClient
+          .delete(absoluteUrl, config, requiredHeaders, excludedHeaders)
+          .returns(Future.successful(outcome))
+
+        await(connector.delete(BackendUri.DesUri[Result](url))) shouldBe outcome
+      }
+
+      "PUT" in new DesTest(desEnvironmentHeaders) {
+        implicit val hc: HeaderCarrier = HeaderCarrier(otherHeaders = otherHeaders ++ Seq("Content-Type" -> "application/json"))
+        val requiredHeadersPut: Seq[(String, String)] = requiredHeaders ++ Seq("Content-Type" -> "application/json")
+
+        MockedHttpClient.put(absoluteUrl, config, body, requiredHeadersPut, excludedHeaders)
+          .returns(Future.successful(outcome))
+
+        await(connector.put(body, BackendUri.DesUri[Result](url))) shouldBe outcome
+      }
+
+      "POST" in new DesTest(desEnvironmentHeaders) {
+        implicit val hc: HeaderCarrier = HeaderCarrier(otherHeaders = otherHeaders ++ Seq("Content-Type" -> "application/json"))
+        val requiredHeadersPost: Seq[(String, String)] = requiredHeaders ++ Seq("Content-Type" -> "application/json")
+
+        MockedHttpClient.put(absoluteUrl, config, body, requiredHeadersPost, excludedHeaders)
           .returns(Future.successful(outcome))
 
         await(connector.post(body, BackendUri.DesUri[Result](url))) shouldBe outcome
       }
     }
-
-    "get" must {
-      "get with the required des headers and return the result" in new DesTest {
-        MockedHttpClient
-          .get(absoluteUrl, requiredHeaders: _*)
-          .returns(Future.successful(outcome))
-
-        await(connector.get(BackendUri.DesUri[Result](url))) shouldBe outcome
-      }
-    }
-
-    "put" must {
-      "put with the required des headers and return the result" in new DesTest {
-        MockedHttpClient
-          .put(absoluteUrl, body, requiredHeaders: _*)
-          .returns(Future.successful(outcome))
-
-        await(connector.put(body, BackendUri.DesUri[Result](url))) shouldBe outcome
-      }
-    }
-
-    "delete" must {
-      "delete with the required des headers and return the result" in new DesTest {
-        MockedHttpClient
-          .delete(absoluteUrl, requiredHeaders: _*)
-          .returns(Future.successful(outcome))
-
-        await(connector.delete(BackendUri.DesUri[Result](url))) shouldBe outcome
-      }
-    }
   }
 
-  "calls to IFS" when {
-    "post" must {
-      "posts with the required des headers and returns the result" in new IfsTest {
+  def testIfsHttpMethods(config: HeaderCarrier.Config,
+                         requiredHeaders: Seq[(String, String)],
+                         excludedHeaders: Seq[(String, String)],
+                         ifsEnvironmentHeaders: Option[Seq[String]]): Unit = {
+
+    "complete the request successfully with the required headers" when {
+      "GET" in new IfsTest(ifsEnvironmentHeaders) {
         MockedHttpClient
-          .post(absoluteUrl, body, requiredHeaders: _*)
+          .get(absoluteUrl, config, requiredHeaders, excludedHeaders)
+          .returns(Future.successful(outcome))
+
+        await(connector.get(BackendUri.IfsUri[Result](url))) shouldBe outcome
+      }
+
+      "DELETE" in new IfsTest(ifsEnvironmentHeaders) {
+        MockedHttpClient
+          .delete(absoluteUrl, config, requiredHeaders, excludedHeaders)
+          .returns(Future.successful(outcome))
+
+        await(connector.delete(BackendUri.IfsUri[Result](url))) shouldBe outcome
+      }
+
+      "PUT" in new IfsTest(ifsEnvironmentHeaders) {
+        implicit val hc: HeaderCarrier = HeaderCarrier(otherHeaders = otherHeaders ++ Seq("Content-Type" -> "application/json"))
+        val requiredHeadersPut: Seq[(String, String)] = requiredHeaders ++ Seq("Content-Type" -> "application/json")
+
+        MockedHttpClient.put(absoluteUrl, config, body, requiredHeadersPut, excludedHeaders)
+          .returns(Future.successful(outcome))
+
+        await(connector.put(body, BackendUri.IfsUri[Result](url))) shouldBe outcome
+      }
+
+      "POST" in new IfsTest(ifsEnvironmentHeaders) {
+        implicit val hc: HeaderCarrier = HeaderCarrier(otherHeaders = otherHeaders ++ Seq("Content-Type" -> "application/json"))
+        val requiredHeadersPost: Seq[(String, String)] = requiredHeaders ++ Seq("Content-Type" -> "application/json")
+
+        MockedHttpClient.put(absoluteUrl, config, body, requiredHeadersPost, excludedHeaders)
           .returns(Future.successful(outcome))
 
         await(connector.post(body, BackendUri.IfsUri[Result](url))) shouldBe outcome
       }
     }
-
-    "get" must {
-      "get with the required des headers and return the result" in new IfsTest {
-        MockedHttpClient
-          .get(absoluteUrl, requiredHeaders: _*)
-          .returns(Future.successful(outcome))
-
-        await(connector.get(BackendUri.IfsUri[Result](url))) shouldBe outcome
-      }
-    }
-
-    "put" must {
-      "put with the required des headers and return the result" in new IfsTest {
-        MockedHttpClient
-          .put(absoluteUrl, body, requiredHeaders: _*)
-          .returns(Future.successful(outcome))
-
-        await(connector.put(body, BackendUri.IfsUri[Result](url))) shouldBe outcome
-      }
-    }
-
-    "delete" must {
-      "delete with the required des headers and return the result" in new IfsTest {
-        MockedHttpClient
-          .delete(absoluteUrl, requiredHeaders: _*)
-          .returns(Future.successful(outcome))
-
-        await(connector.delete(BackendUri.IfsUri[Result](url))) shouldBe outcome
-      }
-    }
   }
+
 }
