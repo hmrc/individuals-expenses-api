@@ -29,7 +29,7 @@ import scala.concurrent.Future
 
 class RetrieveEmploymentsExpensesConnectorSpec extends ConnectorSpec {
 
-  private val nino = Nino("AA123456A")
+  val nino: String = "AA123456A"
   private val taxYear = "2019-20"
   val source: MtdSource.`user`.type = MtdSource.`user`
 
@@ -46,7 +46,7 @@ class RetrieveEmploymentsExpensesConnectorSpec extends ConnectorSpec {
   }
 
   "retrieve employment expenses" should {
-    val request = RetrieveEmploymentsExpensesRequest(nino, taxYear, source)
+    val request = RetrieveEmploymentsExpensesRequest(Nino(nino), taxYear, source)
 
     "return a result" when {
       "the downstream call is successful" in new Test {

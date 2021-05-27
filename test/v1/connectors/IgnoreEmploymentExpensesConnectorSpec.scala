@@ -28,7 +28,7 @@ import scala.concurrent.Future
 class IgnoreEmploymentExpensesConnectorSpec extends ConnectorSpec {
 
   val taxYear: String = "2021-22"
-  val nino: Nino = Nino("AA123456A")
+  val nino: String = "AA123456A"
   val body: IgnoreEmploymentExpensesBody = IgnoreEmploymentExpensesBody(true)
 
   class Test extends MockHttpClient with MockAppConfig {
@@ -44,7 +44,7 @@ class IgnoreEmploymentExpensesConnectorSpec extends ConnectorSpec {
   }
 
   "ignore" should {
-    val request = IgnoreEmploymentExpensesRequest(nino, taxYear)
+    val request = IgnoreEmploymentExpensesRequest(Nino(nino), taxYear)
 
     "put a body and return 204 no body" in new Test {
       val outcome = Right(ResponseWrapper(correlationId, ()))

@@ -61,6 +61,7 @@ trait ConnectorSpec extends UnitSpec
     "X-Request-Timestamp",
     "X-Session-Id"
   )
+
   val dummyIfsHeaderCarrierConfig: HeaderCarrier.Config =
     HeaderCarrier.Config(
       Seq("^not-test-BaseUrl?$".r),

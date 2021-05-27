@@ -27,7 +27,7 @@ import scala.concurrent.Future
 
 class RetrieveOtherExpensesConnectorSpec extends ConnectorSpec {
 
-  private val nino = Nino("AA123456A")
+  val nino: String = "AA123456A"
   private val taxYear = "2019-20"
 
   class Test extends MockHttpClient with MockAppConfig {
@@ -43,7 +43,7 @@ class RetrieveOtherExpensesConnectorSpec extends ConnectorSpec {
   }
 
   "retrieve business details" should {
-    val request = RetrieveOtherExpensesRequest(nino, taxYear)
+    val request = RetrieveOtherExpensesRequest(Nino(nino), taxYear)
     "return a result" when {
       "the downstream call is successful" in new Test {
         val outcome = Right(ResponseWrapper(correlationId, RetrieveOtherExpensesResponse(
@@ -54,9 +54,9 @@ class RetrieveOtherExpensesConnectorSpec extends ConnectorSpec {
 
         MockHttpClient
           .get(
-            url = s"$baseUrl/income-tax/expenses/other/${request.nino}/${request.taxYear}",
+            url = s"$baseUrl/income-tax/expenses/other/$nino/${request.taxYear}",
             config = dummyIfsHeaderCarrierConfig,
-            requiredHeaders = requiredDesHeaders,
+            requiredHeaders = requiredIfsHeaders,
             excludedHeaders = Seq("AnotherHeader" -> "HeaderValue")
           )
           .returns(Future.successful(outcome))

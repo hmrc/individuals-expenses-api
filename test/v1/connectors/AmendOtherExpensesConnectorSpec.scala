@@ -28,7 +28,7 @@ import scala.concurrent.Future
 class AmendOtherExpensesConnectorSpec extends ConnectorSpec {
 
   val taxYear: String = "2017-18"
-  val nino: Nino = Nino("AA123456A")
+  val nino: String = "AA123456A"
 
   val body: AmendOtherExpensesBody = AmendOtherExpensesBody(
     Some(PaymentsToTradeUnionsForDeathBenefits(
@@ -54,13 +54,13 @@ class AmendOtherExpensesConnectorSpec extends ConnectorSpec {
   }
 
   "amend" should {
-    val request = AmendOtherExpensesRequest(nino, taxYear, body)
+    val request = AmendOtherExpensesRequest(Nino(nino), taxYear, body)
 
     "put a body and return 204 no body" in new Test {
       val outcome = Right(ResponseWrapper(correlationId, ()))
 
       implicit val hc: HeaderCarrier = HeaderCarrier(otherHeaders = otherHeaders ++ Seq("Content-Type" -> "application/json"))
-      val requiredHeadersPut: Seq[(String, String)] = requiredDesHeaders ++ Seq("Content-Type" -> "application/json")
+      val requiredHeadersPut: Seq[(String, String)] = requiredIfsHeaders ++ Seq("Content-Type" -> "application/json")
 
       MockHttpClient
         .put(

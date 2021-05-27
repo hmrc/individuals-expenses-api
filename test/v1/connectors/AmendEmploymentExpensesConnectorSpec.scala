@@ -28,7 +28,7 @@ import scala.concurrent.Future
 class AmendEmploymentExpensesConnectorSpec extends ConnectorSpec {
 
   val taxYear: String = "2021-22"
-  val nino: Nino = Nino("AA123456A")
+  val nino: String = "AA123456A"
 
   val body: AmendEmploymentExpensesBody = AmendEmploymentExpensesBody(
     Expenses(
@@ -56,7 +56,7 @@ class AmendEmploymentExpensesConnectorSpec extends ConnectorSpec {
   }
 
   "amend" should {
-    val request = AmendEmploymentExpensesRequest(nino, taxYear, body)
+    val request = AmendEmploymentExpensesRequest(Nino(nino), taxYear, body)
 
     "put a body and return 204 no body" in new Test {
       val outcome = Right(ResponseWrapper(correlationId, ()))

@@ -27,7 +27,7 @@ import scala.concurrent.Future
 class DeleteOtherExpensesConnectorSpec extends ConnectorSpec {
 
   val taxYear: String = "2017-18"
-  val nino: Nino = Nino("AA123456A")
+  val nino: String = "AA123456A"
 
   class Test extends MockHttpClient with MockAppConfig {
     val connector: DeleteOtherExpensesConnector = new DeleteOtherExpensesConnector(
@@ -42,7 +42,7 @@ class DeleteOtherExpensesConnectorSpec extends ConnectorSpec {
   }
 
   "delete" should {
-    val request = DeleteOtherExpensesRequest(nino, taxYear)
+    val request = DeleteOtherExpensesRequest(Nino(nino), taxYear)
 
     "return a 204 with no body" when {
       "the downstream call is successful" in new Test {
@@ -50,7 +50,7 @@ class DeleteOtherExpensesConnectorSpec extends ConnectorSpec {
 
         MockHttpClient
           .delete(
-            url = s"$baseUrl/income-tax/expenses/other/${request.nino}/${request.taxYear}",
+            url = s"$baseUrl/income-tax/expenses/other/$nino/${request.taxYear}",
             config = dummyIfsHeaderCarrierConfig,
             requiredHeaders = requiredIfsHeaders,
             excludedHeaders = Seq("AnotherHeader" -> "HeaderValue")
