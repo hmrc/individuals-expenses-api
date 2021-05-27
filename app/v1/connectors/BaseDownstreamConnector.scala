@@ -30,13 +30,13 @@ trait BaseDownstreamConnector {
   val logger: Logger = Logger(this.getClass)
 
   private def desHeaderCarrier(additionalHeaders: Seq[String] = Seq.empty)(implicit hc: HeaderCarrier,
-                                                                                  correlationId: String): HeaderCarrier =
+                                                                           correlationId: String): HeaderCarrier =
     HeaderCarrier(
       extraHeaders = hc.extraHeaders ++
         // Contract headers
         Seq(
           "Authorization" -> s"Bearer ${appConfig.desToken}",
-          "Environment" -> appConfig.desEnv,
+          "Environment" -> appConfig.desEnvironment,
           "CorrelationId" -> correlationId
         ) ++
         // Other headers (i.e Gov-Test-Scenario, Content-Type)
@@ -50,7 +50,7 @@ trait BaseDownstreamConnector {
         // Contract headers
         Seq(
           "Authorization" -> s"Bearer ${appConfig.ifsToken}",
-          "Environment" -> appConfig.ifsEnv,
+          "Environment" -> appConfig.ifsEnvironment,
           "CorrelationId" -> correlationId
         ) ++
         // Other headers (i.e Gov-Test-Scenario, Content-Type)

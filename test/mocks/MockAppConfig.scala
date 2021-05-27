@@ -30,12 +30,12 @@ trait MockAppConfig extends MockFactory {
     // Downstream Config
     def desBaseUrl: CallHandler[String] = (mockAppConfig.desBaseUrl _: () => String).expects()
     def desToken: CallHandler[String] = (mockAppConfig.desToken _).expects()
-    def desEnv: CallHandler[String] = (mockAppConfig.desEnv _).expects()
+    def desEnvironment: CallHandler[String] = (mockAppConfig.desEnvironment _).expects()
     def desEnvironmentHeaders: CallHandler[Option[Seq[String]]] = (mockAppConfig.desEnvironmentHeaders _).expects()
 
     def ifsBaseUrl: CallHandler[String] = (mockAppConfig.ifsBaseUrl _: () => String).expects()
     def ifsToken: CallHandler[String] = (mockAppConfig.ifsToken _).expects()
-    def ifsEnv: CallHandler[String] = (mockAppConfig.ifsEnv _).expects()
+    def ifsEnvironment: CallHandler[String] = (mockAppConfig.ifsEnvironment _).expects()
     def ifsEnvironmentHeaders: CallHandler[Option[Seq[String]]] = (mockAppConfig.ifsEnvironmentHeaders _).expects()
 
     // MTD ID Lookup Config

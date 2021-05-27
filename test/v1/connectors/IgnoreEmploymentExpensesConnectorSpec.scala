@@ -39,8 +39,8 @@ class IgnoreEmploymentExpensesConnectorSpec extends ConnectorSpec {
 
     MockAppConfig.desBaseUrl returns baseUrl
     MockAppConfig.desToken returns "des-token"
-    MockAppConfig.desEnv returns "des-environment"
-    MockAppConfig.desEnvironmentHeaders returns Some(allowedHeaders)
+    MockAppConfig.desEnvironment returns "des-environment"
+    MockAppConfig.desEnvironmentHeaders returns Some(allowedDesHeaders)
   }
 
   "ignore" should {
@@ -52,10 +52,10 @@ class IgnoreEmploymentExpensesConnectorSpec extends ConnectorSpec {
       implicit val hc: HeaderCarrier = HeaderCarrier(otherHeaders = otherHeaders ++ Seq("Content-Type" -> "application/json"))
       val requiredHeadersPut: Seq[(String, String)] = requiredDesHeaders ++ Seq("Content-Type" -> "application/json")
 
-      MockedHttpClient
+      MockHttpClient
         .put(
           url = s"$baseUrl/income-tax/expenses/employments/$nino/$taxYear",
-          config = dummyHeaderCarrierConfig,
+          config = dummyDesHeaderCarrierConfig,
           body = body,
           requiredHeaders = requiredHeadersPut,
           excludedHeaders = Seq("AnotherHeader" -> "HeaderValue")

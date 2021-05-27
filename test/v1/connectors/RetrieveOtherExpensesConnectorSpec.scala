@@ -38,8 +38,8 @@ class RetrieveOtherExpensesConnectorSpec extends ConnectorSpec {
 
     MockAppConfig.ifsBaseUrl returns baseUrl
     MockAppConfig.ifsToken returns "ifs-token"
-    MockAppConfig.ifsEnv returns "ifs-environment"
-    MockAppConfig.ifsEnvironmentHeaders returns Some(allowedHeaders)
+    MockAppConfig.ifsEnvironment returns "ifs-environment"
+    MockAppConfig.ifsEnvironmentHeaders returns Some(allowedIfsHeaders)
   }
 
   "retrieve business details" should {
@@ -52,10 +52,10 @@ class RetrieveOtherExpensesConnectorSpec extends ConnectorSpec {
           Some(PatentRoyaltiesPayments(Some("ROYALTIES PAYMENTS"), 98765.12))
         )))
 
-        MockedHttpClient
+        MockHttpClient
           .get(
             url = s"$baseUrl/income-tax/expenses/other/${request.nino}/${request.taxYear}",
-            config = dummyHeaderCarrierConfig,
+            config = dummyIfsHeaderCarrierConfig,
             requiredHeaders = requiredDesHeaders,
             excludedHeaders = Seq("AnotherHeader" -> "HeaderValue")
           )

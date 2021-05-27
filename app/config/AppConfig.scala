@@ -29,11 +29,11 @@ trait AppConfig {
   // Downstream Config
   def desBaseUrl: String
   def desToken: String
-  def desEnv: String
+  def desEnvironment: String
   def desEnvironmentHeaders: Option[Seq[String]]
   def ifsToken: String
   def ifsBaseUrl: String
-  def ifsEnv: String
+  def ifsEnvironment: String
   def ifsEnvironmentHeaders: Option[Seq[String]]
 
   // API Config
@@ -58,12 +58,12 @@ class AppConfigImpl @Inject()(config: ServicesConfig, configuration: Configurati
 
   // Downstream Config
   val desBaseUrl: String = config.baseUrl("des")
-  val desEnv: String = config.getString("microservice.services.des.env")
+  val desEnvironment: String = config.getString("microservice.services.des.env")
   val desToken: String = config.getString("microservice.services.des.token")
   val desEnvironmentHeaders: Option[Seq[String]] = configuration.getOptional[Seq[String]]("microservice.services.des.environmentHeaders")
 
   val ifsBaseUrl: String = config.baseUrl("ifs")
-  val ifsEnv: String = config.getString("microservice.services.ifs.env")
+  val ifsEnvironment: String = config.getString("microservice.services.ifs.env")
   val ifsToken: String = config.getString("microservice.services.ifs.token")
   val ifsEnvironmentHeaders: Option[Seq[String]] = configuration.getOptional[Seq[String]]("microservice.services.ifs.environmentHeaders")
 

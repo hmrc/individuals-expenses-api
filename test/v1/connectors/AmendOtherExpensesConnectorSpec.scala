@@ -49,8 +49,8 @@ class AmendOtherExpensesConnectorSpec extends ConnectorSpec {
 
     MockAppConfig.ifsBaseUrl returns baseUrl
     MockAppConfig.ifsToken returns "ifs-token"
-    MockAppConfig.ifsEnv returns "ifs-environment"
-    MockAppConfig.ifsEnvironmentHeaders returns Some(allowedHeaders)
+    MockAppConfig.ifsEnvironment returns "ifs-environment"
+    MockAppConfig.ifsEnvironmentHeaders returns Some(allowedIfsHeaders)
   }
 
   "amend" should {
@@ -62,10 +62,10 @@ class AmendOtherExpensesConnectorSpec extends ConnectorSpec {
       implicit val hc: HeaderCarrier = HeaderCarrier(otherHeaders = otherHeaders ++ Seq("Content-Type" -> "application/json"))
       val requiredHeadersPut: Seq[(String, String)] = requiredDesHeaders ++ Seq("Content-Type" -> "application/json")
 
-      MockedHttpClient
+      MockHttpClient
         .put(
           url = s"$baseUrl/income-tax/expenses/other/$nino/$taxYear",
-          config = dummyHeaderCarrierConfig,
+          config = dummyIfsHeaderCarrierConfig,
           body = body,
           requiredHeaders = requiredHeadersPut,
           excludedHeaders = Seq("AnotherHeader" -> "HeaderValue")
