@@ -29,7 +29,7 @@ trait BaseDownstreamConnector {
 
   val logger: Logger = Logger(this.getClass)
 
-  private def desHeaderCarrier(additionalHeaders: Seq[String] = Seq.empty)(implicit hc: HeaderCarrier,
+  private def desHeaderCarrier(additionalHeaders: Seq[String])(implicit hc: HeaderCarrier,
                                                                            correlationId: String): HeaderCarrier =
     HeaderCarrier(
       extraHeaders = hc.extraHeaders ++
@@ -43,7 +43,7 @@ trait BaseDownstreamConnector {
         hc.headers(additionalHeaders ++ appConfig.desEnvironmentHeaders.getOrElse(Seq.empty))
     )
 
-  private def ifsHeaderCarrier(additionalHeaders: Seq[String] = Seq.empty)(implicit hc: HeaderCarrier,
+  private def ifsHeaderCarrier(additionalHeaders: Seq[String])(implicit hc: HeaderCarrier,
                                                                            correlationId: String): HeaderCarrier =
     HeaderCarrier(
       extraHeaders = hc.extraHeaders ++
