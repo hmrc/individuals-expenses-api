@@ -33,7 +33,7 @@ object AppDependencies {
     "com.vladsch.flexmark"   % "flexmark-all"        % "0.36.8"            % scope,
     "org.scalamock"          %% "scalamock"          % "5.1.0"             % scope,
     "com.typesafe.play"      %% "play-test"          % PlayVersion.current % scope,
-    "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.3"             % scope,
+    "org.scalatestplus.play" %% "scalatestplus-play" % "5.1.0"             % scope,
     "com.github.tomakehurst" % "wiremock-jre8"       % "2.27.2"            % scope
   )
 
