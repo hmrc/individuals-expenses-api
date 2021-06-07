@@ -17,7 +17,7 @@
 package v1.connectors
 
 import mocks.MockAppConfig
-import uk.gov.hmrc.domain.Nino
+import v1.models.domain.Nino
 import v1.mocks.MockHttpClient
 import v1.models.downstream.DownstreamSource
 import v1.models.domain.MtdSource
@@ -29,7 +29,7 @@ import scala.concurrent.Future
 
 class RetrieveEmploymentsExpensesConnectorSpec extends ConnectorSpec {
 
-  private val nino = Nino("AA123456A")
+  val nino: String = "AA123456A"
   private val taxYear = "2019-20"
   val source: MtdSource.`user`.type = MtdSource.`user`
 
@@ -39,13 +39,14 @@ class RetrieveEmploymentsExpensesConnectorSpec extends ConnectorSpec {
       appConfig = mockAppConfig
     )
 
-    MockedAppConfig.desBaseUrl returns baseUrl
-    MockedAppConfig.desToken returns "des-token"
-    MockedAppConfig.desEnv returns "des-environment"
+    MockAppConfig.desBaseUrl returns baseUrl
+    MockAppConfig.desToken returns "des-token"
+    MockAppConfig.desEnvironment returns "des-environment"
+    MockAppConfig.desEnvironmentHeaders returns Some(allowedDesHeaders)
   }
 
   "retrieve employment expenses" should {
-    val request = RetrieveEmploymentsExpensesRequest(nino, taxYear, source)
+    val request = RetrieveEmploymentsExpensesRequest(Nino(nino), taxYear, source)
 
     "return a result" when {
       "the downstream call is successful" in new Test {
@@ -66,10 +67,12 @@ class RetrieveEmploymentsExpensesConnectorSpec extends ConnectorSpec {
           ))
         )))
 
-        MockedHttpClient
+        MockHttpClient
           .get(
             url = s"$baseUrl/income-tax/expenses/employments/$nino/$taxYear?view=${DownstreamSource.`CUSTOMER`}",
-            requiredHeaders = requiredHeaders :_*
+            config = dummyDesHeaderCarrierConfig,
+            requiredHeaders = requiredDesHeaders,
+            excludedHeaders = Seq("AnotherHeader" -> "HeaderValue")
           )
           .returns(Future.successful(outcome))
 

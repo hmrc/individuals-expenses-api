@@ -17,8 +17,9 @@
 package v1.connectors
 
 import mocks.MockAppConfig
-import uk.gov.hmrc.domain.Nino
+import v1.models.domain.Nino
 import v1.mocks.MockHttpClient
+import uk.gov.hmrc.http.HeaderCarrier
 import v1.models.outcomes.ResponseWrapper
 import v1.models.request.ignoreEmploymentExpenses.{IgnoreEmploymentExpensesBody, IgnoreEmploymentExpensesRequest}
 
@@ -27,7 +28,7 @@ import scala.concurrent.Future
 class IgnoreEmploymentExpensesConnectorSpec extends ConnectorSpec {
 
   val taxYear: String = "2021-22"
-  val nino: Nino = Nino("AA123456A")
+  val nino: String = "AA123456A"
   val body: IgnoreEmploymentExpensesBody = IgnoreEmploymentExpensesBody(true)
 
   class Test extends MockHttpClient with MockAppConfig {
@@ -36,23 +37,29 @@ class IgnoreEmploymentExpensesConnectorSpec extends ConnectorSpec {
       appConfig = mockAppConfig
     )
 
-    MockedAppConfig.desBaseUrl returns baseUrl
-    MockedAppConfig.desToken returns "des-token"
-    MockedAppConfig.desEnv returns "des-environment"
+    MockAppConfig.desBaseUrl returns baseUrl
+    MockAppConfig.desToken returns "des-token"
+    MockAppConfig.desEnvironment returns "des-environment"
+    MockAppConfig.desEnvironmentHeaders returns Some(allowedDesHeaders)
   }
 
   "ignore" should {
-    val request = IgnoreEmploymentExpensesRequest(nino, taxYear)
+    val request = IgnoreEmploymentExpensesRequest(Nino(nino), taxYear)
 
     "put a body and return 204 no body" in new Test {
       val outcome = Right(ResponseWrapper(correlationId, ()))
-      MockedHttpClient
+
+      implicit val hc: HeaderCarrier = HeaderCarrier(otherHeaders = otherHeaders ++ Seq("Content-Type" -> "application/json"))
+      val requiredHeadersPut: Seq[(String, String)] = requiredDesHeaders ++ Seq("Content-Type" -> "application/json")
+
+      MockHttpClient
         .put(
           url = s"$baseUrl/income-tax/expenses/employments/$nino/$taxYear",
+          config = dummyDesHeaderCarrierConfig,
           body = body,
-          requiredHeaders = requiredHeaders :_*
-        )
-        .returns(Future.successful(outcome))
+          requiredHeaders = requiredHeadersPut,
+          excludedHeaders = Seq("AnotherHeader" -> "HeaderValue")
+        ).returns(Future.successful(outcome))
 
       await(connector.ignore(request)) shouldBe outcome
     }

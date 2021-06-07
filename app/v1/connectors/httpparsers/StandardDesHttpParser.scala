@@ -28,7 +28,7 @@ object StandardDesHttpParser extends HttpParser {
 
   case class SuccessCode(status: Int) extends AnyVal
 
-  val logger = Logger(getClass)
+  val logger: Logger = Logger(getClass)
 
   // Return Right[DesResponse[Unit]] as success response has no body - no need to assign it a value
   implicit def readsEmpty(implicit successCode: SuccessCode = SuccessCode(NO_CONTENT)): HttpReads[DownstreamOutcome[Unit]] =

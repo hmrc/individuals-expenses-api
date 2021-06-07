@@ -17,7 +17,7 @@
 package v1.controllers.requestParsers
 
 import javax.inject.Inject
-import uk.gov.hmrc.domain.Nino
+import v1.models.domain.Nino
 import v1.controllers.requestParsers.validators.RetrieveEmploymentExpensesValidator
 import v1.models.domain.MtdSource
 import v1.models.request.retrieveEmploymentExpenses.{RetrieveEmploymentsExpensesRawData, RetrieveEmploymentsExpensesRequest}

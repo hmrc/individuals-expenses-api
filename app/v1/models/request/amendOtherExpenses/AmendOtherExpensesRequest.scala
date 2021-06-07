@@ -16,6 +16,6 @@
 
 package v1.models.request.amendOtherExpenses
 
-import uk.gov.hmrc.domain.Nino
+import v1.models.domain.Nino
 
 case class AmendOtherExpensesRequest(nino: Nino, taxYear: String, body: AmendOtherExpensesBody)

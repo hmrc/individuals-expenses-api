@@ -16,6 +16,6 @@
 
 package v1.models.request.deleteOtherExpenses
 
-import uk.gov.hmrc.domain.Nino
+import v1.models.domain.Nino
 
 case class DeleteOtherExpensesRequest(nino: Nino, taxYear: String)

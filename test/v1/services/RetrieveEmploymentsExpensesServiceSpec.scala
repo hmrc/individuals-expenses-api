@@ -16,7 +16,7 @@
 
 package v1.services
 
-import uk.gov.hmrc.domain.Nino
+import v1.models.domain.Nino
 import v1.mocks.connectors.MockRetrieveEmploymentsExpensesConnector
 import v1.models.domain.MtdSource
 import v1.models.errors._
@@ -29,10 +29,10 @@ import scala.concurrent.Future
 class RetrieveEmploymentsExpensesServiceSpec extends ServiceSpec {
 
   val taxYear = "2017-18"
-  val nino = Nino("AA123456A")
+  val nino: Nino = Nino("AA123456A")
   val source: MtdSource.`user`.type = MtdSource.`user`
 
-  val body = RetrieveEmploymentsExpensesResponse(
+  val body: RetrieveEmploymentsExpensesResponse = RetrieveEmploymentsExpensesResponse(
     Some("2019-04-06"),
     Some(2000.99),
     Some(MtdSource.`user`),

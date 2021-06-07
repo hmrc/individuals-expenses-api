@@ -35,7 +35,7 @@ class RetrieveEmploymentsExpensesConnector @Inject()(val http: HttpClient,
     ec: ExecutionContext,
     correlationId: String): Future[DownstreamOutcome[RetrieveEmploymentsExpensesResponse]] = {
 
-    val url = s"income-tax/expenses/employments/${request.nino}/${request.taxYear}?view=${request.source.toDes}"
+    val url = s"income-tax/expenses/employments/${request.nino.nino}/${request.taxYear}?view=${request.source.toDes}"
 
     get(
       uri = BackendUri.DesUri[RetrieveEmploymentsExpensesResponse](s"$url")

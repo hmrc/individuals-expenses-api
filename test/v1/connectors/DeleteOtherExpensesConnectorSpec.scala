@@ -17,7 +17,7 @@
 package v1.connectors
 
 import mocks.MockAppConfig
-import uk.gov.hmrc.domain.Nino
+import v1.models.domain.Nino
 import v1.mocks.MockHttpClient
 import v1.models.outcomes.ResponseWrapper
 import v1.models.request.deleteOtherExpenses.DeleteOtherExpensesRequest
@@ -27,7 +27,7 @@ import scala.concurrent.Future
 class DeleteOtherExpensesConnectorSpec extends ConnectorSpec {
 
   val taxYear: String = "2017-18"
-  val nino: Nino = Nino("AA123456A")
+  val nino: String = "AA123456A"
 
   class Test extends MockHttpClient with MockAppConfig {
     val connector: DeleteOtherExpensesConnector = new DeleteOtherExpensesConnector(
@@ -35,22 +35,25 @@ class DeleteOtherExpensesConnectorSpec extends ConnectorSpec {
       appConfig = mockAppConfig
     )
 
-    MockedAppConfig.ifsBaseUrl returns baseUrl
-    MockedAppConfig.ifsToken returns "des-token"
-    MockedAppConfig.ifsEnv returns "des-environment"
+    MockAppConfig.ifsBaseUrl returns baseUrl
+    MockAppConfig.ifsToken returns "ifs-token"
+    MockAppConfig.ifsEnvironment returns "ifs-environment"
+    MockAppConfig.ifsEnvironmentHeaders returns Some(allowedIfsHeaders)
   }
 
   "delete" should {
-    val request = DeleteOtherExpensesRequest(nino, taxYear)
+    val request = DeleteOtherExpensesRequest(Nino(nino), taxYear)
 
     "return a 204 with no body" when {
       "the downstream call is successful" in new Test {
         val outcome = Right(ResponseWrapper(correlationId, ()))
 
-        MockedHttpClient
+        MockHttpClient
           .delete(
-            url = s"$baseUrl/income-tax/expenses/other/${request.nino}/${request.taxYear}",
-            requiredHeaders = requiredHeaders :_*
+            url = s"$baseUrl/income-tax/expenses/other/$nino/${request.taxYear}",
+            config = dummyIfsHeaderCarrierConfig,
+            requiredHeaders = requiredIfsHeaders,
+            excludedHeaders = Seq("AnotherHeader" -> "HeaderValue")
           )
           .returns(Future.successful(outcome))
 

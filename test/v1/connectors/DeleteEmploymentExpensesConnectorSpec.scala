@@ -17,7 +17,7 @@
 package v1.connectors
 
 import mocks.MockAppConfig
-import uk.gov.hmrc.domain.Nino
+import v1.models.domain.Nino
 import v1.mocks.MockHttpClient
 import v1.models.outcomes.ResponseWrapper
 import v1.models.request.deleteEmploymentExpenses.DeleteEmploymentExpensesRequest
@@ -27,7 +27,7 @@ import scala.concurrent.Future
 class DeleteEmploymentExpensesConnectorSpec extends ConnectorSpec {
 
   val taxYear = "2021-22"
-  val nino = Nino("AA123456A")
+  val nino: String = "AA123456A"
 
   class Test extends MockHttpClient with MockAppConfig {
     val connector: DeleteEmploymentExpensesConnector = new DeleteEmploymentExpensesConnector(
@@ -35,22 +35,25 @@ class DeleteEmploymentExpensesConnectorSpec extends ConnectorSpec {
       appConfig = mockAppConfig
     )
 
-    MockedAppConfig.desBaseUrl returns baseUrl
-    MockedAppConfig.desToken returns "des-token"
-    MockedAppConfig.desEnv returns "des-environment"
+    MockAppConfig.desBaseUrl returns baseUrl
+    MockAppConfig.desToken returns "des-token"
+    MockAppConfig.desEnvironment returns "des-environment"
+    MockAppConfig.desEnvironmentHeaders returns Some(allowedDesHeaders)
   }
 
   "delete" should {
-    val request = DeleteEmploymentExpensesRequest(nino, taxYear)
+    val request = DeleteEmploymentExpensesRequest(Nino(nino), taxYear)
 
     "return a 204 with no body" when {
       "the downstream call is successful" in new Test {
         val outcome = Right(ResponseWrapper(correlationId, ()))
 
-        MockedHttpClient
+        MockHttpClient
           .delete(
-            url = s"$baseUrl/income-tax/expenses/employments/${request.nino}/${request.taxYear}",
-            requiredHeaders = requiredHeaders :_*
+            url = s"$baseUrl/income-tax/expenses/employments/${request.nino.nino}/${request.taxYear}",
+            config = dummyDesHeaderCarrierConfig,
+            requiredHeaders = requiredDesHeaders,
+            excludedHeaders = Seq("AnotherHeader" -> "HeaderValue")
           )
           .returns(Future.successful(outcome))
 
