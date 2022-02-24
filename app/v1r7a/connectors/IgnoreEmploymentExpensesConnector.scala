@@ -36,7 +36,7 @@ class IgnoreEmploymentExpensesConnector @Inject()(val http: HttpClient,
 
     put(
       body = IgnoreEmploymentExpensesBody(true),
-      uri = BackendUri.DesUri[Unit](s"income-tax/expenses/employments/${request.nino.nino}/${request.taxYear}")
+      uri = BackendUri.IfsUri[Unit](s"income-tax/expenses/employments/${request.nino.nino}/${request.taxYear}")
     )
   }
 }
