@@ -7,6 +7,7 @@ is:
   - errors.ruleTaxYearRangeInvalid
   - errors.ruleTaxYearNotEnded
   - errors.clientOrAgentNotAuthorised
+  - errors.notFoundExpenses
 displayName: Ignore Employment Expenses
 description: 'This endpoint allows a developer to ignore HMRC provided employment expenses for this user and can only be used after the tax year has ended.<br>Ignoring an expense will remove any amended expenses and add the "dateIgnored" flag to HMRC expenses.<br>This endpoint requires a National Insurance number and tax year.'
 (annotations.sandboxData): !include scenarios/ignore_employment_expenses.md
