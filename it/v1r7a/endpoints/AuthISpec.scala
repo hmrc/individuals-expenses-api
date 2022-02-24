@@ -21,10 +21,10 @@ import play.api.http.HeaderNames.ACCEPT
 import play.api.http.Status
 import play.api.libs.json.{JsValue, Json}
 import play.api.libs.ws.{WSRequest, WSResponse}
-import support.IntegrationBaseSpec
+import support.V1R7aIntegrationSpec
 import v1r7a.stubs.{AuditStub, AuthStub, DesStub, MtdIdLookupStub}
 
-class AuthISpec extends IntegrationBaseSpec {
+class AuthISpec extends V1R7aIntegrationSpec {
 
   private trait Test {
     val nino          = "AA123456A"

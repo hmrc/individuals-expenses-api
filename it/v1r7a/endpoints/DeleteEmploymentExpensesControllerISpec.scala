@@ -21,11 +21,11 @@ import play.api.http.HeaderNames.ACCEPT
 import play.api.http.Status
 import play.api.libs.json.{JsObject, Json}
 import play.api.libs.ws.{WSRequest, WSResponse}
-import support.IntegrationBaseSpec
+import support.V1R7aIntegrationSpec
 import v1r7a.models.errors.{DownstreamError, MtdError, NinoFormatError, NotFoundError, RuleTaxYearNotSupportedError, RuleTaxYearRangeInvalidError, TaxYearFormatError}
-import v1.stubs.{AuditStub, AuthStub, DesStub, MtdIdLookupStub}
+import v1r7a.stubs.{AuditStub, AuthStub, DesStub, MtdIdLookupStub}
 
-class DeleteEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
+class DeleteEmploymentExpensesControllerISpec extends V1R7aIntegrationSpec {
 
   private trait Test {
 

@@ -23,12 +23,12 @@ import play.api.http.HeaderNames.ACCEPT
 import play.api.http.Status._
 import play.api.libs.json.{JsObject, JsValue, Json}
 import play.api.libs.ws.{WSRequest, WSResponse}
-import support.IntegrationBaseSpec
+import support.V1IntegrationSpec
 import v1.models.errors._
 import v1.models.request.DesTaxYear
 import v1.stubs.{AuditStub, AuthStub, DesStub, MtdIdLookupStub}
 
-class IgnoreEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
+class IgnoreEmploymentExpensesControllerISpec extends V1IntegrationSpec {
 
   private trait Test {
 

@@ -20,12 +20,12 @@ import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import play.api.libs.json.{JsObject, JsValue, Json}
 import play.api.libs.ws.{WSRequest, WSResponse}
 import play.api.http.Status._
-import support.IntegrationBaseSpec
+import support.V1IntegrationSpec
 import v1.models.errors._
 import v1.stubs.{AuditStub, AuthStub, DesStub, MtdIdLookupStub}
 import play.api.http.HeaderNames.ACCEPT
 
-class AmendOtherExpensesControllerISpec extends IntegrationBaseSpec {
+class AmendOtherExpensesControllerISpec extends V1IntegrationSpec {
 
   private trait Test {
 

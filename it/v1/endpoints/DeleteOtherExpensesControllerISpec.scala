@@ -21,11 +21,11 @@ import play.api.http.HeaderNames.ACCEPT
 import play.api.http.Status
 import play.api.libs.json.{JsObject, Json}
 import play.api.libs.ws.{WSRequest, WSResponse}
-import support.IntegrationBaseSpec
+import support.V1IntegrationSpec
 import v1.models.errors._
 import v1.stubs.{AuditStub, AuthStub, DesStub, MtdIdLookupStub}
 
-class DeleteOtherExpensesControllerISpec extends IntegrationBaseSpec {
+class DeleteOtherExpensesControllerISpec extends V1IntegrationSpec {
 
   private trait Test {
 
