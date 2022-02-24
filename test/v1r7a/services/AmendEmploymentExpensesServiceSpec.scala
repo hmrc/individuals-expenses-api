@@ -78,7 +78,8 @@ class AmendEmploymentExpensesServiceSpec extends ServiceSpec {
         "INVALID_TAX_YEAR" -> TaxYearFormatError,
         "INVALID_CORRELATIONID" -> DownstreamError,
         "INVALID_PAYLOAD" -> DownstreamError,
-        "INVALID_REQUEST_BEFORE_TAX_YEAR_END" -> RuleTaxYearNotEndedError,
+        "INVALID_REQUEST_BEFORE_TAX_YEAR" -> RuleTaxYearNotEndedError,
+        "INCOME_SOURCE_NOT_FOUND" -> NotFoundError,
         "SERVER_ERROR" -> DownstreamError,
         "SERVICE_UNAVAILABLE" -> DownstreamError
       )
