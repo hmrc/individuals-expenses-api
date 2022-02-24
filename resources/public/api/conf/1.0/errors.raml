@@ -14,16 +14,6 @@ traits:
               description: The matching resource is not found.
               value:
                 code: MATCHING_RESOURCE_NOT_FOUND
-  notFoundEmployments:
-    responses:
-      404:
-        body:
-          application/json:
-            type: types.errorResponse
-            example:
-              description: Employments could not be found for the supplied NINO.
-              value:
-                code: MATCHING_RESOURCE_NOT_FOUND
   clientOrAgentNotAuthorised:
     responses:
       403:
