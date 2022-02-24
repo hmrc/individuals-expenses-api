@@ -1,0 +1,8 @@
+GET        /other/:nino/:taxYear                            v1r7a.controllers.RetrieveOtherExpensesController.handleRequest(nino: String, taxYear: String)
+DELETE     /other/:nino/:taxYear                            v1r7a.controllers.DeleteOtherExpensesController.handleRequest(nino: String, taxYear: String)
+PUT        /other/:nino/:taxYear                            v1r7a.controllers.AmendOtherExpensesController.handleRequest(nino: String, taxYear: String)
+
+DELETE     /employments/:nino/:taxYear                      v1r7a.controllers.DeleteEmploymentExpensesController.handleRequest(nino: String, taxYear: String)
+PUT        /employments/:nino/:taxYear                      v1r7a.controllers.AmendEmploymentExpensesController.handleRequest(nino: String, taxYear: String)
+POST       /employments/:nino/:taxYear/ignore               v1r7a.controllers.IgnoreEmploymentExpensesController.handleRequest(nino: String, taxYear: String)
+GET        /employments/:nino/:taxYear                      v1r7a.controllers.RetrieveEmploymentsExpensesController.handleRequest(nino:String, taxYear: String, source: String ?= "latest")

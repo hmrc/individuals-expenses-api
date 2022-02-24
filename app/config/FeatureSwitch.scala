@@ -37,4 +37,9 @@ case class FeatureSwitch(value: Option[Configuration]) {
 
     enabled.getOrElse(false)
   }
+
+  def isRelease7aRoutingEnabled: Boolean  = value match {
+    case Some(config) => config.getOptional[Boolean] ("release-7a.enabled").getOrElse(true)
+    case None => true
+  }
 }
