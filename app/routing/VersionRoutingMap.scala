@@ -44,9 +44,10 @@ case class VersionRoutingMapImpl @Inject()(appConfig: AppConfig,
 
   val map: Map[String, Router] = Map(
     VERSION_1 -> {
-      featureSwitch.isRelease7aRoutingEnabled match {
-        case true => v1RouterWithRelease7a
-        case false => v1Router
+      if (featureSwitch.isRelease7aRoutingEnabled) {
+        v1RouterWithRelease7a
+      } else {
+        v1Router
       }
     }
   )
