@@ -109,7 +109,8 @@ class IgnoreEmploymentExpensesController @Inject()(val authService: EnrolmentsAu
            | RuleTaxYearRangeInvalidError
            | RuleTaxYearNotSupportedError
            | RuleTaxYearNotEndedError => BadRequest(Json.toJson(errorWrapper))
-      case DownstreamError                 => InternalServerError(Json.toJson(errorWrapper))
+      case DownstreamError            => InternalServerError(Json.toJson(errorWrapper))
+      case NotFoundError              => NotFound(Json.toJson(errorWrapper))
     }
   }
 
