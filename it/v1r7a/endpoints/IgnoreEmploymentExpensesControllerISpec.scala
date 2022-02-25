@@ -26,7 +26,7 @@ import play.api.libs.ws.{WSRequest, WSResponse}
 import support.V1R7aIntegrationSpec
 import v1r7a.models.errors._
 import v1r7a.models.request.DesTaxYear
-import v1r7a.stubs.{AuditStub, AuthStub, DesStub, MtdIdLookupStub}
+import v1r7a.stubs.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 
 class IgnoreEmploymentExpensesControllerISpec extends V1R7aIntegrationSpec {
 
@@ -86,7 +86,7 @@ class IgnoreEmploymentExpensesControllerISpec extends V1R7aIntegrationSpec {
           AuditStub.audit()
           AuthStub.authorised()
           MtdIdLookupStub.ninoFound(nino)
-          DesStub.onSuccess(DesStub.PUT, desUri, NO_CONTENT, JsObject.empty)
+          DownstreamStub.onSuccess(DownstreamStub.PUT, desUri, NO_CONTENT, JsObject.empty)
         }
 
         val response: WSResponse = await(request().post(requestBody))
@@ -146,7 +146,7 @@ class IgnoreEmploymentExpensesControllerISpec extends V1R7aIntegrationSpec {
               AuditStub.audit()
               AuthStub.authorised()
               MtdIdLookupStub.ninoFound(nino)
-              DesStub.onError(DesStub.PUT, desUri, desStatus, errorBody(desCode))
+              DownstreamStub.onError(DownstreamStub.PUT, desUri, desStatus, errorBody(desCode))
             }
 
             val response: WSResponse = await(request().post(requestBody))

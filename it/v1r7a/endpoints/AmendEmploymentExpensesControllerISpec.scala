@@ -22,7 +22,7 @@ import play.api.libs.ws.{WSRequest, WSResponse}
 import play.api.http.Status._
 import support.V1R7aIntegrationSpec
 import v1r7a.models.errors._
-import v1r7a.stubs.{AuditStub, AuthStub, DesStub, MtdIdLookupStub}
+import v1r7a.stubs.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 import play.api.http.HeaderNames.ACCEPT
 
 class AmendEmploymentExpensesControllerISpec extends V1R7aIntegrationSpec {
@@ -76,7 +76,7 @@ class AmendEmploymentExpensesControllerISpec extends V1R7aIntegrationSpec {
 
     def uri: String = s"/employments/$nino/$taxYear"
 
-    def desUri: String = s"/income-tax/expenses/employments/$nino/$taxYear"
+    def ifsUri: String = s"/income-tax/expenses/employments/$nino/$taxYear"
 
     def setupStubs(): StubMapping
 
@@ -88,10 +88,14 @@ class AmendEmploymentExpensesControllerISpec extends V1R7aIntegrationSpec {
 
     def errorBody(code: String): String =
       s"""
-         |      {
-         |        "code": "$code",
-         |        "reason": "des message"
-         |      }
+         |{
+         |  "failures": [
+         |    {
+         |      "code": "$code",
+         |      "reason": "downstream message"
+         |    }
+         |  ]
+         |}
     """.stripMargin
   }
 
@@ -105,7 +109,7 @@ class AmendEmploymentExpensesControllerISpec extends V1R7aIntegrationSpec {
           AuditStub.audit()
           AuthStub.authorised()
           MtdIdLookupStub.ninoFound(nino)
-          DesStub.onSuccess(DesStub.PUT, desUri, NO_CONTENT, JsObject.empty)
+          DownstreamStub.onSuccess(DownstreamStub.PUT, ifsUri, NO_CONTENT, JsObject.empty)
         }
 
         val response: WSResponse = await(request().put(requestBodyJson))
@@ -258,15 +262,15 @@ class AmendEmploymentExpensesControllerISpec extends V1R7aIntegrationSpec {
 
       }
 
-      "des service error" when {
-        def serviceErrorTest(desStatus: Int, desCode: String, expectedStatus: Int, expectedBody: MtdError): Unit = {
-          s"des returns an $desCode error and status $desStatus" in new Test {
+      "downstream service error" when {
+        def serviceErrorTest(ifsStatus: Int, ifsCode: String, expectedStatus: Int, expectedBody: MtdError): Unit = {
+          s"downstream returns an $ifsCode error and status $ifsStatus" in new Test {
 
             override def setupStubs(): StubMapping = {
               AuditStub.audit()
               AuthStub.authorised()
               MtdIdLookupStub.ninoFound(nino)
-              DesStub.onError(DesStub.PUT, desUri, desStatus, errorBody(desCode))
+              DownstreamStub.onError(DownstreamStub.PUT, ifsUri, ifsStatus, errorBody(ifsCode))
             }
 
             val response: WSResponse = await(request().put(requestBodyJson))
@@ -280,7 +284,8 @@ class AmendEmploymentExpensesControllerISpec extends V1R7aIntegrationSpec {
           (BAD_REQUEST, "INVALID_TAX_YEAR", BAD_REQUEST, TaxYearFormatError),
           (BAD_REQUEST, "INVALID_CORRELATIONID", INTERNAL_SERVER_ERROR, DownstreamError),
           (BAD_REQUEST, "INVALID_PAYLOAD", INTERNAL_SERVER_ERROR, DownstreamError),
-          (UNPROCESSABLE_ENTITY, "INVALID_REQUEST_BEFORE_TAX_YEAR_END", BAD_REQUEST, RuleTaxYearNotEndedError),
+          (UNPROCESSABLE_ENTITY, "INVALID_REQUEST_BEFORE_TAX_YEAR", BAD_REQUEST, RuleTaxYearNotEndedError),
+          (NOT_FOUND, "INCOME_SOURCE_NOT_FOUND", NOT_FOUND, NotFoundError),
           (INTERNAL_SERVER_ERROR, "SERVER_ERROR", INTERNAL_SERVER_ERROR, DownstreamError),
           (SERVICE_UNAVAILABLE, "SERVICE_UNAVAILABLE", INTERNAL_SERVER_ERROR, DownstreamError))
 

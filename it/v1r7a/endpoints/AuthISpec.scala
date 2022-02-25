@@ -22,7 +22,7 @@ import play.api.http.Status
 import play.api.libs.json.{JsValue, Json}
 import play.api.libs.ws.{WSRequest, WSResponse}
 import support.V1R7aIntegrationSpec
-import v1r7a.stubs.{AuditStub, AuthStub, DesStub, MtdIdLookupStub}
+import v1r7a.stubs.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 
 class AuthISpec extends V1R7aIntegrationSpec {
 
@@ -80,7 +80,7 @@ class AuthISpec extends V1R7aIntegrationSpec {
           AuditStub.audit()
           AuthStub.authorised()
           MtdIdLookupStub.ninoFound(nino)
-          DesStub.onSuccess(DesStub.GET, desUri, Status.OK, desResponse)
+          DownstreamStub.onSuccess(DownstreamStub.GET, desUri, Status.OK, desResponse)
         }
 
         val response: WSResponse = await(request().get())

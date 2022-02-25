@@ -23,7 +23,7 @@ import play.api.libs.json.Json
 import play.api.libs.ws.{WSRequest, WSResponse}
 import support.V1R7aIntegrationSpec
 import v1r7a.models.errors.{DownstreamError, MtdError, NinoFormatError, NotFoundError, RuleTaxYearNotSupportedError, RuleTaxYearRangeInvalidError, TaxYearFormatError}
-import v1r7a.stubs.{AuditStub, AuthStub, DesStub, MtdIdLookupStub}
+import v1r7a.stubs.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 
 class RetrieveOtherExpensesControllerISpec extends V1R7aIntegrationSpec {
 
@@ -110,7 +110,7 @@ class RetrieveOtherExpensesControllerISpec extends V1R7aIntegrationSpec {
           AuditStub.audit()
           AuthStub.authorised()
           MtdIdLookupStub.ninoFound(nino)
-          DesStub.onSuccess(DesStub.GET, desUri, Status.OK, desResponseBody)
+          DownstreamStub.onSuccess(DownstreamStub.GET, desUri, Status.OK, desResponseBody)
         }
 
         val response: WSResponse = await(request().get())
@@ -161,7 +161,7 @@ class RetrieveOtherExpensesControllerISpec extends V1R7aIntegrationSpec {
               AuditStub.audit()
               AuthStub.authorised()
               MtdIdLookupStub.ninoFound(nino)
-              DesStub.onError(DesStub.GET, desUri, desStatus, errorBody(desCode))
+              DownstreamStub.onError(DownstreamStub.GET, desUri, desStatus, errorBody(desCode))
             }
 
             val response: WSResponse = await(request().get())
