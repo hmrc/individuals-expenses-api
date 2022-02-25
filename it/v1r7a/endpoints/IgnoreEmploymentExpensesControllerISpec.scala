@@ -90,11 +90,7 @@ class IgnoreEmploymentExpensesControllerISpec extends V1R7aIntegrationSpec {
           AuditStub.audit()
           AuthStub.authorised()
           MtdIdLookupStub.ninoFound(nino)
-<<<<<<< HEAD
-          DownstreamStub.onSuccess(DownstreamStub.PUT, desUri, NO_CONTENT, JsObject.empty)
-=======
-          DesStub.onSuccess(DesStub.PUT, ifsUri, NO_CONTENT, JsObject.empty)
->>>>>>> 44826c6... code changes
+          DownstreamStub.onSuccess(DownstreamStub.PUT, ifsUri, NO_CONTENT, JsObject.empty)
         }
 
         val response: WSResponse = await(request().post(requestBody))
