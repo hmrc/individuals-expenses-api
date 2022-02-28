@@ -11,5 +11,9 @@
             <td><p>N/A - DEFAULT</p></td>
             <td><p>Simulates a success response.</p></td>
         </tr>
+        <tr>
+            <td><p>NOT_FOUND</p></td>
+            <td><p>Scenario to simulate not found error.</p></td>
+        </tr>        
     </tbody>
 </table>
