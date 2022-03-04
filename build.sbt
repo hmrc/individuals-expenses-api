@@ -57,7 +57,8 @@ lazy val microservice = Project(appName, file("."))
     resolvers += Resolver.jcenterRepo
   )
   .settings(PlayKeys.playDefaultPort := 7795)
-  .settings(SilencerSettings())
+
+scalacOptions ++= Seq("-Xfatal-warnings", "-Wconf:src=routes/.*:silent")
 
 dependencyUpdatesFilter -= moduleFilter(organization = "com.typesafe.play")
 dependencyUpdatesFilter -= moduleFilter(name = "scala-library")
