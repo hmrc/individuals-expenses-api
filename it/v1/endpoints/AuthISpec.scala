@@ -21,10 +21,10 @@ import play.api.http.HeaderNames.ACCEPT
 import play.api.http.Status
 import play.api.libs.json.{JsValue, Json}
 import play.api.libs.ws.{WSRequest, WSResponse}
-import support.V1IntegrationSpec
-import v1.stubs.{AuditStub, AuthStub, DesStub, MtdIdLookupStub}
+import support.IntegrationBaseSpec
+import v1.stubs.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 
-class AuthISpec extends V1IntegrationSpec {
+class AuthISpec extends IntegrationBaseSpec {
 
   private trait Test {
     val nino          = "AA123456A"
@@ -80,7 +80,7 @@ class AuthISpec extends V1IntegrationSpec {
           AuditStub.audit()
           AuthStub.authorised()
           MtdIdLookupStub.ninoFound(nino)
-          DesStub.onSuccess(DesStub.GET, desUri, Status.OK, desResponse)
+          DownstreamStub.onSuccess(DownstreamStub.GET, desUri, Status.OK, desResponse)
         }
 
         val response: WSResponse = await(request().get())
