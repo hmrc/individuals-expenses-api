@@ -47,10 +47,10 @@ class AmendOtherExpensesConnectorSpec extends ConnectorSpec {
       appConfig = mockAppConfig
     )
 
-    MockAppConfig.ifsBaseUrl returns baseUrl
-    MockAppConfig.ifsToken returns "ifs-token"
-    MockAppConfig.ifsEnvironment returns "ifs-environment"
-    MockAppConfig.ifsEnvironmentHeaders returns Some(allowedIfsHeaders)
+    MockAppConfig.ifsR5BaseUrl returns baseUrl
+    MockAppConfig.ifsR5Token returns "ifs-token"
+    MockAppConfig.ifsR5Environment returns "ifs-environment"
+    MockAppConfig.ifsR5EnvironmentHeaders returns Some(allowedDownstreamHeaders)
   }
 
   "amend" should {
@@ -65,10 +65,10 @@ class AmendOtherExpensesConnectorSpec extends ConnectorSpec {
       MockHttpClient
         .put(
           url = s"$baseUrl/income-tax/expenses/other/$nino/$taxYear",
-          config = dummyIfsHeaderCarrierConfig,
+          config = dummyDownstreamHeaderCarrierConfig,
           body = body,
           requiredHeaders = requiredHeadersPut,
-          excludedHeaders = Seq("AnotherHeader" -> "HeaderValue")
+          excludedHeaders = excludedHeaders
         ).returns(Future.successful(outcome))
 
       await(connector.amend(request)) shouldBe outcome

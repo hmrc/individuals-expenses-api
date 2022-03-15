@@ -16,14 +16,10 @@
 
 package v1.connectors
 
-trait BackendUri[Resp] {
-  val value: String
-}
+sealed trait DownstreamRequestConfig
 
-object BackendUri {
+case object Des extends DownstreamRequestConfig
+case object IfsR5 extends DownstreamRequestConfig
+case object IfsR6 extends DownstreamRequestConfig
 
-  case class DesUri[Resp](value: String) extends BackendUri[Resp]
-
-  case class IfsUri[Resp](value: String) extends BackendUri[Resp]
-
-}
+case class DownstreamRequest[Resp](config: DownstreamRequestConfig, uri: String)

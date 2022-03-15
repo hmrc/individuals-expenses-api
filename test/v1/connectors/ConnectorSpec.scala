@@ -38,51 +38,39 @@ trait ConnectorSpec extends UnitSpec
   implicit val hc: HeaderCarrier = HeaderCarrier(otherHeaders = otherHeaders)
   implicit val ec: ExecutionContext = scala.concurrent.ExecutionContext.global
 
-  val dummyDesHeaderCarrierConfig: HeaderCarrier.Config =
+  val dummyDownstreamHeaderCarrierConfig: HeaderCarrier.Config =
     HeaderCarrier.Config(
       Seq("^not-test-BaseUrl?$".r),
       Seq.empty[String],
-      Some("self-assessment-accounts-api")
+      Some("individuals-expenses-api")
     )
 
   val requiredDesHeaders: Seq[(String, String)] = Seq(
     "Authorization" -> "Bearer des-token",
     "Environment" -> "des-environment",
-    "User-Agent" -> "self-assessment-accounts-api",
+    "User-Agent" -> "individuals-expenses-api",
     "CorrelationId" -> correlationId,
     "Gov-Test-Scenario" -> "DEFAULT"
   )
-
-  val allowedDesHeaders: Seq[String] = Seq(
-    "Accept",
-    "Gov-Test-Scenario",
-    "Content-Type",
-    "Location",
-    "X-Request-Timestamp",
-    "X-Session-Id"
-  )
-
-  val dummyIfsHeaderCarrierConfig: HeaderCarrier.Config =
-    HeaderCarrier.Config(
-      Seq("^not-test-BaseUrl?$".r),
-      Seq.empty[String],
-      Some("self-assessment-accounts-api")
-    )
 
   val requiredIfsHeaders: Seq[(String, String)] = Seq(
     "Authorization" -> "Bearer ifs-token",
     "Environment" -> "ifs-environment",
-    "User-Agent" -> "self-assessment-accounts-api",
+    "User-Agent" -> "individuals-expenses-api",
     "CorrelationId" -> correlationId,
     "Gov-Test-Scenario" -> "DEFAULT"
   )
 
-  val allowedIfsHeaders: Seq[String] = Seq(
+  val allowedDownstreamHeaders: Seq[String] = Seq(
     "Accept",
     "Gov-Test-Scenario",
     "Content-Type",
     "Location",
     "X-Request-Timestamp",
     "X-Session-Id"
+  )
+
+  val excludedHeaders: Seq[(String, String)] = Seq(
+    "AnotherHeader" -> "HeaderValue"
   )
 }

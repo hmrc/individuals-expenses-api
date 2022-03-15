@@ -38,10 +38,10 @@ class DeleteEmploymentExpensesConnectorSpec extends ConnectorSpec {
     MockAppConfig.desBaseUrl returns baseUrl
     MockAppConfig.desToken returns "des-token"
     MockAppConfig.desEnvironment returns "des-environment"
-    MockAppConfig.desEnvironmentHeaders returns Some(allowedDesHeaders)
+    MockAppConfig.desEnvironmentHeaders returns Some(allowedDownstreamHeaders)
   }
 
-  "delete" should {
+  "deleteEmploymentExpenses" should {
     val request = DeleteEmploymentExpensesRequest(Nino(nino), taxYear)
 
     "return a 204 with no body" when {
@@ -51,9 +51,9 @@ class DeleteEmploymentExpensesConnectorSpec extends ConnectorSpec {
         MockHttpClient
           .delete(
             url = s"$baseUrl/income-tax/expenses/employments/${request.nino.nino}/${request.taxYear}",
-            config = dummyDesHeaderCarrierConfig,
+            config = dummyDownstreamHeaderCarrierConfig,
             requiredHeaders = requiredDesHeaders,
-            excludedHeaders = Seq("AnotherHeader" -> "HeaderValue")
+            excludedHeaders = excludedHeaders
           )
           .returns(Future.successful(outcome))
 

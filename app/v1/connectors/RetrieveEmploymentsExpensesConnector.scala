@@ -38,7 +38,7 @@ class RetrieveEmploymentsExpensesConnector @Inject()(val http: HttpClient,
     val url = s"income-tax/expenses/employments/${request.nino.nino}/${request.taxYear}?view=${request.source.toDes}"
 
     get(
-      uri = BackendUri.DesUri[RetrieveEmploymentsExpensesResponse](s"$url")
+      request = DownstreamRequest[RetrieveEmploymentsExpensesResponse](Des, s"$url")
     )
   }
 }

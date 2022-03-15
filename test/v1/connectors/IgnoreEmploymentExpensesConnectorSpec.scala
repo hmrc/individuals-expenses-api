@@ -37,10 +37,10 @@ class IgnoreEmploymentExpensesConnectorSpec extends ConnectorSpec {
       appConfig = mockAppConfig
     )
 
-    MockAppConfig.ifsBaseUrl returns baseUrl
-    MockAppConfig.ifsToken returns "ifs-token"
-    MockAppConfig.ifsEnvironment returns "ifs-environment"
-    MockAppConfig.ifsEnvironmentHeaders returns Some(allowedIfsHeaders)
+    MockAppConfig.ifsR6BaseUrl returns baseUrl
+    MockAppConfig.ifsR6Token returns "ifs-token"
+    MockAppConfig.ifsR6Environment returns "ifs-environment"
+    MockAppConfig.ifsR6EnvironmentHeaders returns Some(allowedDownstreamHeaders)
   }
 
   "ignore" should {
@@ -55,10 +55,10 @@ class IgnoreEmploymentExpensesConnectorSpec extends ConnectorSpec {
       MockHttpClient
         .put(
           url = s"$baseUrl/income-tax/expenses/employments/$nino/$taxYear",
-          config = dummyIfsHeaderCarrierConfig,
+          config = dummyDownstreamHeaderCarrierConfig,
           body = body,
           requiredHeaders = requiredHeadersPut,
-          excludedHeaders = Seq("AnotherHeader" -> "HeaderValue")
+          excludedHeaders = excludedHeaders
         ).returns(Future.successful(outcome))
 
       await(connector.ignore(request)) shouldBe outcome

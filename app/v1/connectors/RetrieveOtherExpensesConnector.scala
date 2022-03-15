@@ -38,7 +38,7 @@ class RetrieveOtherExpensesConnector @Inject()(val http: HttpClient,
     val url = s"income-tax/expenses/other/${request.nino.nino}/${request.taxYear}"
 
     get(
-      uri = BackendUri.IfsUri[RetrieveOtherExpensesResponse](s"$url")
+      request = DownstreamRequest[RetrieveOtherExpensesResponse](IfsR5, s"$url")
     )
   }
 }

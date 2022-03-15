@@ -36,7 +36,7 @@ class AmendOtherExpensesConnector @Inject()(val http: HttpClient,
 
     put(
       body = request.body,
-      uri = BackendUri.IfsUri[Unit](s"income-tax/expenses/other/${request.nino.nino}/${request.taxYear}")
+      request = DownstreamRequest[Unit](IfsR5,s"income-tax/expenses/other/${request.nino.nino}/${request.taxYear}")
     )
   }
 }
