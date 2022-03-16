@@ -31,19 +31,18 @@ trait IntegrationBaseSpec extends UnitSpec with WireMockHelper with GuiceOneServ
 
   lazy val client: WSClient = app.injector.instanceOf[WSClient]
 
-  val release7aEnabled: Boolean
-
   def servicesConfig: Map[String, Any] = Map(
     "microservice.services.des.host" -> mockHost,
     "microservice.services.des.port" -> mockPort,
-    "microservice.services.ifs.host" -> mockHost,
-    "microservice.services.ifs.port" -> mockPort,
+    "microservice.services.ifsR5.host" -> mockHost,
+    "microservice.services.ifsR5.port" -> mockPort,
+    "microservice.services.ifsR6.host" -> mockHost,
+    "microservice.services.ifsR6.port" -> mockPort,
     "microservice.services.mtd-id-lookup.host" -> mockHost,
     "microservice.services.mtd-id-lookup.port" -> mockPort,
     "microservice.services.auth.host" -> mockHost,
     "microservice.services.auth.port" -> mockPort,
-    "auditing.consumer.baseUri.port" -> mockPort,
-    "feature-switch.release-7a.enabled" -> release7aEnabled
+    "auditing.consumer.baseUri.port" -> mockPort
   )
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()

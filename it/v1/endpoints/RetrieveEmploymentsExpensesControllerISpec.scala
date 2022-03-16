@@ -21,11 +21,11 @@ import play.api.http.HeaderNames.ACCEPT
 import play.api.http.Status
 import play.api.libs.json.Json
 import play.api.libs.ws.{WSRequest, WSResponse}
-import support.V1IntegrationSpec
+import support.IntegrationBaseSpec
 import v1.models.errors._
-import v1.stubs.{AuditStub, AuthStub, DesStub, MtdIdLookupStub}
+import v1.stubs.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 
-class RetrieveEmploymentsExpensesControllerISpec extends V1IntegrationSpec {
+class RetrieveEmploymentsExpensesControllerISpec extends IntegrationBaseSpec {
 
   private trait Test {
 
@@ -235,7 +235,7 @@ class RetrieveEmploymentsExpensesControllerISpec extends V1IntegrationSpec {
           AuditStub.audit()
           AuthStub.authorised()
           MtdIdLookupStub.ninoFound(nino)
-          DesStub.onSuccess(DesStub.GET, desUri, Map("view" -> desSource) ,Status.OK, desResponseBody)
+          DownstreamStub.onSuccess(DownstreamStub.GET, desUri, Map("view" -> desSource) ,Status.OK, desResponseBody)
         }
 
         val response: WSResponse = await(request(latestUri).get())
@@ -250,7 +250,7 @@ class RetrieveEmploymentsExpensesControllerISpec extends V1IntegrationSpec {
           AuditStub.audit()
           AuthStub.authorised()
           MtdIdLookupStub.ninoFound(nino)
-          DesStub.onSuccess(DesStub.GET, desUri, Map("view" -> hmrcHeldDesSource) ,Status.OK, hmrcHeldDesResponseBody)
+          DownstreamStub.onSuccess(DownstreamStub.GET, desUri, Map("view" -> hmrcHeldDesSource) ,Status.OK, hmrcHeldDesResponseBody)
         }
 
         val response: WSResponse = await(request(hmrcHeldUri).get())
@@ -265,7 +265,7 @@ class RetrieveEmploymentsExpensesControllerISpec extends V1IntegrationSpec {
           AuditStub.audit()
           AuthStub.authorised()
           MtdIdLookupStub.ninoFound(nino)
-          DesStub.onSuccess(DesStub.GET, desUri, Map("view" -> userDesSource) ,Status.OK, userDesResponseBody)
+          DownstreamStub.onSuccess(DownstreamStub.GET, desUri, Map("view" -> userDesSource) ,Status.OK, userDesResponseBody)
         }
 
         val response: WSResponse = await(request(userUri).get())
@@ -317,7 +317,7 @@ class RetrieveEmploymentsExpensesControllerISpec extends V1IntegrationSpec {
               AuditStub.audit()
               AuthStub.authorised()
               MtdIdLookupStub.ninoFound(nino)
-              DesStub.onError(DesStub.GET, desUri, desStatus, errorBody(desCode))
+              DownstreamStub.onError(DownstreamStub.GET, desUri, desStatus, errorBody(desCode))
             }
 
             val response: WSResponse = await(request(latestUri).get())

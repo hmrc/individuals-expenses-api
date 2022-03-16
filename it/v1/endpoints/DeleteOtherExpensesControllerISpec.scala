@@ -21,11 +21,11 @@ import play.api.http.HeaderNames.ACCEPT
 import play.api.http.Status
 import play.api.libs.json.{JsObject, Json}
 import play.api.libs.ws.{WSRequest, WSResponse}
-import support.V1IntegrationSpec
+import support.IntegrationBaseSpec
 import v1.models.errors._
-import v1.stubs.{AuditStub, AuthStub, DesStub, MtdIdLookupStub}
+import v1.stubs.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 
-class DeleteOtherExpensesControllerISpec extends V1IntegrationSpec {
+class DeleteOtherExpensesControllerISpec extends IntegrationBaseSpec {
 
   private trait Test {
 
@@ -63,7 +63,7 @@ class DeleteOtherExpensesControllerISpec extends V1IntegrationSpec {
           AuditStub.audit()
           AuthStub.authorised()
           MtdIdLookupStub.ninoFound(nino)
-          DesStub.onSuccess(DesStub.DELETE, desUri, Status.NO_CONTENT, JsObject.empty)
+          DownstreamStub.onSuccess(DownstreamStub.DELETE, desUri, Status.NO_CONTENT, JsObject.empty)
         }
 
         val response: WSResponse = await(request().delete())
@@ -113,7 +113,7 @@ class DeleteOtherExpensesControllerISpec extends V1IntegrationSpec {
               AuditStub.audit()
               AuthStub.authorised()
               MtdIdLookupStub.ninoFound(nino)
-              DesStub.onError(DesStub.DELETE, desUri, desStatus, errorBody(desCode))
+              DownstreamStub.onError(DownstreamStub.DELETE, desUri, desStatus, errorBody(desCode))
             }
 
             val response: WSResponse = await(request().delete())

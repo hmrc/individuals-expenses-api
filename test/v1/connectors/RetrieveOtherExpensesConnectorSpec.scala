@@ -36,13 +36,13 @@ class RetrieveOtherExpensesConnectorSpec extends ConnectorSpec {
       appConfig = mockAppConfig
     )
 
-    MockAppConfig.ifsBaseUrl returns baseUrl
-    MockAppConfig.ifsToken returns "ifs-token"
-    MockAppConfig.ifsEnvironment returns "ifs-environment"
-    MockAppConfig.ifsEnvironmentHeaders returns Some(allowedIfsHeaders)
+    MockAppConfig.ifsR5BaseUrl returns baseUrl
+    MockAppConfig.ifsR5Token returns "ifs-token"
+    MockAppConfig.ifsR5Environment returns "ifs-environment"
+    MockAppConfig.ifsR5EnvironmentHeaders returns Some(allowedDownstreamHeaders)
   }
 
-  "retrieve business details" should {
+  "retrieveOtherExpenses" should {
     val request = RetrieveOtherExpensesRequest(Nino(nino), taxYear)
     "return a result" when {
       "the downstream call is successful" in new Test {
@@ -55,9 +55,9 @@ class RetrieveOtherExpensesConnectorSpec extends ConnectorSpec {
         MockHttpClient
           .get(
             url = s"$baseUrl/income-tax/expenses/other/$nino/${request.taxYear}",
-            config = dummyIfsHeaderCarrierConfig,
+            config = dummyDownstreamHeaderCarrierConfig,
             requiredHeaders = requiredIfsHeaders,
-            excludedHeaders = Seq("AnotherHeader" -> "HeaderValue")
+            excludedHeaders = excludedHeaders
           )
           .returns(Future.successful(outcome))
 

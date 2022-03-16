@@ -31,10 +31,16 @@ trait AppConfig {
   def desToken: String
   def desEnvironment: String
   def desEnvironmentHeaders: Option[Seq[String]]
-  def ifsToken: String
-  def ifsBaseUrl: String
-  def ifsEnvironment: String
-  def ifsEnvironmentHeaders: Option[Seq[String]]
+
+  def ifsR5Token: String
+  def ifsR5BaseUrl: String
+  def ifsR5Environment: String
+  def ifsR5EnvironmentHeaders: Option[Seq[String]]
+
+  def ifsR6Token: String
+  def ifsR6BaseUrl: String
+  def ifsR6Environment: String
+  def ifsR6EnvironmentHeaders: Option[Seq[String]]
 
   // API Config
   def apiStatus(version: String): String
@@ -62,10 +68,15 @@ class AppConfigImpl @Inject()(config: ServicesConfig, configuration: Configurati
   val desToken: String = config.getString("microservice.services.des.token")
   val desEnvironmentHeaders: Option[Seq[String]] = configuration.getOptional[Seq[String]]("microservice.services.des.environmentHeaders")
 
-  val ifsBaseUrl: String = config.baseUrl("ifs")
-  val ifsEnvironment: String = config.getString("microservice.services.ifs.env")
-  val ifsToken: String = config.getString("microservice.services.ifs.token")
-  val ifsEnvironmentHeaders: Option[Seq[String]] = configuration.getOptional[Seq[String]]("microservice.services.ifs.environmentHeaders")
+  val ifsR5BaseUrl: String = config.baseUrl("ifsR5")
+  val ifsR5Environment: String = config.getString("microservice.services.ifsR5.env")
+  val ifsR5Token: String = config.getString("microservice.services.ifsR5.token")
+  val ifsR5EnvironmentHeaders: Option[Seq[String]] = configuration.getOptional[Seq[String]]("microservice.services.ifsR5.environmentHeaders")
+
+  val ifsR6BaseUrl: String = config.baseUrl("ifsR6")
+  val ifsR6Environment: String = config.getString("microservice.services.ifsR6.env")
+  val ifsR6Token: String = config.getString("microservice.services.ifsR6.token")
+  val ifsR6EnvironmentHeaders: Option[Seq[String]] = configuration.getOptional[Seq[String]]("microservice.services.ifsR6.environmentHeaders")
 
   // API Config
   val apiGatewayContext: String = config.getString("api.gateway.context")

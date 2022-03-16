@@ -33,7 +33,8 @@ lazy val microservice = Project(appName, file("."))
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test(),
     retrieveManaged := true,
     update / evictionWarningOptions := EvictionWarningOptions.default.withWarnScalaVersionEviction(warnScalaVersionEviction = false),
-    scalaVersion := "2.12.15"
+    scalaVersion := "2.12.15",
+    scalacOptions ++= Seq("-Xfatal-warnings", "-Wconf:src=routes/.*:silent")
   )
   .settings(
     Compile / unmanagedResourceDirectories += baseDirectory.value / "resources"
@@ -58,7 +59,7 @@ lazy val microservice = Project(appName, file("."))
   )
   .settings(PlayKeys.playDefaultPort := 7795)
 
-scalacOptions ++= Seq("-Xfatal-warnings", "-Wconf:src=routes/.*:silent")
+Global / excludeLintKeys += update / evictionWarningOptions
 
 dependencyUpdatesFilter -= moduleFilter(organization = "com.typesafe.play")
 dependencyUpdatesFilter -= moduleFilter(name = "scala-library")

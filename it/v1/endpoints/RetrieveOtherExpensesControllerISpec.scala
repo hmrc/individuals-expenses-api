@@ -21,11 +21,11 @@ import play.api.http.HeaderNames.ACCEPT
 import play.api.http.Status
 import play.api.libs.json.Json
 import play.api.libs.ws.{WSRequest, WSResponse}
-import support.V1IntegrationSpec
-import v1.models.errors.{DownstreamError, MtdError, NinoFormatError, NotFoundError, RuleTaxYearNotSupportedError, RuleTaxYearRangeInvalidError, TaxYearFormatError}
-import v1.stubs.{AuditStub, AuthStub, DesStub, MtdIdLookupStub}
+import support.IntegrationBaseSpec
+import v1.models.errors._
+import v1.stubs.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 
-class RetrieveOtherExpensesControllerISpec extends V1IntegrationSpec {
+class RetrieveOtherExpensesControllerISpec extends IntegrationBaseSpec {
 
   private trait Test {
 
@@ -110,7 +110,7 @@ class RetrieveOtherExpensesControllerISpec extends V1IntegrationSpec {
           AuditStub.audit()
           AuthStub.authorised()
           MtdIdLookupStub.ninoFound(nino)
-          DesStub.onSuccess(DesStub.GET, desUri, Status.OK, desResponseBody)
+          DownstreamStub.onSuccess(DownstreamStub.GET, desUri, Status.OK, desResponseBody)
         }
 
         val response: WSResponse = await(request().get())
@@ -161,7 +161,7 @@ class RetrieveOtherExpensesControllerISpec extends V1IntegrationSpec {
               AuditStub.audit()
               AuthStub.authorised()
               MtdIdLookupStub.ninoFound(nino)
-              DesStub.onError(DesStub.GET, desUri, desStatus, errorBody(desCode))
+              DownstreamStub.onError(DownstreamStub.GET, desUri, desStatus, errorBody(desCode))
             }
 
             val response: WSResponse = await(request().get())

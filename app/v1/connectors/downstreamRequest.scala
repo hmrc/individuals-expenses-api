@@ -14,23 +14,12 @@
  * limitations under the License.
  */
 
-package v1r7a.models.errors
+package v1.connectors
 
-import play.api.libs.json.Json
-import support.UnitSpec
+sealed trait DownstreamRequestConfig
 
-class MtdErrorSpec extends UnitSpec {
+case object Des extends DownstreamRequestConfig
+case object IfsR5 extends DownstreamRequestConfig
+case object IfsR6 extends DownstreamRequestConfig
 
-  "writes" should {
-    "generate the correct JSON" in {
-      Json.toJson(MtdError("CODE", "some message")) shouldBe Json.parse(
-        """
-          |{
-          |   "code": "CODE",
-          |   "message": "some message"
-          |}
-        """.stripMargin
-      )
-    }
-  }
-}
+case class DownstreamRequest[Resp](config: DownstreamRequestConfig, uri: String)
