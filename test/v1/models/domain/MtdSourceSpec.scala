@@ -38,15 +38,15 @@ class MtdSourceSpec extends UnitSpec with EnumJsonSpecSupport {
 
 
   "mtdSources" when {
-    "when using the toDes" should {
+    "when using the toDownstream" should {
       "return the correct DesSource for latest" in {
-        mtdLatest.toDes shouldBe desLatest
+        mtdLatest.toDownstream shouldBe desLatest
       }
       "return the correct DesSource for customer" in {
-        mtdCustomer.toDes shouldBe desCustomer
+        mtdCustomer.toDownstream shouldBe desCustomer
       }
       "return the correct DesSource for hmrcHeld" in {
-        mtdHmrc.toDes shouldBe desOutgoingHmrc
+        mtdHmrc.toDownstream shouldBe desOutgoingHmrc
       }
     }
   }

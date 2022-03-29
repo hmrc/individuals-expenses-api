@@ -35,10 +35,10 @@ class RetrieveEmploymentsExpensesConnector @Inject()(val http: HttpClient,
     ec: ExecutionContext,
     correlationId: String): Future[DownstreamOutcome[RetrieveEmploymentsExpensesResponse]] = {
 
-    val url = s"income-tax/expenses/employments/${request.nino.nino}/${request.taxYear}?view=${request.source.toDes}"
+    val url = s"income-tax/expenses/employments/${request.nino.nino}/${request.taxYear}?view=${request.source.toDownstream}"
 
     get(
-      request = DownstreamRequest[RetrieveEmploymentsExpensesResponse](Des, s"$url")
+      request = DownstreamRequest[RetrieveEmploymentsExpensesResponse](IfsR6, s"$url")
     )
   }
 }

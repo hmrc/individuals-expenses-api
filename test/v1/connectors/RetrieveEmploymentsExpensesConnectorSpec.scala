@@ -39,10 +39,10 @@ class RetrieveEmploymentsExpensesConnectorSpec extends ConnectorSpec {
       appConfig = mockAppConfig
     )
 
-    MockAppConfig.desBaseUrl returns baseUrl
-    MockAppConfig.desToken returns "des-token"
-    MockAppConfig.desEnvironment returns "des-environment"
-    MockAppConfig.desEnvironmentHeaders returns Some(allowedDownstreamHeaders)
+    MockAppConfig.ifsR6BaseUrl returns baseUrl
+    MockAppConfig.ifsR6Token returns "ifs-token"
+    MockAppConfig.ifsR6Environment returns "ifs-environment"
+    MockAppConfig.ifsR6EnvironmentHeaders returns Some(allowedDownstreamHeaders)
   }
 
   "retrieveEmploymentExpenses" should {
@@ -71,7 +71,7 @@ class RetrieveEmploymentsExpensesConnectorSpec extends ConnectorSpec {
           .get(
             url = s"$baseUrl/income-tax/expenses/employments/$nino/$taxYear?view=${DownstreamSource.`CUSTOMER`}",
             config = dummyDownstreamHeaderCarrierConfig,
-            requiredHeaders = requiredDesHeaders,
+            requiredHeaders = requiredIfsHeaders,
             excludedHeaders = excludedHeaders
           )
           .returns(Future.successful(outcome))
