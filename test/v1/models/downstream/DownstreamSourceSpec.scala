@@ -39,7 +39,7 @@ class DownstreamSourceSpec extends UnitSpec with EnumJsonSpecSupport{
   )
 
   "mtdSources" when {
-    "when using the toDes" should {
+    "when using the toDownstream" should {
       "return the correct DesSource for latest" in {
         desLatest.toMtd shouldBe mtdLatest
       }

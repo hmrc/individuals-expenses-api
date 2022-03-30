@@ -21,21 +21,21 @@ import utils.enums.Enums
 import v1.models.downstream.DownstreamSource
 
 sealed trait MtdSource {
-  def toDes: DownstreamSource
+  def toDownstream: DownstreamSource
 }
 
 object MtdSource {
 
   case object `hmrcHeld` extends MtdSource {
-    override def toDes: DownstreamSource = DownstreamSource.`HMRC-HELD`
+    override def toDownstream: DownstreamSource = DownstreamSource.`HMRC-HELD`
   }
 
   case object `user` extends MtdSource {
-    override def toDes: DownstreamSource = DownstreamSource.`CUSTOMER`
+    override def toDownstream: DownstreamSource = DownstreamSource.`CUSTOMER`
   }
 
   case object `latest` extends MtdSource {
-    override def toDes: DownstreamSource = DownstreamSource.`LATEST`
+    override def toDownstream: DownstreamSource = DownstreamSource.`LATEST`
   }
 
   implicit val format: Format[MtdSource] = Enums.format[MtdSource]

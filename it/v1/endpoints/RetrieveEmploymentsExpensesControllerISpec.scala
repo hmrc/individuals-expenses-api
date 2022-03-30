@@ -206,7 +206,7 @@ class RetrieveEmploymentsExpensesControllerISpec extends IntegrationBaseSpec {
     def latestUri: String = s"/employments/$nino/$taxYear?source=$latestSource"
     def hmrcHeldUri: String = s"/employments/$nino/$taxYear?source=$hmrcHeldSource"
     def userUri: String = s"/employments/$nino/$taxYear?source=$userSource"
-    def desUri: String = s"/income-tax/expenses/employments/$nino/$taxYear"
+    def ifsUri: String = s"/income-tax/expenses/employments/$nino/$taxYear"
 
     def setupStubs(): StubMapping
 
@@ -218,10 +218,14 @@ class RetrieveEmploymentsExpensesControllerISpec extends IntegrationBaseSpec {
 
     def errorBody(code: String): String =
       s"""
-         |      {
-         |        "code": "$code",
-         |        "reason": "des message"
-         |      }
+         |{
+         |  "failures": [
+         |    {
+         |      "code": "$code",
+         |      "reason": "if message"
+         |    }
+         |  ]
+         |}
     """.stripMargin
   }
 
@@ -235,7 +239,7 @@ class RetrieveEmploymentsExpensesControllerISpec extends IntegrationBaseSpec {
           AuditStub.audit()
           AuthStub.authorised()
           MtdIdLookupStub.ninoFound(nino)
-          DownstreamStub.onSuccess(DownstreamStub.GET, desUri, Map("view" -> desSource) ,Status.OK, desResponseBody)
+          DownstreamStub.onSuccess(DownstreamStub.GET, ifsUri, Map("view" -> desSource) ,Status.OK, desResponseBody)
         }
 
         val response: WSResponse = await(request(latestUri).get())
@@ -250,7 +254,7 @@ class RetrieveEmploymentsExpensesControllerISpec extends IntegrationBaseSpec {
           AuditStub.audit()
           AuthStub.authorised()
           MtdIdLookupStub.ninoFound(nino)
-          DownstreamStub.onSuccess(DownstreamStub.GET, desUri, Map("view" -> hmrcHeldDesSource) ,Status.OK, hmrcHeldDesResponseBody)
+          DownstreamStub.onSuccess(DownstreamStub.GET, ifsUri, Map("view" -> hmrcHeldDesSource) ,Status.OK, hmrcHeldDesResponseBody)
         }
 
         val response: WSResponse = await(request(hmrcHeldUri).get())
@@ -265,7 +269,7 @@ class RetrieveEmploymentsExpensesControllerISpec extends IntegrationBaseSpec {
           AuditStub.audit()
           AuthStub.authorised()
           MtdIdLookupStub.ninoFound(nino)
-          DownstreamStub.onSuccess(DownstreamStub.GET, desUri, Map("view" -> userDesSource) ,Status.OK, userDesResponseBody)
+          DownstreamStub.onSuccess(DownstreamStub.GET, ifsUri, Map("view" -> userDesSource) ,Status.OK, userDesResponseBody)
         }
 
         val response: WSResponse = await(request(userUri).get())
@@ -317,7 +321,7 @@ class RetrieveEmploymentsExpensesControllerISpec extends IntegrationBaseSpec {
               AuditStub.audit()
               AuthStub.authorised()
               MtdIdLookupStub.ninoFound(nino)
-              DownstreamStub.onError(DownstreamStub.GET, desUri, desStatus, errorBody(desCode))
+              DownstreamStub.onError(DownstreamStub.GET, ifsUri, desStatus, errorBody(desCode))
             }
 
             val response: WSResponse = await(request(latestUri).get())
