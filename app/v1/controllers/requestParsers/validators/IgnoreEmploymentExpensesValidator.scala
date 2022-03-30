@@ -23,14 +23,14 @@ import v1.controllers.requestParsers.validators.validations._
 import v1.models.errors._
 import v1.models.request.ignoreEmploymentExpenses._
 
-class IgnoreEmploymentExpensesValidator @Inject()(implicit currentDateTime: CurrentDateTime, appConfig: AppConfig, currentTaxYear: CurrentTaxYear)
-  extends Validator[IgnoreEmploymentExpensesRawData] {
+class IgnoreEmploymentExpensesValidator @Inject() (implicit currentDateTime: CurrentDateTime, appConfig: AppConfig, currentTaxYear: CurrentTaxYear)
+    extends Validator[IgnoreEmploymentExpensesRawData] {
   private val validationSet = List(parameterFormatValidation, parameterRuleValidation)
 
   private def parameterFormatValidation: IgnoreEmploymentExpensesRawData => List[List[MtdError]] = (data: IgnoreEmploymentExpensesRawData) => {
     List(
       NinoValidation.validate(data.nino),
-      TaxYearValidation.validate(data.taxYear),
+      TaxYearValidation.validate(data.taxYear)
     )
   }
 
@@ -43,4 +43,5 @@ class IgnoreEmploymentExpensesValidator @Inject()(implicit currentDateTime: Curr
   override def validate(data: IgnoreEmploymentExpensesRawData): List[MtdError] = {
     run(validationSet, data).distinct
   }
+
 }

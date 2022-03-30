@@ -25,13 +25,13 @@ import v1.models.request.retrieveEmploymentExpenses.{RetrieveEmploymentsExpenses
 
 class RetrieveEmploymentsExpensesRequestParserSpec extends UnitSpec {
 
-  val nino = "AA123456B"
-  val taxYear = "2021-22"
+  val nino                           = "AA123456B"
+  val taxYear                        = "2021-22"
   implicit val correlationId: String = "a1e8057e-fbbc-47a8-a8b4-78d9f015c253"
 
-  val inputDataLatest = RetrieveEmploymentsExpensesRawData(nino, taxYear, "latest")
+  val inputDataLatest   = RetrieveEmploymentsExpensesRawData(nino, taxYear, "latest")
   val inputDataHmrcHeld = RetrieveEmploymentsExpensesRawData(nino, taxYear, "hmrcHeld")
-  val inputDataUser = RetrieveEmploymentsExpensesRawData(nino, taxYear, "user")
+  val inputDataUser     = RetrieveEmploymentsExpensesRawData(nino, taxYear, "user")
 
   trait Test extends MockRetrieveEmploymentExpensesValidator {
     lazy val parser = new RetrieveEmploymentsExpensesRequestParser(mockValidator)
@@ -63,7 +63,8 @@ class RetrieveEmploymentsExpensesRequestParserSpec extends UnitSpec {
     "return an ErrorWrapper" when {
 
       "a single validation error occurs" in new Test {
-        MockRetrieveEmploymentExpensesValidator.validate(inputDataLatest)
+        MockRetrieveEmploymentExpensesValidator
+          .validate(inputDataLatest)
           .returns(List(NinoFormatError))
 
         parser.parseRequest(inputDataLatest) shouldBe
@@ -71,7 +72,8 @@ class RetrieveEmploymentsExpensesRequestParserSpec extends UnitSpec {
       }
 
       "multiple validation errors occur" in new Test {
-        MockRetrieveEmploymentExpensesValidator.validate(inputDataLatest)
+        MockRetrieveEmploymentExpensesValidator
+          .validate(inputDataLatest)
           .returns(List(NinoFormatError, TaxYearFormatError))
 
         parser.parseRequest(inputDataLatest) shouldBe
@@ -79,5 +81,5 @@ class RetrieveEmploymentsExpensesRequestParserSpec extends UnitSpec {
       }
     }
   }
-}
 
+}

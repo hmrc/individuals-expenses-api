@@ -27,13 +27,12 @@ import v1.models.response.retrieveOtherExpenses.RetrieveOtherExpensesResponse
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class RetrieveOtherExpensesConnector @Inject()(val http: HttpClient,
-                                               val appConfig: AppConfig) extends BaseDownstreamConnector {
+class RetrieveOtherExpensesConnector @Inject() (val http: HttpClient, val appConfig: AppConfig) extends BaseDownstreamConnector {
 
-  def retrieveOtherExpenses(request: RetrieveOtherExpensesRequest)(
-    implicit hc: HeaderCarrier,
-    ec: ExecutionContext,
-    correlationId: String): Future[DownstreamOutcome[RetrieveOtherExpensesResponse]] = {
+  def retrieveOtherExpenses(request: RetrieveOtherExpensesRequest)(implicit
+      hc: HeaderCarrier,
+      ec: ExecutionContext,
+      correlationId: String): Future[DownstreamOutcome[RetrieveOtherExpensesResponse]] = {
 
     val url = s"income-tax/expenses/other/${request.nino.nino}/${request.taxYear}"
 
@@ -41,4 +40,5 @@ class RetrieveOtherExpensesConnector @Inject()(val http: HttpClient,
       request = DownstreamRequest[RetrieveOtherExpensesResponse](IfsR5, s"$url")
     )
   }
+
 }

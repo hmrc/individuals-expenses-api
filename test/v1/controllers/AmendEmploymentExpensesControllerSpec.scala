@@ -36,7 +36,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class AmendEmploymentExpensesControllerSpec
-  extends ControllerBaseSpec
+    extends ControllerBaseSpec
     with MockEnrolmentsAuthService
     with MockMtdIdLookupService
     with MockAmendEmploymentExpensesService
@@ -45,31 +45,30 @@ class AmendEmploymentExpensesControllerSpec
     with MockAuditService
     with MockIdGenerator {
 
-    private val nino = "AA123456A"
-    private val taxYear = "2021-22"
-    private val correlationId: String = "X-123"
+  private val nino                  = "AA123456A"
+  private val taxYear               = "2021-22"
+  private val correlationId: String = "X-123"
 
-    private val testHateoasLinks = Seq(
-      Link(href = s"/individuals/expenses/employments/$nino/$taxYear", method = GET, rel = "self"),
-      Link(href = s"/individuals/expenses/employments/$nino/$taxYear", method = PUT, rel = "amend-employment-expenses"),
-      Link(href = s"/individuals/expenses/employments/$nino/$taxYear", method = DELETE, rel = "delete-employment-expenses")
+  private val testHateoasLinks = Seq(
+    Link(href = s"/individuals/expenses/employments/$nino/$taxYear", method = GET, rel = "self"),
+    Link(href = s"/individuals/expenses/employments/$nino/$taxYear", method = PUT, rel = "amend-employment-expenses"),
+    Link(href = s"/individuals/expenses/employments/$nino/$taxYear", method = DELETE, rel = "delete-employment-expenses")
+  )
+
+  private val requestBody = AmendEmploymentExpensesBody(
+    Expenses(
+      Some(123.12),
+      Some(123.12),
+      Some(123.12),
+      Some(123.12),
+      Some(123.12),
+      Some(123.12),
+      Some(123.12),
+      Some(123.12)
     )
+  )
 
-    private val requestBody = AmendEmploymentExpensesBody(
-      Expenses(
-        Some(123.12),
-        Some(123.12),
-        Some(123.12),
-        Some(123.12),
-        Some(123.12),
-        Some(123.12),
-        Some(123.12),
-        Some(123.12),
-      )
-    )
-
-    private val requestBodyJson = Json.parse(
-      """
+  private val requestBodyJson = Json.parse("""
         |{
         |    "expenses": {
         |        "businessTravelCosts": 123.12,
@@ -84,8 +83,7 @@ class AmendEmploymentExpensesControllerSpec
         |}
         |""".stripMargin)
 
-  private val responseBody = Json.parse(
-    s"""
+  private val responseBody = Json.parse(s"""
        |{
        |  "links": [
        |    {
@@ -121,119 +119,120 @@ class AmendEmploymentExpensesControllerSpec
       )
     )
 
-    private val rawData = AmendEmploymentExpensesRawData(nino, taxYear, requestBodyJson)
-    private val requestData = AmendEmploymentExpensesRequest(Nino(nino), taxYear , requestBody)
+  private val rawData     = AmendEmploymentExpensesRawData(nino, taxYear, requestBodyJson)
+  private val requestData = AmendEmploymentExpensesRequest(Nino(nino), taxYear, requestBody)
 
-    trait Test {
-      val hc: HeaderCarrier = HeaderCarrier()
+  trait Test {
+    val hc: HeaderCarrier = HeaderCarrier()
 
-      val controller = new AmendEmploymentExpensesController(
-        authService = mockEnrolmentsAuthService,
-        lookupService = mockMtdIdLookupService,
-        parser = mockRequestParser,
-        service = mockService,
-        auditService = mockAuditService,
-        hateoasFactory = mockHateoasFactory,
-        cc = cc,
-        idGenerator = mockIdGenerator
-      )
+    val controller = new AmendEmploymentExpensesController(
+      authService = mockEnrolmentsAuthService,
+      lookupService = mockMtdIdLookupService,
+      parser = mockRequestParser,
+      service = mockService,
+      auditService = mockAuditService,
+      hateoasFactory = mockHateoasFactory,
+      cc = cc,
+      idGenerator = mockIdGenerator
+    )
 
-      MockedMtdIdLookupService.lookup(nino).returns(Future.successful(Right("test-mtd-id")))
-      MockedEnrolmentsAuthService.authoriseUser()
-      MockIdGenerator.generateCorrelationId.returns(correlationId)
+    MockedMtdIdLookupService.lookup(nino).returns(Future.successful(Right("test-mtd-id")))
+    MockedEnrolmentsAuthService.authoriseUser()
+    MockIdGenerator.generateCorrelationId.returns(correlationId)
+  }
+
+  "handleRequest" should {
+    "return Ok" when {
+      "the request received is valid" in new Test {
+
+        MockAmendEmploymentExpensesRequestParser
+          .parseRequest(rawData)
+          .returns(Right(requestData))
+
+        MockAmendEmploymentExpensesService
+          .amend(requestData)
+          .returns(Future.successful(Right(ResponseWrapper(correlationId, ()))))
+
+        MockHateoasFactory
+          .wrap((), AmendEmploymentExpensesHateoasData(nino, taxYear))
+          .returns(HateoasWrapper((), testHateoasLinks))
+
+        val result: Future[Result] = controller.handleRequest(nino, taxYear)(fakePostRequest(requestBodyJson))
+        status(result) shouldBe OK
+        header("X-CorrelationId", result) shouldBe Some(correlationId)
+
+        val auditResponse: AuditResponse = AuditResponse(OK, None, Some(responseBody))
+        MockedAuditService.verifyAuditEvent(event(auditResponse, Some(requestBodyJson))).once
+      }
     }
 
-    "handleRequest" should {
-      "return Ok" when {
-        "the request received is valid" in new Test {
+    "return the error as per spec" when {
+      "parser errors occur" should {
+        def errorsFromParserTester(error: MtdError, expectedStatus: Int): Unit = {
+          s"a ${error.code} error is returned from the parser" in new Test {
 
-          MockAmendEmploymentExpensesRequestParser
-            .parseRequest(rawData)
-            .returns(Right(requestData))
+            MockAmendEmploymentExpensesRequestParser
+              .parseRequest(rawData)
+              .returns(Left(ErrorWrapper(correlationId, error, None)))
 
-          MockAmendEmploymentExpensesService
-            .amend(requestData)
-            .returns(Future.successful(Right(ResponseWrapper(correlationId, ()))))
+            val result: Future[Result] = controller.handleRequest(nino, taxYear)(fakePostRequest(requestBodyJson))
 
-          MockHateoasFactory
-            .wrap((), AmendEmploymentExpensesHateoasData(nino, taxYear))
-            .returns(HateoasWrapper((), testHateoasLinks))
+            status(result) shouldBe expectedStatus
+            contentAsJson(result) shouldBe Json.toJson(error)
+            header("X-CorrelationId", result) shouldBe Some(correlationId)
 
-          val result: Future[Result] = controller.handleRequest(nino, taxYear)(fakePostRequest(requestBodyJson))
-          status(result) shouldBe OK
-          header("X-CorrelationId", result) shouldBe Some(correlationId)
-
-          val auditResponse: AuditResponse = AuditResponse(OK, None, Some(responseBody))
-          MockedAuditService.verifyAuditEvent(event(auditResponse, Some(requestBodyJson))).once
+            val auditResponse: AuditResponse = AuditResponse(expectedStatus, Some(Seq(AuditError(error.code))), None)
+            MockedAuditService.verifyAuditEvent(event(auditResponse, Some(requestBodyJson))).once
+          }
         }
+
+        val input = Seq(
+          (BadRequestError, BAD_REQUEST),
+          (NinoFormatError, BAD_REQUEST),
+          (TaxYearFormatError, BAD_REQUEST),
+          (RuleTaxYearRangeInvalidError, BAD_REQUEST),
+          (RuleIncorrectOrEmptyBodyError, BAD_REQUEST),
+          (RuleTaxYearNotSupportedError, BAD_REQUEST),
+          (RuleTaxYearNotEndedError, BAD_REQUEST),
+          (ValueFormatError, BAD_REQUEST)
+        )
+
+        input.foreach(args => (errorsFromParserTester _).tupled(args))
       }
 
-      "return the error as per spec" when {
-        "parser errors occur" should {
-          def errorsFromParserTester(error: MtdError, expectedStatus: Int): Unit = {
-            s"a ${error.code} error is returned from the parser" in new Test {
+      "service errors occur" should {
+        def serviceErrors(mtdError: MtdError, expectedStatus: Int): Unit = {
+          s"a $mtdError error is returned from the service" in new Test {
 
-              MockAmendEmploymentExpensesRequestParser
-                .parseRequest(rawData)
-                .returns(Left(ErrorWrapper(correlationId, error, None)))
+            MockAmendEmploymentExpensesRequestParser
+              .parseRequest(rawData)
+              .returns(Right(requestData))
 
-              val result: Future[Result] = controller.handleRequest(nino, taxYear)(fakePostRequest(requestBodyJson))
+            MockAmendEmploymentExpensesService
+              .amend(requestData)
+              .returns(Future.successful(Left(ErrorWrapper(correlationId, mtdError))))
 
-              status(result) shouldBe expectedStatus
-              contentAsJson(result) shouldBe Json.toJson(error)
-              header("X-CorrelationId", result) shouldBe Some(correlationId)
+            val result: Future[Result] = controller.handleRequest(nino, taxYear)(fakePostRequest(requestBodyJson))
 
-              val auditResponse: AuditResponse = AuditResponse(expectedStatus, Some(Seq(AuditError(error.code))), None)
-              MockedAuditService.verifyAuditEvent(event(auditResponse, Some(requestBodyJson))).once
-            }
+            status(result) shouldBe expectedStatus
+            contentAsJson(result) shouldBe Json.toJson(mtdError)
+            header("X-CorrelationId", result) shouldBe Some(correlationId)
+
+            val auditResponse: AuditResponse = AuditResponse(expectedStatus, Some(Seq(AuditError(mtdError.code))), None)
+            MockedAuditService.verifyAuditEvent(event(auditResponse, Some(requestBodyJson))).once
           }
-
-          val input = Seq(
-            (BadRequestError, BAD_REQUEST),
-            (NinoFormatError, BAD_REQUEST),
-            (TaxYearFormatError, BAD_REQUEST),
-            (RuleTaxYearRangeInvalidError, BAD_REQUEST),
-            (RuleIncorrectOrEmptyBodyError, BAD_REQUEST),
-            (RuleTaxYearNotSupportedError, BAD_REQUEST),
-            (RuleTaxYearNotEndedError, BAD_REQUEST),
-            (ValueFormatError, BAD_REQUEST)
-          )
-
-          input.foreach(args => (errorsFromParserTester _).tupled(args))
         }
 
-        "service errors occur" should {
-          def serviceErrors(mtdError: MtdError, expectedStatus: Int): Unit = {
-            s"a $mtdError error is returned from the service" in new Test {
+        val input = Seq(
+          (NinoFormatError, BAD_REQUEST),
+          (RuleTaxYearNotEndedError, BAD_REQUEST),
+          (NotFoundError, NOT_FOUND),
+          (DownstreamError, INTERNAL_SERVER_ERROR)
+        )
 
-              MockAmendEmploymentExpensesRequestParser
-                .parseRequest(rawData)
-                .returns(Right(requestData))
-
-              MockAmendEmploymentExpensesService
-                .amend(requestData)
-                .returns(Future.successful(Left(ErrorWrapper(correlationId, mtdError))))
-
-              val result: Future[Result] = controller.handleRequest(nino, taxYear)(fakePostRequest(requestBodyJson))
-
-              status(result) shouldBe expectedStatus
-              contentAsJson(result) shouldBe Json.toJson(mtdError)
-              header("X-CorrelationId", result) shouldBe Some(correlationId)
-
-              val auditResponse: AuditResponse = AuditResponse(expectedStatus, Some(Seq(AuditError(mtdError.code))), None)
-              MockedAuditService.verifyAuditEvent(event(auditResponse, Some(requestBodyJson))).once
-            }
-          }
-
-          val input = Seq(
-            (NinoFormatError, BAD_REQUEST),
-            (RuleTaxYearNotEndedError, BAD_REQUEST),
-            (NotFoundError, NOT_FOUND),
-            (DownstreamError, INTERNAL_SERVER_ERROR)
-          )
-
-          input.foreach(args => (serviceErrors _).tupled(args))
-        }
+        input.foreach(args => (serviceErrors _).tupled(args))
       }
     }
   }
+
+}

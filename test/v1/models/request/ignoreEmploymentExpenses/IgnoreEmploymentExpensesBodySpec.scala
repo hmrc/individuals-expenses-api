@@ -21,8 +21,7 @@ import support.UnitSpec
 
 class IgnoreEmploymentExpensesBodySpec extends UnitSpec {
 
-  val json: JsValue = Json.parse(
-    """
+  val json: JsValue = Json.parse("""
       |{
       |  "ignoreExpenses": true
       |}""".stripMargin)
@@ -40,4 +39,5 @@ class IgnoreEmploymentExpensesBodySpec extends UnitSpec {
       Json.toJson(model) shouldBe json
     }
   }
+
 }

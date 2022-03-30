@@ -23,14 +23,14 @@ import utils.{CurrentDateTime, CurrentTaxYear}
 import v1.models.errors._
 import v1.models.request.amendOtherExpenses._
 
-class AmendOtherExpensesValidator @Inject()(implicit currentDateTime: CurrentDateTime, appConfig: AppConfig, currentTaxYear: CurrentTaxYear)
-  extends Validator[AmendOtherExpensesRawData] {
+class AmendOtherExpensesValidator @Inject() (implicit currentDateTime: CurrentDateTime, appConfig: AppConfig, currentTaxYear: CurrentTaxYear)
+    extends Validator[AmendOtherExpensesRawData] {
   private val validationSet = List(parameterFormatValidation, bodyFormatValidation, parameterRuleValidation, bodyFieldValidation)
 
   private def parameterFormatValidation: AmendOtherExpensesRawData => List[List[MtdError]] = (data: AmendOtherExpensesRawData) => {
     List(
       NinoValidation.validate(data.nino),
-      TaxYearValidation.validate(data.taxYear),
+      TaxYearValidation.validate(data.taxYear)
     )
   }
 
@@ -49,15 +49,17 @@ class AmendOtherExpensesValidator @Inject()(implicit currentDateTime: CurrentDat
   private def bodyFieldValidation: AmendOtherExpensesRawData => List[List[MtdError]] = { data =>
     val body = data.body.as[AmendOtherExpensesBody]
 
-    List(flattenErrors(
-      List(
-        body.paymentsToTradeUnionsForDeathBenefits.map(validatePaymentsToTradeUnionsForDeathBenefits).getOrElse(NoValidationErrors),
-        body.patentRoyaltiesPayments.map(validatePatentRoyaltiesPayments).getOrElse(NoValidationErrors)
-      )
-    ))
+    List(
+      flattenErrors(
+        List(
+          body.paymentsToTradeUnionsForDeathBenefits.map(validatePaymentsToTradeUnionsForDeathBenefits).getOrElse(NoValidationErrors),
+          body.patentRoyaltiesPayments.map(validatePatentRoyaltiesPayments).getOrElse(NoValidationErrors)
+        )
+      ))
   }
 
-  private def validatePaymentsToTradeUnionsForDeathBenefits(paymentsToTradeUnionsForDeathBenefits: PaymentsToTradeUnionsForDeathBenefits): List[MtdError] = {
+  private def validatePaymentsToTradeUnionsForDeathBenefits(
+      paymentsToTradeUnionsForDeathBenefits: PaymentsToTradeUnionsForDeathBenefits): List[MtdError] = {
     List(
       CustomerReferenceValidation.validateOptional(
         field = paymentsToTradeUnionsForDeathBenefits.customerReference,
@@ -86,4 +88,5 @@ class AmendOtherExpensesValidator @Inject()(implicit currentDateTime: CurrentDat
   override def validate(data: AmendOtherExpensesRawData): List[MtdError] = {
     run(validationSet, data).distinct
   }
+
 }

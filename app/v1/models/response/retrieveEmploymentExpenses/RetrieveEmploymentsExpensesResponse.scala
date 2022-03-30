@@ -38,30 +38,34 @@ object RetrieveEmploymentsExpensesResponse extends HateoasLinks {
       (JsPath \ "source").readNullable[DownstreamSource].map(_.map(_.toMtd)) and
       (JsPath \ "dateIgnored").readNullable[String] and
       (JsPath \ "expenses").readNullable[Expenses]
-    ) (RetrieveEmploymentsExpensesResponse.apply _)
+  )(RetrieveEmploymentsExpensesResponse.apply _)
 
   implicit val writes: OWrites[RetrieveEmploymentsExpensesResponse] = Json.writes[RetrieveEmploymentsExpensesResponse]
 
   implicit object RetrieveEmploymentsExpensesLinksFactory
-    extends HateoasLinksFactory[RetrieveEmploymentsExpensesResponse, RetrieveEmploymentsExpensesHateoasData] {
+      extends HateoasLinksFactory[RetrieveEmploymentsExpensesResponse, RetrieveEmploymentsExpensesHateoasData] {
+
     override def links(appConfig: AppConfig, data: RetrieveEmploymentsExpensesHateoasData): Seq[Link] = {
       import data._
       data.source match {
-        case "latest" => Seq(
-          amendEmploymentExpenses(appConfig, nino, taxYear),
-          retrieveEmploymentExpenses(appConfig, nino, taxYear),
-          deleteEmploymentExpenses(appConfig, nino, taxYear),
-          ignoreEmploymentExpenses(appConfig,nino, taxYear))
-        case "hmrcHeld" => Seq(
-          retrieveEmploymentExpenses(appConfig, nino, taxYear),
-          ignoreEmploymentExpenses(appConfig,nino, taxYear))
-        case "user" => Seq(
-          amendEmploymentExpenses(appConfig, nino, taxYear),
-          retrieveEmploymentExpenses(appConfig, nino, taxYear),
-          deleteEmploymentExpenses(appConfig, nino, taxYear))
+        case "latest" =>
+          Seq(
+            amendEmploymentExpenses(appConfig, nino, taxYear),
+            retrieveEmploymentExpenses(appConfig, nino, taxYear),
+            deleteEmploymentExpenses(appConfig, nino, taxYear),
+            ignoreEmploymentExpenses(appConfig, nino, taxYear)
+          )
+        case "hmrcHeld" => Seq(retrieveEmploymentExpenses(appConfig, nino, taxYear), ignoreEmploymentExpenses(appConfig, nino, taxYear))
+        case "user" =>
+          Seq(
+            amendEmploymentExpenses(appConfig, nino, taxYear),
+            retrieveEmploymentExpenses(appConfig, nino, taxYear),
+            deleteEmploymentExpenses(appConfig, nino, taxYear))
       }
     }
+
   }
+
 }
 
 case class RetrieveEmploymentsExpensesHateoasData(nino: String, taxYear: String, source: String) extends HateoasData

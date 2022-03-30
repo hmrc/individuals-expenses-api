@@ -27,8 +27,8 @@ import v1.stubs.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 class AuthISpec extends IntegrationBaseSpec {
 
   private trait Test {
-    val nino          = "AA123456A"
-    val taxYear       = "2021-22"
+    val nino    = "AA123456A"
+    val taxYear = "2021-22"
 
     def setupStubs(): StubMapping
 
@@ -40,8 +40,7 @@ class AuthISpec extends IntegrationBaseSpec {
 
     def desUri: String = s"/income-tax/expenses/other/$nino/$taxYear"
 
-    val desResponse: JsValue = Json.parse(
-      """
+    val desResponse: JsValue = Json.parse("""
         |{
         |  "submittedOn": "2019-04-04T01:01:01Z",
         |  "paymentsToTradeUnionsForDeathBenefits": {
@@ -54,6 +53,7 @@ class AuthISpec extends IntegrationBaseSpec {
         |  }
         |}
         |""".stripMargin)
+
   }
 
   "Calling the retrieve other expenses endpoint" when {

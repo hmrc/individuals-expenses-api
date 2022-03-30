@@ -30,27 +30,30 @@ import v1.support.DesResponseMappingSupport
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class DeleteEmploymentExpensesService @Inject()(deleteEmploymentExpensesConnector: DeleteEmploymentExpensesConnector)
-  extends DesResponseMappingSupport with Logging {
+class DeleteEmploymentExpensesService @Inject() (deleteEmploymentExpensesConnector: DeleteEmploymentExpensesConnector)
+    extends DesResponseMappingSupport
+    with Logging {
 
-  def deleteEmploymentExpenses(request: DeleteEmploymentExpensesRequest)(
-    implicit hc: HeaderCarrier,
-    ec: ExecutionContext,
-    logContext: EndpointLogContext,
-    correlationId: String): Future[DeleteEmploymentExpensesServiceOutcome] = {
+  def deleteEmploymentExpenses(request: DeleteEmploymentExpensesRequest)(implicit
+      hc: HeaderCarrier,
+      ec: ExecutionContext,
+      logContext: EndpointLogContext,
+      correlationId: String): Future[DeleteEmploymentExpensesServiceOutcome] = {
 
     val result = for {
       desResponseWrapper <- EitherT(deleteEmploymentExpensesConnector.deleteEmploymentExpenses(request)).leftMap(mapDesErrors(desErrorMap))
     } yield desResponseWrapper
     result.value
   }
+
   private def desErrorMap: Map[String, MtdError] =
     Map(
       "INVALID_TAXABLE_ENTITY_ID" -> NinoFormatError,
-      "INVALID_TAX_YEAR" -> TaxYearFormatError,
-      "INVALID_CORRELATIONID" -> DownstreamError,
-      "NO_DATA_FOUND" -> NotFoundError,
-      "SERVER_ERROR" -> DownstreamError,
-      "SERVICE_UNAVAILABLE" -> DownstreamError
+      "INVALID_TAX_YEAR"          -> TaxYearFormatError,
+      "INVALID_CORRELATIONID"     -> DownstreamError,
+      "NO_DATA_FOUND"             -> NotFoundError,
+      "SERVER_ERROR"              -> DownstreamError,
+      "SERVICE_UNAVAILABLE"       -> DownstreamError
     )
+
 }

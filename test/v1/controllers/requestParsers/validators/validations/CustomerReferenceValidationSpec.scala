@@ -21,14 +21,16 @@ import v1.models.errors.CustomerReferenceFormatError
 
 class CustomerReferenceValidationSpec extends UnitSpec {
 
-  val validReference: Option[String] = Some("validReference")
+  val validReference: Option[String]           = Some("validReference")
   val smallestAllowedReference: Option[String] = Some("a")
-  val largestAllowedReference: Option[String] = Some("abcdefghijklmnopqrstuvwxyabcdefghijklmnopqrstuvwxyabcdefghijklmnopqrstuvwxyabcdefghijknine")
+  val largestAllowedReference: Option[String]  = Some("abcdefghijklmnopqrstuvwxyabcdefghijklmnopqrstuvwxyabcdefghijklmnopqrstuvwxyabcdefghijknine")
 
   val invalidReferenceSmallestLength: Option[String] = Some("")
-  val invalidReferenceLength: Option[String] = Some("abcdefghijklmnopqrstuvwxyabcdefghijklmnopqrstuvwxyabcdefghijklmnopqrstuvwxyabcdefghijknineandthensome")
-  val invalidReferenceCharacter: Option[String] = Some("REFERENCE\\EXAMPLE")
 
+  val invalidReferenceLength: Option[String] = Some(
+    "abcdefghijklmnopqrstuvwxyabcdefghijklmnopqrstuvwxyabcdefghijklmnopqrstuvwxyabcdefghijknineandthensome")
+
+  val invalidReferenceCharacter: Option[String] = Some("REFERENCE\\EXAMPLE")
 
   "validate" should {
     "return no errors" when {
@@ -71,4 +73,5 @@ class CustomerReferenceValidationSpec extends UnitSpec {
       }
     }
   }
+
 }

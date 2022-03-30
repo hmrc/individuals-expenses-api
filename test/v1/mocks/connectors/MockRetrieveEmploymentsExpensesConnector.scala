@@ -31,11 +31,19 @@ trait MockRetrieveEmploymentsExpensesConnector extends MockFactory {
 
   object MockRetrieveEmploymentsExpensesConnector {
 
-    def retrieveEmploymentsExpenses(requestData: RetrieveEmploymentsExpensesRequest): CallHandler[Future[DownstreamOutcome[RetrieveEmploymentsExpensesResponse]]] = {
-      (mockRetrieveEmploymentsExpensesConnector
-        .retrieveEmploymentExpenses(_: RetrieveEmploymentsExpensesRequest)(_: HeaderCarrier, _: ExecutionContext, _: String))
-          .expects(requestData, *, *, *)
+    def retrieveEmploymentsExpenses(
+        requestData: RetrieveEmploymentsExpensesRequest): CallHandler[Future[DownstreamOutcome[RetrieveEmploymentsExpensesResponse]]] = {
+      (
+        mockRetrieveEmploymentsExpensesConnector
+          .retrieveEmploymentExpenses(_: RetrieveEmploymentsExpensesRequest)(
+            _: HeaderCarrier,
+            _: ExecutionContext,
+            _: String
+          )
+        )
+        .expects(requestData, *, *, *)
     }
+
   }
 
 }

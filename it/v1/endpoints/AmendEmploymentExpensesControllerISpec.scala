@@ -29,7 +29,7 @@ class AmendEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
 
   private trait Test {
 
-    val nino: String = "AA123456A"
+    val nino: String    = "AA123456A"
     val taxYear: String = "2019-20"
 
     val amount: BigDecimal = 123.12
@@ -51,8 +51,7 @@ class AmendEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
          |""".stripMargin
     )
 
-    val responseBody = Json.parse(
-      s"""
+    val responseBody = Json.parse(s"""
          |{
          |  "links": [
          |    {
@@ -97,6 +96,7 @@ class AmendEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
          |  ]
          |}
     """.stripMargin
+
   }
 
   "Calling the amend endpoint" should {
@@ -183,7 +183,8 @@ class AmendEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
             "/expenses/hotelAndMealExpenses",
             "/expenses/otherAndCapitalAllowances",
             "/expenses/vehicleExpenses",
-            "/expenses/mileageAllowanceRelief"))))
+            "/expenses/mileageAllowanceRelief"
+          ))))
         }
 
         s"a taxYear with range of greater than a year is provided" in new Test {
@@ -242,8 +243,7 @@ class AmendEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
           response.json shouldBe Json.toJson(RuleIncorrectOrEmptyBodyError)
         }
         s"an empty expenses body is provided" in new Test {
-          override val requestBodyJson: JsValue = Json.parse(
-            """
+          override val requestBodyJson: JsValue = Json.parse("""
               |{
               |    "expenses": {}
               |}
@@ -287,10 +287,12 @@ class AmendEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
           (UNPROCESSABLE_ENTITY, "INVALID_REQUEST_BEFORE_TAX_YEAR", BAD_REQUEST, RuleTaxYearNotEndedError),
           (NOT_FOUND, "INCOME_SOURCE_NOT_FOUND", NOT_FOUND, NotFoundError),
           (INTERNAL_SERVER_ERROR, "SERVER_ERROR", INTERNAL_SERVER_ERROR, DownstreamError),
-          (SERVICE_UNAVAILABLE, "SERVICE_UNAVAILABLE", INTERNAL_SERVER_ERROR, DownstreamError))
+          (SERVICE_UNAVAILABLE, "SERVICE_UNAVAILABLE", INTERNAL_SERVER_ERROR, DownstreamError)
+        )
 
         input.foreach(args => (serviceErrorTest _).tupled(args))
       }
     }
   }
+
 }

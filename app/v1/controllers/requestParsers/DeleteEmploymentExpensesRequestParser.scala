@@ -21,8 +21,8 @@ import v1.models.domain.Nino
 import v1.controllers.requestParsers.validators.DeleteEmploymentExpensesValidator
 import v1.models.request.deleteEmploymentExpenses.{DeleteEmploymentExpensesRawData, DeleteEmploymentExpensesRequest}
 
-class DeleteEmploymentExpensesRequestParser @Inject()(val validator: DeleteEmploymentExpensesValidator)
-extends RequestParser[DeleteEmploymentExpensesRawData, DeleteEmploymentExpensesRequest] {
+class DeleteEmploymentExpensesRequestParser @Inject() (val validator: DeleteEmploymentExpensesValidator)
+    extends RequestParser[DeleteEmploymentExpensesRawData, DeleteEmploymentExpensesRequest] {
 
   override protected def requestFor(data: DeleteEmploymentExpensesRawData): DeleteEmploymentExpensesRequest =
     DeleteEmploymentExpensesRequest(Nino(data.nino), data.taxYear)

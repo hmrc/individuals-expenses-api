@@ -35,6 +35,7 @@ trait MockIgnoreEmploymentExpensesConnector extends MockFactory {
         .ignore(_: IgnoreEmploymentExpensesRequest)(_: HeaderCarrier, _: ExecutionContext, _: String))
         .expects(requestData, *, *, *)
     }
+
   }
 
 }

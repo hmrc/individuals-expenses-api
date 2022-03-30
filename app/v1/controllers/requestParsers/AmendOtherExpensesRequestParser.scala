@@ -21,8 +21,8 @@ import v1.models.domain.Nino
 import v1.controllers.requestParsers.validators.AmendOtherExpensesValidator
 import v1.models.request.amendOtherExpenses.{AmendOtherExpensesBody, AmendOtherExpensesRawData, AmendOtherExpensesRequest}
 
-class AmendOtherExpensesRequestParser @Inject()(val validator: AmendOtherExpensesValidator)
-  extends RequestParser[AmendOtherExpensesRawData, AmendOtherExpensesRequest] {
+class AmendOtherExpensesRequestParser @Inject() (val validator: AmendOtherExpensesValidator)
+    extends RequestParser[AmendOtherExpensesRawData, AmendOtherExpensesRequest] {
 
   override protected def requestFor(data: AmendOtherExpensesRawData): AmendOtherExpensesRequest =
     AmendOtherExpensesRequest(Nino(data.nino), data.taxYear, data.body.as[AmendOtherExpensesBody])

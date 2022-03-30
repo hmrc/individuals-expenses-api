@@ -29,14 +29,14 @@ class RetrieveEmploymentsExpensesControllerISpec extends IntegrationBaseSpec {
 
   private trait Test {
 
-    val nino = "AA123456A"
-    val taxYear = "2019-20"
-    val latestSource = "latest"
-    val hmrcHeldSource = "hmrcHeld"
-    val userSource = "user"
-    val desSource = "LATEST"
+    val nino              = "AA123456A"
+    val taxYear           = "2019-20"
+    val latestSource      = "latest"
+    val hmrcHeldSource    = "hmrcHeld"
+    val userSource        = "user"
+    val desSource         = "LATEST"
     val hmrcHeldDesSource = "HMRC-HELD"
-    val userDesSource = "CUSTOMER"
+    val userDesSource     = "CUSTOMER"
 
     val latestResponseBody = Json.parse(
       s"""
@@ -146,8 +146,7 @@ class RetrieveEmploymentsExpensesControllerISpec extends IntegrationBaseSpec {
          |""".stripMargin
     )
 
-    val desResponseBody = Json.parse(
-      s"""
+    val desResponseBody = Json.parse(s"""
          |{
          |    "submittedOn": "2020-12-12T12:12:12Z",
          |    "source": "LATEST",
@@ -165,8 +164,7 @@ class RetrieveEmploymentsExpensesControllerISpec extends IntegrationBaseSpec {
          |}
          |""".stripMargin)
 
-    val hmrcHeldDesResponseBody = Json.parse(
-      s"""
+    val hmrcHeldDesResponseBody = Json.parse(s"""
          |{
          |    "submittedOn": "2020-12-12T12:12:12Z",
          |    "source": "HMRC HELD",
@@ -184,8 +182,7 @@ class RetrieveEmploymentsExpensesControllerISpec extends IntegrationBaseSpec {
          |}
          |""".stripMargin)
 
-    val userDesResponseBody = Json.parse(
-      s"""
+    val userDesResponseBody = Json.parse(s"""
          |{
          |    "submittedOn": "2020-12-12T12:12:12Z",
          |    "source": "CUSTOMER",
@@ -203,10 +200,10 @@ class RetrieveEmploymentsExpensesControllerISpec extends IntegrationBaseSpec {
          |}
          |""".stripMargin)
 
-    def latestUri: String = s"/employments/$nino/$taxYear?source=$latestSource"
+    def latestUri: String   = s"/employments/$nino/$taxYear?source=$latestSource"
     def hmrcHeldUri: String = s"/employments/$nino/$taxYear?source=$hmrcHeldSource"
-    def userUri: String = s"/employments/$nino/$taxYear?source=$userSource"
-    def ifsUri: String = s"/income-tax/expenses/employments/$nino/$taxYear"
+    def userUri: String     = s"/employments/$nino/$taxYear?source=$userSource"
+    def ifsUri: String      = s"/income-tax/expenses/employments/$nino/$taxYear"
 
     def setupStubs(): StubMapping
 
@@ -227,6 +224,7 @@ class RetrieveEmploymentsExpensesControllerISpec extends IntegrationBaseSpec {
          |  ]
          |}
     """.stripMargin
+
   }
 
   "Calling the retrieve endpoint" should {
@@ -239,7 +237,7 @@ class RetrieveEmploymentsExpensesControllerISpec extends IntegrationBaseSpec {
           AuditStub.audit()
           AuthStub.authorised()
           MtdIdLookupStub.ninoFound(nino)
-          DownstreamStub.onSuccess(DownstreamStub.GET, ifsUri, Map("view" -> desSource) ,Status.OK, desResponseBody)
+          DownstreamStub.onSuccess(DownstreamStub.GET, ifsUri, Map("view" -> desSource), Status.OK, desResponseBody)
         }
 
         val response: WSResponse = await(request(latestUri).get())
@@ -254,7 +252,7 @@ class RetrieveEmploymentsExpensesControllerISpec extends IntegrationBaseSpec {
           AuditStub.audit()
           AuthStub.authorised()
           MtdIdLookupStub.ninoFound(nino)
-          DownstreamStub.onSuccess(DownstreamStub.GET, ifsUri, Map("view" -> hmrcHeldDesSource) ,Status.OK, hmrcHeldDesResponseBody)
+          DownstreamStub.onSuccess(DownstreamStub.GET, ifsUri, Map("view" -> hmrcHeldDesSource), Status.OK, hmrcHeldDesResponseBody)
         }
 
         val response: WSResponse = await(request(hmrcHeldUri).get())
@@ -269,7 +267,7 @@ class RetrieveEmploymentsExpensesControllerISpec extends IntegrationBaseSpec {
           AuditStub.audit()
           AuthStub.authorised()
           MtdIdLookupStub.ninoFound(nino)
-          DownstreamStub.onSuccess(DownstreamStub.GET, ifsUri, Map("view" -> userDesSource) ,Status.OK, userDesResponseBody)
+          DownstreamStub.onSuccess(DownstreamStub.GET, ifsUri, Map("view" -> userDesSource), Status.OK, userDesResponseBody)
         }
 
         val response: WSResponse = await(request(userUri).get())
@@ -283,11 +281,15 @@ class RetrieveEmploymentsExpensesControllerISpec extends IntegrationBaseSpec {
     "return error according to spec" when {
 
       "validation error" when {
-        def validationErrorTest(requestNino: String, requestTaxYear: String, requestSource: String, expectedStatus: Int, expectedBody: MtdError): Unit = {
+        def validationErrorTest(requestNino: String,
+                                requestTaxYear: String,
+                                requestSource: String,
+                                expectedStatus: Int,
+                                expectedBody: MtdError): Unit = {
           s"validation fails with ${expectedBody.code} error" in new Test {
 
-            override val nino: String = requestNino
-            override val taxYear: String = requestTaxYear
+            override val nino: String         = requestNino
+            override val taxYear: String      = requestTaxYear
             override val latestSource: String = requestSource
 
             override def setupStubs(): StubMapping = {
@@ -344,4 +346,5 @@ class RetrieveEmploymentsExpensesControllerISpec extends IntegrationBaseSpec {
       }
     }
   }
+
 }

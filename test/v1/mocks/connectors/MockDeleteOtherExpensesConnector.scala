@@ -35,6 +35,7 @@ trait MockDeleteOtherExpensesConnector extends MockFactory {
         .deleteOtherExpenses(_: DeleteOtherExpensesRequest)(_: HeaderCarrier, _: ExecutionContext, _: String))
         .expects(requestData, *, *, *)
     }
+
   }
 
 }

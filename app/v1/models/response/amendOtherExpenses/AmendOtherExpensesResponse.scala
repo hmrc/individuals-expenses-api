@@ -23,6 +23,7 @@ import v1.models.hateoas.{HateoasData, Link}
 object AmendOtherExpensesResponse extends HateoasLinks {
 
   implicit object AmendOtherExpensesLinksFactory extends HateoasLinksFactory[Unit, AmendOtherExpensesHateoasData] {
+
     override def links(appConfig: AppConfig, data: AmendOtherExpensesHateoasData): Seq[Link] = {
       import data._
       Seq(
@@ -31,7 +32,9 @@ object AmendOtherExpensesResponse extends HateoasLinks {
         deleteOtherExpenses(appConfig, nino, taxYear)
       )
     }
+
   }
+
 }
 
 case class AmendOtherExpensesHateoasData(nino: String, taxYear: String) extends HateoasData

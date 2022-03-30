@@ -30,26 +30,29 @@ import v1.support.DesResponseMappingSupport
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class RetrieveOtherExpensesService @Inject()(retrieveOtherExpensesConnector: RetrieveOtherExpensesConnector)
-  extends DesResponseMappingSupport with Logging {
+class RetrieveOtherExpensesService @Inject() (retrieveOtherExpensesConnector: RetrieveOtherExpensesConnector)
+    extends DesResponseMappingSupport
+    with Logging {
 
-  def retrieveOtherExpenses(request: RetrieveOtherExpensesRequest)(
-    implicit hc: HeaderCarrier,
-    ec: ExecutionContext,
-    logContext: EndpointLogContext,
-    correlationId: String): Future[RetrieveOtherExpensesServiceOutcome] = {
+  def retrieveOtherExpenses(request: RetrieveOtherExpensesRequest)(implicit
+      hc: HeaderCarrier,
+      ec: ExecutionContext,
+      logContext: EndpointLogContext,
+      correlationId: String): Future[RetrieveOtherExpensesServiceOutcome] = {
 
     val result = for {
       desResponseWrapper <- EitherT(retrieveOtherExpensesConnector.retrieveOtherExpenses(request)).leftMap(mapDesErrors(desErrorMap))
     } yield desResponseWrapper
     result.value
   }
+
   private def desErrorMap: Map[String, MtdError] =
     Map(
       "INVALID_TAXABLE_ENTITY_ID" -> NinoFormatError,
-      "FORMAT_TAX_YEAR" -> TaxYearFormatError,
-      "NO_DATA_FOUND" -> NotFoundError,
-      "SERVER_ERROR" -> DownstreamError,
-      "SERVICE_UNAVAILABLE" -> DownstreamError
+      "FORMAT_TAX_YEAR"           -> TaxYearFormatError,
+      "NO_DATA_FOUND"             -> NotFoundError,
+      "SERVER_ERROR"              -> DownstreamError,
+      "SERVICE_UNAVAILABLE"       -> DownstreamError
     )
+
 }

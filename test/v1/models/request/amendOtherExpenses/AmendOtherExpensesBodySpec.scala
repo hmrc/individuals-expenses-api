@@ -22,10 +22,14 @@ import v1.models.utils.JsonErrorValidators
 
 class AmendOtherExpensesBodySpec extends UnitSpec with JsonErrorValidators {
 
-  val amendOtherExpensesBody = AmendOtherExpensesBody(Some(PaymentsToTradeUnionsForDeathBenefits(Some("TRADE UNION PAYMENTS"),2314.32)), Some(PatentRoyaltiesPayments(Some("ROYALTIES PAYMENTS"),2314.32)))
-  val amendOtherExpensesBodyWithoutPatents = AmendOtherExpensesBody(Some(PaymentsToTradeUnionsForDeathBenefits(Some("TRADE UNION PAYMENTS"),2314.32)), None)
-  val amendOtherExpensesBodyWithoutPayments = AmendOtherExpensesBody(None, Some(PatentRoyaltiesPayments(Some("ROYALTIES PAYMENTS"),2314.32)))
+  val amendOtherExpensesBody = AmendOtherExpensesBody(
+    Some(PaymentsToTradeUnionsForDeathBenefits(Some("TRADE UNION PAYMENTS"), 2314.32)),
+    Some(PatentRoyaltiesPayments(Some("ROYALTIES PAYMENTS"), 2314.32)))
 
+  val amendOtherExpensesBodyWithoutPatents =
+    AmendOtherExpensesBody(Some(PaymentsToTradeUnionsForDeathBenefits(Some("TRADE UNION PAYMENTS"), 2314.32)), None)
+
+  val amendOtherExpensesBodyWithoutPayments = AmendOtherExpensesBody(None, Some(PatentRoyaltiesPayments(Some("ROYALTIES PAYMENTS"), 2314.32)))
 
   val json = Json.parse(
     """{
@@ -65,16 +69,19 @@ class AmendOtherExpensesBodySpec extends UnitSpec with JsonErrorValidators {
       }
     }
   }
+
   "read from empty JSON with missing Patents" should {
     "convert JSON into an empty AmendOtherExpensesBody object" in {
       amendOtherExpensesBodyWithoutPatents shouldBe patentsMissingJson.as[AmendOtherExpensesBody]
     }
   }
+
   "read from empty JSON with missing Payments" should {
     "convert JSON into an empty AmendOtherExpensesBody object" in {
       amendOtherExpensesBodyWithoutPayments shouldBe paymentsMissingJson.as[AmendOtherExpensesBody]
     }
   }
+
   "writes" when {
     "passed valid model" should {
       "return valid JSON" in {
@@ -94,4 +101,5 @@ class AmendOtherExpensesBodySpec extends UnitSpec with JsonErrorValidators {
       }
     }
   }
+
 }

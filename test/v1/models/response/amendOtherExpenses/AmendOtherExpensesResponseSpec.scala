@@ -22,9 +22,10 @@ import v1.models.hateoas.Link
 import v1.models.hateoas.Method.{DELETE, GET, PUT}
 
 class AmendOtherExpensesResponseSpec extends UnitSpec with MockAppConfig {
+
   "LinksFactory" should {
     "return the correct links" in {
-      val nino = "mynino"
+      val nino    = "mynino"
       val taxYear = "mytaxyear"
 
       MockAppConfig.apiGatewayContext.returns("my/context").anyNumberOfTimes
@@ -36,4 +37,5 @@ class AmendOtherExpensesResponseSpec extends UnitSpec with MockAppConfig {
         )
     }
   }
+
 }

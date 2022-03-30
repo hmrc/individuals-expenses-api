@@ -23,15 +23,15 @@ import support.UnitSpec
 class ExpensesAuditDetailSpec extends UnitSpec {
 
   val auditErrors: Seq[AuditError] = Seq(AuditError(errorCode = "FORMAT_NINO"), AuditError(errorCode = "FORMAT_TAX_YEAR"))
-  val body: JsValue = Json.parse("""{ "aField" : "aValue" }""")
+  val body: JsValue                = Json.parse("""{ "aField" : "aValue" }""")
 
-  val nino: String = "ZG903729C"
-  val taxYear: String = "2019-20"
-  val userType: String = "Agent"
+  val nino: String                         = "ZG903729C"
+  val taxYear: String                      = "2019-20"
+  val userType: String                     = "Agent"
   val agentReferenceNumber: Option[String] = Some("012345678")
-  val pathParams: Map[String, String] = Map("nino" -> nino, "taxYear" -> taxYear)
-  val requestBody: Option[JsValue] = None
-  val xCorrId = "a1e8057e-fbbc-47a8-a8b478d9f015c253"
+  val pathParams: Map[String, String]      = Map("nino" -> nino, "taxYear" -> taxYear)
+  val requestBody: Option[JsValue]         = None
+  val xCorrId                              = "a1e8057e-fbbc-47a8-a8b478d9f015c253"
 
   val auditResponseModelWithBody: AuditResponse =
     AuditResponse(
@@ -118,4 +118,5 @@ class ExpensesAuditDetailSpec extends UnitSpec {
       }
     }
   }
+
 }

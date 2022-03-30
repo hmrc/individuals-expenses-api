@@ -26,21 +26,24 @@ import scala.concurrent.Future
 
 class DeleteOtherExpensesServiceSpec extends ServiceSpec {
 
-  val taxYear = "2017-18"
+  val taxYear    = "2017-18"
   val nino: Nino = Nino("AA123456A")
 
   private val requestData = DeleteOtherExpensesRequest(nino, taxYear)
 
   trait Test extends MockDeleteOtherExpensesConnector {
+
     val service = new DeleteOtherExpensesService(
       deleteOtherExpensesConnector = mockDeleteOtherExpensesConnector
     )
+
   }
 
   "service" should {
     "service call successful" when {
       "return mapped result" in new Test {
-        MockDeleteOtherExpensesConnector.deleteOtherExpenses(requestData)
+        MockDeleteOtherExpensesConnector
+          .deleteOtherExpenses(requestData)
           .returns(Future.successful(Right(ResponseWrapper(correlationId, ()))))
 
         await(service.deleteOtherExpenses(requestData)) shouldBe Right(ResponseWrapper(correlationId, ()))
@@ -54,7 +57,8 @@ class DeleteOtherExpensesServiceSpec extends ServiceSpec {
       def serviceError(desErrorCode: String, error: MtdError): Unit =
         s"a $desErrorCode error is returned from the service" in new Test {
 
-          MockDeleteOtherExpensesConnector.deleteOtherExpenses(requestData)
+          MockDeleteOtherExpensesConnector
+            .deleteOtherExpenses(requestData)
             .returns(Future.successful(Left(ResponseWrapper(correlationId, DesErrors.single(DesErrorCode(desErrorCode))))))
 
           await(service.deleteOtherExpenses(requestData)) shouldBe Left(ErrorWrapper(correlationId, error))
@@ -62,13 +66,14 @@ class DeleteOtherExpensesServiceSpec extends ServiceSpec {
 
       val input = Seq(
         "INVALID_TAXABLE_ENTITY_ID" -> NinoFormatError,
-        "FORMAT_TAX_YEAR" -> TaxYearFormatError,
-        "NO_DATA_FOUND" -> NotFoundError,
-        "SERVER_ERROR" -> DownstreamError,
-        "SERVICE_UNAVAILABLE" -> DownstreamError
+        "FORMAT_TAX_YEAR"           -> TaxYearFormatError,
+        "NO_DATA_FOUND"             -> NotFoundError,
+        "SERVER_ERROR"              -> DownstreamError,
+        "SERVICE_UNAVAILABLE"       -> DownstreamError
       )
 
       input.foreach(args => (serviceError _).tupled(args))
     }
   }
+
 }

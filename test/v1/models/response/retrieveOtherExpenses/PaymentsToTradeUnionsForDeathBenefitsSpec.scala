@@ -22,8 +22,8 @@ import v1.models.utils.JsonErrorValidators
 
 class PaymentsToTradeUnionsForDeathBenefitsSpec extends UnitSpec with JsonErrorValidators {
 
-  val paymentsToTradeUnionsForDeathBenefits = PaymentsToTradeUnionsForDeathBenefits(Some("TRADE UNION PAYMENTS"),2314.32)
-  val emptyPaymentsToTradeUnionsForDeathBenefits = PaymentsToTradeUnionsForDeathBenefits(None,2314.32)
+  val paymentsToTradeUnionsForDeathBenefits      = PaymentsToTradeUnionsForDeathBenefits(Some("TRADE UNION PAYMENTS"), 2314.32)
+  val emptyPaymentsToTradeUnionsForDeathBenefits = PaymentsToTradeUnionsForDeathBenefits(None, 2314.32)
 
   val json = Json.parse(
     """{
@@ -45,11 +45,13 @@ class PaymentsToTradeUnionsForDeathBenefitsSpec extends UnitSpec with JsonErrorV
       }
     }
   }
+
   "read from empty JSON" should {
     "convert empty MTD JSON into an empty PaymentsToTradeUnionsForDeathBenefits object" in {
       emptyPaymentsToTradeUnionsForDeathBenefits shouldBe noReferenceJson.as[PaymentsToTradeUnionsForDeathBenefits]
     }
   }
+
   "writes" when {
     "passed valid model" should {
       "return valid JSON" in {
@@ -57,6 +59,7 @@ class PaymentsToTradeUnionsForDeathBenefitsSpec extends UnitSpec with JsonErrorV
       }
     }
   }
+
   "written from an empty body" when {
     "passed an empty model" should {
       "return an no reference JSON" in {
@@ -64,4 +67,5 @@ class PaymentsToTradeUnionsForDeathBenefitsSpec extends UnitSpec with JsonErrorV
       }
     }
   }
+
 }

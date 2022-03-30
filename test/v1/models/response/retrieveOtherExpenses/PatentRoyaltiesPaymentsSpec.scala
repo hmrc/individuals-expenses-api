@@ -22,8 +22,8 @@ import v1.models.utils.JsonErrorValidators
 
 class PatentRoyaltiesPaymentsSpec extends UnitSpec with JsonErrorValidators {
 
-  val patentRoyaltiesPayments = PatentRoyaltiesPayments(Some("ROYALTIES PAYMENT"),2314.32)
-  val emptyPatentRoyaltiesPayments = PatentRoyaltiesPayments(None,2314.32)
+  val patentRoyaltiesPayments      = PatentRoyaltiesPayments(Some("ROYALTIES PAYMENT"), 2314.32)
+  val emptyPatentRoyaltiesPayments = PatentRoyaltiesPayments(None, 2314.32)
 
   val json = Json.parse(
     """{
@@ -45,11 +45,13 @@ class PatentRoyaltiesPaymentsSpec extends UnitSpec with JsonErrorValidators {
       }
     }
   }
+
   "read from empty JSON" should {
     "convert empty MTD JSON into an empty PatentRoyaltiesPayments object" in {
       emptyPatentRoyaltiesPayments shouldBe noReferenceJson.as[PatentRoyaltiesPayments]
     }
   }
+
   "writes" when {
     "passed valid model" should {
       "return valid JSON" in {
@@ -57,6 +59,7 @@ class PatentRoyaltiesPaymentsSpec extends UnitSpec with JsonErrorValidators {
       }
     }
   }
+
   "write from an empty body" when {
     "passed an empty model" should {
       "return an no reference JSON" in {
@@ -64,5 +67,5 @@ class PatentRoyaltiesPaymentsSpec extends UnitSpec with JsonErrorValidators {
       }
     }
   }
-}
 
+}

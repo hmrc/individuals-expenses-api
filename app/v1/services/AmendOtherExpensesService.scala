@@ -30,13 +30,13 @@ import v1.support.DesResponseMappingSupport
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class AmendOtherExpensesService @Inject()(connector: AmendOtherExpensesConnector) extends DesResponseMappingSupport with Logging {
+class AmendOtherExpensesService @Inject() (connector: AmendOtherExpensesConnector) extends DesResponseMappingSupport with Logging {
 
-  def amend(request: AmendOtherExpensesRequest)(
-    implicit hc: HeaderCarrier,
-    ec: ExecutionContext,
-    logContext: EndpointLogContext,
-    correlationId: String): Future[AmendOtherExpensesServiceOutcome] = {
+  def amend(request: AmendOtherExpensesRequest)(implicit
+      hc: HeaderCarrier,
+      ec: ExecutionContext,
+      logContext: EndpointLogContext,
+      correlationId: String): Future[AmendOtherExpensesServiceOutcome] = {
 
     val result = for {
       desResponseWrapper <- EitherT(connector.amend(request)).leftMap(mapDesErrors(desErrorMap))
@@ -47,8 +47,9 @@ class AmendOtherExpensesService @Inject()(connector: AmendOtherExpensesConnector
   private def desErrorMap: Map[String, MtdError] =
     Map(
       "INVALID_TAXABLE_ENTITY_ID" -> NinoFormatError,
-      "FORMAT_TAX_YEAR" -> TaxYearFormatError,
-      "SERVER_ERROR" -> DownstreamError,
-      "SERVICE_UNAVAILABLE" -> DownstreamError
+      "FORMAT_TAX_YEAR"           -> TaxYearFormatError,
+      "SERVER_ERROR"              -> DownstreamError,
+      "SERVICE_UNAVAILABLE"       -> DownstreamError
     )
+
 }

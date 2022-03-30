@@ -20,13 +20,18 @@ import v1.models.domain.Nino
 import v1.mocks.connectors.MockAmendOtherExpensesConnector
 import v1.models.errors._
 import v1.models.outcomes.ResponseWrapper
-import v1.models.request.amendOtherExpenses.{AmendOtherExpensesBody, AmendOtherExpensesRequest, PatentRoyaltiesPayments, PaymentsToTradeUnionsForDeathBenefits}
+import v1.models.request.amendOtherExpenses.{
+  AmendOtherExpensesBody,
+  AmendOtherExpensesRequest,
+  PatentRoyaltiesPayments,
+  PaymentsToTradeUnionsForDeathBenefits
+}
 
 import scala.concurrent.Future
 
 class AmendOtherExpensesServiceSpec extends ServiceSpec {
 
-  val taxYear = "2017-18"
+  val taxYear    = "2017-18"
   val nino: Nino = Nino("AA123456A")
 
   val body: AmendOtherExpensesBody = AmendOtherExpensesBody(
@@ -37,15 +42,18 @@ class AmendOtherExpensesServiceSpec extends ServiceSpec {
   private val requestData = AmendOtherExpensesRequest(nino, taxYear, body)
 
   trait Test extends MockAmendOtherExpensesConnector {
+
     val service = new AmendOtherExpensesService(
       connector = mockAmendOtherExpensesConnector
     )
+
   }
 
   "service" should {
     "service call successful" when {
       "return mapped result" in new Test {
-        MockAmendOtherExpensesConnector.amend(requestData)
+        MockAmendOtherExpensesConnector
+          .amend(requestData)
           .returns(Future.successful(Right(ResponseWrapper(correlationId, ()))))
 
         await(service.amend(requestData)) shouldBe Right(ResponseWrapper(correlationId, ()))
@@ -59,7 +67,8 @@ class AmendOtherExpensesServiceSpec extends ServiceSpec {
       def serviceError(desErrorCode: String, error: MtdError): Unit =
         s"a $desErrorCode error is returned from the service" in new Test {
 
-          MockAmendOtherExpensesConnector.amend(requestData)
+          MockAmendOtherExpensesConnector
+            .amend(requestData)
             .returns(Future.successful(Left(ResponseWrapper(correlationId, DesErrors.single(DesErrorCode(desErrorCode))))))
 
           await(service.amend(requestData)) shouldBe Left(ErrorWrapper(correlationId, error))
@@ -67,12 +76,13 @@ class AmendOtherExpensesServiceSpec extends ServiceSpec {
 
       val input = Seq(
         "INVALID_TAXABLE_ENTITY_ID" -> NinoFormatError,
-        "FORMAT_TAX_YEAR" -> TaxYearFormatError,
-        "SERVER_ERROR" -> DownstreamError,
-        "SERVICE_UNAVAILABLE" -> DownstreamError
+        "FORMAT_TAX_YEAR"           -> TaxYearFormatError,
+        "SERVER_ERROR"              -> DownstreamError,
+        "SERVICE_UNAVAILABLE"       -> DownstreamError
       )
 
       input.foreach(args => (serviceError _).tupled(args))
     }
   }
+
 }

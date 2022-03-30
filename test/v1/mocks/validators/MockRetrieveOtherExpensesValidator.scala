@@ -33,6 +33,7 @@ class MockRetrieveOtherExpensesValidator extends MockFactory {
         .validate(_: RetrieveOtherExpensesRawData))
         .expects(data)
     }
-  }
-}
 
+  }
+
+}

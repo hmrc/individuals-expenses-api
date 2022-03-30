@@ -29,7 +29,7 @@ class AmendOtherExpensesControllerISpec extends IntegrationBaseSpec {
 
   private trait Test {
 
-    val nino: String = "AA123456A"
+    val nino: String    = "AA123456A"
     val taxYear: String = "2021-22"
 
     val amount: BigDecimal = 5000.99
@@ -49,8 +49,7 @@ class AmendOtherExpensesControllerISpec extends IntegrationBaseSpec {
          |""".stripMargin
     )
 
-    val responseBody = Json.parse(
-      s"""
+    val responseBody = Json.parse(s"""
          |{
          |  "links": [
          |    {
@@ -91,6 +90,7 @@ class AmendOtherExpensesControllerISpec extends IntegrationBaseSpec {
          |        "reason": "des message"
          |      }
     """.stripMargin
+
   }
 
   "Calling the amend endpoint" should {
@@ -179,8 +179,8 @@ class AmendOtherExpensesControllerISpec extends IntegrationBaseSpec {
 
           val response: WSResponse = await(request().put(requestBodyJson))
           response.status shouldBe BAD_REQUEST
-          response.json shouldBe Json.toJson(ValueFormatError.copy(paths = Some(Seq("/paymentsToTradeUnionsForDeathBenefits/expenseAmount",
-                                                                                    "/patentRoyaltiesPayments/expenseAmount"))))
+          response.json shouldBe Json.toJson(ValueFormatError.copy(paths =
+            Some(Seq("/paymentsToTradeUnionsForDeathBenefits/expenseAmount", "/patentRoyaltiesPayments/expenseAmount"))))
         }
         s"an invalid customer reference is provided" in new Test {
           override val requestBodyJson: JsValue = Json.parse(
@@ -206,8 +206,8 @@ class AmendOtherExpensesControllerISpec extends IntegrationBaseSpec {
 
           val response: WSResponse = await(request().put(requestBodyJson))
           response.status shouldBe BAD_REQUEST
-          response.json shouldBe Json.toJson(CustomerReferenceFormatError.copy(paths = Some(Seq("/paymentsToTradeUnionsForDeathBenefits/customerReference",
-                                                                                                "/patentRoyaltiesPayments/customerReference"))))
+          response.json shouldBe Json.toJson(CustomerReferenceFormatError.copy(paths =
+            Some(Seq("/paymentsToTradeUnionsForDeathBenefits/customerReference", "/patentRoyaltiesPayments/customerReference"))))
         }
         s"a taxYear with range of greater than a year is provided" in new Test {
           override val taxYear: String = "2019-21"
@@ -236,8 +236,7 @@ class AmendOtherExpensesControllerISpec extends IntegrationBaseSpec {
           response.json shouldBe Json.toJson(RuleIncorrectOrEmptyBodyError)
         }
         s"a body missing mandatory fields is provided" in new Test {
-          override val requestBodyJson: JsValue = Json.parse(
-            """{
+          override val requestBodyJson: JsValue = Json.parse("""{
               | "paymentsToTradeUnionsForDeathBenefits": {},
               | "patentRoyaltiesPayments": {}
               |}""".stripMargin)
@@ -276,10 +275,12 @@ class AmendOtherExpensesControllerISpec extends IntegrationBaseSpec {
           (BAD_REQUEST, "INVALID_TAXABLE_ENTITY_ID", BAD_REQUEST, NinoFormatError),
           (BAD_REQUEST, "FORMAT_TAX_YEAR", BAD_REQUEST, TaxYearFormatError),
           (SERVICE_UNAVAILABLE, "SERVICE_UNAVAILABLE", INTERNAL_SERVER_ERROR, DownstreamError),
-          (INTERNAL_SERVER_ERROR, "SERVER_ERROR", INTERNAL_SERVER_ERROR, DownstreamError))
+          (INTERNAL_SERVER_ERROR, "SERVER_ERROR", INTERNAL_SERVER_ERROR, DownstreamError)
+        )
 
         input.foreach(args => (serviceErrorTest _).tupled(args))
       }
     }
   }
+
 }

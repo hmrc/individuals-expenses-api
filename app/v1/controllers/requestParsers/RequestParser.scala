@@ -46,4 +46,5 @@ trait RequestParser[Raw <: RawData, Request] extends Logging {
         Left(ErrorWrapper(correlationId, BadRequestError, Some(errs)))
     }
   }
+
 }

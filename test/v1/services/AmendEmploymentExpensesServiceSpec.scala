@@ -26,7 +26,7 @@ import scala.concurrent.Future
 
 class AmendEmploymentExpensesServiceSpec extends ServiceSpec {
 
-  val taxYear = "2021-22"
+  val taxYear    = "2021-22"
   val nino: Nino = Nino("AA123456A")
 
   val body: AmendEmploymentExpensesBody = AmendEmploymentExpensesBody(
@@ -45,15 +45,18 @@ class AmendEmploymentExpensesServiceSpec extends ServiceSpec {
   private val requestData = AmendEmploymentExpensesRequest(nino, taxYear, body)
 
   trait Test extends MockAmendEmploymentExpensesConnector {
+
     val service = new AmendEmploymentExpensesService(
       connector = mockAmendEmploymentExpensesConnector
     )
+
   }
 
   "service" should {
     "service call successful" when {
       "return mapped result" in new Test {
-        MockAmendEmploymentExpensesConnector.amend(requestData)
+        MockAmendEmploymentExpensesConnector
+          .amend(requestData)
           .returns(Future.successful(Right(ResponseWrapper(correlationId, ()))))
 
         await(service.amend(requestData)) shouldBe Right(ResponseWrapper(correlationId, ()))
@@ -67,24 +70,26 @@ class AmendEmploymentExpensesServiceSpec extends ServiceSpec {
       def serviceError(desErrorCode: String, error: MtdError): Unit =
         s"a $desErrorCode error is returned from the service" in new Test {
 
-          MockAmendEmploymentExpensesConnector.amend(requestData)
+          MockAmendEmploymentExpensesConnector
+            .amend(requestData)
             .returns(Future.successful(Left(ResponseWrapper(correlationId, DesErrors.single(DesErrorCode(desErrorCode))))))
 
           await(service.amend(requestData)) shouldBe Left(ErrorWrapper(correlationId, error))
         }
 
       val input = Seq(
-        "INVALID_TAXABLE_ENTITY_ID" -> NinoFormatError,
-        "INVALID_TAX_YEAR" -> TaxYearFormatError,
-        "INVALID_CORRELATIONID" -> DownstreamError,
-        "INVALID_PAYLOAD" -> DownstreamError,
+        "INVALID_TAXABLE_ENTITY_ID"       -> NinoFormatError,
+        "INVALID_TAX_YEAR"                -> TaxYearFormatError,
+        "INVALID_CORRELATIONID"           -> DownstreamError,
+        "INVALID_PAYLOAD"                 -> DownstreamError,
         "INVALID_REQUEST_BEFORE_TAX_YEAR" -> RuleTaxYearNotEndedError,
-        "INCOME_SOURCE_NOT_FOUND" -> NotFoundError,
-        "SERVER_ERROR" -> DownstreamError,
-        "SERVICE_UNAVAILABLE" -> DownstreamError
+        "INCOME_SOURCE_NOT_FOUND"         -> NotFoundError,
+        "SERVER_ERROR"                    -> DownstreamError,
+        "SERVICE_UNAVAILABLE"             -> DownstreamError
       )
 
       input.foreach(args => (serviceError _).tupled(args))
     }
   }
+
 }

@@ -30,13 +30,13 @@ import v1.support.DesResponseMappingSupport
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class IgnoreEmploymentExpensesService @Inject()(connector: IgnoreEmploymentExpensesConnector) extends DesResponseMappingSupport with Logging {
+class IgnoreEmploymentExpensesService @Inject() (connector: IgnoreEmploymentExpensesConnector) extends DesResponseMappingSupport with Logging {
 
-  def ignore(request: IgnoreEmploymentExpensesRequest)(
-    implicit hc: HeaderCarrier,
-    ec: ExecutionContext,
-    logContext: EndpointLogContext,
-    correlationId: String): Future[IgnoreEmploymentExpensesServiceOutcome] = {
+  def ignore(request: IgnoreEmploymentExpensesRequest)(implicit
+      hc: HeaderCarrier,
+      ec: ExecutionContext,
+      logContext: EndpointLogContext,
+      correlationId: String): Future[IgnoreEmploymentExpensesServiceOutcome] = {
 
     val result = for {
       desResponseWrapper <- EitherT(connector.ignore(request)).leftMap(mapDesErrors(desErrorMap))
@@ -47,13 +47,14 @@ class IgnoreEmploymentExpensesService @Inject()(connector: IgnoreEmploymentExpen
 
   private def desErrorMap =
     Map(
-      "INVALID_TAXABLE_ENTITY_ID" -> NinoFormatError,
-      "INVALID_TAX_YEAR" -> TaxYearFormatError,
-      "INVALID_CORRELATIONID" -> DownstreamError,
-      "INVALID_PAYLOAD" -> DownstreamError,
+      "INVALID_TAXABLE_ENTITY_ID"       -> NinoFormatError,
+      "INVALID_TAX_YEAR"                -> TaxYearFormatError,
+      "INVALID_CORRELATIONID"           -> DownstreamError,
+      "INVALID_PAYLOAD"                 -> DownstreamError,
       "INVALID_REQUEST_BEFORE_TAX_YEAR" -> RuleTaxYearNotEndedError,
-      "INCOME_SOURCE_NOT_FOUND" -> NotFoundError,
-      "SERVER_ERROR" -> DownstreamError,
-      "SERVICE_UNAVAILABLE" -> DownstreamError
+      "INCOME_SOURCE_NOT_FOUND"         -> NotFoundError,
+      "SERVER_ERROR"                    -> DownstreamError,
+      "SERVICE_UNAVAILABLE"             -> DownstreamError
     )
+
 }

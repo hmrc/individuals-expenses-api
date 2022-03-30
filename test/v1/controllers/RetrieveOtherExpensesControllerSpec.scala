@@ -35,7 +35,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class RetrieveOtherExpensesControllerSpec
-  extends ControllerBaseSpec
+    extends ControllerBaseSpec
     with MockEnrolmentsAuthService
     with MockMtdIdLookupService
     with MockRetrieveOtherExpensesService
@@ -62,11 +62,11 @@ class RetrieveOtherExpensesControllerSpec
     MockIdGenerator.generateCorrelationId.returns(correlationId)
   }
 
-  private val nino = "AA123456A"
-  private val taxYear = "2019-20"
+  private val nino          = "AA123456A"
+  private val taxYear       = "2019-20"
   private val correlationId = "X-123"
 
-  private val rawData = RetrieveOtherExpensesRawData(nino, taxYear)
+  private val rawData     = RetrieveOtherExpensesRawData(nino, taxYear)
   private val requestData = RetrieveOtherExpensesRequest(Nino(nino), taxYear)
 
   private val testHateoasLink = Link(href = s"individuals/expenses/other/$nino/$taxYear", method = GET, rel = "self")
@@ -158,4 +158,5 @@ class RetrieveOtherExpensesControllerSpec
       }
     }
   }
+
 }

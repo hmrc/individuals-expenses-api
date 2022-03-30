@@ -29,11 +29,11 @@ import v1.models.request.amendOtherExpenses.AmendOtherExpensesRawData
 
 class AmendOtherExpensesValidatorSpec extends UnitSpec {
 
-  private val validNino = "AA123456A"
+  private val validNino    = "AA123456A"
   private val validTaxYear = "2021-22"
-  private val date = DateTime.parse("2020-08-05")
-  private val requestBodyJson = Json.parse(
-    """
+  private val date         = DateTime.parse("2020-08-05")
+
+  private val requestBodyJson = Json.parse("""
       |{
       |  "paymentsToTradeUnionsForDeathBenefits": {
       |    "customerReference": "TRADE UNION PAYMENTS",
@@ -45,8 +45,7 @@ class AmendOtherExpensesValidatorSpec extends UnitSpec {
       |  }
       |}""".stripMargin)
 
-  private val requestBodyJsonNoDecimals = Json.parse(
-    """
+  private val requestBodyJsonNoDecimals = Json.parse("""
       |{
       |  "paymentsToTradeUnionsForDeathBenefits": {
       |    "customerReference": "TRADE UNION PAYMENTS",
@@ -58,8 +57,7 @@ class AmendOtherExpensesValidatorSpec extends UnitSpec {
       |  }
       |}""".stripMargin)
 
-  private val requestBodyJsonNoPaymentsToTradeUnionsForDeathBenefits = Json.parse(
-    """
+  private val requestBodyJsonNoPaymentsToTradeUnionsForDeathBenefits = Json.parse("""
       |{
       |  "patentRoyaltiesPayments":{
       |    "customerReference": "ROYALTIES PAYMENTS",
@@ -67,8 +65,7 @@ class AmendOtherExpensesValidatorSpec extends UnitSpec {
       |  }
       |}""".stripMargin)
 
-  private val requestBodyJsonNoPatentRoyaltiesPayments = Json.parse(
-    """
+  private val requestBodyJsonNoPatentRoyaltiesPayments = Json.parse("""
       |{
       |  "paymentsToTradeUnionsForDeathBenefits": {
       |    "customerReference": "TRADE UNION PAYMENTS",
@@ -82,13 +79,12 @@ class AmendOtherExpensesValidatorSpec extends UnitSpec {
       |""".stripMargin
   )
 
-
   class Test extends MockCurrentDateTime with MockCurrentTaxYear with MockAppConfig {
 
     implicit val dateTimeProvider: CurrentDateTime = mockCurrentDateTime
-    val dateTimeFormatter: DateTimeFormatter = DateTimeFormat.forPattern("yyyy-MM-dd")
+    val dateTimeFormatter: DateTimeFormatter       = DateTimeFormat.forPattern("yyyy-MM-dd")
 
-    implicit val appConfig: AppConfig = mockAppConfig
+    implicit val appConfig: AppConfig           = mockAppConfig
     implicit val currentTaxYear: CurrentTaxYear = mockCurrentTaxYear
 
     val validator = new AmendOtherExpensesValidator()
@@ -99,8 +95,10 @@ class AmendOtherExpensesValidatorSpec extends UnitSpec {
       .returns(DateTime.parse("2020-07-11", dateTimeFormatter))
       .anyNumberOfTimes()
 
-    MockCurrentTaxYear.getCurrentTaxYear(date)
+    MockCurrentTaxYear
+      .getCurrentTaxYear(date)
       .returns(2021)
+
   }
 
   "running a validation" should {
@@ -142,8 +140,7 @@ class AmendOtherExpensesValidatorSpec extends UnitSpec {
         validator.validate(AmendOtherExpensesRawData(validNino, validTaxYear, emptyJson)) shouldBe List(RuleIncorrectOrEmptyBodyError)
       }
       "at least one mandatory field is missing" in new Test {
-        val json =  Json.parse(
-          """
+        val json = Json.parse("""
             |{
             |  "paymentsToTradeUnionsForDeathBenefits": {},
             |  "patentRoyaltiesPayments":{
@@ -156,8 +153,7 @@ class AmendOtherExpensesValidatorSpec extends UnitSpec {
     }
     "return a FORMAT_VALUE error" when {
       "expenseAmount is below 0" in new Test {
-        val badJson = Json.parse(
-          """
+        val badJson = Json.parse("""
             |{
             |  "paymentsToTradeUnionsForDeathBenefits": {
             |    "customerReference": "TRADE UNION PAYMENTS",
@@ -173,8 +169,7 @@ class AmendOtherExpensesValidatorSpec extends UnitSpec {
         )
       }
       "multiple errors is below 0" in new Test {
-        val badJson = Json.parse(
-          """
+        val badJson = Json.parse("""
             |{
             |  "paymentsToTradeUnionsForDeathBenefits": {
             |    "customerReference": "TRADE UNION PAYMENTS",
@@ -186,11 +181,11 @@ class AmendOtherExpensesValidatorSpec extends UnitSpec {
             |  }
             |}""".stripMargin)
         validator.validate(AmendOtherExpensesRawData(validNino, validTaxYear, badJson)) shouldBe List(
-          ValueFormatError.copy(paths = Some(Seq("/paymentsToTradeUnionsForDeathBenefits/expenseAmount",
-            "/patentRoyaltiesPayments/expenseAmount")))
+          ValueFormatError.copy(paths = Some(Seq("/paymentsToTradeUnionsForDeathBenefits/expenseAmount", "/patentRoyaltiesPayments/expenseAmount")))
         )
       }
     }
 
   }
+
 }

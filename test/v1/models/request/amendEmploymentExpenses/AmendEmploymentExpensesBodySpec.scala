@@ -22,7 +22,8 @@ import v1.models.utils.JsonErrorValidators
 
 class AmendEmploymentExpensesBodySpec extends UnitSpec with JsonErrorValidators {
 
-  val amendEmploymentExpensesBody = AmendEmploymentExpensesBody(Expenses(Some(123.12), Some(123.12), Some(123.12), Some(123.12), Some(123.12), Some(123.12), Some(123.12), Some(123.12)))
+  val amendEmploymentExpensesBody = AmendEmploymentExpensesBody(
+    Expenses(Some(123.12), Some(123.12), Some(123.12), Some(123.12), Some(123.12), Some(123.12), Some(123.12), Some(123.12)))
 
   val json = Json.parse(
     """
@@ -69,5 +70,5 @@ class AmendEmploymentExpensesBodySpec extends UnitSpec with JsonErrorValidators 
       }
     }
   }
-}
 
+}

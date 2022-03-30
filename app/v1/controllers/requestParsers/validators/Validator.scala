@@ -37,22 +37,23 @@ trait Validator[A <: RawData] {
     }
   }
 
-def flattenErrors(errors: List[List[MtdError]]): List[MtdError] = {
-  errors.flatten.groupBy(_.message).map { case (_, errors) =>
+  def flattenErrors(errors: List[List[MtdError]]): List[MtdError] = {
+    errors.flatten
+      .groupBy(_.message)
+      .map { case (_, errors) =>
+        val baseError = errors.head.copy(paths = Some(Seq.empty[String]))
 
-    val baseError = errors.head.copy(paths = Some(Seq.empty[String]))
-
-    errors.fold(baseError)(
-      (error1, error2) => {
-        val paths: Option[Seq[String]] = for {
-          error1Paths <- error1.paths
-          error2Paths <- error2.paths
-        } yield {
-          error1Paths ++ error2Paths
-        }
-        error1.copy(paths = paths)
+        errors.fold(baseError)((error1, error2) => {
+          val paths: Option[Seq[String]] = for {
+            error1Paths <- error1.paths
+            error2Paths <- error2.paths
+          } yield {
+            error1Paths ++ error2Paths
+          }
+          error1.copy(paths = paths)
+        })
       }
-    )
-  }.toList
-}
+      .toList
+  }
+
 }
