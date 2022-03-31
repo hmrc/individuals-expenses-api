@@ -36,6 +36,7 @@ trait MockRetrieveOtherExpensesConnector extends MockFactory {
         .retrieveOtherExpenses(_: RetrieveOtherExpensesRequest)(_: HeaderCarrier, _: ExecutionContext, _: String))
         .expects(requestData, *, *, *)
     }
+
   }
 
 }

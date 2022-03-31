@@ -29,7 +29,7 @@ class RetrieveOtherExpensesControllerISpec extends IntegrationBaseSpec {
 
   private trait Test {
 
-    val nino = "AA123456A"
+    val nino    = "AA123456A"
     val taxYear = "2021-22"
 
     val responseBody = Json.parse(
@@ -65,8 +65,7 @@ class RetrieveOtherExpensesControllerISpec extends IntegrationBaseSpec {
          |""".stripMargin
     )
 
-    val desResponseBody = Json.parse(
-      s"""
+    val desResponseBody = Json.parse(s"""
          |{
          |  "submittedOn": "2019-04-04T01:01:01Z",
          |  "paymentsToTradeUnionsForDeathBenefits": {
@@ -80,7 +79,7 @@ class RetrieveOtherExpensesControllerISpec extends IntegrationBaseSpec {
          |}
          |""".stripMargin)
 
-    def uri: String = s"/other/$nino/$taxYear"
+    def uri: String    = s"/other/$nino/$taxYear"
     def desUri: String = s"/income-tax/expenses/other/$nino/$taxYear"
 
     def setupStubs(): StubMapping
@@ -98,6 +97,7 @@ class RetrieveOtherExpensesControllerISpec extends IntegrationBaseSpec {
          |        "reason": "des message"
          |      }
     """.stripMargin
+
   }
 
   "Calling the retrieve endpoint" should {
@@ -127,7 +127,7 @@ class RetrieveOtherExpensesControllerISpec extends IntegrationBaseSpec {
         def validationErrorTest(requestNino: String, requestTaxYear: String, expectedStatus: Int, expectedBody: MtdError): Unit = {
           s"validation fails with ${expectedBody.code} error" in new Test {
 
-            override val nino: String = requestNino
+            override val nino: String    = requestNino
             override val taxYear: String = requestTaxYear
 
             override def setupStubs(): StubMapping = {
@@ -148,7 +148,6 @@ class RetrieveOtherExpensesControllerISpec extends IntegrationBaseSpec {
           ("AA123456A", "2018-20", Status.BAD_REQUEST, RuleTaxYearRangeInvalidError),
           ("AA123456A", "2018-19", Status.BAD_REQUEST, RuleTaxYearNotSupportedError)
         )
-
 
         input.foreach(args => (validationErrorTest _).tupled(args))
       }
@@ -182,4 +181,5 @@ class RetrieveOtherExpensesControllerISpec extends IntegrationBaseSpec {
       }
     }
   }
+
 }

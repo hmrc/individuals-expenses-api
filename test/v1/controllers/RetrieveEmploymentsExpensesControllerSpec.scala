@@ -37,7 +37,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class RetrieveEmploymentsExpensesControllerSpec
-  extends ControllerBaseSpec
+    extends ControllerBaseSpec
     with MockEnrolmentsAuthService
     with MockMtdIdLookupService
     with MockRetrieveEmploymentsExpensesService
@@ -45,7 +45,6 @@ class RetrieveEmploymentsExpensesControllerSpec
     with MockHateoasFactory
     with MockAuditService
     with MockIdGenerator {
-
 
   trait Test {
     val hc = HeaderCarrier()
@@ -66,12 +65,12 @@ class RetrieveEmploymentsExpensesControllerSpec
     MockIdGenerator.generateCorrelationId.returns(correlationId)
   }
 
-  private val nino = "AA123456A"
-  private val taxYear = "2019-20"
-  private val source = MtdSource.`latest`
+  private val nino          = "AA123456A"
+  private val taxYear       = "2019-20"
+  private val source        = MtdSource.`latest`
   private val correlationId = "X-123"
 
-  private val rawData = RetrieveEmploymentsExpensesRawData(nino, taxYear, source.toString)
+  private val rawData     = RetrieveEmploymentsExpensesRawData(nino, taxYear, source.toString)
   private val requestData = RetrieveEmploymentsExpensesRequest(Nino(nino), taxYear, source)
 
   private val testHateoasLinks = Seq(
@@ -81,11 +80,12 @@ class RetrieveEmploymentsExpensesControllerSpec
     Link(href = s"/individuals/expenses/employments/$nino/$taxYear/ignore", method = POST, rel = "ignore-employment-expenses")
   )
 
-  private val responseBody = RetrieveEmploymentsExpensesResponse(Some("2020-12-12T12:12:12Z"),
+  private val responseBody = RetrieveEmploymentsExpensesResponse(
+    Some("2020-12-12T12:12:12Z"),
     Some(123.12),
     Some(MtdSource.`latest`),
     Some("2020-07-13T20:37:27Z"),
-    Some(Expenses(Some(123.12),Some(123.12),Some(123.12),Some(123.12),Some(123.12),Some(123.12),Some(123.12),Some(123.12)))
+    Some(Expenses(Some(123.12), Some(123.12), Some(123.12), Some(123.12), Some(123.12), Some(123.12), Some(123.12), Some(123.12)))
   )
 
   private val latestResponseBody = Json.parse(
@@ -234,4 +234,5 @@ class RetrieveEmploymentsExpensesControllerSpec
       }
     }
   }
+
 }

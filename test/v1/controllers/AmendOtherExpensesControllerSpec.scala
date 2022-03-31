@@ -29,14 +29,20 @@ import v1.models.errors._
 import v1.models.hateoas.{HateoasWrapper, Link}
 import v1.models.hateoas.Method.{DELETE, GET, PUT}
 import v1.models.outcomes.ResponseWrapper
-import v1.models.request.amendOtherExpenses.{AmendOtherExpensesBody, AmendOtherExpensesRawData, AmendOtherExpensesRequest, PatentRoyaltiesPayments, PaymentsToTradeUnionsForDeathBenefits}
+import v1.models.request.amendOtherExpenses.{
+  AmendOtherExpensesBody,
+  AmendOtherExpensesRawData,
+  AmendOtherExpensesRequest,
+  PatentRoyaltiesPayments,
+  PaymentsToTradeUnionsForDeathBenefits
+}
 import v1.models.response.amendOtherExpenses.AmendOtherExpensesHateoasData
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class AmendOtherExpensesControllerSpec
-  extends ControllerBaseSpec
+    extends ControllerBaseSpec
     with MockEnrolmentsAuthService
     with MockMtdIdLookupService
     with MockAmendOtherExpensesService
@@ -45,9 +51,8 @@ class AmendOtherExpensesControllerSpec
     with MockAuditService
     with MockIdGenerator {
 
-
-  private val nino = "AA123456A"
-  private val taxYear = "2019-20"
+  private val nino          = "AA123456A"
+  private val taxYear       = "2019-20"
   private val correlationId = "X-123"
 
   private val testHateoasLinks = Seq(
@@ -55,13 +60,13 @@ class AmendOtherExpensesControllerSpec
     Link(href = s"/individuals/expenses/other/$nino/$taxYear", method = PUT, rel = "amend-expenses-other"),
     Link(href = s"/individuals/expenses/other/$nino/$taxYear", method = DELETE, rel = "delete-expenses-other")
   )
+
   private val requestBody = AmendOtherExpensesBody(
-    Some(PaymentsToTradeUnionsForDeathBenefits(Some("TRADE UNION PAYMENTS"),1223.22)),
+    Some(PaymentsToTradeUnionsForDeathBenefits(Some("TRADE UNION PAYMENTS"), 1223.22)),
     Some(PatentRoyaltiesPayments(Some("ROYALTIES PAYMENTS"), 1223.22))
   )
 
-  private val requestBodyJson = Json.parse(
-    """
+  private val requestBodyJson = Json.parse("""
       |{
       |  "paymentsToTradeUnionsForDeathBenefits": {
       |    "customerReference": "TRADE UNION PAYMENTS",
@@ -74,8 +79,8 @@ class AmendOtherExpensesControllerSpec
       |}
       |""".stripMargin)
 
-  private val rawData = AmendOtherExpensesRawData(nino, taxYear, requestBodyJson)
-  private val requestData = AmendOtherExpensesRequest(Nino(nino), taxYear , requestBody)
+  private val rawData     = AmendOtherExpensesRawData(nino, taxYear, requestBodyJson)
+  private val requestData = AmendOtherExpensesRequest(Nino(nino), taxYear, requestBody)
 
   trait Test {
     val hc: HeaderCarrier = HeaderCarrier()
@@ -96,8 +101,7 @@ class AmendOtherExpensesControllerSpec
     MockIdGenerator.generateCorrelationId.returns(correlationId)
   }
 
-  private val responseBodyJson = Json.parse(
-    s"""
+  private val responseBodyJson = Json.parse(s"""
        |{
        |  "links": [
        |    {
@@ -224,4 +228,5 @@ class AmendOtherExpensesControllerSpec
       }
     }
   }
+
 }

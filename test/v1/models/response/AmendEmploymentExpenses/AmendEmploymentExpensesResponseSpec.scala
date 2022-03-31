@@ -26,7 +26,7 @@ class AmendEmploymentExpensesResponseSpec extends UnitSpec with MockAppConfig {
 
   "LinksFactory" should {
     "return the correct links" in {
-      val nino = "mynino"
+      val nino    = "mynino"
       val taxYear = "mytaxyear"
 
       MockAppConfig.apiGatewayContext.returns("my/context").anyNumberOfTimes
@@ -38,4 +38,5 @@ class AmendEmploymentExpensesResponseSpec extends UnitSpec with MockAppConfig {
         )
     }
   }
+
 }

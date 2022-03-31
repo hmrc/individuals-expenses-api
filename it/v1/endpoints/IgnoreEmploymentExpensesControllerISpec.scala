@@ -32,13 +32,12 @@ class IgnoreEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
 
   private trait Test {
 
-    val nino: String = "AA123456A"
+    val nino: String    = "AA123456A"
     val taxYear: String = "2019-20"
 
     val requestBody: JsValue = Json.parse("{}")
 
-    val responseBody: JsValue = Json.parse(
-      s"""
+    val responseBody: JsValue = Json.parse(s"""
          |{
          |  "links": [
          |    {
@@ -78,6 +77,7 @@ class IgnoreEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
          |  ]
          |}
     """.stripMargin
+
   }
 
   "Calling the ignore endpoint" should {
@@ -107,7 +107,7 @@ class IgnoreEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
         def parserErrorTest(newNino: String, newTaxYear: String, expectedStatus: Int, expectedBody: MtdError): Unit = {
           s"parser returns ${expectedBody.code}" in new Test {
 
-            override val nino: String = newNino
+            override val nino: String    = newNino
             override val taxYear: String = newTaxYear
 
             override def setupStubs(): StubMapping = {
@@ -174,4 +174,5 @@ class IgnoreEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
       }
     }
   }
+
 }

@@ -29,11 +29,11 @@ import v1.models.request.amendEmploymentExpenses.AmendEmploymentExpensesRawData
 
 class AmendEmploymentExpensesValidatorSpec extends UnitSpec {
 
-  private val validNino = "AA123456A"
+  private val validNino    = "AA123456A"
   private val validTaxYear = "2019-20"
-  private val date = DateTime.parse("2020-08-05")
-  private val requestBodyJson = Json.parse(
-    """
+  private val date         = DateTime.parse("2020-08-05")
+
+  private val requestBodyJson = Json.parse("""
       |{
       |    "expenses": {
       |        "businessTravelCosts": 123.12,
@@ -47,8 +47,7 @@ class AmendEmploymentExpensesValidatorSpec extends UnitSpec {
       |    }
       |}""".stripMargin)
 
-  private val requestBodyJsonNoDecimals = Json.parse(
-    """
+  private val requestBodyJsonNoDecimals = Json.parse("""
       |{
       |    "expenses": {
       |        "businessTravelCosts": 123,
@@ -62,8 +61,7 @@ class AmendEmploymentExpensesValidatorSpec extends UnitSpec {
       |    }
       |}""".stripMargin)
 
-  private val requestBodyJsonNoBusinessTravelCosts = Json.parse(
-    """
+  private val requestBodyJsonNoBusinessTravelCosts = Json.parse("""
       |{
       |    "expenses": {
       |        "jobExpenses": 123,
@@ -76,8 +74,7 @@ class AmendEmploymentExpensesValidatorSpec extends UnitSpec {
       |    }
       |}""".stripMargin)
 
-  private val requestBodyJsonNoJobExpenses = Json.parse(
-    """
+  private val requestBodyJsonNoJobExpenses = Json.parse("""
       |{
       |    "expenses": {
       |        "businessTravelCosts": 123,
@@ -90,8 +87,7 @@ class AmendEmploymentExpensesValidatorSpec extends UnitSpec {
       |    }
       |}""".stripMargin)
 
-  private val requestBodyJsonNoFlatRateJobExpenses = Json.parse(
-    """
+  private val requestBodyJsonNoFlatRateJobExpenses = Json.parse("""
       |{
       |    "expenses": {
       |        "businessTravelCosts": 123,
@@ -104,8 +100,7 @@ class AmendEmploymentExpensesValidatorSpec extends UnitSpec {
       |    }
       |}""".stripMargin)
 
-  private val requestBodyJsonNoProfessionalSubscriptions = Json.parse(
-    """
+  private val requestBodyJsonNoProfessionalSubscriptions = Json.parse("""
       |{
       |    "expenses": {
       |        "businessTravelCosts": 123,
@@ -118,8 +113,7 @@ class AmendEmploymentExpensesValidatorSpec extends UnitSpec {
       |    }
       |}""".stripMargin)
 
-  private val requestBodyJsonNoHotelAndMealExpenses = Json.parse(
-    """
+  private val requestBodyJsonNoHotelAndMealExpenses = Json.parse("""
       |{
       |    "expenses": {
       |        "businessTravelCosts": 123,
@@ -132,8 +126,7 @@ class AmendEmploymentExpensesValidatorSpec extends UnitSpec {
       |    }
       |}""".stripMargin)
 
-  private val requestBodyJsonNoOtherAndCapitalAllowances = Json.parse(
-    """
+  private val requestBodyJsonNoOtherAndCapitalAllowances = Json.parse("""
       |{
       |    "expenses": {
       |        "businessTravelCosts": 123,
@@ -146,8 +139,7 @@ class AmendEmploymentExpensesValidatorSpec extends UnitSpec {
       |    }
       |}""".stripMargin)
 
-  private val requestBodyJsonNoVehicleExpenses = Json.parse(
-    """
+  private val requestBodyJsonNoVehicleExpenses = Json.parse("""
       |{
       |    "expenses": {
       |        "businessTravelCosts": 123,
@@ -160,8 +152,7 @@ class AmendEmploymentExpensesValidatorSpec extends UnitSpec {
       |    }
       |}""".stripMargin)
 
-  private val requestBodyJsonNoMileageAllowanceRelief = Json.parse(
-    """
+  private val requestBodyJsonNoMileageAllowanceRelief = Json.parse("""
       |{
       |    "expenses": {
       |        "businessTravelCosts": 123,
@@ -174,8 +165,7 @@ class AmendEmploymentExpensesValidatorSpec extends UnitSpec {
       |    }
       |}""".stripMargin)
 
-  private val requestBodyJsonEmptyExpensesObject = Json.parse(
-    """
+  private val requestBodyJsonEmptyExpensesObject = Json.parse("""
       |{
       |    "expenses": {}
       |}""".stripMargin)
@@ -189,9 +179,9 @@ class AmendEmploymentExpensesValidatorSpec extends UnitSpec {
   class Test extends MockCurrentDateTime with MockCurrentTaxYear with MockAppConfig {
 
     implicit val dateTimeProvider: CurrentDateTime = mockCurrentDateTime
-    val dateTimeFormatter: DateTimeFormatter = DateTimeFormat.forPattern("yyyy-MM-dd")
+    val dateTimeFormatter: DateTimeFormatter       = DateTimeFormat.forPattern("yyyy-MM-dd")
 
-    implicit val appConfig: AppConfig = mockAppConfig
+    implicit val appConfig: AppConfig           = mockAppConfig
     implicit val currentTaxYear: CurrentTaxYear = mockCurrentTaxYear
 
     val validator = new AmendEmploymentExpensesValidator()
@@ -202,8 +192,10 @@ class AmendEmploymentExpensesValidatorSpec extends UnitSpec {
       .returns(DateTime.parse("2020-08-05", dateTimeFormatter))
       .anyNumberOfTimes()
 
-    MockCurrentTaxYear.getCurrentTaxYear(date)
+    MockCurrentTaxYear
+      .getCurrentTaxYear(date)
       .returns(2021)
+
   }
 
   "running a validation" should {
@@ -265,14 +257,13 @@ class AmendEmploymentExpensesValidatorSpec extends UnitSpec {
         validator.validate(AmendEmploymentExpensesRawData(validNino, validTaxYear, emptyJson)) shouldBe List(RuleIncorrectOrEmptyBodyError)
       }
       "an empty expenses object is submitted" in new Test {
-        validator.validate(AmendEmploymentExpensesRawData
-        (validNino, validTaxYear, requestBodyJsonEmptyExpensesObject))shouldBe List(RuleIncorrectOrEmptyBodyError)
+        validator.validate(AmendEmploymentExpensesRawData(validNino, validTaxYear, requestBodyJsonEmptyExpensesObject)) shouldBe List(
+          RuleIncorrectOrEmptyBodyError)
       }
     }
     "return a FORMAT_VALUE error" when {
       "a value field is below 0" in new Test {
-        val badJson = Json.parse(
-          """
+        val badJson = Json.parse("""
             |{
             |    "expenses": {
             |        "businessTravelCosts": -123.12,
@@ -290,8 +281,7 @@ class AmendEmploymentExpensesValidatorSpec extends UnitSpec {
         )
       }
       "multiple fields are below 0" in new Test {
-        val badjson = Json.parse(
-          """
+        val badjson = Json.parse("""
             |{
             |    "expenses": {
             |        "businessTravelCosts": -123.12,

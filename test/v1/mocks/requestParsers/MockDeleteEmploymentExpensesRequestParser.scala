@@ -31,6 +31,7 @@ trait MockDeleteEmploymentExpensesRequestParser extends MockFactory {
     def parse(data: DeleteEmploymentExpensesRawData): CallHandler[Either[ErrorWrapper, DeleteEmploymentExpensesRequest]] = {
       (mockRequestDataParser.parseRequest(_: DeleteEmploymentExpensesRawData)(_: String)).expects(data, *)
     }
+
   }
 
 }

@@ -35,6 +35,7 @@ trait MockAmendEmploymentExpensesConnector extends MockFactory {
         .amend(_: AmendEmploymentExpensesRequest)(_: HeaderCarrier, _: ExecutionContext, _: String))
         .expects(requestData, *, *, *)
     }
+
   }
 
 }

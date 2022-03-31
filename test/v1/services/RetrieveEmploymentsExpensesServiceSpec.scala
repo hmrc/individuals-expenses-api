@@ -28,8 +28,8 @@ import scala.concurrent.Future
 
 class RetrieveEmploymentsExpensesServiceSpec extends ServiceSpec {
 
-  val taxYear = "2017-18"
-  val nino: Nino = Nino("AA123456A")
+  val taxYear                       = "2017-18"
+  val nino: Nino                    = Nino("AA123456A")
   val source: MtdSource.`user`.type = MtdSource.`user`
 
   val body: RetrieveEmploymentsExpensesResponse = RetrieveEmploymentsExpensesResponse(
@@ -37,30 +37,34 @@ class RetrieveEmploymentsExpensesServiceSpec extends ServiceSpec {
     Some(2000.99),
     Some(MtdSource.`user`),
     Some("2019-04-06"),
-    Some(Expenses(
-      Some(2000.99),
-      Some(2000.99),
-      Some(2000.99),
-      Some(2000.99),
-      Some(2000.99),
-      Some(2000.99),
-      Some(2000.99),
-      Some(2000.99)
-    ))
+    Some(
+      Expenses(
+        Some(2000.99),
+        Some(2000.99),
+        Some(2000.99),
+        Some(2000.99),
+        Some(2000.99),
+        Some(2000.99),
+        Some(2000.99),
+        Some(2000.99)
+      ))
   )
 
   private val requestData = RetrieveEmploymentsExpensesRequest(nino, taxYear, source)
 
   trait Test extends MockRetrieveEmploymentsExpensesConnector {
+
     val service = new RetrieveEmploymentsExpensesService(
       retrieveEmploymentsExpensesConnector = mockRetrieveEmploymentsExpensesConnector
     )
+
   }
 
   "service" should {
     "service call successful" when {
       "return mapped result" in new Test {
-        MockRetrieveEmploymentsExpensesConnector.retrieveEmploymentsExpenses(requestData)
+        MockRetrieveEmploymentsExpensesConnector
+          .retrieveEmploymentsExpenses(requestData)
           .returns(Future.successful(Right(ResponseWrapper(correlationId, body))))
 
         await(service.retrieveEmploymentsExpenses(requestData)) shouldBe Right(ResponseWrapper(correlationId, body))
@@ -74,7 +78,8 @@ class RetrieveEmploymentsExpensesServiceSpec extends ServiceSpec {
       def serviceError(desErrorCode: String, error: MtdError): Unit =
         s"a $desErrorCode error is returned from the service" in new Test {
 
-          MockRetrieveEmploymentsExpensesConnector.retrieveEmploymentsExpenses(requestData)
+          MockRetrieveEmploymentsExpensesConnector
+            .retrieveEmploymentsExpenses(requestData)
             .returns(Future.successful(Left(ResponseWrapper(correlationId, DesErrors.single(DesErrorCode(desErrorCode))))))
 
           await(service.retrieveEmploymentsExpenses(requestData)) shouldBe Left(ErrorWrapper(correlationId, error))
@@ -82,13 +87,13 @@ class RetrieveEmploymentsExpensesServiceSpec extends ServiceSpec {
 
       val input = Seq(
         "INVALID_TAXABLE_ENTITY_ID" -> NinoFormatError,
-        "INVALID_TAX_YEAR" -> TaxYearFormatError,
-        "INVALID_VIEW" -> SourceFormatError,
-        "INVALID_CORRELATIONID" -> DownstreamError,
-        "NO_DATA_FOUND" -> NotFoundError,
-        "INVALID_DATE_RANGE" -> RuleTaxYearNotSupportedError,
-        "SERVER_ERROR" -> DownstreamError,
-        "SERVICE_UNAVAILABLE" -> DownstreamError
+        "INVALID_TAX_YEAR"          -> TaxYearFormatError,
+        "INVALID_VIEW"              -> SourceFormatError,
+        "INVALID_CORRELATIONID"     -> DownstreamError,
+        "NO_DATA_FOUND"             -> NotFoundError,
+        "INVALID_DATE_RANGE"        -> RuleTaxYearNotSupportedError,
+        "SERVER_ERROR"              -> DownstreamError,
+        "SERVICE_UNAVAILABLE"       -> DownstreamError
       )
 
       input.foreach(args => (serviceError _).tupled(args))

@@ -33,7 +33,7 @@ import v1.models.outcomes.AuthOutcome
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class EnrolmentsAuthService @Inject()(val connector: AuthConnector, val appConfig: AppConfig) {
+class EnrolmentsAuthService @Inject() (val connector: AuthConnector, val appConfig: AppConfig) {
 
   private val logger: Logger = Logger(this.getClass)
 
@@ -49,25 +49,24 @@ class EnrolmentsAuthService @Inject()(val connector: AuthConnector, val appConfi
   def buildPredicate(predicate: Predicate): Predicate =
     if (appConfig.confidenceLevelConfig.authValidationEnabled) {
       predicate and ((Individual and ConfidenceLevel.L200) or Organisation or Agent)
-    }
-    else {
+    } else {
       predicate
     }
 
   def authorised(predicate: Predicate)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[AuthOutcome] = {
     authFunction.authorised(buildPredicate(predicate)).retrieve(affinityGroup and authorisedEnrolments) {
-      case Some(Individual) ~ _   =>
+      case Some(Individual) ~ _ =>
         val user = UserDetails("", "Individual", None)
         Future.successful(Right(user))
       case Some(Organisation) ~ _ =>
         val user = UserDetails("", "Organisation", None)
         Future.successful(Right(user))
-      case Some(Agent) ~ _        =>
+      case Some(Agent) ~ _ =>
         retrieveAgentDetails() map {
-          case arn@Some(_) =>
+          case arn @ Some(_) =>
             val user: AuthOutcome = Right(UserDetails("", "Agent", arn))
             user
-          case None        =>
+          case None =>
             logger.warn(s"[EnrolmentsAuthService][authorised] No AgentReferenceNumber defined on agent enrolment.")
             Left(DownstreamError)
         }
@@ -77,16 +76,18 @@ class EnrolmentsAuthService @Inject()(val connector: AuthConnector, val appConfi
     } recoverWith {
       case _: MissingBearerToken     => Future.successful(Left(UnauthorisedError))
       case _: AuthorisationException => Future.successful(Left(UnauthorisedError))
-      case error                     =>
+      case error =>
         logger.warn(s"[EnrolmentsAuthService][authorised] An unexpected error occurred: $error")
         Future.successful(Left(DownstreamError))
     }
   }
 
   private def retrieveAgentDetails()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[String]] =
-    authFunction.authorised(AffinityGroup.Agent and Enrolment("HMRC-AS-AGENT"))
+    authFunction
+      .authorised(AffinityGroup.Agent and Enrolment("HMRC-AS-AGENT"))
       .retrieve(Retrievals.agentCode and Retrievals.authorisedEnrolments) {
         case _ ~ enrolments => Future.successful(getAgentReferenceFromEnrolments(enrolments))
         case _              => Future.successful(None)
       }
+
 }

@@ -35,6 +35,7 @@ case class Expenses(businessTravelCosts: Option[BigDecimal],
     otherAndCapitalAllowances.isEmpty &&
     vehicleExpenses.isEmpty &&
     mileageAllowanceRelief.isEmpty
+
 }
 
 object Expenses {

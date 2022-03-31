@@ -22,20 +22,19 @@ import v1.models.downstream.DownstreamSource
 
 class MtdSourceSpec extends UnitSpec with EnumJsonSpecSupport {
 
-  val mtdLatest = MtdSource.`latest`
+  val mtdLatest   = MtdSource.`latest`
   val mtdCustomer = MtdSource.`user`
-  val mtdHmrc = MtdSource.`hmrcHeld`
+  val mtdHmrc     = MtdSource.`hmrcHeld`
 
-  val desLatest = DownstreamSource.`LATEST`
-  val desCustomer = DownstreamSource.`CUSTOMER`
+  val desLatest       = DownstreamSource.`LATEST`
+  val desCustomer     = DownstreamSource.`CUSTOMER`
   val desOutgoingHmrc = DownstreamSource.`HMRC-HELD`
 
   testRoundTrip[MtdSource](
-    ("latest",MtdSource.`latest`),
-    ("user",MtdSource.`user`),
+    ("latest", MtdSource.`latest`),
+    ("user", MtdSource.`user`),
     ("hmrcHeld", MtdSource.`hmrcHeld`)
   )
-
 
   "mtdSources" when {
     "when using the toDownstream" should {
@@ -50,4 +49,5 @@ class MtdSourceSpec extends UnitSpec with EnumJsonSpecSupport {
       }
     }
   }
+
 }

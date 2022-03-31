@@ -29,7 +29,7 @@ class DeleteOtherExpensesControllerISpec extends IntegrationBaseSpec {
 
   private trait Test {
 
-    val nino = "AA123456A"
+    val nino    = "AA123456A"
     val taxYear = "2021-22"
 
     def uri: String = s"/other/$nino/$taxYear"
@@ -51,6 +51,7 @@ class DeleteOtherExpensesControllerISpec extends IntegrationBaseSpec {
          |        "reason": "des message"
          |      }
     """.stripMargin
+
   }
 
   "calling the delete endpoint" should {
@@ -78,7 +79,7 @@ class DeleteOtherExpensesControllerISpec extends IntegrationBaseSpec {
         def validationErrorTest(requestNino: String, requestTaxYear: String, expectedStatus: Int, expectedBody: MtdError): Unit = {
           s"validation fails with ${expectedBody.code} error" in new Test {
 
-            override val nino: String = requestNino
+            override val nino: String    = requestNino
             override val taxYear: String = requestTaxYear
 
             override def setupStubs(): StubMapping = {
@@ -100,7 +101,6 @@ class DeleteOtherExpensesControllerISpec extends IntegrationBaseSpec {
           ("AA123456A", "2018-20", Status.BAD_REQUEST, RuleTaxYearRangeInvalidError),
           ("AA123456A", "2018-19", Status.BAD_REQUEST, RuleTaxYearNotSupportedError)
         )
-
 
         input.foreach(args => (validationErrorTest _).tupled(args))
       }
@@ -134,4 +134,5 @@ class DeleteOtherExpensesControllerISpec extends IntegrationBaseSpec {
       }
     }
   }
+
 }

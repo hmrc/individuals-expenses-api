@@ -26,16 +26,16 @@ import v1.models.request.deleteOtherExpenses.DeleteOtherExpensesRequest
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class DeleteOtherExpensesConnector @Inject()(val http: HttpClient,
-                                             val appConfig: AppConfig) extends BaseDownstreamConnector {
+class DeleteOtherExpensesConnector @Inject() (val http: HttpClient, val appConfig: AppConfig) extends BaseDownstreamConnector {
 
-  def deleteOtherExpenses(request: DeleteOtherExpensesRequest)(
-    implicit hc: HeaderCarrier,
-    ec: ExecutionContext,
-    correlationId: String): Future[DownstreamOutcome[Unit]] = {
+  def deleteOtherExpenses(request: DeleteOtherExpensesRequest)(implicit
+      hc: HeaderCarrier,
+      ec: ExecutionContext,
+      correlationId: String): Future[DownstreamOutcome[Unit]] = {
 
     delete(
-      request = DownstreamRequest[Unit](IfsR5,s"income-tax/expenses/other/${request.nino.nino}/${request.taxYear}")
+      request = DownstreamRequest[Unit](IfsR5, s"income-tax/expenses/other/${request.nino.nino}/${request.taxYear}")
     )
   }
+
 }

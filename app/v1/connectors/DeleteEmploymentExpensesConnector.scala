@@ -26,16 +26,16 @@ import v1.models.request.deleteEmploymentExpenses.DeleteEmploymentExpensesReques
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class DeleteEmploymentExpensesConnector @Inject()(val http: HttpClient,
-                                                  val appConfig: AppConfig) extends BaseDownstreamConnector {
+class DeleteEmploymentExpensesConnector @Inject() (val http: HttpClient, val appConfig: AppConfig) extends BaseDownstreamConnector {
 
-  def deleteEmploymentExpenses(request: DeleteEmploymentExpensesRequest)(
-    implicit hc: HeaderCarrier,
-    ec: ExecutionContext,
-    correlationId: String): Future[DownstreamOutcome[Unit]] = {
+  def deleteEmploymentExpenses(request: DeleteEmploymentExpensesRequest)(implicit
+      hc: HeaderCarrier,
+      ec: ExecutionContext,
+      correlationId: String): Future[DownstreamOutcome[Unit]] = {
 
     delete(
-      request = DownstreamRequest[Unit](Des,s"income-tax/expenses/employments/${request.nino.nino}/${request.taxYear}")
+      request = DownstreamRequest[Unit](Des, s"income-tax/expenses/employments/${request.nino.nino}/${request.taxYear}")
     )
   }
+
 }

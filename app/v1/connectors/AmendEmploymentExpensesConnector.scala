@@ -26,17 +26,17 @@ import v1.models.request.amendEmploymentExpenses.AmendEmploymentExpensesRequest
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class AmendEmploymentExpensesConnector @Inject()(val http: HttpClient,
-                                                 val appConfig: AppConfig) extends BaseDownstreamConnector {
+class AmendEmploymentExpensesConnector @Inject() (val http: HttpClient, val appConfig: AppConfig) extends BaseDownstreamConnector {
 
-  def amend(request: AmendEmploymentExpensesRequest)(
-    implicit hc: HeaderCarrier,
-    ec: ExecutionContext,
-    correlationId: String): Future[DownstreamOutcome[Unit]] = {
+  def amend(request: AmendEmploymentExpensesRequest)(implicit
+      hc: HeaderCarrier,
+      ec: ExecutionContext,
+      correlationId: String): Future[DownstreamOutcome[Unit]] = {
 
     put(
       body = request.body,
-      request = DownstreamRequest[Unit](IfsR6,s"income-tax/expenses/employments/${request.nino.nino}/${request.taxYear}")
+      request = DownstreamRequest[Unit](IfsR6, s"income-tax/expenses/employments/${request.nino.nino}/${request.taxYear}")
     )
   }
+
 }

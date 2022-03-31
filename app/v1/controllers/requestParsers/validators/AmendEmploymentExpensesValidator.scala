@@ -23,14 +23,16 @@ import v1.controllers.requestParsers.validators.validations._
 import v1.models.errors.{MtdError, RuleIncorrectOrEmptyBodyError}
 import v1.models.request.amendEmploymentExpenses.{AmendEmploymentExpensesBody, AmendEmploymentExpensesRawData, Expenses}
 
-class AmendEmploymentExpensesValidator @Inject()(implicit currentDateTime: CurrentDateTime, appConfig: AppConfig, currentTaxYear: CurrentTaxYear)
-  extends Validator[AmendEmploymentExpensesRawData] {
-  private val validationSet = List(parameterFormatValidation, bodyFormatValidation, parameterRuleValidation, incorrectOrEmptyBodySubmittedValidation, bodyFieldValidation)
+class AmendEmploymentExpensesValidator @Inject() (implicit currentDateTime: CurrentDateTime, appConfig: AppConfig, currentTaxYear: CurrentTaxYear)
+    extends Validator[AmendEmploymentExpensesRawData] {
+
+  private val validationSet =
+    List(parameterFormatValidation, bodyFormatValidation, parameterRuleValidation, incorrectOrEmptyBodySubmittedValidation, bodyFieldValidation)
 
   private def parameterFormatValidation: AmendEmploymentExpensesRawData => List[List[MtdError]] = (data: AmendEmploymentExpensesRawData) => {
     List(
       NinoValidation.validate(data.nino),
-      TaxYearValidation.validate(data.taxYear),
+      TaxYearValidation.validate(data.taxYear)
     )
   }
 
@@ -54,11 +56,12 @@ class AmendEmploymentExpensesValidator @Inject()(implicit currentDateTime: Curre
   private def bodyFieldValidation: AmendEmploymentExpensesRawData => List[List[MtdError]] = { data =>
     val body = data.body.as[AmendEmploymentExpensesBody]
 
-    List(flattenErrors(
-      List(
-        validateExpenses(body.expenses)
-      )
-    ))
+    List(
+      flattenErrors(
+        List(
+          validateExpenses(body.expenses)
+        )
+      ))
   }
 
   private def validateExpenses(expenses: Expenses): List[MtdError] = {
@@ -101,4 +104,5 @@ class AmendEmploymentExpensesValidator @Inject()(implicit currentDateTime: Curre
   override def validate(data: AmendEmploymentExpensesRawData): List[MtdError] = {
     run(validationSet, data).distinct
   }
+
 }

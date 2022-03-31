@@ -20,7 +20,7 @@ import javax.inject.{Inject, Singleton}
 import org.joda.time.{DateTime, DateTimeZone}
 
 @Singleton
-class CurrentDateTime @Inject()() {
+class CurrentDateTime @Inject() () {
 
   def getDateTime: DateTime = DateTime.now(DateTimeZone.UTC)
 }

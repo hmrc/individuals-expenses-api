@@ -23,13 +23,13 @@ class CurrentTaxYearSpec extends UnitSpec {
 
   class TestTaxYear extends CurrentTaxYear
 
-  lazy val dateAfterApril = DateTime.parse("2019-08-05")
-  lazy val dateBeforeApril = DateTime.parse("2020-03-05")
+  lazy val dateAfterApril        = DateTime.parse("2019-08-05")
+  lazy val dateBeforeApril       = DateTime.parse("2020-03-05")
   lazy val dateFirstDayOfTaxYear = DateTime.parse("2019-04-06")
-  lazy val dateLastDayOfTaxYear = DateTime.parse("2020-04-05")
-  lazy val dateFirstDayOfYear = DateTime.parse("2020-01-01")
-  lazy val dateLastDayOfYear = DateTime.parse("2019-12-31")
-  private val thisYear = 2020
+  lazy val dateLastDayOfTaxYear  = DateTime.parse("2020-04-05")
+  lazy val dateFirstDayOfYear    = DateTime.parse("2020-01-01")
+  lazy val dateLastDayOfYear     = DateTime.parse("2019-12-31")
+  private val thisYear           = 2020
 
   "getCurrentTaxYear" should {
     "return the current tax year" when {
@@ -59,4 +59,5 @@ class CurrentTaxYearSpec extends UnitSpec {
       }
     }
   }
+
 }

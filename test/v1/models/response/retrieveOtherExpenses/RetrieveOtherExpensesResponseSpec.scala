@@ -29,17 +29,18 @@ class RetrieveOtherExpensesResponseSpec extends UnitSpec with MockAppConfig {
     Some(PaymentsToTradeUnionsForDeathBenefits(Some("TRADE UNION PAYMENTS"), 2314.32)),
     Some(PatentRoyaltiesPayments(Some("ROYALTIES PAYMENTS"), 2314.32))
   )
+
   val retrieveOtherExpensesBodyWithoutPatents = RetrieveOtherExpensesResponse(
     "2019-04-04T01:01:01Z",
     Some(PaymentsToTradeUnionsForDeathBenefits(Some("TRADE UNION PAYMENTS"), 2314.32)),
     None
   )
+
   val retrieveOtherExpensesBodyWithoutPayments = RetrieveOtherExpensesResponse(
     "2019-04-04T01:01:01Z",
     None,
     Some(PatentRoyaltiesPayments(Some("ROYALTIES PAYMENTS"), 2314.32))
   )
-
 
   val json = Json.parse(
     """{
@@ -92,6 +93,7 @@ class RetrieveOtherExpensesResponseSpec extends UnitSpec with MockAppConfig {
       }
     }
   }
+
   "writes" when {
     "passed valid model" should {
       "return valid JSON" in {
@@ -112,7 +114,7 @@ class RetrieveOtherExpensesResponseSpec extends UnitSpec with MockAppConfig {
 
   "LinksFactory" should {
     "return the correct links" in {
-      val nino = "mynino"
+      val nino    = "mynino"
       val taxYear = "mytaxyear"
 
       MockAppConfig.apiGatewayContext.returns("my/context").anyNumberOfTimes
@@ -124,4 +126,5 @@ class RetrieveOtherExpensesResponseSpec extends UnitSpec with MockAppConfig {
         )
     }
   }
+
 }

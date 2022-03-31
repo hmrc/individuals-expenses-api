@@ -26,7 +26,10 @@ trait MockCurrentTaxYear extends MockFactory {
   val mockCurrentTaxYear: CurrentTaxYear = mock[CurrentTaxYear]
 
   object MockCurrentTaxYear {
+
     def getCurrentTaxYear(date: DateTime): CallHandler1[DateTime, Int] =
       (mockCurrentTaxYear.getCurrentTaxYear(_: DateTime)).expects(date)
+
   }
+
 }

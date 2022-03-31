@@ -33,6 +33,7 @@ class MockDeleteOtherExpensesValidator extends MockFactory {
         .validate(_: DeleteOtherExpensesRawData))
         .expects(data)
     }
-  }
-}
 
+  }
+
+}

@@ -28,16 +28,16 @@ import v1.models.request.deleteEmploymentExpenses.DeleteEmploymentExpensesRawDat
 
 class DeleteEmploymentExpensesValidatorSpec extends UnitSpec {
 
-  private val validNino = "AA123456A"
+  private val validNino    = "AA123456A"
   private val validTaxYear = "2021-22"
-  private val date = DateTime.parse("2020-08-05")
+  private val date         = DateTime.parse("2020-08-05")
 
   class Test extends MockCurrentDateTime with MockCurrentTaxYear with MockAppConfig {
 
     implicit val dateTimeProvider: CurrentDateTime = mockCurrentDateTime
-    val dateTimeFormatter: DateTimeFormatter = DateTimeFormat.forPattern("yyyy-MM-dd")
+    val dateTimeFormatter: DateTimeFormatter       = DateTimeFormat.forPattern("yyyy-MM-dd")
 
-    implicit val appConfig: AppConfig = mockAppConfig
+    implicit val appConfig: AppConfig           = mockAppConfig
     implicit val currentTaxYear: CurrentTaxYear = mockCurrentTaxYear
 
     val validator = new DeleteEmploymentExpensesValidator()
@@ -48,8 +48,10 @@ class DeleteEmploymentExpensesValidatorSpec extends UnitSpec {
       .returns(DateTime.parse("2020-08-05", dateTimeFormatter))
       .anyNumberOfTimes()
 
-    MockCurrentTaxYear.getCurrentTaxYear(date)
+    MockCurrentTaxYear
+      .getCurrentTaxYear(date)
       .returns(2021)
+
   }
 
   "running a validation error" should {
@@ -94,4 +96,5 @@ class DeleteEmploymentExpensesValidatorSpec extends UnitSpec {
       }
     }
   }
+
 }

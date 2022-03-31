@@ -53,4 +53,5 @@ class ExpensesSpec extends UnitSpec with JsonErrorValidators {
       }
     }
   }
+
 }

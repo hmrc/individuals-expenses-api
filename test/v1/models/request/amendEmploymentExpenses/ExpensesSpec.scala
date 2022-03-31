@@ -39,8 +39,7 @@ class ExpensesSpec extends UnitSpec with JsonErrorValidators {
       |""".stripMargin
   )
 
-  val minJson: JsValue = Json.parse(
-    """
+  val minJson: JsValue = Json.parse("""
       |{}
       |""".stripMargin)
 
@@ -95,4 +94,5 @@ class ExpensesSpec extends UnitSpec with JsonErrorValidators {
       }
     }
   }
+
 }

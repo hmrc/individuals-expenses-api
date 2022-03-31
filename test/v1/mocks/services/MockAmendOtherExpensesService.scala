@@ -38,5 +38,7 @@ trait MockAmendOtherExpensesService extends MockFactory {
         .amend(_: AmendOtherExpensesRequest)(_: HeaderCarrier, _: ExecutionContext, _: EndpointLogContext, _: String))
         .expects(requestData, *, *, *, *)
     }
+
   }
+
 }

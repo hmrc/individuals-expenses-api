@@ -36,7 +36,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class IgnoreEmploymentExpensesControllerSpec
-  extends ControllerBaseSpec
+    extends ControllerBaseSpec
     with MockEnrolmentsAuthService
     with MockMtdIdLookupService
     with MockIgnoreEmploymentExpensesService
@@ -45,8 +45,8 @@ class IgnoreEmploymentExpensesControllerSpec
     with MockAuditService
     with MockIdGenerator {
 
-  private val nino = "AA123456A"
-  private val taxYear = "2019-20"
+  private val nino          = "AA123456A"
+  private val taxYear       = "2019-20"
   private val correlationId = "X-123"
 
   private val testHateoasLinks = Seq(
@@ -54,8 +54,7 @@ class IgnoreEmploymentExpensesControllerSpec
     Link(href = s"/individuals/expenses/employments/$nino/$taxYear", method = DELETE, rel = "delete-employment-expenses")
   )
 
-  val responseBody: JsValue = Json.parse(
-    s"""
+  val responseBody: JsValue = Json.parse(s"""
        |{
        |  "links": [
        |    {
@@ -86,7 +85,7 @@ class IgnoreEmploymentExpensesControllerSpec
       )
     )
 
-  private val rawData = IgnoreEmploymentExpensesRawData(nino, taxYear)
+  private val rawData     = IgnoreEmploymentExpensesRawData(nino, taxYear)
   private val requestData = IgnoreEmploymentExpensesRequest(Nino(nino), taxYear)
 
   trait Test {
@@ -199,4 +198,5 @@ class IgnoreEmploymentExpensesControllerSpec
       }
     }
   }
+
 }

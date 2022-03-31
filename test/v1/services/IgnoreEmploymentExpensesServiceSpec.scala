@@ -26,21 +26,24 @@ import scala.concurrent.Future
 
 class IgnoreEmploymentExpensesServiceSpec extends ServiceSpec {
 
-  val taxYear = "2021-22"
+  val taxYear    = "2021-22"
   val nino: Nino = Nino("AA123456A")
 
   private val requestData = IgnoreEmploymentExpensesRequest(nino, taxYear)
 
   trait Test extends MockIgnoreEmploymentExpensesConnector {
+
     val service = new IgnoreEmploymentExpensesService(
       connector = mockIgnoreEmploymentExpensesConnector
     )
+
   }
 
   "service" should {
     "return mapped result" when {
       "connector call successful" in new Test {
-        MockIgnoreEmploymentExpensesConnector.ignore(requestData)
+        MockIgnoreEmploymentExpensesConnector
+          .ignore(requestData)
           .returns(Future.successful(Right(ResponseWrapper(correlationId, ()))))
 
         await(service.ignore(requestData)) shouldBe Right(ResponseWrapper(correlationId, ()))
@@ -54,24 +57,26 @@ class IgnoreEmploymentExpensesServiceSpec extends ServiceSpec {
       def serviceError(desErrorCode: String, error: MtdError): Unit =
         s"a $desErrorCode error is returned from the service" in new Test {
 
-          MockIgnoreEmploymentExpensesConnector.ignore(requestData)
+          MockIgnoreEmploymentExpensesConnector
+            .ignore(requestData)
             .returns(Future.successful(Left(ResponseWrapper(correlationId, DesErrors.single(DesErrorCode(desErrorCode))))))
 
           await(service.ignore(requestData)) shouldBe Left(ErrorWrapper(correlationId, error))
         }
 
       val input = Seq(
-        "INVALID_TAXABLE_ENTITY_ID" -> NinoFormatError,
-        "INVALID_TAX_YEAR" -> TaxYearFormatError,
-        "INVALID_CORRELATIONID" -> DownstreamError,
-        "INVALID_PAYLOAD" -> DownstreamError,
+        "INVALID_TAXABLE_ENTITY_ID"       -> NinoFormatError,
+        "INVALID_TAX_YEAR"                -> TaxYearFormatError,
+        "INVALID_CORRELATIONID"           -> DownstreamError,
+        "INVALID_PAYLOAD"                 -> DownstreamError,
         "INVALID_REQUEST_BEFORE_TAX_YEAR" -> RuleTaxYearNotEndedError,
-        "INCOME_SOURCE_NOT_FOUND" -> NotFoundError,
-        "SERVER_ERROR" -> DownstreamError,
-        "SERVICE_UNAVAILABLE" -> DownstreamError
+        "INCOME_SOURCE_NOT_FOUND"         -> NotFoundError,
+        "SERVER_ERROR"                    -> DownstreamError,
+        "SERVICE_UNAVAILABLE"             -> DownstreamError
       )
 
       input.foreach(args => (serviceError _).tupled(args))
     }
   }
+
 }

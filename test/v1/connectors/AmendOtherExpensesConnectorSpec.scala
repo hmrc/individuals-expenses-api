@@ -21,27 +21,35 @@ import v1.models.domain.Nino
 import v1.mocks.MockHttpClient
 import uk.gov.hmrc.http.HeaderCarrier
 import v1.models.outcomes.ResponseWrapper
-import v1.models.request.amendOtherExpenses.{AmendOtherExpensesBody, AmendOtherExpensesRequest, PatentRoyaltiesPayments, PaymentsToTradeUnionsForDeathBenefits}
+import v1.models.request.amendOtherExpenses.{
+  AmendOtherExpensesBody,
+  AmendOtherExpensesRequest,
+  PatentRoyaltiesPayments,
+  PaymentsToTradeUnionsForDeathBenefits
+}
 
 import scala.concurrent.Future
 
 class AmendOtherExpensesConnectorSpec extends ConnectorSpec {
 
   val taxYear: String = "2017-18"
-  val nino: String = "AA123456A"
+  val nino: String    = "AA123456A"
 
   val body: AmendOtherExpensesBody = AmendOtherExpensesBody(
-    Some(PaymentsToTradeUnionsForDeathBenefits(
-      Some("TRADE UNION PAYMENTS"),
-      2000.99
-    )),
-    Some(PatentRoyaltiesPayments(
-      Some("ROYALTIES PAYMENTS"),
-      2000.99
-    ))
+    Some(
+      PaymentsToTradeUnionsForDeathBenefits(
+        Some("TRADE UNION PAYMENTS"),
+        2000.99
+      )),
+    Some(
+      PatentRoyaltiesPayments(
+        Some("ROYALTIES PAYMENTS"),
+        2000.99
+      ))
   )
 
   class Test extends MockHttpClient with MockAppConfig {
+
     val connector: AmendOtherExpensesConnector = new AmendOtherExpensesConnector(
       http = mockHttpClient,
       appConfig = mockAppConfig
@@ -59,7 +67,7 @@ class AmendOtherExpensesConnectorSpec extends ConnectorSpec {
     "put a body and return 204 no body" in new Test {
       val outcome = Right(ResponseWrapper(correlationId, ()))
 
-      implicit val hc: HeaderCarrier = HeaderCarrier(otherHeaders = otherHeaders ++ Seq("Content-Type" -> "application/json"))
+      implicit val hc: HeaderCarrier                = HeaderCarrier(otherHeaders = otherHeaders ++ Seq("Content-Type" -> "application/json"))
       val requiredHeadersPut: Seq[(String, String)] = requiredIfsHeaders ++ Seq("Content-Type" -> "application/json")
 
       MockHttpClient
@@ -69,9 +77,11 @@ class AmendOtherExpensesConnectorSpec extends ConnectorSpec {
           body = body,
           requiredHeaders = requiredHeadersPut,
           excludedHeaders = excludedHeaders
-        ).returns(Future.successful(outcome))
+        )
+        .returns(Future.successful(outcome))
 
       await(connector.amend(request)) shouldBe outcome
     }
   }
+
 }

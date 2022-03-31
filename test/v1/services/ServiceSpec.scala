@@ -23,13 +23,10 @@ import v1.controllers.EndpointLogContext
 
 import scala.concurrent.ExecutionContext
 
-trait ServiceSpec extends UnitSpec
-  with Status
-  with MimeTypes
-  with HeaderNames {
+trait ServiceSpec extends UnitSpec with Status with MimeTypes with HeaderNames {
 
-  implicit val hc: HeaderCarrier = HeaderCarrier()
-  implicit val ec: ExecutionContext = scala.concurrent.ExecutionContext.global
+  implicit val hc: HeaderCarrier              = HeaderCarrier()
+  implicit val ec: ExecutionContext           = scala.concurrent.ExecutionContext.global
   implicit val logContext: EndpointLogContext = EndpointLogContext("c", "ep")
-  implicit val correlationId: String = "X-123"
+  implicit val correlationId: String          = "X-123"
 }

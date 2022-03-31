@@ -33,7 +33,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class DeleteOtherExpensesControllerSpec
-  extends ControllerBaseSpec
+    extends ControllerBaseSpec
     with MockEnrolmentsAuthService
     with MockMtdIdLookupService
     with MockDeleteOtherExpensesService
@@ -41,7 +41,6 @@ class DeleteOtherExpensesControllerSpec
     with MockHateoasFactory
     with MockAuditService
     with MockIdGenerator {
-
 
   trait Test {
     val hc = HeaderCarrier()
@@ -61,8 +60,8 @@ class DeleteOtherExpensesControllerSpec
     MockIdGenerator.generateCorrelationId.returns(correlationId)
   }
 
-  private val nino = "AA123456A"
-  private val taxYear = "2019-20"
+  private val nino          = "AA123456A"
+  private val taxYear       = "2019-20"
   private val correlationId = "X-123"
 
   def event(auditResponse: AuditResponse): AuditEvent[ExpensesAuditDetail] =
@@ -79,7 +78,7 @@ class DeleteOtherExpensesControllerSpec
       )
     )
 
-  private val rawData = DeleteOtherExpensesRawData(nino, taxYear)
+  private val rawData     = DeleteOtherExpensesRawData(nino, taxYear)
   private val requestData = DeleteOtherExpensesRequest(Nino(nino), taxYear)
 
   "handleRequest" should {
@@ -162,11 +161,12 @@ class DeleteOtherExpensesControllerSpec
           (NinoFormatError, BAD_REQUEST),
           (TaxYearFormatError, BAD_REQUEST),
           (NotFoundError, NOT_FOUND),
-          (DownstreamError, INTERNAL_SERVER_ERROR),
+          (DownstreamError, INTERNAL_SERVER_ERROR)
         )
 
         input.foreach(args => (serviceErrors _).tupled(args))
       }
     }
   }
+
 }

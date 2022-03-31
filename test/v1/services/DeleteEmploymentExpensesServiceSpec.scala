@@ -26,21 +26,24 @@ import scala.concurrent.Future
 
 class DeleteEmploymentExpensesServiceSpec extends ServiceSpec {
 
-  val taxYear = "2021-22"
+  val taxYear    = "2021-22"
   val nino: Nino = Nino("AA123456A")
 
   private val requestData = DeleteEmploymentExpensesRequest(nino, taxYear)
 
   trait Test extends MockDeleteEmploymentExpensesConnector {
+
     val service = new DeleteEmploymentExpensesService(
       deleteEmploymentExpensesConnector = mockDeleteEmploymentExpensesConnector
     )
+
   }
 
   "service" should {
     "service call successful" when {
       "return mapped result" in new Test {
-        MockDeleteEmploymentExpensesConnector.deleteEmploymentExpenses(requestData)
+        MockDeleteEmploymentExpensesConnector
+          .deleteEmploymentExpenses(requestData)
           .returns(Future.successful(Right(ResponseWrapper(correlationId, ()))))
 
         await(service.deleteEmploymentExpenses(requestData)) shouldBe Right(ResponseWrapper(correlationId, ()))
@@ -54,7 +57,8 @@ class DeleteEmploymentExpensesServiceSpec extends ServiceSpec {
       def serviceError(desErrorCode: String, error: MtdError): Unit =
         s"a $desErrorCode error is returned from the service" in new Test {
 
-          MockDeleteEmploymentExpensesConnector.deleteEmploymentExpenses(requestData)
+          MockDeleteEmploymentExpensesConnector
+            .deleteEmploymentExpenses(requestData)
             .returns(Future.successful(Left(ResponseWrapper(correlationId, DesErrors.single(DesErrorCode(desErrorCode))))))
 
           await(service.deleteEmploymentExpenses(requestData)) shouldBe Left(ErrorWrapper(correlationId, error))
@@ -62,14 +66,15 @@ class DeleteEmploymentExpensesServiceSpec extends ServiceSpec {
 
       val input = Seq(
         "INVALID_TAXABLE_ENTITY_ID" -> NinoFormatError,
-        "INVALID_TAX_YEAR" -> TaxYearFormatError,
-        "INVALID_CORRELATIONID" -> DownstreamError,
-        "NO_DATA_FOUND" -> NotFoundError,
-        "SERVER_ERROR" -> DownstreamError,
-        "SERVICE_UNAVAILABLE" -> DownstreamError
+        "INVALID_TAX_YEAR"          -> TaxYearFormatError,
+        "INVALID_CORRELATIONID"     -> DownstreamError,
+        "NO_DATA_FOUND"             -> NotFoundError,
+        "SERVER_ERROR"              -> DownstreamError,
+        "SERVICE_UNAVAILABLE"       -> DownstreamError
       )
 
       input.foreach(args => (serviceError _).tupled(args))
     }
   }
+
 }

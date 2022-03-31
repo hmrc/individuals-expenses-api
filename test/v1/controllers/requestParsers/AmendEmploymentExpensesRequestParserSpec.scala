@@ -21,16 +21,20 @@ import support.UnitSpec
 import v1.models.domain.Nino
 import v1.mocks.validators.MockAmendEmploymentExpensesValidator
 import v1.models.errors.{BadRequestError, ErrorWrapper, NinoFormatError, TaxYearFormatError}
-import v1.models.request.amendEmploymentExpenses.{AmendEmploymentExpensesBody, AmendEmploymentExpensesRawData, AmendEmploymentExpensesRequest, Expenses}
+import v1.models.request.amendEmploymentExpenses.{
+  AmendEmploymentExpensesBody,
+  AmendEmploymentExpensesRawData,
+  AmendEmploymentExpensesRequest,
+  Expenses
+}
 
 class AmendEmploymentExpensesRequestParserSpec extends UnitSpec {
 
-  val nino = "AA123456B"
-  val taxYear = "2017-18"
+  val nino                           = "AA123456B"
+  val taxYear                        = "2017-18"
   implicit val correlationId: String = "a1e8057e-fbbc-47a8-a8b4-78d9f015c253"
 
-  private val requestBodyJson = Json.parse(
-    """
+  private val requestBodyJson = Json.parse("""
       |{
       |    "expenses": {
       |        "businessTravelCosts": 123.12,
@@ -58,25 +62,31 @@ class AmendEmploymentExpensesRequestParserSpec extends UnitSpec {
         MockAmendEmploymentExpensesValidator.validate(inputData).returns(Nil)
 
         parser.parseRequest(inputData) shouldBe
-          Right(AmendEmploymentExpensesRequest(Nino(nino), taxYear, AmendEmploymentExpensesBody(
-            Expenses(
-              Some(123.12),
-              Some(123.12),
-              Some(123.12),
-              Some(123.12),
-              Some(123.12),
-              Some(123.12),
-              Some(123.12),
-              Some(123.12)
-            )
-          )))
+          Right(
+            AmendEmploymentExpensesRequest(
+              Nino(nino),
+              taxYear,
+              AmendEmploymentExpensesBody(
+                Expenses(
+                  Some(123.12),
+                  Some(123.12),
+                  Some(123.12),
+                  Some(123.12),
+                  Some(123.12),
+                  Some(123.12),
+                  Some(123.12),
+                  Some(123.12)
+                )
+              )
+            ))
       }
     }
 
     "return an ErrorWrapper" when {
 
       "a single validation error occurs" in new Test {
-        MockAmendEmploymentExpensesValidator.validate(inputData)
+        MockAmendEmploymentExpensesValidator
+          .validate(inputData)
           .returns(List(NinoFormatError))
 
         parser.parseRequest(inputData) shouldBe
@@ -84,7 +94,8 @@ class AmendEmploymentExpensesRequestParserSpec extends UnitSpec {
       }
 
       "multiple validation errors occur" in new Test {
-        MockAmendEmploymentExpensesValidator.validate(inputData)
+        MockAmendEmploymentExpensesValidator
+          .validate(inputData)
           .returns(List(NinoFormatError, TaxYearFormatError))
 
         parser.parseRequest(inputData) shouldBe
@@ -92,4 +103,5 @@ class AmendEmploymentExpensesRequestParserSpec extends UnitSpec {
       }
     }
   }
+
 }

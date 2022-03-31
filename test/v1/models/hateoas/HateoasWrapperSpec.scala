@@ -78,4 +78,5 @@ class HateoasWrapperSpec extends UnitSpec {
         Json.parse("""{}""".stripMargin)
     }
   }
+
 }

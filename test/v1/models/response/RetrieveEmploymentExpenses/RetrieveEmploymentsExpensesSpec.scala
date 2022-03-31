@@ -25,26 +25,31 @@ import v1.models.utils.JsonErrorValidators
 class RetrieveEmploymentsExpensesSpec extends UnitSpec with JsonErrorValidators {
 
   val retrieveEmploymentExpensesBodyLatest =
-    RetrieveEmploymentsExpensesResponse(Some("2020-07-13T20:37:27Z"),
+    RetrieveEmploymentsExpensesResponse(
+      Some("2020-07-13T20:37:27Z"),
       Some(1000.25),
       Some(MtdSource.`latest`),
       Some("2020-07-13T20:37:27Z"),
-      Some(Expenses(Some(1000.25),Some(1000.25),Some(1000.25),Some(1000.25),Some(1000.25),Some(1000.25),Some(1000.25),Some(1000.25))))
+      Some(Expenses(Some(1000.25), Some(1000.25), Some(1000.25), Some(1000.25), Some(1000.25), Some(1000.25), Some(1000.25), Some(1000.25)))
+    )
 
   val retrieveEmploymentExpensesBodyCustomer =
-    RetrieveEmploymentsExpensesResponse(Some("2020-07-13T20:37:27Z"),
+    RetrieveEmploymentsExpensesResponse(
+      Some("2020-07-13T20:37:27Z"),
       Some(1000.25),
       Some(MtdSource.`user`),
       Some("2020-07-13T20:37:27Z"),
-      Some(Expenses(Some(1000.25),Some(1000.25),Some(1000.25),Some(1000.25),Some(1000.25),Some(1000.25),Some(1000.25),Some(1000.25))))
+      Some(Expenses(Some(1000.25), Some(1000.25), Some(1000.25), Some(1000.25), Some(1000.25), Some(1000.25), Some(1000.25), Some(1000.25)))
+    )
 
   val retrieveEmploymentExpensesBodyHmrcHeld =
-    RetrieveEmploymentsExpensesResponse(Some("2020-07-13T20:37:27Z"),
+    RetrieveEmploymentsExpensesResponse(
+      Some("2020-07-13T20:37:27Z"),
       Some(1000.25),
       Some(MtdSource.`hmrcHeld`),
       Some("2020-07-13T20:37:27Z"),
-      Some(Expenses(Some(1000.25),Some(1000.25),Some(1000.25),Some(1000.25),Some(1000.25),Some(1000.25),Some(1000.25),Some(1000.25))))
-
+      Some(Expenses(Some(1000.25), Some(1000.25), Some(1000.25), Some(1000.25), Some(1000.25), Some(1000.25), Some(1000.25), Some(1000.25)))
+    )
 
   val latestDesJson = Json.parse(
     """{
@@ -187,4 +192,5 @@ class RetrieveEmploymentsExpensesSpec extends UnitSpec with JsonErrorValidators 
       }
     }
   }
+
 }

@@ -18,7 +18,7 @@ package v1.connectors
 
 sealed trait DownstreamRequestConfig
 
-case object Des extends DownstreamRequestConfig
+case object Des   extends DownstreamRequestConfig
 case object IfsR5 extends DownstreamRequestConfig
 case object IfsR6 extends DownstreamRequestConfig
 

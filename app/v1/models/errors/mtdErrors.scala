@@ -25,29 +25,31 @@ object MtdError {
 
   implicit def genericWrites[T <: MtdError]: OWrites[T] =
     writes.contramap[T](c => c: MtdError)
+
 }
 
 object MtdErrorWithCustomMessage {
   def unapply(arg: MtdError): Option[String] = Some(arg.code)
 }
 
-object NinoFormatError extends MtdError("FORMAT_NINO", "The provided NINO is invalid")
-object TaxYearFormatError extends MtdError("FORMAT_TAX_YEAR", "The provided tax year is invalid")
-object ValueFormatError extends MtdError("FORMAT_VALUE", "The field should be between 0 and 99999999999.99")
+object NinoFormatError              extends MtdError("FORMAT_NINO", "The provided NINO is invalid")
+object TaxYearFormatError           extends MtdError("FORMAT_TAX_YEAR", "The provided tax year is invalid")
+object ValueFormatError             extends MtdError("FORMAT_VALUE", "The field should be between 0 and 99999999999.99")
 object CustomerReferenceFormatError extends MtdError("FORMAT_CUSTOMER_REFERENCE", "The provided customer reference is not valid")
-object SourceFormatError extends MtdError("FORMAT_SOURCE", "The provided source is invalid")
+object SourceFormatError            extends MtdError("FORMAT_SOURCE", "The provided source is invalid")
 
 // Rule Errors
 object RuleTaxYearNotSupportedError
-    extends MtdError("RULE_TAX_YEAR_NOT_SUPPORTED", "The specified tax year is not supported. That is, the tax year specified is before the minimum tax year value")
+    extends MtdError(
+      "RULE_TAX_YEAR_NOT_SUPPORTED",
+      "The specified tax year is not supported. That is, the tax year specified is before the minimum tax year value")
 
 object RuleIncorrectOrEmptyBodyError extends MtdError("RULE_INCORRECT_OR_EMPTY_BODY_SUBMITTED", "An empty or non-matching body was submitted")
 
 object RuleTaxYearRangeInvalidError
     extends MtdError("RULE_TAX_YEAR_RANGE_INVALID", "Tax year range invalid. A tax year range of one year is required")
 
-object RuleTaxYearNotEndedError
-    extends MtdError("RULE_TAX_YEAR_NOT_ENDED", "Tax year not ended")
+object RuleTaxYearNotEndedError extends MtdError("RULE_TAX_YEAR_NOT_ENDED", "Tax year not ended")
 
 //Standard Errors
 object NotFoundError extends MtdError("MATCHING_RESOURCE_NOT_FOUND", "Matching resource not found")
@@ -61,12 +63,12 @@ object BVRError extends MtdError("BUSINESS_ERROR", "Business validation error")
 object ServiceUnavailableError extends MtdError("SERVICE_UNAVAILABLE", "Internal server error")
 
 //Authorisation Errors
-object UnauthorisedError extends MtdError("CLIENT_OR_AGENT_NOT_AUTHORISED", "The client and/or agent is not authorised")
+object UnauthorisedError       extends MtdError("CLIENT_OR_AGENT_NOT_AUTHORISED", "The client and/or agent is not authorised")
 object InvalidBearerTokenError extends MtdError("UNAUTHORIZED", "Bearer token is missing or not authorized")
 
 // Accept header Errors
-object  InvalidAcceptHeaderError extends MtdError("ACCEPT_HEADER_INVALID", "The accept header is missing or invalid")
+object InvalidAcceptHeaderError extends MtdError("ACCEPT_HEADER_INVALID", "The accept header is missing or invalid")
 
-object  UnsupportedVersionError extends MtdError("NOT_FOUND", "The requested resource could not be found")
+object UnsupportedVersionError extends MtdError("NOT_FOUND", "The requested resource could not be found")
 
 object InvalidBodyTypeError extends MtdError("INVALID_BODY_TYPE", "Expecting text/json or application/json body")

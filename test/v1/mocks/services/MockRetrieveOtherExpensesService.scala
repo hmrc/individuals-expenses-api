@@ -34,11 +34,20 @@ trait MockRetrieveOtherExpensesService extends MockFactory {
 
   object MockRetrieveOtherExpensesService {
 
-    def retrieveOtherExpenses(requestData: RetrieveOtherExpensesRequest):
-    CallHandler[Future[Either[ErrorWrapper, ResponseWrapper[RetrieveOtherExpensesResponse]]]] = {
-      (mockRetrieveOtherExpensesService
-        .retrieveOtherExpenses(_: RetrieveOtherExpensesRequest)(_: HeaderCarrier, _: ExecutionContext, _: EndpointLogContext, _: String))
+    def retrieveOtherExpenses(
+        requestData: RetrieveOtherExpensesRequest): CallHandler[Future[Either[ErrorWrapper, ResponseWrapper[RetrieveOtherExpensesResponse]]]] = {
+      (
+        mockRetrieveOtherExpensesService
+          .retrieveOtherExpenses(_: RetrieveOtherExpensesRequest)(
+            _: HeaderCarrier,
+            _: ExecutionContext,
+            _: EndpointLogContext,
+            _: String
+          )
+        )
         .expects(requestData, *, *, *, *)
     }
+
   }
+
 }

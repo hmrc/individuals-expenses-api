@@ -27,9 +27,10 @@ import scala.concurrent.Future
 class DeleteOtherExpensesConnectorSpec extends ConnectorSpec {
 
   val taxYear: String = "2017-18"
-  val nino: String = "AA123456A"
+  val nino: String    = "AA123456A"
 
   class Test extends MockHttpClient with MockAppConfig {
+
     val connector: DeleteOtherExpensesConnector = new DeleteOtherExpensesConnector(
       http = mockHttpClient,
       appConfig = mockAppConfig
@@ -61,4 +62,5 @@ class DeleteOtherExpensesConnectorSpec extends ConnectorSpec {
       }
     }
   }
+
 }

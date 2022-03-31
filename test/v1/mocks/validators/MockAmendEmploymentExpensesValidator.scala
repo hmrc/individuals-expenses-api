@@ -32,5 +32,7 @@ class MockAmendEmploymentExpensesValidator extends MockFactory {
         .validate(_: AmendEmploymentExpensesRawData))
         .expects(data)
     }
+
   }
+
 }

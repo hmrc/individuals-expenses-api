@@ -25,7 +25,17 @@ import v1.mocks.hateoas.MockHateoasFactory
 import v1.mocks.requestParsers.MockDeleteEmploymentExpensesRequestParser
 import v1.mocks.services.{MockAuditService, MockDeleteEmploymentExpensesService, MockEnrolmentsAuthService, MockMtdIdLookupService}
 import v1.models.audit.{AuditError, AuditEvent, AuditResponse, ExpensesAuditDetail}
-import v1.models.errors.{BadRequestError, DownstreamError, ErrorWrapper, MtdError, NinoFormatError, NotFoundError, RuleTaxYearNotSupportedError, RuleTaxYearRangeInvalidError, TaxYearFormatError}
+import v1.models.errors.{
+  BadRequestError,
+  DownstreamError,
+  ErrorWrapper,
+  MtdError,
+  NinoFormatError,
+  NotFoundError,
+  RuleTaxYearNotSupportedError,
+  RuleTaxYearRangeInvalidError,
+  TaxYearFormatError
+}
 import v1.models.outcomes.ResponseWrapper
 import v1.models.request.deleteEmploymentExpenses.{DeleteEmploymentExpensesRawData, DeleteEmploymentExpensesRequest}
 
@@ -33,7 +43,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class DeleteEmploymentExpensesControllerSpec
-  extends ControllerBaseSpec
+    extends ControllerBaseSpec
     with MockEnrolmentsAuthService
     with MockMtdIdLookupService
     with MockDeleteEmploymentExpensesService
@@ -41,7 +51,6 @@ class DeleteEmploymentExpensesControllerSpec
     with MockHateoasFactory
     with MockAuditService
     with MockIdGenerator {
-
 
   trait Test {
     val hc: HeaderCarrier = HeaderCarrier()
@@ -61,8 +70,8 @@ class DeleteEmploymentExpensesControllerSpec
     MockIdGenerator.generateCorrelationId.returns(correlationId)
   }
 
-  private val nino = "AA123456A"
-  private val taxYear = "2019-20"
+  private val nino          = "AA123456A"
+  private val taxYear       = "2019-20"
   private val correlationId = "X-123"
 
   def event(auditResponse: AuditResponse): AuditEvent[ExpensesAuditDetail] =
@@ -79,7 +88,7 @@ class DeleteEmploymentExpensesControllerSpec
       )
     )
 
-  private val rawData = DeleteEmploymentExpensesRawData(nino, taxYear)
+  private val rawData     = DeleteEmploymentExpensesRawData(nino, taxYear)
   private val requestData = DeleteEmploymentExpensesRequest(Nino(nino), taxYear)
 
   "handleRequest" should {
@@ -162,11 +171,12 @@ class DeleteEmploymentExpensesControllerSpec
           (NinoFormatError, BAD_REQUEST),
           (TaxYearFormatError, BAD_REQUEST),
           (NotFoundError, NOT_FOUND),
-          (DownstreamError, INTERNAL_SERVER_ERROR),
+          (DownstreamError, INTERNAL_SERVER_ERROR)
         )
 
         input.foreach(args => (serviceErrors _).tupled(args))
       }
     }
   }
+
 }

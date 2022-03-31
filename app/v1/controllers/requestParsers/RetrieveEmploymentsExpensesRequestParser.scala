@@ -22,8 +22,8 @@ import v1.controllers.requestParsers.validators.RetrieveEmploymentExpensesValida
 import v1.models.domain.MtdSource
 import v1.models.request.retrieveEmploymentExpenses.{RetrieveEmploymentsExpensesRawData, RetrieveEmploymentsExpensesRequest}
 
-class RetrieveEmploymentsExpensesRequestParser @Inject()(val validator: RetrieveEmploymentExpensesValidator)
-  extends RequestParser[RetrieveEmploymentsExpensesRawData, RetrieveEmploymentsExpensesRequest] {
+class RetrieveEmploymentsExpensesRequestParser @Inject() (val validator: RetrieveEmploymentExpensesValidator)
+    extends RequestParser[RetrieveEmploymentsExpensesRawData, RetrieveEmploymentsExpensesRequest] {
 
   override protected def requestFor(data: RetrieveEmploymentsExpensesRawData): RetrieveEmploymentsExpensesRequest = {
 

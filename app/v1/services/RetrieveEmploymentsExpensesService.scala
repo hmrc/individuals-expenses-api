@@ -30,30 +30,32 @@ import v1.support.DesResponseMappingSupport
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class RetrieveEmploymentsExpensesService @Inject()(retrieveEmploymentsExpensesConnector: RetrieveEmploymentsExpensesConnector)
-  extends DesResponseMappingSupport with Logging {
+class RetrieveEmploymentsExpensesService @Inject() (retrieveEmploymentsExpensesConnector: RetrieveEmploymentsExpensesConnector)
+    extends DesResponseMappingSupport
+    with Logging {
 
-  def retrieveEmploymentsExpenses(request: RetrieveEmploymentsExpensesRequest)(
-    implicit hc: HeaderCarrier,
-    ec: ExecutionContext,
-    logContext: EndpointLogContext,
-    correlationId: String): Future[RetrieveEmploymentExpensesServiceOutcome] = {
+  def retrieveEmploymentsExpenses(request: RetrieveEmploymentsExpensesRequest)(implicit
+      hc: HeaderCarrier,
+      ec: ExecutionContext,
+      logContext: EndpointLogContext,
+      correlationId: String): Future[RetrieveEmploymentExpensesServiceOutcome] = {
 
     val result = for {
       desResponseWrapper <- EitherT(retrieveEmploymentsExpensesConnector.retrieveEmploymentExpenses(request)).leftMap(mapDesErrors(desErrorMap))
     } yield desResponseWrapper
     result.value
   }
+
   private def desErrorMap: Map[String, MtdError] =
     Map(
       "INVALID_TAXABLE_ENTITY_ID" -> NinoFormatError,
-      "INVALID_TAX_YEAR" -> TaxYearFormatError,
-      "INVALID_VIEW" -> SourceFormatError,
-      "INVALID_CORRELATIONID" -> DownstreamError,
-      "NO_DATA_FOUND" -> NotFoundError,
-      "INVALID_DATE_RANGE" -> RuleTaxYearNotSupportedError,
-      "SERVER_ERROR" -> DownstreamError,
-      "SERVICE_UNAVAILABLE" -> DownstreamError
+      "INVALID_TAX_YEAR"          -> TaxYearFormatError,
+      "INVALID_VIEW"              -> SourceFormatError,
+      "INVALID_CORRELATIONID"     -> DownstreamError,
+      "NO_DATA_FOUND"             -> NotFoundError,
+      "INVALID_DATE_RANGE"        -> RuleTaxYearNotSupportedError,
+      "SERVER_ERROR"              -> DownstreamError,
+      "SERVICE_UNAVAILABLE"       -> DownstreamError
     )
 
 }

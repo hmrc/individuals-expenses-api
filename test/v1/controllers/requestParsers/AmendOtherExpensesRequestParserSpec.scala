@@ -25,12 +25,11 @@ import v1.models.request.amendOtherExpenses._
 
 class AmendOtherExpensesRequestParserSpec extends UnitSpec {
 
-  val nino = "AA123456B"
-  val taxYear = "2017-18"
+  val nino                           = "AA123456B"
+  val taxYear                        = "2017-18"
   implicit val correlationId: String = "a1e8057e-fbbc-47a8-a8b4-78d9f015c253"
 
-  private val requestBodyJson = Json.parse(
-    """{
+  private val requestBodyJson = Json.parse("""{
       |  "paymentsToTradeUnionsForDeathBenefits": {
       |    "customerReference": "TRADE UNION PAYMENTS",
       |    "expenseAmount": 1223.22
@@ -56,17 +55,23 @@ class AmendOtherExpensesRequestParserSpec extends UnitSpec {
         MockAmendOtherExpensesValidator.validate(inputData).returns(Nil)
 
         parser.parseRequest(inputData) shouldBe
-          Right(AmendOtherExpensesRequest(Nino(nino), taxYear, AmendOtherExpensesBody(
-            Some(PaymentsToTradeUnionsForDeathBenefits(Some("TRADE UNION PAYMENTS"), 1223.22)),
-            Some(PatentRoyaltiesPayments(Some("ROYALTIES PAYMENTS"), 1223.22))
-          )))
+          Right(
+            AmendOtherExpensesRequest(
+              Nino(nino),
+              taxYear,
+              AmendOtherExpensesBody(
+                Some(PaymentsToTradeUnionsForDeathBenefits(Some("TRADE UNION PAYMENTS"), 1223.22)),
+                Some(PatentRoyaltiesPayments(Some("ROYALTIES PAYMENTS"), 1223.22))
+              )
+            ))
       }
     }
 
     "return an ErrorWrapper" when {
 
       "a single validation error occurs" in new Test {
-        MockAmendOtherExpensesValidator.validate(inputData)
+        MockAmendOtherExpensesValidator
+          .validate(inputData)
           .returns(List(NinoFormatError))
 
         parser.parseRequest(inputData) shouldBe
@@ -74,7 +79,8 @@ class AmendOtherExpensesRequestParserSpec extends UnitSpec {
       }
 
       "multiple validation errors occur" in new Test {
-        MockAmendOtherExpensesValidator.validate(inputData)
+        MockAmendOtherExpensesValidator
+          .validate(inputData)
           .returns(List(NinoFormatError, TaxYearFormatError))
 
         parser.parseRequest(inputData) shouldBe
@@ -82,4 +88,5 @@ class AmendOtherExpensesRequestParserSpec extends UnitSpec {
       }
     }
   }
+
 }

@@ -26,17 +26,17 @@ import v1.models.request.ignoreEmploymentExpenses.{IgnoreEmploymentExpensesBody,
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class IgnoreEmploymentExpensesConnector @Inject()(val http: HttpClient,
-                                                  val appConfig: AppConfig) extends BaseDownstreamConnector {
+class IgnoreEmploymentExpensesConnector @Inject() (val http: HttpClient, val appConfig: AppConfig) extends BaseDownstreamConnector {
 
-  def ignore(request: IgnoreEmploymentExpensesRequest)(
-    implicit hc: HeaderCarrier,
-    ec: ExecutionContext,
-    correlationId: String): Future[DownstreamOutcome[Unit]] = {
+  def ignore(request: IgnoreEmploymentExpensesRequest)(implicit
+      hc: HeaderCarrier,
+      ec: ExecutionContext,
+      correlationId: String): Future[DownstreamOutcome[Unit]] = {
 
     put(
       body = IgnoreEmploymentExpensesBody(true),
-      request = DownstreamRequest[Unit](IfsR6,s"income-tax/expenses/employments/${request.nino.nino}/${request.taxYear}")
+      request = DownstreamRequest[Unit](IfsR6, s"income-tax/expenses/employments/${request.nino.nino}/${request.taxYear}")
     )
   }
+
 }

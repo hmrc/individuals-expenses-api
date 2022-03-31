@@ -28,16 +28,16 @@ import v1.models.request.retrieveEmploymentExpenses.RetrieveEmploymentsExpensesR
 
 class RetrieveEmploymentExpensesValidatorSpec extends UnitSpec {
 
-  private val validNino = "AA123456A"
+  private val validNino    = "AA123456A"
   private val validTaxYear = "2021-22"
-  private val date = DateTime.parse("2020-08-05")
+  private val date         = DateTime.parse("2020-08-05")
 
   class Test extends MockCurrentDateTime with MockCurrentTaxYear with MockAppConfig {
 
     implicit val dateTimeProvider: CurrentDateTime = mockCurrentDateTime
-    val dateTimeFormatter: DateTimeFormatter = DateTimeFormat.forPattern("yyyy-MM-dd")
+    val dateTimeFormatter: DateTimeFormatter       = DateTimeFormat.forPattern("yyyy-MM-dd")
 
-    implicit val appConfig: AppConfig = mockAppConfig
+    implicit val appConfig: AppConfig           = mockAppConfig
     implicit val currentTaxYear: CurrentTaxYear = mockCurrentTaxYear
 
     val validator = new RetrieveEmploymentExpensesValidator()
@@ -48,8 +48,10 @@ class RetrieveEmploymentExpensesValidatorSpec extends UnitSpec {
       .returns(DateTime.parse("2020-08-05", dateTimeFormatter))
       .anyNumberOfTimes()
 
-    MockCurrentTaxYear.getCurrentTaxYear(date)
+    MockCurrentTaxYear
+      .getCurrentTaxYear(date)
       .returns(2021)
+
   }
 
   "running a validation" should {
@@ -88,16 +90,14 @@ class RetrieveEmploymentExpensesValidatorSpec extends UnitSpec {
 
     "return RuleTaxYearRangeInvalid error" when {
       "an out of range tax year is supplied" in new Test {
-        validator.validate(
-          RetrieveEmploymentsExpensesRawData(validNino, "2019-21", "latest")) shouldBe
+        validator.validate(RetrieveEmploymentsExpensesRawData(validNino, "2019-21", "latest")) shouldBe
           List(RuleTaxYearRangeInvalidError)
       }
     }
 
     "return RuleTaxYearNotSupportedError error" when {
       "a taxYear below the minimum required is supplied" in new Test {
-        validator.validate(
-          RetrieveEmploymentsExpensesRawData(validNino, "2018-19", "latest")) shouldBe
+        validator.validate(RetrieveEmploymentsExpensesRawData(validNino, "2018-19", "latest")) shouldBe
           List(RuleTaxYearNotSupportedError)
       }
     }
@@ -109,4 +109,5 @@ class RetrieveEmploymentExpensesValidatorSpec extends UnitSpec {
       }
     }
   }
+
 }

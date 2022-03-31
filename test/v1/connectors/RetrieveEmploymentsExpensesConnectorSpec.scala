@@ -29,11 +29,12 @@ import scala.concurrent.Future
 
 class RetrieveEmploymentsExpensesConnectorSpec extends ConnectorSpec {
 
-  val nino: String = "AA123456A"
-  private val taxYear = "2019-20"
+  val nino: String                  = "AA123456A"
+  private val taxYear               = "2019-20"
   val source: MtdSource.`user`.type = MtdSource.`user`
 
   class Test extends MockHttpClient with MockAppConfig {
+
     val connector: RetrieveEmploymentsExpensesConnector = new RetrieveEmploymentsExpensesConnector(
       http = mockHttpClient,
       appConfig = mockAppConfig
@@ -50,22 +51,27 @@ class RetrieveEmploymentsExpensesConnectorSpec extends ConnectorSpec {
 
     "return a result" when {
       "the downstream call is successful" in new Test {
-        val outcome = Right(ResponseWrapper(correlationId, RetrieveEmploymentsExpensesResponse(
-          Some("2019-04-06"),
-          Some(2000.99),
-          Some(MtdSource.`user`),
-          Some("2019-04-06"),
-          Some(Expenses(
-            Some(2000.99),
-            Some(2000.99),
-            Some(2000.99),
-            Some(2000.99),
-            Some(2000.99),
-            Some(2000.99),
-            Some(2000.99),
-            Some(2000.99)
+        val outcome = Right(
+          ResponseWrapper(
+            correlationId,
+            RetrieveEmploymentsExpensesResponse(
+              Some("2019-04-06"),
+              Some(2000.99),
+              Some(MtdSource.`user`),
+              Some("2019-04-06"),
+              Some(
+                Expenses(
+                  Some(2000.99),
+                  Some(2000.99),
+                  Some(2000.99),
+                  Some(2000.99),
+                  Some(2000.99),
+                  Some(2000.99),
+                  Some(2000.99),
+                  Some(2000.99)
+                ))
+            )
           ))
-        )))
 
         MockHttpClient
           .get(
@@ -80,4 +86,5 @@ class RetrieveEmploymentsExpensesConnectorSpec extends ConnectorSpec {
       }
     }
   }
+
 }

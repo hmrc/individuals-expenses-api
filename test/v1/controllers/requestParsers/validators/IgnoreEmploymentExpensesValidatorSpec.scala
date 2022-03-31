@@ -28,16 +28,16 @@ import v1.models.request.ignoreEmploymentExpenses.IgnoreEmploymentExpensesRawDat
 
 class IgnoreEmploymentExpensesValidatorSpec extends UnitSpec {
 
-  private val validNino = "AA123456A"
+  private val validNino    = "AA123456A"
   private val validTaxYear = "2019-20"
-  private val date = DateTime.parse("2020-08-05")
+  private val date         = DateTime.parse("2020-08-05")
 
   class Test extends MockCurrentDateTime with MockCurrentTaxYear with MockAppConfig {
 
     implicit val dateTimeProvider: CurrentDateTime = mockCurrentDateTime
-    val dateTimeFormatter: DateTimeFormatter = DateTimeFormat.forPattern("yyyy-MM-dd")
+    val dateTimeFormatter: DateTimeFormatter       = DateTimeFormat.forPattern("yyyy-MM-dd")
 
-    implicit val appConfig: AppConfig = mockAppConfig
+    implicit val appConfig: AppConfig           = mockAppConfig
     implicit val currentTaxYear: CurrentTaxYear = mockCurrentTaxYear
 
     val validator = new IgnoreEmploymentExpensesValidator()
@@ -48,9 +48,12 @@ class IgnoreEmploymentExpensesValidatorSpec extends UnitSpec {
       .returns(DateTime.parse("2020-08-05", dateTimeFormatter))
       .anyNumberOfTimes()
 
-    MockCurrentTaxYear.getCurrentTaxYear(date)
+    MockCurrentTaxYear
+      .getCurrentTaxYear(date)
       .returns(2021)
+
   }
+
   "running a validation" should {
     "return no errors" when {
       "a valid request is supplied" in new Test {
@@ -79,4 +82,5 @@ class IgnoreEmploymentExpensesValidatorSpec extends UnitSpec {
       }
     }
   }
+
 }

@@ -23,8 +23,8 @@ import v1.controllers.requestParsers.validators.validations.{MtdTaxYearValidatio
 import v1.models.errors.MtdError
 import v1.models.request.deleteOtherExpenses.DeleteOtherExpensesRawData
 
-class DeleteOtherExpensesValidator @Inject()(implicit currentDateTime: CurrentDateTime, appConfig: AppConfig, currentTaxYear: CurrentTaxYear)
-  extends Validator[DeleteOtherExpensesRawData] {
+class DeleteOtherExpensesValidator @Inject() (implicit currentDateTime: CurrentDateTime, appConfig: AppConfig, currentTaxYear: CurrentTaxYear)
+    extends Validator[DeleteOtherExpensesRawData] {
 
   private val validationSet = List(parameterFormatValidation, parameterRuleValidation)
 
@@ -44,4 +44,5 @@ class DeleteOtherExpensesValidator @Inject()(implicit currentDateTime: CurrentDa
   override def validate(data: DeleteOtherExpensesRawData): List[MtdError] = {
     run(validationSet, data).distinct
   }
+
 }
