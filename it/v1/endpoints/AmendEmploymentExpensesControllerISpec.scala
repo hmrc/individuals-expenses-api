@@ -23,6 +23,7 @@ import play.api.http.Status._
 import v1.models.errors._
 import v1.stubs.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 import play.api.http.HeaderNames.ACCEPT
+import play.api.test.Helpers.AUTHORIZATION
 import support.IntegrationBaseSpec
 
 class AmendEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
@@ -82,7 +83,10 @@ class AmendEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
     def request(): WSRequest = {
       setupStubs()
       buildRequest(uri)
-        .withHttpHeaders((ACCEPT, "application/vnd.hmrc.1.0+json"))
+        .withHttpHeaders(
+          (ACCEPT, "application/vnd.hmrc.1.0+json"),
+          (AUTHORIZATION, "Bearer 123") // some bearer token
+        )
     }
 
     def errorBody(code: String): String =
@@ -216,7 +220,7 @@ class AmendEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
         }
 
         s"a taxYear that hasn't ended is provided" in new Test {
-          override val taxYear: String = "2021-22"
+          override val taxYear: String = "2022-23"
 
           override def setupStubs(): StubMapping = {
             AuditStub.audit()
