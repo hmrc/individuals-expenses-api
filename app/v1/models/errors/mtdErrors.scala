@@ -42,7 +42,7 @@ object SourceFormatError            extends MtdError("FORMAT_SOURCE", "The provi
 object RuleTaxYearNotSupportedError
     extends MtdError(
       "RULE_TAX_YEAR_NOT_SUPPORTED",
-      "The specified tax year is not supported. That is, the tax year specified is before the minimum tax year value")
+      "The tax year specified does not lie within the supported range")
 
 object RuleIncorrectOrEmptyBodyError extends MtdError("RULE_INCORRECT_OR_EMPTY_BODY_SUBMITTED", "An empty or non-matching body was submitted")
 
