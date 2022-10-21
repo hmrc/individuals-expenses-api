@@ -47,8 +47,10 @@ trait MockAppConfig extends MockFactory {
     def mtdIdBaseUrl: CallHandler[String] = (mockAppConfig.mtdIdBaseUrl _: () => String).expects()
 
     // API Config
-    def apiGatewayContext: CallHandler[String] = (mockAppConfig.apiGatewayContext _: () => String).expects()
-    def apiStatus: CallHandler[String]         = (mockAppConfig.apiStatus: String => String).expects("1.0")
+    def featureSwitches: CallHandler[Configuration] = (mockAppConfig.featureSwitches _: () => Configuration).expects()
+    def apiGatewayContext: CallHandler[String]      = (mockAppConfig.apiGatewayContext _: () => String).expects()
+    def apiStatus: CallHandler[String]              = (mockAppConfig.apiStatus: String => String).expects("1.0")
+    def endpointsEnabled: CallHandler[Boolean]      = (mockAppConfig.endpointsEnabled: String => Boolean).expects("1.0")
 
     def confidenceLevelCheckEnabled: CallHandler[ConfidenceLevelConfig] =
       (mockAppConfig.confidenceLevelConfig _: () => ConfidenceLevelConfig).expects()
@@ -56,9 +58,6 @@ trait MockAppConfig extends MockFactory {
     // Business Rule Config
     def otherExpensesMinimumTaxYear: CallHandler[Int]      = (mockAppConfig.otherExpensesMinimumTaxYear _).expects()
     def employmentExpensesMinimumTaxYear: CallHandler[Int] = (mockAppConfig.employmentExpensesMinimumTaxYear _).expects()
-
-    def featureSwitch: CallHandler[Option[Configuration]] = (mockAppConfig.featureSwitches _: () => Option[Configuration]).expects()
-    def endpointsEnabled: CallHandler[Boolean]            = (mockAppConfig.endpointsEnabled: String => Boolean).expects("1.0")
 
   }
 
