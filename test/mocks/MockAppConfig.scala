@@ -30,17 +30,17 @@ trait MockAppConfig extends MockFactory {
     // Downstream Config
     def desBaseUrl: CallHandler[String]                         = (mockAppConfig.desBaseUrl _: () => String).expects()
     def desToken: CallHandler[String]                           = (mockAppConfig.desToken _).expects()
-    def desEnvironment: CallHandler[String]                     = (mockAppConfig.desEnvironment _).expects()
+    def desEnvironment: CallHandler[String]                     = (mockAppConfig.desEnv _).expects()
     def desEnvironmentHeaders: CallHandler[Option[Seq[String]]] = (mockAppConfig.desEnvironmentHeaders _).expects()
 
     def ifsR5BaseUrl: CallHandler[String]                         = (mockAppConfig.ifsR5BaseUrl _: () => String).expects()
     def ifsR5Token: CallHandler[String]                           = (mockAppConfig.ifsR5Token _).expects()
-    def ifsR5Environment: CallHandler[String]                     = (mockAppConfig.ifsR5Environment _).expects()
+    def ifsR5Environment: CallHandler[String]                     = (mockAppConfig.ifsR5Env _).expects()
     def ifsR5EnvironmentHeaders: CallHandler[Option[Seq[String]]] = (mockAppConfig.ifsR5EnvironmentHeaders _).expects()
 
     def ifsR6BaseUrl: CallHandler[String]                         = (mockAppConfig.ifsR6BaseUrl _: () => String).expects()
     def ifsR6Token: CallHandler[String]                           = (mockAppConfig.ifsR6Token _).expects()
-    def ifsR6Environment: CallHandler[String]                     = (mockAppConfig.ifsR6Environment _).expects()
+    def ifsR6Environment: CallHandler[String]                     = (mockAppConfig.ifsR6Env _).expects()
     def ifsR6EnvironmentHeaders: CallHandler[Option[Seq[String]]] = (mockAppConfig.ifsR6EnvironmentHeaders _).expects()
 
     // MTD ID Lookup Config

@@ -16,6 +16,7 @@
 
 package v1.connectors
 
+import v1.connectors.DownstreamUri._
 import config.AppConfig
 import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -35,7 +36,7 @@ class AmendOtherExpensesConnector @Inject() (val http: HttpClient, val appConfig
 
     put(
       body = request.body,
-      request = DownstreamRequest[Unit](IfsR5, s"income-tax/expenses/other/${request.nino.nino}/${request.taxYear}")
+      uri = IfsR5Uri[Unit](s"income-tax/expenses/other/${request.nino.nino}/${request.taxYear}")
     )
   }
 

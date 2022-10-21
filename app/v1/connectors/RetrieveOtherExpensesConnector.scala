@@ -17,9 +17,11 @@
 package v1.connectors
 
 import config.AppConfig
+
 import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.HttpClient
+import v1.connectors.DownstreamUri.IfsR5Uri
 import v1.connectors.httpparsers.StandardDesHttpParser._
 import v1.models.request.retrieveOtherExpenses.RetrieveOtherExpensesRequest
 import v1.models.response.retrieveOtherExpenses.RetrieveOtherExpensesResponse
@@ -37,7 +39,7 @@ class RetrieveOtherExpensesConnector @Inject() (val http: HttpClient, val appCon
     val url = s"income-tax/expenses/other/${request.nino.nino}/${request.taxYear}"
 
     get(
-      request = DownstreamRequest[RetrieveOtherExpensesResponse](IfsR5, s"$url")
+      uri = IfsR5Uri[RetrieveOtherExpensesResponse](s"$url")
     )
   }
 

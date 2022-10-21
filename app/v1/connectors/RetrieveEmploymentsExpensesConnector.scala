@@ -16,6 +16,7 @@
 
 package v1.connectors
 
+import v1.connectors.DownstreamUri._
 import config.AppConfig
 import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -37,7 +38,7 @@ class RetrieveEmploymentsExpensesConnector @Inject() (val http: HttpClient, val 
     val url = s"income-tax/expenses/employments/${request.nino.nino}/${request.taxYear}?view=${request.source.toDownstream}"
 
     get(
-      request = DownstreamRequest[RetrieveEmploymentsExpensesResponse](IfsR6, s"$url")
+      uri = IfsR6Uri[RetrieveEmploymentsExpensesResponse](s"$url")
     )
   }
 

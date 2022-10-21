@@ -16,6 +16,7 @@
 
 package v1.connectors
 
+import v1.connectors.DownstreamUri.DesUri
 import config.AppConfig
 import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -34,7 +35,7 @@ class DeleteEmploymentExpensesConnector @Inject() (val http: HttpClient, val app
       correlationId: String): Future[DownstreamOutcome[Unit]] = {
 
     delete(
-      request = DownstreamRequest[Unit](Des, s"income-tax/expenses/employments/${request.nino.nino}/${request.taxYear}")
+      uri = DesUri[Unit](s"income-tax/expenses/employments/${request.nino.nino}/${request.taxYear}")
     )
   }
 
