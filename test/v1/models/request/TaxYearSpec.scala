@@ -14,44 +14,51 @@
  * limitations under the License.
  */
 
-package v1.models.request
+import v1.models.request.TaxYear
 
 import support.UnitSpec
 
 class TaxYearSpec extends UnitSpec {
 
-  "DesTaxYear" when {
-    "toString" should {
-      "produce the correct String" in {
-        TaxYear("2019").toString shouldBe "2019"
+  "TaxYear" when {
+
+    val taxYear = TaxYear.fromMtd("2023-24")
+
+    "constructed from an MTD tax year" should {
+      "return the downstream tax value" in {
+        taxYear.asDownstream shouldBe "2024"
+      }
+
+      "return the MTD tax year" in {
+        taxYear.asMtd shouldBe "2023-24"
+      }
+
+      "return the tax year in the 'Tax Year Specific API' format" in {
+        taxYear.asTysDownstream shouldBe "23-24"
       }
     }
 
-    "fromMtd" should {
-      "produce the correct String" in {
-        TaxYear.fromMtd("2019-20") shouldBe TaxYear("2020")
+    "constructed from a downstream tax year" should {
+      "return the downstream tax value" in {
+        TaxYear.fromDownstream("2019").asDownstream shouldBe "2019"
+      }
+
+      "allow the MTD tax year to be extracted" in {
+        TaxYear.fromDownstream("2019").asMtd shouldBe "2018-19"
       }
     }
 
-    "fromDesIntToString" should {
-      "produce the correct String" in {
-        TaxYear.fromDesIntToString(2019) shouldBe "2018-19"
+    "constructed directly" should {
+      "not compile" in {
+        """new TaxYear("2021-22")""" shouldNot compile
       }
     }
 
-    "fromDes" should {
-      "produce the correct String" in {
-        TaxYear.fromDes("2019") shouldBe "2018-19"
-      }
-    }
-  }
-
-  val taxYearValue = TaxYear("2018")
-
-  "DesTaxYear" should {
-    "return a value as a string" when {
-      "toString is used" in {
-        taxYearValue.toString shouldBe "2018"
+    "compared with equals" should {
+      "have equality based on content" in {
+        val taxYear = TaxYear.fromMtd("2021-22")
+        taxYear shouldBe TaxYear.fromDownstream("2022")
+        taxYear should not be TaxYear.fromDownstream("2021")
       }
     }
   }
