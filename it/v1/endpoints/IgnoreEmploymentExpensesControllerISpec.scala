@@ -25,7 +25,7 @@ import play.api.libs.ws.{WSRequest, WSResponse}
 import play.api.test.Helpers.AUTHORIZATION
 import support.IntegrationBaseSpec
 import v1.models.errors._
-import v1.models.request.DesTaxYear
+import v1.models.request.TaxYear
 import v1.stubs.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 
 class IgnoreEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
@@ -130,7 +130,7 @@ class IgnoreEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
 
           val taxYear: Int = currentDate.getYear + 1
 
-          DesTaxYear.fromDesIntToString(taxYear)
+          TaxYear.fromDesIntToString(taxYear)
         }
 
         val input = Seq(

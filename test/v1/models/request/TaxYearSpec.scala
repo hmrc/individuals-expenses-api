@@ -18,35 +18,35 @@ package v1.models.request
 
 import support.UnitSpec
 
-class DesTaxYearSpec extends UnitSpec {
+class TaxYearSpec extends UnitSpec {
 
   "DesTaxYear" when {
     "toString" should {
       "produce the correct String" in {
-        DesTaxYear("2019").toString shouldBe "2019"
+        TaxYear("2019").toString shouldBe "2019"
       }
     }
 
     "fromMtd" should {
       "produce the correct String" in {
-        DesTaxYear.fromMtd("2019-20") shouldBe DesTaxYear("2020")
+        TaxYear.fromMtd("2019-20") shouldBe TaxYear("2020")
       }
     }
 
     "fromDesIntToString" should {
       "produce the correct String" in {
-        DesTaxYear.fromDesIntToString(2019) shouldBe "2018-19"
+        TaxYear.fromDesIntToString(2019) shouldBe "2018-19"
       }
     }
 
     "fromDes" should {
       "produce the correct String" in {
-        DesTaxYear.fromDes("2019") shouldBe "2018-19"
+        TaxYear.fromDes("2019") shouldBe "2018-19"
       }
     }
   }
 
-  val taxYearValue = DesTaxYear("2018")
+  val taxYearValue = TaxYear("2018")
 
   "DesTaxYear" should {
     "return a value as a string" when {

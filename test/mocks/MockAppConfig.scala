@@ -57,7 +57,7 @@ trait MockAppConfig extends MockFactory {
     def otherExpensesMinimumTaxYear: CallHandler[Int]      = (mockAppConfig.otherExpensesMinimumTaxYear _).expects()
     def employmentExpensesMinimumTaxYear: CallHandler[Int] = (mockAppConfig.employmentExpensesMinimumTaxYear _).expects()
 
-    def featureSwitch: CallHandler[Option[Configuration]] = (mockAppConfig.featureSwitch _: () => Option[Configuration]).expects()
+    def featureSwitch: CallHandler[Option[Configuration]] = (mockAppConfig.featureSwitches _: () => Option[Configuration]).expects()
     def endpointsEnabled: CallHandler[Boolean]            = (mockAppConfig.endpointsEnabled: String => Boolean).expects("1.0")
 
   }

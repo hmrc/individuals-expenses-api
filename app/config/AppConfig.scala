@@ -51,7 +51,7 @@ trait AppConfig {
   def otherExpensesMinimumTaxYear: Int
   def employmentExpensesMinimumTaxYear: Int
 
-  def featureSwitch: Option[Configuration]
+  def featureSwitches: Configuration
   def endpointsEnabled(version: String): Boolean
 
 }
@@ -81,13 +81,12 @@ class AppConfigImpl @Inject() (config: ServicesConfig, configuration: Configurat
   // API Config
   val apiGatewayContext: String                    = config.getString("api.gateway.context")
   def apiStatus(version: String): String           = config.getString(s"api.$version.status")
+  def featureSwitches: Configuration               = configuration.getOptional[Configuration](s"feature-switch").getOrElse(Configuration.empty)
   val confidenceLevelConfig: ConfidenceLevelConfig = configuration.get[ConfidenceLevelConfig](s"api.confidence-level-check")
 
   // Business Rule Config
   val otherExpensesMinimumTaxYear: Int      = config.getInt("otherExpensesMinimumTaxYear")
   val employmentExpensesMinimumTaxYear: Int = config.getInt("employmentExpensesMinimumTaxYear")
-
-  def featureSwitch: Option[Configuration] = configuration.getOptional[Configuration](s"feature-switch")
 
   def endpointsEnabled(version: String): Boolean = config.getBoolean(s"api.$version.endpoints.enabled")
 
