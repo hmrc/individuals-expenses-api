@@ -16,16 +16,11 @@
 
 package v1.services
 
-import v1.models.domain.Nino
 import v1.mocks.connectors.MockAmendOtherExpensesConnector
+import v1.models.domain.Nino
 import v1.models.errors._
 import v1.models.outcomes.ResponseWrapper
-import v1.models.request.amendOtherExpenses.{
-  AmendOtherExpensesBody,
-  AmendOtherExpensesRequest,
-  PatentRoyaltiesPayments,
-  PaymentsToTradeUnionsForDeathBenefits
-}
+import v1.models.request.amendOtherExpenses.{AmendOtherExpensesBody, AmendOtherExpensesRequest, PatentRoyaltiesPayments, PaymentsToTradeUnionsForDeathBenefits}
 
 import scala.concurrent.Future
 

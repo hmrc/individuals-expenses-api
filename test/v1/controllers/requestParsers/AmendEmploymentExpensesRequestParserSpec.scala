@@ -18,15 +18,10 @@ package v1.controllers.requestParsers
 
 import play.api.libs.json.Json
 import support.UnitSpec
-import v1.models.domain.Nino
 import v1.mocks.validators.MockAmendEmploymentExpensesValidator
+import v1.models.domain.Nino
 import v1.models.errors.{BadRequestError, ErrorWrapper, NinoFormatError, TaxYearFormatError}
-import v1.models.request.amendEmploymentExpenses.{
-  AmendEmploymentExpensesBody,
-  AmendEmploymentExpensesRawData,
-  AmendEmploymentExpensesRequest,
-  Expenses
-}
+import v1.models.request.amendEmploymentExpenses.{AmendEmploymentExpensesBody, AmendEmploymentExpensesRawData, AmendEmploymentExpensesRequest, Expenses}
 
 class AmendEmploymentExpensesRequestParserSpec extends UnitSpec {
 

@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-import v1.models.request.TaxYear
-
 import support.UnitSpec
+import v1.models.request.TaxYear
 
 class TaxYearSpec extends UnitSpec {
 

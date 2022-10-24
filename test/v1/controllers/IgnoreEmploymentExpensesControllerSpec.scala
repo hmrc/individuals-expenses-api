@@ -18,15 +18,15 @@ package v1.controllers
 
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Result
-import v1.models.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
 import v1.mocks.MockIdGenerator
 import v1.mocks.hateoas.MockHateoasFactory
 import v1.mocks.requestParsers.MockIgnoreEmploymentExpensesRequestParser
 import v1.mocks.services.{MockAuditService, MockEnrolmentsAuthService, MockIgnoreEmploymentExpensesService, MockMtdIdLookupService}
 import v1.models.audit.{AuditError, AuditEvent, AuditResponse, ExpensesAuditDetail}
+import v1.models.domain.Nino
 import v1.models.errors._
-import v1.models.hateoas.Method.{GET, DELETE}
+import v1.models.hateoas.Method.{DELETE, GET}
 import v1.models.hateoas.{HateoasWrapper, Link}
 import v1.models.outcomes.ResponseWrapper
 import v1.models.request.ignoreEmploymentExpenses._

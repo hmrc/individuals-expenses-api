@@ -23,7 +23,7 @@ import org.joda.time.format.{DateTimeFormat, DateTimeFormatter}
 import support.UnitSpec
 import utils.{CurrentDateTime, CurrentTaxYear}
 import v1.mocks.{MockCurrentDateTime, MockCurrentTaxYear}
-import v1.models.errors.{NinoFormatError, RuleTaxYearNotSupportedError, RuleTaxYearRangeInvalidError, SourceFormatError, TaxYearFormatError}
+import v1.models.errors._
 import v1.models.request.retrieveEmploymentExpenses.RetrieveEmploymentsExpensesRawData
 
 class RetrieveEmploymentExpensesValidatorSpec extends UnitSpec {

@@ -18,24 +18,18 @@ package v1.controllers
 
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Result
-import v1.models.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
 import v1.mocks.MockIdGenerator
 import v1.mocks.hateoas.MockHateoasFactory
 import v1.mocks.requestParsers.MockAmendOtherExpensesRequestParser
 import v1.mocks.services.{MockAmendOtherExpensesService, MockAuditService, MockEnrolmentsAuthService, MockMtdIdLookupService}
 import v1.models.audit.{AuditError, AuditEvent, AuditResponse, ExpensesAuditDetail}
+import v1.models.domain.Nino
 import v1.models.errors._
-import v1.models.hateoas.{HateoasWrapper, Link}
 import v1.models.hateoas.Method.{DELETE, GET, PUT}
+import v1.models.hateoas.{HateoasWrapper, Link}
 import v1.models.outcomes.ResponseWrapper
-import v1.models.request.amendOtherExpenses.{
-  AmendOtherExpensesBody,
-  AmendOtherExpensesRawData,
-  AmendOtherExpensesRequest,
-  PatentRoyaltiesPayments,
-  PaymentsToTradeUnionsForDeathBenefits
-}
+import v1.models.request.amendOtherExpenses._
 import v1.models.response.amendOtherExpenses.AmendOtherExpensesHateoasData
 
 import scala.concurrent.ExecutionContext.Implicits.global

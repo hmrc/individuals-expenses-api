@@ -17,14 +17,14 @@
 package v1.endpoints
 
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
+import play.api.http.HeaderNames.ACCEPT
+import play.api.http.Status._
 import play.api.libs.json.{JsObject, JsValue, Json}
 import play.api.libs.ws.{WSRequest, WSResponse}
-import play.api.http.Status._
+import play.api.test.Helpers.AUTHORIZATION
 import support.IntegrationBaseSpec
 import v1.models.errors._
 import v1.stubs.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
-import play.api.http.HeaderNames.ACCEPT
-import play.api.test.Helpers.AUTHORIZATION
 
 class AmendOtherExpensesControllerISpec extends IntegrationBaseSpec {
 
