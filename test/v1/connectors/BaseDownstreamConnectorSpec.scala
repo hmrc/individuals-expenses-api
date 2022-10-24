@@ -18,7 +18,9 @@ package v1.connectors
 
 import config.AppConfig
 import mocks.MockAppConfig
+import play.api.Configuration
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads}
+import v1.connectors.DownstreamUri._
 import v1.mocks.MockHttpClient
 import v1.models.outcomes.ResponseWrapper
 
@@ -50,6 +52,7 @@ class BaseDownstreamConnectorSpec extends ConnectorSpec {
     MockAppConfig.desToken returns "des-token"
     MockAppConfig.desEnvironment returns "des-environment"
     MockAppConfig.desEnvironmentHeaders returns desEnvironmentHeaders
+    MockAppConfig.featureSwitches returns Configuration("tys-api.enabled" -> false)
   }
 
   class IfsR5Test(ifsR5EnvironmentHeaders: Option[Seq[String]]) extends MockHttpClient with MockAppConfig {
@@ -63,6 +66,7 @@ class BaseDownstreamConnectorSpec extends ConnectorSpec {
     MockAppConfig.ifsR5Token returns "ifs-token"
     MockAppConfig.ifsR5Environment returns "ifs-environment"
     MockAppConfig.ifsR5EnvironmentHeaders returns ifsR5EnvironmentHeaders
+    MockAppConfig.featureSwitches returns Configuration("tys-api.enabled" -> false)
   }
 
   class IfsR6Test(ifsR6EnvironmentHeaders: Option[Seq[String]]) extends MockHttpClient with MockAppConfig {
@@ -76,6 +80,7 @@ class BaseDownstreamConnectorSpec extends ConnectorSpec {
     MockAppConfig.ifsR6Token returns "ifs-token"
     MockAppConfig.ifsR6Environment returns "ifs-environment"
     MockAppConfig.ifsR6EnvironmentHeaders returns ifsR6EnvironmentHeaders
+    MockAppConfig.featureSwitches returns Configuration("tys-api.enabled" -> false)
   }
 
   "BaseDownstreamConnector" when {
@@ -131,8 +136,7 @@ class BaseDownstreamConnectorSpec extends ConnectorSpec {
   def desTestHttpMethods(config: HeaderCarrier.Config,
                          requiredHeaders: Seq[(String, String)],
                          excludedHeaders: Seq[(String, String)],
-                         desEnvironmentHeaders: Option[Seq[String]],
-                         requestConfig: DownstreamRequestConfig = Des): Unit = {
+                         desEnvironmentHeaders: Option[Seq[String]]): Unit = {
 
     "complete the request successfully with the required headers" when {
       "GET" in new DesTest(desEnvironmentHeaders) {
@@ -140,7 +144,7 @@ class BaseDownstreamConnectorSpec extends ConnectorSpec {
           .get(absoluteUrl, config, requiredHeaders, excludedHeaders)
           .returns(Future.successful(outcome))
 
-        await(connector.get(DownstreamRequest[Result](requestConfig, url))) shouldBe outcome
+        await(connector.get(DesUri[Result](url))) shouldBe outcome
       }
 
       "POST" in new DesTest(desEnvironmentHeaders) {
@@ -151,7 +155,7 @@ class BaseDownstreamConnectorSpec extends ConnectorSpec {
           .post(absoluteUrl, config, body, requiredHeadersPost, excludedHeaders)
           .returns(Future.successful(outcome))
 
-        await(connector.post(body, DownstreamRequest[Result](requestConfig, url))) shouldBe outcome
+        await(connector.post(body, DesUri[Result](url))) shouldBe outcome
       }
 
       "PUT" in new DesTest(desEnvironmentHeaders) {
@@ -162,7 +166,7 @@ class BaseDownstreamConnectorSpec extends ConnectorSpec {
           .put(absoluteUrl, config, body, requiredHeadersPut, excludedHeaders)
           .returns(Future.successful(outcome))
 
-        await(connector.put(body, DownstreamRequest[Result](requestConfig, url))) shouldBe outcome
+        await(connector.put(body, DesUri[Result](url))) shouldBe outcome
       }
 
       "DELETE" in new DesTest(desEnvironmentHeaders) {
@@ -170,7 +174,7 @@ class BaseDownstreamConnectorSpec extends ConnectorSpec {
           .delete(absoluteUrl, config, requiredHeaders, excludedHeaders)
           .returns(Future.successful(outcome))
 
-        await(connector.delete(DownstreamRequest[Result](requestConfig, url))) shouldBe outcome
+        await(connector.delete(DesUri[Result](url))) shouldBe outcome
       }
     }
   }
@@ -178,10 +182,9 @@ class BaseDownstreamConnectorSpec extends ConnectorSpec {
   def ifsR5TestHttpMethods(config: HeaderCarrier.Config,
                            requiredHeaders: Seq[(String, String)],
                            excludedHeaders: Seq[(String, String)],
-                           ifsR5EnvironmentHeaders: Option[Seq[String]],
-                           requestConfig: DownstreamRequestConfig = IfsR5): Unit = {
+                           ifsR5EnvironmentHeaders: Option[Seq[String]]): Unit = {
 
-    s"complete the request successfully with the required headers $requestConfig" when {
+    "complete the request successfully with the required headers for IfsR5" when {
       "POST" in new IfsR5Test(ifsR5EnvironmentHeaders) {
         implicit val hc: HeaderCarrier                 = HeaderCarrier(otherHeaders = otherHeaders ++ Seq("Content-Type" -> "application/json"))
         val requiredHeadersPost: Seq[(String, String)] = requiredHeaders ++ Seq("Content-Type" -> "application/json")
@@ -190,7 +193,7 @@ class BaseDownstreamConnectorSpec extends ConnectorSpec {
           .post(absoluteUrl, config, body, requiredHeadersPost, excludedHeaders)
           .returns(Future.successful(outcome))
 
-        await(connector.post(body, DownstreamRequest[Result](requestConfig, url))) shouldBe outcome
+        await(connector.post(body, IfsR5Uri[Result](url))) shouldBe outcome
       }
 
       "GET" in new IfsR5Test(ifsR5EnvironmentHeaders) {
@@ -198,7 +201,7 @@ class BaseDownstreamConnectorSpec extends ConnectorSpec {
           .get(absoluteUrl, config, requiredHeaders, excludedHeaders)
           .returns(Future.successful(outcome))
 
-        await(connector.get(DownstreamRequest[Result](requestConfig, url))) shouldBe outcome
+        await(connector.get(IfsR5Uri[Result](url))) shouldBe outcome
       }
 
       "PUT" in new IfsR5Test(ifsR5EnvironmentHeaders) {
@@ -209,7 +212,7 @@ class BaseDownstreamConnectorSpec extends ConnectorSpec {
           .put(absoluteUrl, config, body, requiredHeadersPut, excludedHeaders)
           .returns(Future.successful(outcome))
 
-        await(connector.put(body, DownstreamRequest[Result](requestConfig, url))) shouldBe outcome
+        await(connector.put(body, IfsR5Uri[Result](url))) shouldBe outcome
       }
 
       "DELETE" in new IfsR5Test(ifsR5EnvironmentHeaders) {
@@ -217,7 +220,7 @@ class BaseDownstreamConnectorSpec extends ConnectorSpec {
           .delete(absoluteUrl, config, requiredHeaders, excludedHeaders)
           .returns(Future.successful(outcome))
 
-        await(connector.delete(DownstreamRequest[Result](requestConfig, url))) shouldBe outcome
+        await(connector.delete(IfsR5Uri[Result](url))) shouldBe outcome
       }
     }
   }
@@ -225,10 +228,9 @@ class BaseDownstreamConnectorSpec extends ConnectorSpec {
   def ifsR6TestHttpMethods(config: HeaderCarrier.Config,
                            requiredHeaders: Seq[(String, String)],
                            excludedHeaders: Seq[(String, String)],
-                           ifsR6EnvironmentHeaders: Option[Seq[String]],
-                           requestConfig: DownstreamRequestConfig = IfsR6): Unit = {
+                           ifsR6EnvironmentHeaders: Option[Seq[String]]): Unit = {
 
-    s"complete the request successfully with the required headers for $requestConfig" when {
+    "complete the request successfully with the required headers for IfsR6" when {
       "POST" in new IfsR6Test(ifsR6EnvironmentHeaders) {
         implicit val hc: HeaderCarrier                 = HeaderCarrier(otherHeaders = otherHeaders ++ Seq("Content-Type" -> "application/json"))
         val requiredHeadersPost: Seq[(String, String)] = requiredHeaders ++ Seq("Content-Type" -> "application/json")
@@ -237,7 +239,7 @@ class BaseDownstreamConnectorSpec extends ConnectorSpec {
           .post(absoluteUrl, config, body, requiredHeadersPost, excludedHeaders)
           .returns(Future.successful(outcome))
 
-        await(connector.post(body, DownstreamRequest[Result](requestConfig, url))) shouldBe outcome
+        await(connector.post(body, IfsR6Uri[Result](url))) shouldBe outcome
       }
 
       "GET" in new IfsR6Test(ifsR6EnvironmentHeaders) {
@@ -245,7 +247,7 @@ class BaseDownstreamConnectorSpec extends ConnectorSpec {
           .get(absoluteUrl, config, requiredHeaders, excludedHeaders)
           .returns(Future.successful(outcome))
 
-        await(connector.get(DownstreamRequest[Result](requestConfig, url))) shouldBe outcome
+        await(connector.get(IfsR6Uri[Result](url))) shouldBe outcome
       }
 
       "PUT" in new IfsR6Test(ifsR6EnvironmentHeaders) {
@@ -256,7 +258,7 @@ class BaseDownstreamConnectorSpec extends ConnectorSpec {
           .put(absoluteUrl, config, body, requiredHeadersPut, excludedHeaders)
           .returns(Future.successful(outcome))
 
-        await(connector.put(body, DownstreamRequest[Result](requestConfig, url))) shouldBe outcome
+        await(connector.put(body, IfsR6Uri[Result](url))) shouldBe outcome
       }
 
       "DELETE" in new IfsR6Test(ifsR6EnvironmentHeaders) {
@@ -264,7 +266,7 @@ class BaseDownstreamConnectorSpec extends ConnectorSpec {
           .delete(absoluteUrl, config, requiredHeaders, excludedHeaders)
           .returns(Future.successful(outcome))
 
-        await(connector.delete(DownstreamRequest[Result](requestConfig, url))) shouldBe outcome
+        await(connector.delete(IfsR6Uri[Result](url))) shouldBe outcome
       }
     }
   }
