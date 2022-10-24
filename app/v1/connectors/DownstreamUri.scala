@@ -14,16 +14,6 @@
  * limitations under the License.
  */
 
-//package v1.connectors
-//
-//sealed trait DownstreamRequestConfig
-//
-//case object Des   extends DownstreamRequestConfig
-//case object IfsR5 extends DownstreamRequestConfig
-//case object IfsR6 extends DownstreamRequestConfig
-//
-//case class DownstreamRequest[Resp](config: DownstreamRequestConfig, uri: String)
-
 package v1.connectors
 
 sealed trait DownstreamUri[Resp] {
