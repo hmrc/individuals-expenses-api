@@ -24,10 +24,7 @@ import play.api.libs.ws.{WSRequest, WSResponse}
 import play.api.test.Helpers.AUTHORIZATION
 import support.IntegrationBaseSpec
 import v1.models.errors._
-import v1.models.request.TaxYear
 import v1.stubs.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
-
-import java.time.LocalDate
 
 class IgnoreEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
 
@@ -126,20 +123,12 @@ class IgnoreEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
           }
         }
 
-        def currentYear: String = {
-          val currentDate = LocalDate.now()
-
-          val taxYear: Int = currentDate.getYear + 1
-
-          TaxYear.fromDesIntToString(taxYear)
-        }
-
         val input = Seq(
           ("AA123456ABCDEF", "2019-20", BAD_REQUEST, NinoFormatError),
           ("AA123456A", "201920", BAD_REQUEST, TaxYearFormatError),
           ("AA123456A", "2016-17", BAD_REQUEST, RuleTaxYearNotSupportedError),
           ("AA123456A", "2019-21", BAD_REQUEST, RuleTaxYearRangeInvalidError),
-          ("AA123456A", currentYear, BAD_REQUEST, RuleTaxYearNotEndedError)
+          ("AA123456A", getCurrentTaxYear, BAD_REQUEST, RuleTaxYearNotEndedError)
         )
 
         input.foreach(args => (parserErrorTest _).tupled(args))
