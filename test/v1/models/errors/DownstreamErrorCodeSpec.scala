@@ -32,7 +32,7 @@ class DownstreamErrorCodeSpec extends UnitSpec {
     )
 
     "generate the correct error code" in {
-      json.as[DesErrorCode] shouldBe DesErrorCode("CODE")
+      json.as[DownstreamErrorCode] shouldBe DownstreamErrorCode("CODE")
     }
   }
 

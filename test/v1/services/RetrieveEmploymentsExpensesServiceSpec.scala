@@ -79,7 +79,7 @@ class RetrieveEmploymentsExpensesServiceSpec extends ServiceSpec {
 
           MockRetrieveEmploymentsExpensesConnector
             .retrieveEmploymentsExpenses(requestData)
-            .returns(Future.successful(Left(ResponseWrapper(correlationId, DownstreamErrors.single(DesErrorCode(desErrorCode))))))
+            .returns(Future.successful(Left(ResponseWrapper(correlationId, DownstreamErrors.single(DownstreamErrorCode(desErrorCode))))))
 
           await(service.retrieveEmploymentsExpenses(requestData)) shouldBe Left(ErrorWrapper(correlationId, error))
         }

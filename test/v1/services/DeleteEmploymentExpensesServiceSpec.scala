@@ -59,7 +59,7 @@ class DeleteEmploymentExpensesServiceSpec extends ServiceSpec {
 
           MockDeleteEmploymentExpensesConnector
             .deleteEmploymentExpenses(requestData)
-            .returns(Future.successful(Left(ResponseWrapper(correlationId, DownstreamErrors.single(DesErrorCode(desErrorCode))))))
+            .returns(Future.successful(Left(ResponseWrapper(correlationId, DownstreamErrors.single(DownstreamErrorCode(desErrorCode))))))
 
           await(service.deleteEmploymentExpenses(requestData)) shouldBe Left(ErrorWrapper(correlationId, error))
         }

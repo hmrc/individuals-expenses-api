@@ -66,7 +66,7 @@ class RetrieveOtherExpensesServiceSpec extends ServiceSpec {
 
           MockRetrieveOtherExpensesConnector
             .retrieveOtherExpenses(requestData)
-            .returns(Future.successful(Left(ResponseWrapper(correlationId, DownstreamErrors.single(DesErrorCode(desErrorCode))))))
+            .returns(Future.successful(Left(ResponseWrapper(correlationId, DownstreamErrors.single(DownstreamErrorCode(desErrorCode))))))
 
           await(service.retrieveOtherExpenses(requestData)) shouldBe Left(ErrorWrapper(correlationId, error))
         }

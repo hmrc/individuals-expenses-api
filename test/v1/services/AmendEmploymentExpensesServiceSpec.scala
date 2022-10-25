@@ -72,7 +72,7 @@ class AmendEmploymentExpensesServiceSpec extends ServiceSpec {
 
           MockAmendEmploymentExpensesConnector
             .amend(requestData)
-            .returns(Future.successful(Left(ResponseWrapper(correlationId, DownstreamErrors.single(DesErrorCode(desErrorCode))))))
+            .returns(Future.successful(Left(ResponseWrapper(correlationId, DownstreamErrors.single(DownstreamErrorCode(desErrorCode))))))
 
           await(service.amend(requestData)) shouldBe Left(ErrorWrapper(correlationId, error))
         }
