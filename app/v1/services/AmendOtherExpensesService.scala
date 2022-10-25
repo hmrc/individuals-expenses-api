@@ -25,12 +25,12 @@ import v1.connectors.AmendOtherExpensesConnector
 import v1.controllers.EndpointLogContext
 import v1.models.errors._
 import v1.models.request.amendOtherExpenses.AmendOtherExpensesRequest
-import v1.support.DesResponseMappingSupport
+import v1.support.DownstreamResponseMappingSupport
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class AmendOtherExpensesService @Inject() (connector: AmendOtherExpensesConnector) extends DesResponseMappingSupport with Logging {
+class AmendOtherExpensesService @Inject() (connector: AmendOtherExpensesConnector) extends DownstreamResponseMappingSupport with Logging {
 
   def amend(request: AmendOtherExpensesRequest)(implicit
       hc: HeaderCarrier,
@@ -39,7 +39,7 @@ class AmendOtherExpensesService @Inject() (connector: AmendOtherExpensesConnecto
       correlationId: String): Future[AmendOtherExpensesServiceOutcome] = {
 
     val result = for {
-      desResponseWrapper <- EitherT(connector.amend(request)).leftMap(mapDesErrors(desErrorMap))
+      desResponseWrapper <- EitherT(connector.amend(request)).leftMap(mapDownstreamErrors(desErrorMap))
     } yield desResponseWrapper
     result.value
   }
@@ -48,8 +48,8 @@ class AmendOtherExpensesService @Inject() (connector: AmendOtherExpensesConnecto
     Map(
       "INVALID_TAXABLE_ENTITY_ID" -> NinoFormatError,
       "FORMAT_TAX_YEAR"           -> TaxYearFormatError,
-      "SERVER_ERROR"              -> DownstreamError,
-      "SERVICE_UNAVAILABLE"       -> DownstreamError
+      "SERVER_ERROR"              -> StandardDownstreamError,
+      "SERVICE_UNAVAILABLE"       -> StandardDownstreamError
     )
 
 }

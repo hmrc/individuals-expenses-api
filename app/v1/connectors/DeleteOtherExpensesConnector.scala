@@ -16,11 +16,12 @@
 
 package v1.connectors
 
+import v1.connectors.DownstreamUri.IfsR5Uri
 import config.AppConfig
 import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.HttpClient
-import v1.connectors.httpparsers.StandardDesHttpParser._
+import v1.connectors.httpparsers.StandardDownstreamHttpParser._
 import v1.models.request.deleteOtherExpenses.DeleteOtherExpensesRequest
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -34,7 +35,7 @@ class DeleteOtherExpensesConnector @Inject() (val http: HttpClient, val appConfi
       correlationId: String): Future[DownstreamOutcome[Unit]] = {
 
     delete(
-      request = DownstreamRequest[Unit](IfsR5, s"income-tax/expenses/other/${request.nino.nino}/${request.taxYear}")
+      uri = IfsR5Uri[Unit](s"income-tax/expenses/other/${request.nino.nino}/${request.taxYear}")
     )
   }
 

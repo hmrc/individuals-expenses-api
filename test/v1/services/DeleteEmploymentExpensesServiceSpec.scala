@@ -16,8 +16,8 @@
 
 package v1.services
 
-import v1.models.domain.Nino
 import v1.mocks.connectors.MockDeleteEmploymentExpensesConnector
+import v1.models.domain.Nino
 import v1.models.errors._
 import v1.models.outcomes.ResponseWrapper
 import v1.models.request.deleteEmploymentExpenses.DeleteEmploymentExpensesRequest
@@ -59,7 +59,7 @@ class DeleteEmploymentExpensesServiceSpec extends ServiceSpec {
 
           MockDeleteEmploymentExpensesConnector
             .deleteEmploymentExpenses(requestData)
-            .returns(Future.successful(Left(ResponseWrapper(correlationId, DesErrors.single(DesErrorCode(desErrorCode))))))
+            .returns(Future.successful(Left(ResponseWrapper(correlationId, DownstreamErrors.single(DownstreamErrorCode(desErrorCode))))))
 
           await(service.deleteEmploymentExpenses(requestData)) shouldBe Left(ErrorWrapper(correlationId, error))
         }
@@ -67,10 +67,10 @@ class DeleteEmploymentExpensesServiceSpec extends ServiceSpec {
       val input = Seq(
         "INVALID_TAXABLE_ENTITY_ID" -> NinoFormatError,
         "INVALID_TAX_YEAR"          -> TaxYearFormatError,
-        "INVALID_CORRELATIONID"     -> DownstreamError,
+        "INVALID_CORRELATIONID"     -> StandardDownstreamError,
         "NO_DATA_FOUND"             -> NotFoundError,
-        "SERVER_ERROR"              -> DownstreamError,
-        "SERVICE_UNAVAILABLE"       -> DownstreamError
+        "SERVER_ERROR"              -> StandardDownstreamError,
+        "SERVICE_UNAVAILABLE"       -> StandardDownstreamError
       )
 
       input.foreach(args => (serviceError _).tupled(args))

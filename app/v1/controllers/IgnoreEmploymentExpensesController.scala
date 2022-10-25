@@ -108,7 +108,7 @@ class IgnoreEmploymentExpensesController @Inject() (val authService: EnrolmentsA
       case NinoFormatError | BadRequestError | TaxYearFormatError | RuleTaxYearRangeInvalidError | RuleTaxYearNotSupportedError |
           RuleTaxYearNotEndedError =>
         BadRequest(Json.toJson(errorWrapper))
-      case DownstreamError => InternalServerError(Json.toJson(errorWrapper))
+      case StandardDownstreamError => InternalServerError(Json.toJson(errorWrapper))
       case NotFoundError   => NotFound(Json.toJson(errorWrapper))
     }
   }

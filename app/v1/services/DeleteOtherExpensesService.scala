@@ -25,13 +25,13 @@ import v1.connectors.DeleteOtherExpensesConnector
 import v1.controllers.EndpointLogContext
 import v1.models.errors._
 import v1.models.request.deleteOtherExpenses.DeleteOtherExpensesRequest
-import v1.support.DesResponseMappingSupport
+import v1.support.DownstreamResponseMappingSupport
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class DeleteOtherExpensesService @Inject() (deleteOtherExpensesConnector: DeleteOtherExpensesConnector)
-    extends DesResponseMappingSupport
+    extends DownstreamResponseMappingSupport
     with Logging {
 
   def deleteOtherExpenses(request: DeleteOtherExpensesRequest)(implicit
@@ -41,7 +41,7 @@ class DeleteOtherExpensesService @Inject() (deleteOtherExpensesConnector: Delete
       correlationId: String): Future[DeleteOtherExpensesServiceOutcome] = {
 
     val result = for {
-      desResponseWrapper <- EitherT(deleteOtherExpensesConnector.deleteOtherExpenses(request)).leftMap(mapDesErrors(desErrorMap))
+      desResponseWrapper <- EitherT(deleteOtherExpensesConnector.deleteOtherExpenses(request)).leftMap(mapDownstreamErrors(desErrorMap))
     } yield desResponseWrapper
     result.value
   }
@@ -51,8 +51,8 @@ class DeleteOtherExpensesService @Inject() (deleteOtherExpensesConnector: Delete
       "INVALID_TAXABLE_ENTITY_ID" -> NinoFormatError,
       "FORMAT_TAX_YEAR"           -> TaxYearFormatError,
       "NO_DATA_FOUND"             -> NotFoundError,
-      "SERVER_ERROR"              -> DownstreamError,
-      "SERVICE_UNAVAILABLE"       -> DownstreamError
+      "SERVER_ERROR"              -> StandardDownstreamError,
+      "SERVICE_UNAVAILABLE"       -> StandardDownstreamError
     )
 
 }

@@ -16,8 +16,8 @@
 
 package v1.services
 
-import v1.models.domain.Nino
 import v1.mocks.connectors.MockRetrieveOtherExpensesConnector
+import v1.models.domain.Nino
 import v1.models.errors._
 import v1.models.outcomes.ResponseWrapper
 import v1.models.request.retrieveOtherExpenses.RetrieveOtherExpensesRequest
@@ -66,7 +66,7 @@ class RetrieveOtherExpensesServiceSpec extends ServiceSpec {
 
           MockRetrieveOtherExpensesConnector
             .retrieveOtherExpenses(requestData)
-            .returns(Future.successful(Left(ResponseWrapper(correlationId, DesErrors.single(DesErrorCode(desErrorCode))))))
+            .returns(Future.successful(Left(ResponseWrapper(correlationId, DownstreamErrors.single(DownstreamErrorCode(desErrorCode))))))
 
           await(service.retrieveOtherExpenses(requestData)) shouldBe Left(ErrorWrapper(correlationId, error))
         }
@@ -75,8 +75,8 @@ class RetrieveOtherExpensesServiceSpec extends ServiceSpec {
         "INVALID_TAXABLE_ENTITY_ID" -> NinoFormatError,
         "FORMAT_TAX_YEAR"           -> TaxYearFormatError,
         "NO_DATA_FOUND"             -> NotFoundError,
-        "SERVER_ERROR"              -> DownstreamError,
-        "SERVICE_UNAVAILABLE"       -> DownstreamError
+        "SERVER_ERROR"              -> StandardDownstreamError,
+        "SERVICE_UNAVAILABLE"       -> StandardDownstreamError
       )
 
       input.foreach(args => (serviceError _).tupled(args))

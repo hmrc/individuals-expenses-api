@@ -17,10 +17,9 @@
 package v1.connectors
 
 import mocks.MockAppConfig
-import v1.models.domain.Nino
 import v1.mocks.MockHttpClient
+import v1.models.domain.{MtdSource, Nino}
 import v1.models.downstream.DownstreamSource
-import v1.models.domain.MtdSource
 import v1.models.outcomes.ResponseWrapper
 import v1.models.request.retrieveEmploymentExpenses.RetrieveEmploymentsExpensesRequest
 import v1.models.response.retrieveEmploymentExpenses.{Expenses, RetrieveEmploymentsExpensesResponse}

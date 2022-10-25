@@ -16,8 +16,8 @@
 
 package v1.services
 
-import v1.models.domain.Nino
 import v1.mocks.connectors.MockAmendEmploymentExpensesConnector
+import v1.models.domain.Nino
 import v1.models.errors._
 import v1.models.outcomes.ResponseWrapper
 import v1.models.request.amendEmploymentExpenses.{AmendEmploymentExpensesBody, AmendEmploymentExpensesRequest, Expenses}
@@ -72,7 +72,7 @@ class AmendEmploymentExpensesServiceSpec extends ServiceSpec {
 
           MockAmendEmploymentExpensesConnector
             .amend(requestData)
-            .returns(Future.successful(Left(ResponseWrapper(correlationId, DesErrors.single(DesErrorCode(desErrorCode))))))
+            .returns(Future.successful(Left(ResponseWrapper(correlationId, DownstreamErrors.single(DownstreamErrorCode(desErrorCode))))))
 
           await(service.amend(requestData)) shouldBe Left(ErrorWrapper(correlationId, error))
         }
@@ -80,12 +80,12 @@ class AmendEmploymentExpensesServiceSpec extends ServiceSpec {
       val input = Seq(
         "INVALID_TAXABLE_ENTITY_ID"       -> NinoFormatError,
         "INVALID_TAX_YEAR"                -> TaxYearFormatError,
-        "INVALID_CORRELATIONID"           -> DownstreamError,
-        "INVALID_PAYLOAD"                 -> DownstreamError,
+        "INVALID_CORRELATIONID"           -> StandardDownstreamError,
+        "INVALID_PAYLOAD"                 -> StandardDownstreamError,
         "INVALID_REQUEST_BEFORE_TAX_YEAR" -> RuleTaxYearNotEndedError,
         "INCOME_SOURCE_NOT_FOUND"         -> NotFoundError,
-        "SERVER_ERROR"                    -> DownstreamError,
-        "SERVICE_UNAVAILABLE"             -> DownstreamError
+        "SERVER_ERROR"                    -> StandardDownstreamError,
+        "SERVICE_UNAVAILABLE"             -> StandardDownstreamError
       )
 
       input.foreach(args => (serviceError _).tupled(args))

@@ -83,7 +83,7 @@ class RetrieveOtherExpensesController @Inject() (val authService: EnrolmentsAuth
     (errorWrapper.error: @unchecked) match {
       case NinoFormatError | BadRequestError | TaxYearFormatError | RuleTaxYearNotSupportedError | RuleTaxYearRangeInvalidError =>
         BadRequest(Json.toJson(errorWrapper))
-      case DownstreamError => InternalServerError(Json.toJson(errorWrapper))
+      case StandardDownstreamError => InternalServerError(Json.toJson(errorWrapper))
       case NotFoundError   => NotFound(Json.toJson(errorWrapper))
     }
   }

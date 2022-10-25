@@ -17,8 +17,8 @@
 package v1.controllers.requestParsers
 
 import support.UnitSpec
-import v1.models.domain.Nino
 import v1.mocks.validators.MockDeleteEmploymentExpensesValidator
+import v1.models.domain.Nino
 import v1.models.errors._
 import v1.models.request.deleteEmploymentExpenses.{DeleteEmploymentExpensesRawData, DeleteEmploymentExpensesRequest}
 

@@ -106,7 +106,7 @@ class RetrieveEmploymentsExpensesController @Inject() (val authService: Enrolmen
     (errorWrapper.error: @unchecked) match {
       case NinoFormatError | BadRequestError | TaxYearFormatError | RuleTaxYearNotSupportedError | SourceFormatError | RuleTaxYearRangeInvalidError =>
         BadRequest(Json.toJson(errorWrapper))
-      case DownstreamError => InternalServerError(Json.toJson(errorWrapper))
+      case StandardDownstreamError => InternalServerError(Json.toJson(errorWrapper))
       case NotFoundError   => NotFound(Json.toJson(errorWrapper))
     }
   }

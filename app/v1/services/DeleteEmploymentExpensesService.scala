@@ -23,15 +23,15 @@ import uk.gov.hmrc.http.HeaderCarrier
 import utils.Logging
 import v1.connectors.DeleteEmploymentExpensesConnector
 import v1.controllers.EndpointLogContext
-import v1.models.errors.{DownstreamError, MtdError, NinoFormatError, NotFoundError, TaxYearFormatError}
+import v1.models.errors.{StandardDownstreamError, MtdError, NinoFormatError, NotFoundError, TaxYearFormatError}
 import v1.models.request.deleteEmploymentExpenses.DeleteEmploymentExpensesRequest
-import v1.support.DesResponseMappingSupport
+import v1.support.DownstreamResponseMappingSupport
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class DeleteEmploymentExpensesService @Inject() (deleteEmploymentExpensesConnector: DeleteEmploymentExpensesConnector)
-    extends DesResponseMappingSupport
+    extends DownstreamResponseMappingSupport
     with Logging {
 
   def deleteEmploymentExpenses(request: DeleteEmploymentExpensesRequest)(implicit
@@ -41,7 +41,7 @@ class DeleteEmploymentExpensesService @Inject() (deleteEmploymentExpensesConnect
       correlationId: String): Future[DeleteEmploymentExpensesServiceOutcome] = {
 
     val result = for {
-      desResponseWrapper <- EitherT(deleteEmploymentExpensesConnector.deleteEmploymentExpenses(request)).leftMap(mapDesErrors(desErrorMap))
+      desResponseWrapper <- EitherT(deleteEmploymentExpensesConnector.deleteEmploymentExpenses(request)).leftMap(mapDownstreamErrors(desErrorMap))
     } yield desResponseWrapper
     result.value
   }
@@ -50,10 +50,10 @@ class DeleteEmploymentExpensesService @Inject() (deleteEmploymentExpensesConnect
     Map(
       "INVALID_TAXABLE_ENTITY_ID" -> NinoFormatError,
       "INVALID_TAX_YEAR"          -> TaxYearFormatError,
-      "INVALID_CORRELATIONID"     -> DownstreamError,
+      "INVALID_CORRELATIONID"     -> StandardDownstreamError,
       "NO_DATA_FOUND"             -> NotFoundError,
-      "SERVER_ERROR"              -> DownstreamError,
-      "SERVICE_UNAVAILABLE"       -> DownstreamError
+      "SERVER_ERROR"              -> StandardDownstreamError,
+      "SERVICE_UNAVAILABLE"       -> StandardDownstreamError
     )
 
 }

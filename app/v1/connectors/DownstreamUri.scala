@@ -14,14 +14,16 @@
  * limitations under the License.
  */
 
-package v1
+package v1.connectors
 
-import v1.models.errors.{DownstreamError, MtdError}
-import v1.models.outcomes.ResponseWrapper
+sealed trait DownstreamUri[Resp] {
+  val value: String
+}
 
-package object connectors {
+object DownstreamUri {
+  case class DesUri[Resp](value: String)                extends DownstreamUri[Resp]
+  case class IfsR5Uri[Resp](value: String)              extends DownstreamUri[Resp]
+  case class IfsR6Uri[Resp](value: String)              extends DownstreamUri[Resp]
+  case class TaxYearSpecificIfsUri[Resp](value: String) extends DownstreamUri[Resp]
 
-  type MtdIdLookupOutcome = Either[MtdError, String]
-
-  type DownstreamOutcome[A] = Either[ResponseWrapper[DownstreamError], ResponseWrapper[A]]
 }

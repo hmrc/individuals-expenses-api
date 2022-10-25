@@ -29,18 +29,36 @@ trait AppConfig {
   // Downstream Config
   def desBaseUrl: String
   def desToken: String
-  def desEnvironment: String
+  def desEnv: String
   def desEnvironmentHeaders: Option[Seq[String]]
+
+  lazy val desDownstreamConfig: DownstreamConfig =
+    DownstreamConfig(baseUrl = desBaseUrl, env = desEnv, token = desToken, environmentHeaders = desEnvironmentHeaders)
 
   def ifsR5Token: String
   def ifsR5BaseUrl: String
-  def ifsR5Environment: String
+  def ifsR5Env: String
   def ifsR5EnvironmentHeaders: Option[Seq[String]]
+
+  lazy val ifsR5DownstreamConfig: DownstreamConfig =
+    DownstreamConfig(baseUrl = ifsR5BaseUrl, env = ifsR5Env, token = ifsR5Token, environmentHeaders = ifsR5EnvironmentHeaders)
 
   def ifsR6Token: String
   def ifsR6BaseUrl: String
-  def ifsR6Environment: String
+  def ifsR6Env: String
   def ifsR6EnvironmentHeaders: Option[Seq[String]]
+
+  lazy val ifsR6DownstreamConfig: DownstreamConfig =
+    DownstreamConfig(baseUrl = ifsR6BaseUrl, env = ifsR6Env, token = ifsR6Token, environmentHeaders = ifsR6EnvironmentHeaders)
+
+  // Tax Year Specific (TYS) IFS Config
+  def tysIfsBaseUrl: String
+  def tysIfsEnv: String
+  def tysIfsToken: String
+  def tysIfsEnvironmentHeaders: Option[Seq[String]]
+
+  lazy val taxYearSpecificIfsDownstreamConfig: DownstreamConfig =
+    DownstreamConfig(baseUrl = tysIfsBaseUrl, env = tysIfsEnv, token = tysIfsToken, environmentHeaders = tysIfsEnvironmentHeaders)
 
   // API Config
   def apiStatus(version: String): String
@@ -51,7 +69,7 @@ trait AppConfig {
   def otherExpensesMinimumTaxYear: Int
   def employmentExpensesMinimumTaxYear: Int
 
-  def featureSwitch: Option[Configuration]
+  def featureSwitches: Configuration
   def endpointsEnabled(version: String): Boolean
 
 }
@@ -64,30 +82,35 @@ class AppConfigImpl @Inject() (config: ServicesConfig, configuration: Configurat
 
   // Downstream Config
   val desBaseUrl: String                         = config.baseUrl("des")
-  val desEnvironment: String                     = config.getString("microservice.services.des.env")
+  val desEnv: String                             = config.getString("microservice.services.des.env")
   val desToken: String                           = config.getString("microservice.services.des.token")
   val desEnvironmentHeaders: Option[Seq[String]] = configuration.getOptional[Seq[String]]("microservice.services.des.environmentHeaders")
 
   val ifsR5BaseUrl: String                         = config.baseUrl("ifsR5")
-  val ifsR5Environment: String                     = config.getString("microservice.services.ifsR5.env")
+  val ifsR5Env: String                             = config.getString("microservice.services.ifsR5.env")
   val ifsR5Token: String                           = config.getString("microservice.services.ifsR5.token")
   val ifsR5EnvironmentHeaders: Option[Seq[String]] = configuration.getOptional[Seq[String]]("microservice.services.ifsR5.environmentHeaders")
 
   val ifsR6BaseUrl: String                         = config.baseUrl("ifsR6")
-  val ifsR6Environment: String                     = config.getString("microservice.services.ifsR6.env")
+  val ifsR6Env: String                             = config.getString("microservice.services.ifsR6.env")
   val ifsR6Token: String                           = config.getString("microservice.services.ifsR6.token")
   val ifsR6EnvironmentHeaders: Option[Seq[String]] = configuration.getOptional[Seq[String]]("microservice.services.ifsR6.environmentHeaders")
+
+  // Tax Year Specific (TYS) IFS Config
+  val tysIfsBaseUrl: String                         = config.baseUrl("tys-ifs")
+  val tysIfsEnv: String                             = config.getString("microservice.services.tys-ifs.env")
+  val tysIfsToken: String                           = config.getString("microservice.services.tys-ifs.token")
+  val tysIfsEnvironmentHeaders: Option[Seq[String]] = configuration.getOptional[Seq[String]]("microservice.services.tys-ifs.environmentHeaders")
 
   // API Config
   val apiGatewayContext: String                    = config.getString("api.gateway.context")
   def apiStatus(version: String): String           = config.getString(s"api.$version.status")
+  def featureSwitches: Configuration               = configuration.getOptional[Configuration](s"feature-switch").getOrElse(Configuration.empty)
   val confidenceLevelConfig: ConfidenceLevelConfig = configuration.get[ConfidenceLevelConfig](s"api.confidence-level-check")
 
   // Business Rule Config
   val otherExpensesMinimumTaxYear: Int      = config.getInt("otherExpensesMinimumTaxYear")
   val employmentExpensesMinimumTaxYear: Int = config.getInt("employmentExpensesMinimumTaxYear")
-
-  def featureSwitch: Option[Configuration] = configuration.getOptional[Configuration](s"feature-switch")
 
   def endpointsEnabled(version: String): Boolean = config.getBoolean(s"api.$version.endpoints.enabled")
 

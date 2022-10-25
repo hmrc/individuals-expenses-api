@@ -16,7 +16,6 @@
 
 package v1.endpoints
 
-import java.time.LocalDate
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import play.api.http.HeaderNames.ACCEPT
 import play.api.http.Status._
@@ -25,7 +24,6 @@ import play.api.libs.ws.{WSRequest, WSResponse}
 import play.api.test.Helpers.AUTHORIZATION
 import support.IntegrationBaseSpec
 import v1.models.errors._
-import v1.models.request.DesTaxYear
 import v1.stubs.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 
 class IgnoreEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
@@ -125,20 +123,12 @@ class IgnoreEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
           }
         }
 
-        def currentYear: String = {
-          val currentDate = LocalDate.now()
-
-          val taxYear: Int = currentDate.getYear + 1
-
-          DesTaxYear.fromDesIntToString(taxYear)
-        }
-
         val input = Seq(
           ("AA123456ABCDEF", "2019-20", BAD_REQUEST, NinoFormatError),
           ("AA123456A", "201920", BAD_REQUEST, TaxYearFormatError),
           ("AA123456A", "2016-17", BAD_REQUEST, RuleTaxYearNotSupportedError),
           ("AA123456A", "2019-21", BAD_REQUEST, RuleTaxYearRangeInvalidError),
-          ("AA123456A", currentYear, BAD_REQUEST, RuleTaxYearNotEndedError)
+          ("AA123456A", getCurrentTaxYear, BAD_REQUEST, RuleTaxYearNotEndedError)
         )
 
         input.foreach(args => (parserErrorTest _).tupled(args))
@@ -165,12 +155,12 @@ class IgnoreEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
         val input = Seq(
           (BAD_REQUEST, "INVALID_TAXABLE_ENTITY_ID", BAD_REQUEST, NinoFormatError),
           (BAD_REQUEST, "INVALID_TAX_YEAR", BAD_REQUEST, TaxYearFormatError),
-          (BAD_REQUEST, "INVALID_CORRELATIONID", INTERNAL_SERVER_ERROR, DownstreamError),
-          (BAD_REQUEST, "INVALID_PAYLOAD", INTERNAL_SERVER_ERROR, DownstreamError),
+          (BAD_REQUEST, "INVALID_CORRELATIONID", INTERNAL_SERVER_ERROR, StandardDownstreamError),
+          (BAD_REQUEST, "INVALID_PAYLOAD", INTERNAL_SERVER_ERROR, StandardDownstreamError),
           (UNPROCESSABLE_ENTITY, "INVALID_REQUEST_BEFORE_TAX_YEAR", BAD_REQUEST, RuleTaxYearNotEndedError),
           (NOT_FOUND, "INCOME_SOURCE_NOT_FOUND", NOT_FOUND, NotFoundError),
-          (SERVICE_UNAVAILABLE, "SERVICE_UNAVAILABLE", INTERNAL_SERVER_ERROR, DownstreamError),
-          (INTERNAL_SERVER_ERROR, "SERVER_ERROR", INTERNAL_SERVER_ERROR, DownstreamError)
+          (SERVICE_UNAVAILABLE, "SERVICE_UNAVAILABLE", INTERNAL_SERVER_ERROR, StandardDownstreamError),
+          (INTERNAL_SERVER_ERROR, "SERVER_ERROR", INTERNAL_SERVER_ERROR, StandardDownstreamError)
         )
 
         input.foreach(args => (serviceErrorTest _).tupled(args))

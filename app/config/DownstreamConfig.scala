@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package v1.connectors
+package config
 
-sealed trait DownstreamRequestConfig
-
-case object Des   extends DownstreamRequestConfig
-case object IfsR5 extends DownstreamRequestConfig
-case object IfsR6 extends DownstreamRequestConfig
-
-case class DownstreamRequest[Resp](config: DownstreamRequestConfig, uri: String)
+case class DownstreamConfig(
+    baseUrl: String,
+    env: String,
+    token: String,
+    environmentHeaders: Option[Seq[String]]
+)

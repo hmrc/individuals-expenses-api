@@ -109,7 +109,7 @@ class AmendOtherExpensesController @Inject() (val authService: EnrolmentsAuthSer
             CustomerReferenceFormatError.code) | RuleTaxYearRangeInvalidError | RuleIncorrectOrEmptyBodyError | MtdErrorWithCustomMessage(
             ValueFormatError.code) =>
         BadRequest(Json.toJson(errorWrapper))
-      case DownstreamError => InternalServerError(Json.toJson(errorWrapper))
+      case StandardDownstreamError => InternalServerError(Json.toJson(errorWrapper))
     }
   }
 
