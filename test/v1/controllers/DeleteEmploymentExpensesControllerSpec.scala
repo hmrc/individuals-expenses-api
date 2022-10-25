@@ -25,6 +25,7 @@ import v1.mocks.requestParsers.MockDeleteEmploymentExpensesRequestParser
 import v1.mocks.services.{MockAuditService, MockDeleteEmploymentExpensesService, MockEnrolmentsAuthService, MockMtdIdLookupService}
 import v1.models.audit.{AuditError, AuditEvent, AuditResponse, ExpensesAuditDetail}
 import v1.models.domain.Nino
+import v1.models.request.TaxYear
 import v1.models.errors._
 import v1.models.outcomes.ResponseWrapper
 import v1.models.request.deleteEmploymentExpenses.{DeleteEmploymentExpensesRawData, DeleteEmploymentExpensesRequest}
@@ -79,7 +80,7 @@ class DeleteEmploymentExpensesControllerSpec
     )
 
   private val rawData     = DeleteEmploymentExpensesRawData(nino, taxYear)
-  private val requestData = DeleteEmploymentExpensesRequest(Nino(nino), taxYear)
+  private val requestData = DeleteEmploymentExpensesRequest(Nino(nino), TaxYear.fromMtd(taxYear))
 
   "handleRequest" should {
     "return NoContent" when {

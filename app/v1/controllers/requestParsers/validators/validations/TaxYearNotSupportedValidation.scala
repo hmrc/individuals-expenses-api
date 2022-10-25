@@ -14,9 +14,20 @@
  * limitations under the License.
  */
 
-package v1.models.request.deleteEmploymentExpenses
+package v1.controllers.requestParsers.validators.validations
 
-import v1.models.domain.Nino
+import config.AppConfig
+import v1.models.errors.{MtdError, RuleTaxYearNotSupportedError}
 import v1.models.request.TaxYear
 
-case class DeleteEmploymentExpensesRequest(nino: Nino, taxYear: TaxYear)
+object TaxYearNotSupportedValidation {
+
+  /** @param taxYear
+    *   taxYear in MTD format YYYY-YY
+    */
+  def validate(taxYear: String)(implicit appConfig: AppConfig): List[MtdError] = {
+    val year = TaxYear.fromMtd(taxYear).year
+    if (year < appConfig.employmentExpensesMinimumTaxYear) List(RuleTaxYearNotSupportedError) else NoValidationErrors
+  }
+
+}

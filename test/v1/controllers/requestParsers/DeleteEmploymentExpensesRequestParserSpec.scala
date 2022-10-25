@@ -20,6 +20,7 @@ import support.UnitSpec
 import v1.mocks.validators.MockDeleteEmploymentExpensesValidator
 import v1.models.domain.Nino
 import v1.models.errors._
+import v1.models.request.TaxYear
 import v1.models.request.deleteEmploymentExpenses.{DeleteEmploymentExpensesRawData, DeleteEmploymentExpensesRequest}
 
 class DeleteEmploymentExpensesRequestParserSpec extends UnitSpec {
@@ -35,13 +36,12 @@ class DeleteEmploymentExpensesRequestParserSpec extends UnitSpec {
   }
 
   "parse" should {
-
     "return a request object" when {
       "valid request data is supplied" in new Test {
         MockDeleteEmploymentExpensesValidator.validate(inputData).returns(Nil)
 
         parser.parseRequest(inputData) shouldBe
-          Right(DeleteEmploymentExpensesRequest(Nino(nino), taxYear))
+          Right(DeleteEmploymentExpensesRequest(Nino(nino), TaxYear.fromMtd(taxYear)))
       }
     }
 

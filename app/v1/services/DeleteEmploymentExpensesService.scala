@@ -17,13 +17,14 @@
 package v1.services
 
 import cats.data.EitherT
+
 import javax.inject.{Inject, Singleton}
 import cats.implicits._
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Logging
 import v1.connectors.DeleteEmploymentExpensesConnector
 import v1.controllers.EndpointLogContext
-import v1.models.errors.{StandardDownstreamError, MtdError, NinoFormatError, NotFoundError, TaxYearFormatError}
+import v1.models.errors.{MtdError, NinoFormatError, NotFoundError, RuleTaxYearNotSupportedError, StandardDownstreamError, TaxYearFormatError}
 import v1.models.request.deleteEmploymentExpenses.DeleteEmploymentExpensesRequest
 import v1.support.DownstreamResponseMappingSupport
 
@@ -40,14 +41,13 @@ class DeleteEmploymentExpensesService @Inject() (deleteEmploymentExpensesConnect
       logContext: EndpointLogContext,
       correlationId: String): Future[DeleteEmploymentExpensesServiceOutcome] = {
 
-    val result = for {
-      desResponseWrapper <- EitherT(deleteEmploymentExpensesConnector.deleteEmploymentExpenses(request)).leftMap(mapDownstreamErrors(desErrorMap))
-    } yield desResponseWrapper
+    val result =  EitherT(deleteEmploymentExpensesConnector.deleteEmploymentExpenses(request)).leftMap(mapDownstreamErrors(errorMap))
+
     result.value
   }
 
-  private def desErrorMap: Map[String, MtdError] =
-    Map(
+  private def errorMap: Map[String, MtdError] = {
+    val errorMap = Map(
       "INVALID_TAXABLE_ENTITY_ID" -> NinoFormatError,
       "INVALID_TAX_YEAR"          -> TaxYearFormatError,
       "INVALID_CORRELATIONID"     -> StandardDownstreamError,
@@ -55,5 +55,14 @@ class DeleteEmploymentExpensesService @Inject() (deleteEmploymentExpensesConnect
       "SERVER_ERROR"              -> StandardDownstreamError,
       "SERVICE_UNAVAILABLE"       -> StandardDownstreamError
     )
+
+    val extraTysErrors = Map(
+      "INVALID_CORRELATION_ID" -> StandardDownstreamError,
+      "NOT_FOUND"              -> NotFoundError,
+      "TAX_YEAR_NOT_SUPPORTED" -> RuleTaxYearNotSupportedError
+    )
+
+    errorMap ++ extraTysErrors
+  }
 
 }

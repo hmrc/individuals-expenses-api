@@ -16,51 +16,61 @@
 
 package v1.connectors
 
-import mocks.MockAppConfig
-import v1.mocks.MockHttpClient
 import v1.models.domain.Nino
 import v1.models.outcomes.ResponseWrapper
+import v1.models.request.TaxYear
 import v1.models.request.deleteEmploymentExpenses.DeleteEmploymentExpensesRequest
 
 import scala.concurrent.Future
 
 class DeleteEmploymentExpensesConnectorSpec extends ConnectorSpec {
 
-  val taxYear      = "2021-22"
-  val nino: String = "AA123456A"
+  val nino: String        = "AA123456A"
 
-  class Test extends MockHttpClient with MockAppConfig {
+  trait Test {
+    _: ConnectorTest =>
+    def taxYear: TaxYear
 
-    val connector: DeleteEmploymentExpensesConnector = new DeleteEmploymentExpensesConnector(
-      http = mockHttpClient,
-      appConfig = mockAppConfig
-    )
+    protected val connector: DeleteEmploymentExpensesConnector =
+      new DeleteEmploymentExpensesConnector(
+        http = mockHttpClient,
+        appConfig = mockAppConfig
+      )
 
-    MockAppConfig.desBaseUrl returns baseUrl
-    MockAppConfig.desToken returns "des-token"
-    MockAppConfig.desEnvironment returns "des-environment"
-    MockAppConfig.desEnvironmentHeaders returns Some(allowedDownstreamHeaders)
+    protected val request: DeleteEmploymentExpensesRequest =
+      DeleteEmploymentExpensesRequest(
+        nino = Nino(nino),
+        taxYear = taxYear,
+      )
+
   }
 
-  "deleteEmploymentExpenses" should {
-    val request = DeleteEmploymentExpensesRequest(Nino(nino), taxYear)
+  "DeleteEmploymentExpensesConnector" should {
+    "return a 200 result on delete" when {
+      "the downstream call is successful and not tax year specific" in new DesTest with Test {
+        def taxYear: TaxYear                               = TaxYear.fromMtd("2017-18")
+        val outcome: Right[Nothing, ResponseWrapper[Unit]] = Right(ResponseWrapper(correlationId, ()))
 
-    "return a 204 with no body" when {
-      "the downstream call is successful" in new Test {
-        val outcome = Right(ResponseWrapper(correlationId, ()))
+        willDelete(s"$baseUrl/income-tax/expenses/employments/${request.nino.nino}/${request.taxYear.asMtd}") returns Future.successful(outcome)
 
-        MockHttpClient
-          .delete(
-            url = s"$baseUrl/income-tax/expenses/employments/${request.nino.nino}/${request.taxYear}",
-            config = dummyDownstreamHeaderCarrierConfig,
-            requiredHeaders = requiredDesHeaders,
-            excludedHeaders = excludedHeaders
-          )
-          .returns(Future.successful(outcome))
+        val result = await(connector.deleteEmploymentExpenses(request))
 
-        await(connector.deleteEmploymentExpenses(request)) shouldBe outcome
+        result shouldBe outcome
       }
+
+      "the downstream call is successful and is tax year specific" in new TysIfsTest with Test {
+        def taxYear: TaxYear                               = TaxYear.fromMtd("2023-24")
+        val outcome: Right[Nothing, ResponseWrapper[Unit]] = Right(ResponseWrapper(correlationId, ()))
+
+        willDelete(s"$baseUrl/income-tax/expenses/employments/${request.taxYear.asTysDownstream}/${request.nino.nino}") returns Future.successful(outcome)
+
+        val result = await(connector.deleteEmploymentExpenses(request))
+
+        result shouldBe outcome
+      }
+
     }
+
   }
 
 }
