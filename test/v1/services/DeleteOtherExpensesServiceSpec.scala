@@ -59,7 +59,7 @@ class DeleteOtherExpensesServiceSpec extends ServiceSpec {
 
           MockDeleteOtherExpensesConnector
             .deleteOtherExpenses(requestData)
-            .returns(Future.successful(Left(ResponseWrapper(correlationId, DesErrors.single(DesErrorCode(desErrorCode))))))
+            .returns(Future.successful(Left(ResponseWrapper(correlationId, DownstreamErrors.single(DesErrorCode(desErrorCode))))))
 
           await(service.deleteOtherExpenses(requestData)) shouldBe Left(ErrorWrapper(correlationId, error))
         }
@@ -68,8 +68,8 @@ class DeleteOtherExpensesServiceSpec extends ServiceSpec {
         "INVALID_TAXABLE_ENTITY_ID" -> NinoFormatError,
         "FORMAT_TAX_YEAR"           -> TaxYearFormatError,
         "NO_DATA_FOUND"             -> NotFoundError,
-        "SERVER_ERROR"              -> DownstreamError,
-        "SERVICE_UNAVAILABLE"       -> DownstreamError
+        "SERVER_ERROR"              -> StandardDownstreamError,
+        "SERVICE_UNAVAILABLE"       -> StandardDownstreamError
       )
 
       input.foreach(args => (serviceError _).tupled(args))

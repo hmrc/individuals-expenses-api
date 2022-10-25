@@ -39,10 +39,7 @@ object CustomerReferenceFormatError extends MtdError("FORMAT_CUSTOMER_REFERENCE"
 object SourceFormatError            extends MtdError("FORMAT_SOURCE", "The provided source is invalid")
 
 // Rule Errors
-object RuleTaxYearNotSupportedError
-    extends MtdError(
-      "RULE_TAX_YEAR_NOT_SUPPORTED",
-      "The tax year specified does not lie within the supported range")
+object RuleTaxYearNotSupportedError extends MtdError("RULE_TAX_YEAR_NOT_SUPPORTED", "The tax year specified does not lie within the supported range")
 
 object RuleIncorrectOrEmptyBodyError extends MtdError("RULE_INCORRECT_OR_EMPTY_BODY_SUBMITTED", "An empty or non-matching body was submitted")
 
@@ -54,7 +51,7 @@ object RuleTaxYearNotEndedError extends MtdError("RULE_TAX_YEAR_NOT_ENDED", "Tax
 //Standard Errors
 object NotFoundError extends MtdError("MATCHING_RESOURCE_NOT_FOUND", "Matching resource not found")
 
-object DownstreamError extends MtdError("INTERNAL_SERVER_ERROR", "An internal server error occurred")
+object StandardDownstreamError extends MtdError("INTERNAL_SERVER_ERROR", "An internal server error occurred")
 
 object BadRequestError extends MtdError("INVALID_REQUEST", "Invalid request")
 

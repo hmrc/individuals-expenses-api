@@ -19,7 +19,7 @@ package v1.models.errors
 import play.api.libs.json.Json
 import support.UnitSpec
 
-class DesErrorCodeSpec extends UnitSpec {
+class DownstreamErrorCodeSpec extends UnitSpec {
 
   "reads" should {
     val json = Json.parse(

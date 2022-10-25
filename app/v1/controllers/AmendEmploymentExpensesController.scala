@@ -108,7 +108,7 @@ class AmendEmploymentExpensesController @Inject() (val authService: EnrolmentsAu
       case NinoFormatError | BadRequestError | TaxYearFormatError | RuleTaxYearRangeInvalidError | RuleIncorrectOrEmptyBodyError |
           RuleTaxYearNotSupportedError | RuleTaxYearNotEndedError | MtdErrorWithCustomMessage(ValueFormatError.code) =>
         BadRequest(Json.toJson(errorWrapper))
-      case DownstreamError => InternalServerError(Json.toJson(errorWrapper))
+      case StandardDownstreamError => InternalServerError(Json.toJson(errorWrapper))
       case NotFoundError   => NotFound(Json.toJson(errorWrapper))
     }
   }

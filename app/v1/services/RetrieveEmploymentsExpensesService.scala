@@ -25,13 +25,13 @@ import v1.connectors.RetrieveEmploymentsExpensesConnector
 import v1.controllers.EndpointLogContext
 import v1.models.errors._
 import v1.models.request.retrieveEmploymentExpenses.RetrieveEmploymentsExpensesRequest
-import v1.support.DesResponseMappingSupport
+import v1.support.DownstreamResponseMappingSupport
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class RetrieveEmploymentsExpensesService @Inject() (retrieveEmploymentsExpensesConnector: RetrieveEmploymentsExpensesConnector)
-    extends DesResponseMappingSupport
+    extends DownstreamResponseMappingSupport
     with Logging {
 
   def retrieveEmploymentsExpenses(request: RetrieveEmploymentsExpensesRequest)(implicit
@@ -41,7 +41,7 @@ class RetrieveEmploymentsExpensesService @Inject() (retrieveEmploymentsExpensesC
       correlationId: String): Future[RetrieveEmploymentExpensesServiceOutcome] = {
 
     val result = for {
-      desResponseWrapper <- EitherT(retrieveEmploymentsExpensesConnector.retrieveEmploymentExpenses(request)).leftMap(mapDesErrors(desErrorMap))
+      desResponseWrapper <- EitherT(retrieveEmploymentsExpensesConnector.retrieveEmploymentExpenses(request)).leftMap(mapDownstreamErrors(desErrorMap))
     } yield desResponseWrapper
     result.value
   }
@@ -51,11 +51,11 @@ class RetrieveEmploymentsExpensesService @Inject() (retrieveEmploymentsExpensesC
       "INVALID_TAXABLE_ENTITY_ID" -> NinoFormatError,
       "INVALID_TAX_YEAR"          -> TaxYearFormatError,
       "INVALID_VIEW"              -> SourceFormatError,
-      "INVALID_CORRELATIONID"     -> DownstreamError,
+      "INVALID_CORRELATIONID"     -> StandardDownstreamError,
       "NO_DATA_FOUND"             -> NotFoundError,
       "INVALID_DATE_RANGE"        -> RuleTaxYearNotSupportedError,
-      "SERVER_ERROR"              -> DownstreamError,
-      "SERVICE_UNAVAILABLE"       -> DownstreamError
+      "SERVER_ERROR"              -> StandardDownstreamError,
+      "SERVICE_UNAVAILABLE"       -> StandardDownstreamError
     )
 
 }

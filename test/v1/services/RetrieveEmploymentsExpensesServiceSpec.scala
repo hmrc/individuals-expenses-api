@@ -79,7 +79,7 @@ class RetrieveEmploymentsExpensesServiceSpec extends ServiceSpec {
 
           MockRetrieveEmploymentsExpensesConnector
             .retrieveEmploymentsExpenses(requestData)
-            .returns(Future.successful(Left(ResponseWrapper(correlationId, DesErrors.single(DesErrorCode(desErrorCode))))))
+            .returns(Future.successful(Left(ResponseWrapper(correlationId, DownstreamErrors.single(DesErrorCode(desErrorCode))))))
 
           await(service.retrieveEmploymentsExpenses(requestData)) shouldBe Left(ErrorWrapper(correlationId, error))
         }
@@ -88,11 +88,11 @@ class RetrieveEmploymentsExpensesServiceSpec extends ServiceSpec {
         "INVALID_TAXABLE_ENTITY_ID" -> NinoFormatError,
         "INVALID_TAX_YEAR"          -> TaxYearFormatError,
         "INVALID_VIEW"              -> SourceFormatError,
-        "INVALID_CORRELATIONID"     -> DownstreamError,
+        "INVALID_CORRELATIONID"     -> StandardDownstreamError,
         "NO_DATA_FOUND"             -> NotFoundError,
         "INVALID_DATE_RANGE"        -> RuleTaxYearNotSupportedError,
-        "SERVER_ERROR"              -> DownstreamError,
-        "SERVICE_UNAVAILABLE"       -> DownstreamError
+        "SERVER_ERROR"              -> StandardDownstreamError,
+        "SERVICE_UNAVAILABLE"       -> StandardDownstreamError
       )
 
       input.foreach(args => (serviceError _).tupled(args))
