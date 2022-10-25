@@ -18,7 +18,6 @@ package v1.connectors
 
 import config.AppConfig
 import mocks.MockAppConfig
-import play.api.Configuration
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads}
 import v1.connectors.DownstreamUri._
 import v1.mocks.MockHttpClient
@@ -52,7 +51,6 @@ class BaseDownstreamConnectorSpec extends ConnectorSpec {
     MockAppConfig.desToken returns "des-token"
     MockAppConfig.desEnvironment returns "des-environment"
     MockAppConfig.desEnvironmentHeaders returns desEnvironmentHeaders
-    MockAppConfig.featureSwitches returns Configuration("tys-api.enabled" -> false)
   }
 
   class IfsR5Test(ifsR5EnvironmentHeaders: Option[Seq[String]]) extends MockHttpClient with MockAppConfig {
@@ -66,7 +64,6 @@ class BaseDownstreamConnectorSpec extends ConnectorSpec {
     MockAppConfig.ifsR5Token returns "ifs-token"
     MockAppConfig.ifsR5Environment returns "ifs-environment"
     MockAppConfig.ifsR5EnvironmentHeaders returns ifsR5EnvironmentHeaders
-    MockAppConfig.featureSwitches returns Configuration("tys-api.enabled" -> false)
   }
 
   class IfsR6Test(ifsR6EnvironmentHeaders: Option[Seq[String]]) extends MockHttpClient with MockAppConfig {
@@ -80,7 +77,6 @@ class BaseDownstreamConnectorSpec extends ConnectorSpec {
     MockAppConfig.ifsR6Token returns "ifs-token"
     MockAppConfig.ifsR6Environment returns "ifs-environment"
     MockAppConfig.ifsR6EnvironmentHeaders returns ifsR6EnvironmentHeaders
-    MockAppConfig.featureSwitches returns Configuration("tys-api.enabled" -> false)
   }
 
   "BaseDownstreamConnector" when {
