@@ -16,34 +16,26 @@
 
 package v1.controllers.requestParsers.validators.validations
 
-import config.AppConfig
-import mocks.MockAppConfig
 import support.UnitSpec
 import v1.models.errors.RuleTaxYearNotSupportedError
 import v1.models.utils.JsonErrorValidators
 
 class TaxYearNotSupportedValidationSpec extends UnitSpec with JsonErrorValidators {
 
-  class Test extends MockAppConfig {
-    implicit val appConfig: AppConfig = mockAppConfig
-
-    MockAppConfig.employmentExpensesMinimumTaxYear
-      .returns(2021)
-
-  }
+  val minYear          = 2021
 
   "validate" should {
     "return no errors" when {
-      "a tax year after 2020-21 is supplied" in new Test {
-        private val validTaxYear     = "2021-22"
-        private val validationResult = TaxYearNotSupportedValidation.validate(validTaxYear)
+      "a tax year after 2020-21 is supplied" in {
+        val validTaxYear     = "2021-22"
+        val validationResult = TaxYearNotSupportedValidation.validate(validTaxYear, minYear)
 
         validationResult.isEmpty shouldBe true
       }
 
-      "the minimum allowed tax year is supplied" in new Test {
-        private val validTaxYear     = "2020-21"
-        private val validationResult = TaxYearNotSupportedValidation.validate(validTaxYear)
+      "the minimum allowed tax year is supplied" in {
+        val validTaxYear     = "2020-21"
+        val validationResult = TaxYearNotSupportedValidation.validate(validTaxYear, minYear)
 
         validationResult.isEmpty shouldBe true
       }
@@ -51,9 +43,9 @@ class TaxYearNotSupportedValidationSpec extends UnitSpec with JsonErrorValidator
     }
 
     "return the given error" when {
-      "a tax year before 2020-21 is supplied" in new Test {
-        private val invalidTaxYear   = "2019-20"
-        private val validationResult = TaxYearNotSupportedValidation.validate(invalidTaxYear)
+      "a tax year before 2020-21 is supplied" in {
+        val invalidTaxYear   = "2019-20"
+        val validationResult = TaxYearNotSupportedValidation.validate(invalidTaxYear, minYear)
 
         validationResult.isEmpty shouldBe false
         validationResult.length shouldBe 1
