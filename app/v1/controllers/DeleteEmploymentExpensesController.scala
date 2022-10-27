@@ -53,7 +53,9 @@ class DeleteEmploymentExpensesController @Inject() (val authService: EnrolmentsA
       logger.info(message = s"[${endpointLogContext.controllerName}][${endpointLogContext.endpointName}] " +
         s"with correlationId : $correlationId")
 
-      val rawData = DeleteEmploymentExpensesRawData(nino, taxYear)
+      val rawData: DeleteEmploymentExpensesRawData =
+        DeleteEmploymentExpensesRawData(nino, taxYear)
+
       val result =
         for {
           parsedRequest   <- EitherT.fromEither[Future](parser.parseRequest(rawData))
@@ -97,8 +99,15 @@ class DeleteEmploymentExpensesController @Inject() (val authService: EnrolmentsA
     }
 
   private def errorResult(errorWrapper: ErrorWrapper) = {
-    (errorWrapper.error: @unchecked) match {
-      case NinoFormatError | BadRequestError | TaxYearFormatError | RuleTaxYearRangeInvalidError | RuleTaxYearNotSupportedError =>
+    errorWrapper.error match {
+      case _
+        if errorWrapper.containsAnyOf(
+          NinoFormatError,
+          BadRequestError,
+          TaxYearFormatError,
+          RuleTaxYearRangeInvalidError,
+          RuleTaxYearNotSupportedError
+        ) =>
         BadRequest(Json.toJson(errorWrapper))
       case StandardDownstreamError => InternalServerError(Json.toJson(errorWrapper))
       case NotFoundError   => NotFound(Json.toJson(errorWrapper))

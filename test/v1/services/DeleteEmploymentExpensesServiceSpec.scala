@@ -20,6 +20,7 @@ import v1.mocks.connectors.MockDeleteEmploymentExpensesConnector
 import v1.models.domain.Nino
 import v1.models.errors._
 import v1.models.outcomes.ResponseWrapper
+import v1.models.request.TaxYear
 import v1.models.request.deleteEmploymentExpenses.DeleteEmploymentExpensesRequest
 
 import scala.concurrent.Future
@@ -29,7 +30,7 @@ class DeleteEmploymentExpensesServiceSpec extends ServiceSpec {
   val taxYear    = "2021-22"
   val nino: Nino = Nino("AA123456A")
 
-  private val requestData = DeleteEmploymentExpensesRequest(nino, taxYear)
+  private val requestData = DeleteEmploymentExpensesRequest(nino, TaxYear.fromMtd(taxYear))
 
   trait Test extends MockDeleteEmploymentExpensesConnector {
 
@@ -54,24 +55,34 @@ class DeleteEmploymentExpensesServiceSpec extends ServiceSpec {
   "unsuccessful" should {
     "map errors according to spec" when {
 
-      def serviceError(desErrorCode: String, error: MtdError): Unit =
-        s"a $desErrorCode error is returned from the service" in new Test {
+      def serviceError(errorCode: String, error: MtdError): Unit =
+        s"a $errorCode error is returned from the service" in new Test {
 
           MockDeleteEmploymentExpensesConnector
             .deleteEmploymentExpenses(requestData)
-            .returns(Future.successful(Left(ResponseWrapper(correlationId, DownstreamErrors.single(DownstreamErrorCode(desErrorCode))))))
+            .returns(Future.successful(Left(ResponseWrapper(correlationId, DownstreamErrors.single(DownstreamErrorCode(errorCode))))))
 
           await(service.deleteEmploymentExpenses(requestData)) shouldBe Left(ErrorWrapper(correlationId, error))
         }
 
-      val input = Seq(
-        "INVALID_TAXABLE_ENTITY_ID" -> NinoFormatError,
-        "INVALID_TAX_YEAR"          -> TaxYearFormatError,
-        "INVALID_CORRELATIONID"     -> StandardDownstreamError,
-        "NO_DATA_FOUND"             -> NotFoundError,
-        "SERVER_ERROR"              -> StandardDownstreamError,
-        "SERVICE_UNAVAILABLE"       -> StandardDownstreamError
-      )
+        def input: Map[String, MtdError] = {
+          val errorMap = Map(
+            "INVALID_TAXABLE_ENTITY_ID" -> NinoFormatError,
+            "INVALID_TAX_YEAR"          -> TaxYearFormatError,
+            "INVALID_CORRELATIONID"     -> StandardDownstreamError,
+            "NO_DATA_FOUND"             -> NotFoundError,
+            "SERVER_ERROR"              -> StandardDownstreamError,
+            "SERVICE_UNAVAILABLE"       -> StandardDownstreamError
+          )
+
+          val extraTysErrors = Map(
+            "INVALID_CORRELATION_ID" -> StandardDownstreamError,
+            "NOT_FOUND"              -> NotFoundError,
+            "TAX_YEAR_NOT_SUPPORTED" -> RuleTaxYearNotSupportedError
+          )
+
+          errorMap ++ extraTysErrors
+        }
 
       input.foreach(args => (serviceError _).tupled(args))
     }
