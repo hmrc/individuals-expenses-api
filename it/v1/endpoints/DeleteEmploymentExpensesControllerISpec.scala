@@ -35,7 +35,6 @@ class DeleteEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
     def nino: String = "AA123456A"
 
     def uri: String = s"/employments/$nino/$taxYear"
-    def downstreamUri: String = s"/income-tax/expenses/employments/$nino/$taxYear"
 
     def request(): WSRequest = {
       setupStubs()
@@ -50,13 +49,12 @@ class DeleteEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
 
   private trait NonTysTest extends Test {
     override def taxYear: String = "2021-22"
+    def downstreamUri: String = s"/income-tax/expenses/employments/$nino/2021-22"
   }
 
   private trait TysIfsTest extends Test {
-    val tysYear: String = "23-24"
     override def taxYear: String = "2023-24"
-
-    override def downstreamUri: String = s"/income-tax/expenses/employments/$tysYear/$nino"
+    def downstreamUri: String = s"/income-tax/expenses/employments/23-24/$nino"
   }
 
   "calling the delete employment expenses endpoint" should {

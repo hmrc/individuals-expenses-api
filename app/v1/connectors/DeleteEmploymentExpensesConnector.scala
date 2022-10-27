@@ -42,6 +42,7 @@ class DeleteEmploymentExpensesConnector @Inject() (val http: HttpClient, val app
       if (request.taxYear.useTaxYearSpecificApi) {
         TaxYearSpecificIfsUri[Unit](s"income-tax/expenses/employments/${request.taxYear.asTysDownstream}/${request.nino.nino}")
       } else {
+        // The endpoint uses the MTD tax year format:
         DesUri[Unit](s"income-tax/expenses/employments/${request.nino.nino}/${request.taxYear.asMtd}")
       }
 

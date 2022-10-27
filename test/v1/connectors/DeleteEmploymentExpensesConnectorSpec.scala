@@ -51,7 +51,7 @@ class DeleteEmploymentExpensesConnectorSpec extends ConnectorSpec {
         def taxYear: TaxYear                               = TaxYear.fromMtd("2017-18")
         val outcome: Right[Nothing, ResponseWrapper[Unit]] = Right(ResponseWrapper(correlationId, ()))
 
-        willDelete(s"$baseUrl/income-tax/expenses/employments/${request.nino.nino}/${request.taxYear.asMtd}") returns Future.successful(outcome)
+        willDelete(s"$baseUrl/income-tax/expenses/employments/$nino/2017-18") returns Future.successful(outcome)
 
         val result = await(connector.deleteEmploymentExpenses(request))
 
@@ -62,7 +62,7 @@ class DeleteEmploymentExpensesConnectorSpec extends ConnectorSpec {
         def taxYear: TaxYear                               = TaxYear.fromMtd("2023-24")
         val outcome: Right[Nothing, ResponseWrapper[Unit]] = Right(ResponseWrapper(correlationId, ()))
 
-        willDelete(s"$baseUrl/income-tax/expenses/employments/${request.taxYear.asTysDownstream}/${request.nino.nino}") returns Future.successful(outcome)
+        willDelete(s"$baseUrl/income-tax/expenses/employments/23-24/$nino") returns Future.successful(outcome)
 
         val result = await(connector.deleteEmploymentExpenses(request))
 
