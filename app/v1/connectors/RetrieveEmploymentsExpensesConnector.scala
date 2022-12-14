@@ -16,15 +16,14 @@
 
 package v1.connectors
 
-import v1.connectors.DownstreamUri._
 import config.AppConfig
-import javax.inject.{Inject, Singleton}
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.http.HttpClient
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import v1.connectors.DownstreamUri._
 import v1.connectors.httpparsers.StandardDownstreamHttpParser._
 import v1.models.request.retrieveEmploymentExpenses.RetrieveEmploymentsExpensesRequest
 import v1.models.response.retrieveEmploymentExpenses.RetrieveEmploymentsExpensesResponse
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -35,11 +34,17 @@ class RetrieveEmploymentsExpensesConnector @Inject() (val http: HttpClient, val 
       ec: ExecutionContext,
       correlationId: String): Future[DownstreamOutcome[RetrieveEmploymentsExpensesResponse]] = {
 
-    val url = s"income-tax/expenses/employments/${request.nino.nino}/${request.taxYear}?view=${request.source.toDownstream}"
+    val source  = request.source.toDownstream
+    val nino    = request.nino.value
+    val taxYear = request.taxYear
 
-    get(
-      uri = IfsR6Uri[RetrieveEmploymentsExpensesResponse](s"$url")
-    )
+    val url = if (taxYear.useTaxYearSpecificApi) {
+      TaxYearSpecificIfsUri[RetrieveEmploymentsExpensesResponse](s"income-tax/expenses/employments/${taxYear.asTysDownstream}/$nino?view=$source")
+    } else {
+      IfsR6Uri[RetrieveEmploymentsExpensesResponse](s"income-tax/expenses/employments/$nino/${taxYear.asMtd}?view=$source")
+    }
+
+    get(url)
   }
 
 }

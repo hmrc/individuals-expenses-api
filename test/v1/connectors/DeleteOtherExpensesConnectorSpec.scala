@@ -36,26 +36,18 @@ class DeleteOtherExpensesConnectorSpec extends ConnectorSpec {
       appConfig = mockAppConfig
     )
 
-    MockAppConfig.ifsR5BaseUrl returns baseUrl
-    MockAppConfig.ifsR5Token returns "ifs-token"
-    MockAppConfig.ifsR5Environment returns "ifs-environment"
-    MockAppConfig.ifsR5EnvironmentHeaders returns Some(allowedDownstreamHeaders)
   }
 
   "deleteOtherExpenses" should {
     val request = DeleteOtherExpensesRequest(Nino(nino), taxYear)
 
     "return a 204 with no body" when {
-      "the downstream call is successful" in new Test {
+      "the downstream call is successful" in new Test with IfsR5Test {
         val outcome = Right(ResponseWrapper(correlationId, ()))
 
-        MockHttpClient
-          .delete(
-            url = s"$baseUrl/income-tax/expenses/other/$nino/${request.taxYear}",
-            config = dummyDownstreamHeaderCarrierConfig,
-            requiredHeaders = requiredIfsHeaders,
-            excludedHeaders = excludedHeaders
-          )
+        willDelete(
+          url = s"$baseUrl/income-tax/expenses/other/$nino/${request.taxYear}"
+        )
           .returns(Future.successful(outcome))
 
         await(connector.deleteOtherExpenses(request)) shouldBe outcome

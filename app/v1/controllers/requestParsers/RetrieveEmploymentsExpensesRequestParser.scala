@@ -20,6 +20,7 @@ import javax.inject.Inject
 import v1.models.domain.Nino
 import v1.controllers.requestParsers.validators.RetrieveEmploymentExpensesValidator
 import v1.models.domain.MtdSource
+import v1.models.request.TaxYear
 import v1.models.request.retrieveEmploymentExpenses.{RetrieveEmploymentsExpensesRawData, RetrieveEmploymentsExpensesRequest}
 
 class RetrieveEmploymentsExpensesRequestParser @Inject() (val validator: RetrieveEmploymentExpensesValidator)
@@ -29,7 +30,7 @@ class RetrieveEmploymentsExpensesRequestParser @Inject() (val validator: Retriev
 
     val source: MtdSource = MtdSource.parser(data.source)
 
-    RetrieveEmploymentsExpensesRequest(Nino(data.nino), data.taxYear, source)
+    RetrieveEmploymentsExpensesRequest(Nino(data.nino), TaxYear.fromMtd(data.taxYear), source)
   }
 
 }

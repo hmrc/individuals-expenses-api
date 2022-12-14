@@ -17,7 +17,6 @@
 package v1.connectors
 
 import mocks.MockAppConfig
-import uk.gov.hmrc.http.HeaderCarrier
 import v1.mocks.MockHttpClient
 import v1.models.domain.Nino
 import v1.models.outcomes.ResponseWrapper
@@ -50,29 +49,18 @@ class AmendOtherExpensesConnectorSpec extends ConnectorSpec {
       appConfig = mockAppConfig
     )
 
-    MockAppConfig.ifsR5BaseUrl returns baseUrl
-    MockAppConfig.ifsR5Token returns "ifs-token"
-    MockAppConfig.ifsR5Environment returns "ifs-environment"
-    MockAppConfig.ifsR5EnvironmentHeaders returns Some(allowedDownstreamHeaders)
   }
 
   "amend" should {
     val request = AmendOtherExpensesRequest(Nino(nino), taxYear, body)
 
-    "put a body and return 204 no body" in new Test {
+    "put a body and return 204 no body" in new Test with IfsR5Test {
       val outcome = Right(ResponseWrapper(correlationId, ()))
 
-      implicit val hc: HeaderCarrier                = HeaderCarrier(otherHeaders = otherHeaders ++ Seq("Content-Type" -> "application/json"))
-      val requiredHeadersPut: Seq[(String, String)] = requiredIfsHeaders ++ Seq("Content-Type" -> "application/json")
-
-      MockHttpClient
-        .put(
-          url = s"$baseUrl/income-tax/expenses/other/$nino/$taxYear",
-          config = dummyDownstreamHeaderCarrierConfig,
-          body = body,
-          requiredHeaders = requiredHeadersPut,
-          excludedHeaders = excludedHeaders
-        )
+      willPut(
+        url = s"$baseUrl/income-tax/expenses/other/$nino/$taxYear",
+        body = body
+      )
         .returns(Future.successful(outcome))
 
       await(connector.amend(request)) shouldBe outcome

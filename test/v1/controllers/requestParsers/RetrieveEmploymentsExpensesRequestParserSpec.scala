@@ -20,12 +20,15 @@ import support.UnitSpec
 import v1.mocks.validators.MockRetrieveEmploymentExpensesValidator
 import v1.models.domain.{MtdSource, Nino}
 import v1.models.errors.{BadRequestError, ErrorWrapper, NinoFormatError, TaxYearFormatError}
+import v1.models.request.TaxYear
 import v1.models.request.retrieveEmploymentExpenses.{RetrieveEmploymentsExpensesRawData, RetrieveEmploymentsExpensesRequest}
 
 class RetrieveEmploymentsExpensesRequestParserSpec extends UnitSpec {
 
-  val nino                           = "AA123456B"
-  val taxYear                        = "2021-22"
+  val nino          = "AA123456B"
+  val taxYear       = "2021-22"
+  val parsedTaxYear = TaxYear.fromMtd(taxYear)
+
   implicit val correlationId: String = "a1e8057e-fbbc-47a8-a8b4-78d9f015c253"
 
   val inputDataLatest   = RetrieveEmploymentsExpensesRawData(nino, taxYear, "latest")
@@ -42,20 +45,17 @@ class RetrieveEmploymentsExpensesRequestParserSpec extends UnitSpec {
       "valid request data is supplied with the latest query parameter" in new Test {
         MockRetrieveEmploymentExpensesValidator.validate(inputDataLatest).returns(Nil)
 
-        parser.parseRequest(inputDataLatest) shouldBe
-          Right(RetrieveEmploymentsExpensesRequest(Nino(nino), "2021-22", MtdSource.`latest`))
+        parser.parseRequest(inputDataLatest) shouldBe Right(RetrieveEmploymentsExpensesRequest(Nino(nino), parsedTaxYear, MtdSource.`latest`))
       }
       "valid request data is supplied with the HMRC Held query parameter" in new Test {
         MockRetrieveEmploymentExpensesValidator.validate(inputDataHmrcHeld).returns(Nil)
 
-        parser.parseRequest(inputDataHmrcHeld) shouldBe
-          Right(RetrieveEmploymentsExpensesRequest(Nino(nino), "2021-22", MtdSource.`hmrcHeld`))
+        parser.parseRequest(inputDataHmrcHeld) shouldBe Right(RetrieveEmploymentsExpensesRequest(Nino(nino), parsedTaxYear, MtdSource.`hmrcHeld`))
       }
       "valid request data is supplied with the user query parameter" in new Test {
         MockRetrieveEmploymentExpensesValidator.validate(inputDataUser).returns(Nil)
 
-        parser.parseRequest(inputDataUser) shouldBe
-          Right(RetrieveEmploymentsExpensesRequest(Nino(nino), "2021-22", MtdSource.`user`))
+        parser.parseRequest(inputDataUser) shouldBe Right(RetrieveEmploymentsExpensesRequest(Nino(nino), parsedTaxYear, MtdSource.`user`))
       }
     }
 

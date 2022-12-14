@@ -17,71 +17,53 @@
 package v1.connectors
 
 import mocks.MockAppConfig
+import v1.fixtures.RetrieveEmploymentsExpensesFixtures._
 import v1.mocks.MockHttpClient
 import v1.models.domain.{MtdSource, Nino}
-import v1.models.downstream.DownstreamSource
 import v1.models.outcomes.ResponseWrapper
+import v1.models.request.TaxYear
 import v1.models.request.retrieveEmploymentExpenses.RetrieveEmploymentsExpensesRequest
-import v1.models.response.retrieveEmploymentExpenses.{Expenses, RetrieveEmploymentsExpensesResponse}
 
 import scala.concurrent.Future
 
 class RetrieveEmploymentsExpensesConnectorSpec extends ConnectorSpec {
 
-  val nino: String                  = "AA123456A"
-  private val taxYear               = "2019-20"
-  val source: MtdSource.`user`.type = MtdSource.`user`
+  val nino: String      = "AA123456A"
+  val source: MtdSource = MtdSource.`user`
 
-  class Test extends MockHttpClient with MockAppConfig {
+  def makeRequest(taxYear: String): RetrieveEmploymentsExpensesRequest =
+    RetrieveEmploymentsExpensesRequest(Nino(nino), TaxYear.fromMtd(taxYear), source)
+
+  val nonTysRequest = makeRequest("2019-20")
+  val tysRequest    = makeRequest("2023-24")
+
+  trait Test extends MockHttpClient with MockAppConfig {
 
     val connector: RetrieveEmploymentsExpensesConnector = new RetrieveEmploymentsExpensesConnector(
       http = mockHttpClient,
       appConfig = mockAppConfig
     )
 
-    MockAppConfig.ifsR6BaseUrl returns baseUrl
-    MockAppConfig.ifsR6Token returns "ifs-token"
-    MockAppConfig.ifsR6Environment returns "ifs-environment"
-    MockAppConfig.ifsR6EnvironmentHeaders returns Some(allowedDownstreamHeaders)
   }
 
   "retrieveEmploymentExpenses" should {
-    val request = RetrieveEmploymentsExpensesRequest(Nino(nino), taxYear, source)
-
     "return a result" when {
-      "the downstream call is successful" in new Test {
-        val outcome = Right(
-          ResponseWrapper(
-            correlationId,
-            RetrieveEmploymentsExpensesResponse(
-              Some("2019-04-06"),
-              Some(2000.99),
-              Some(MtdSource.`user`),
-              Some("2019-04-06"),
-              Some(
-                Expenses(
-                  Some(2000.99),
-                  Some(2000.99),
-                  Some(2000.99),
-                  Some(2000.99),
-                  Some(2000.99),
-                  Some(2000.99),
-                  Some(2000.99),
-                  Some(2000.99)
-                ))
-            )
-          ))
+      "the downstream call is successful for a non-TYS tax year" in new Test with IfsR6Test {
+        val outcome = Right(ResponseWrapper(correlationId, responseModelUser))
 
-        MockHttpClient
-          .get(
-            url = s"$baseUrl/income-tax/expenses/employments/$nino/$taxYear?view=${DownstreamSource.`CUSTOMER`}",
-            config = dummyDownstreamHeaderCarrierConfig,
-            requiredHeaders = requiredIfsHeaders,
-            excludedHeaders = excludedHeaders
-          )
+        willGet(s"$baseUrl/income-tax/expenses/employments/$nino/2019-20?view=CUSTOMER")
           .returns(Future.successful(outcome))
 
-        await(connector.retrieveEmploymentExpenses(request)) shouldBe outcome
+        await(connector.retrieveEmploymentExpenses(nonTysRequest)) shouldBe outcome
+      }
+
+      "the downstream call is successful for a TYS tax year" in new Test with TysIfsTest {
+        val outcome = Right(ResponseWrapper(correlationId, responseModelUser))
+
+        willGet(s"$baseUrl/income-tax/expenses/employments/23-24/$nino?view=CUSTOMER")
+          .returns(Future.successful(outcome))
+
+        await(connector.retrieveEmploymentExpenses(tysRequest)) shouldBe outcome
       }
     }
   }

@@ -38,8 +38,8 @@ class RetrieveOtherExpensesConnectorSpec extends ConnectorSpec {
     )
 
     MockAppConfig.ifsR5BaseUrl returns baseUrl
-    MockAppConfig.ifsR5Token returns "ifs-token"
-    MockAppConfig.ifsR5Environment returns "ifs-environment"
+    MockAppConfig.ifsR5Token returns "ifs-r5-token"
+    MockAppConfig.ifsR5Environment returns "ifs-r5-environment"
     MockAppConfig.ifsR5EnvironmentHeaders returns Some(allowedDownstreamHeaders)
   }
 
@@ -61,7 +61,7 @@ class RetrieveOtherExpensesConnectorSpec extends ConnectorSpec {
           .get(
             url = s"$baseUrl/income-tax/expenses/other/$nino/${request.taxYear}",
             config = dummyDownstreamHeaderCarrierConfig,
-            requiredHeaders = requiredIfsHeaders,
+            requiredHeaders = requiredIfsR5Headers,
             excludedHeaders = excludedHeaders
           )
           .returns(Future.successful(outcome))
