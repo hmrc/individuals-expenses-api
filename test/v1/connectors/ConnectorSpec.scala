@@ -149,7 +149,7 @@ trait ConnectorSpec extends UnitSpec with Status with MimeTypes with HeaderNames
     MockAppConfig.desEnvironment returns "des-environment"
     MockAppConfig.desEnvironmentHeaders returns Some(allowedDownstreamHeaders)
 
-    MockAppConfig.featureSwitches returns Configuration("tys-api.enabled" -> false) anyNumberOfTimes()
+    MockAppConfig.featureSwitches returns Configuration("tys-api.enabled" -> false)
 
   }
 
@@ -162,7 +162,7 @@ trait ConnectorSpec extends UnitSpec with Status with MimeTypes with HeaderNames
     MockAppConfig.ifsR5Environment returns "ifs-r5-environment"
     MockAppConfig.ifsR5EnvironmentHeaders returns Some(allowedDownstreamHeaders)
 
-    MockAppConfig.featureSwitches returns Configuration("tys-api.enabled" -> false) anyNumberOfTimes()
+    MockAppConfig.featureSwitches returns Configuration("tys-api.enabled" -> false)
 
   }
 
@@ -175,7 +175,7 @@ trait ConnectorSpec extends UnitSpec with Status with MimeTypes with HeaderNames
     MockAppConfig.ifsR6Environment returns "ifs-r6-environment"
     MockAppConfig.ifsR6EnvironmentHeaders returns Some(allowedDownstreamHeaders)
 
-    MockAppConfig.featureSwitches returns Configuration("tys-api.enabled" -> false) anyNumberOfTimes()
+    MockAppConfig.featureSwitches returns Configuration("tys-api.enabled" -> false)
 
   }
 
@@ -188,7 +188,7 @@ trait ConnectorSpec extends UnitSpec with Status with MimeTypes with HeaderNames
     MockAppConfig.tysIfsEnvironment returns "TYS-IFS-environment"
     MockAppConfig.tysIfsEnvironmentHeaders returns Some(allowedDownstreamHeaders)
 
-    MockAppConfig.featureSwitches returns Configuration("tys-api.enabled" -> true) anyNumberOfTimes()
+    MockAppConfig.featureSwitches returns Configuration("tys-api.enabled" -> true)
   }
 
 }
