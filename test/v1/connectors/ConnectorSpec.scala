@@ -54,9 +54,17 @@ trait ConnectorSpec extends UnitSpec with Status with MimeTypes with HeaderNames
     "Gov-Test-Scenario" -> "DEFAULT"
   )
 
-  val requiredIfsHeaders: Seq[(String, String)] = Seq(
-    "Authorization"     -> "Bearer ifs-token",
-    "Environment"       -> "ifs-environment",
+  val requiredIfsR5Headers: Seq[(String, String)] = Seq(
+    "Authorization"     -> "Bearer ifs-r5-token",
+    "Environment"       -> "ifs-r5-environment",
+    "User-Agent"        -> "individuals-expenses-api",
+    "CorrelationId"     -> correlationId,
+    "Gov-Test-Scenario" -> "DEFAULT"
+  )
+
+  val requiredIfsR6Headers: Seq[(String, String)] = Seq(
+    "Authorization"     -> "Bearer ifs-r6-token",
+    "Environment"       -> "ifs-r6-environment",
     "User-Agent"        -> "individuals-expenses-api",
     "CorrelationId"     -> correlationId,
     "Gov-Test-Scenario" -> "DEFAULT"
@@ -141,7 +149,33 @@ trait ConnectorSpec extends UnitSpec with Status with MimeTypes with HeaderNames
     MockAppConfig.desEnvironment returns "des-environment"
     MockAppConfig.desEnvironmentHeaders returns Some(allowedDownstreamHeaders)
 
-    MockAppConfig.featureSwitches returns Configuration("tys-api.enabled" -> false)
+    MockAppConfig.featureSwitches returns Configuration("tys-api.enabled" -> false) anyNumberOfTimes()
+
+  }
+
+  protected trait IfsR5Test extends ConnectorTest {
+
+    protected lazy val requiredHeaders: Seq[(String, String)] = requiredIfsR5Headers
+
+    MockAppConfig.ifsR5BaseUrl returns baseUrl
+    MockAppConfig.ifsR5Token returns "ifs-r5-token"
+    MockAppConfig.ifsR5Environment returns "ifs-r5-environment"
+    MockAppConfig.ifsR5EnvironmentHeaders returns Some(allowedDownstreamHeaders)
+
+    MockAppConfig.featureSwitches returns Configuration("tys-api.enabled" -> false) anyNumberOfTimes()
+
+  }
+
+  protected trait IfsR6Test extends ConnectorTest {
+
+    protected lazy val requiredHeaders: Seq[(String, String)] = requiredIfsR6Headers
+
+    MockAppConfig.ifsR6BaseUrl returns baseUrl
+    MockAppConfig.ifsR6Token returns "ifs-r6-token"
+    MockAppConfig.ifsR6Environment returns "ifs-r6-environment"
+    MockAppConfig.ifsR6EnvironmentHeaders returns Some(allowedDownstreamHeaders)
+
+    MockAppConfig.featureSwitches returns Configuration("tys-api.enabled" -> false) anyNumberOfTimes()
 
   }
 
@@ -154,6 +188,7 @@ trait ConnectorSpec extends UnitSpec with Status with MimeTypes with HeaderNames
     MockAppConfig.tysIfsEnvironment returns "TYS-IFS-environment"
     MockAppConfig.tysIfsEnvironmentHeaders returns Some(allowedDownstreamHeaders)
 
-    MockAppConfig.featureSwitches returns Configuration("tys-api.enabled" -> true)
+    MockAppConfig.featureSwitches returns Configuration("tys-api.enabled" -> true) anyNumberOfTimes()
   }
+
 }

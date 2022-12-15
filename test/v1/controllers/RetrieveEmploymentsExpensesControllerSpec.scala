@@ -19,6 +19,7 @@ package v1.controllers
 import play.api.libs.json.Json
 import play.api.mvc.Result
 import uk.gov.hmrc.http.HeaderCarrier
+import v1.fixtures.RetrieveEmploymentsExpensesFixtures._
 import v1.mocks.MockIdGenerator
 import v1.mocks.hateoas.MockHateoasFactory
 import v1.mocks.requestParsers.MockRetrieveEmploymentsExpensesRequestParser
@@ -29,8 +30,9 @@ import v1.models.errors._
 import v1.models.hateoas.Method.{DELETE, GET, POST, PUT}
 import v1.models.hateoas.{HateoasWrapper, Link}
 import v1.models.outcomes.ResponseWrapper
+import v1.models.request.TaxYear
 import v1.models.request.retrieveEmploymentExpenses.{RetrieveEmploymentsExpensesRawData, RetrieveEmploymentsExpensesRequest}
-import v1.models.response.retrieveEmploymentExpenses.{Expenses, RetrieveEmploymentsExpensesHateoasData, RetrieveEmploymentsExpensesResponse}
+import v1.models.response.retrieveEmploymentExpenses.RetrieveEmploymentsExpensesHateoasData
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -70,63 +72,13 @@ class RetrieveEmploymentsExpensesControllerSpec
   private val correlationId = "X-123"
 
   private val rawData     = RetrieveEmploymentsExpensesRawData(nino, taxYear, source.toString)
-  private val requestData = RetrieveEmploymentsExpensesRequest(Nino(nino), taxYear, source)
+  private val requestData = RetrieveEmploymentsExpensesRequest(Nino(nino), TaxYear.fromMtd(taxYear), source)
 
   private val testHateoasLinks = Seq(
     Link(href = s"/individuals/expenses/employments/$nino/$taxYear", method = PUT, rel = "amend-employment-expenses"),
     Link(href = s"/individuals/expenses/employments/$nino/$taxYear", method = GET, rel = "self"),
     Link(href = s"/individuals/expenses/employments/$nino/$taxYear", method = DELETE, rel = "delete-employment-expenses"),
     Link(href = s"/individuals/expenses/employments/$nino/$taxYear/ignore", method = POST, rel = "ignore-employment-expenses")
-  )
-
-  private val responseBody = RetrieveEmploymentsExpensesResponse(
-    Some("2020-12-12T12:12:12Z"),
-    Some(123.12),
-    Some(MtdSource.`latest`),
-    Some("2020-07-13T20:37:27Z"),
-    Some(Expenses(Some(123.12), Some(123.12), Some(123.12), Some(123.12), Some(123.12), Some(123.12), Some(123.12), Some(123.12)))
-  )
-
-  private val latestResponseBody = Json.parse(
-    s"""
-       |{
-       |		"submittedOn": "2020-12-12T12:12:12Z",
-       |		"totalExpenses": 123.12,
-       |  	"source": "latest",
-       |    "dateIgnored": "2020-07-13T20:37:27Z",
-       |		"expenses": {
-       |			"businessTravelCosts": 123.12,
-       |			"jobExpenses": 123.12,
-       |			"flatRateJobExpenses": 123.12,
-       |			"professionalSubscriptions": 123.12,
-       |			"hotelAndMealExpenses": 123.12,
-       |			"otherAndCapitalAllowances": 123.12,
-       |			"vehicleExpenses": 123.12,
-       |			"mileageAllowanceRelief": 123.12
-       |		},
-       |		"links": [{
-       |				"href": "/individuals/expenses/employments/AA123456A/2019-20",
-       |				"method": "PUT",
-       |				"rel": "amend-employment-expenses"
-       |			},
-       |			{
-       |				"href": "/individuals/expenses/employments/AA123456A/2019-20",
-       |				"method": "GET",
-       |				"rel": "self"
-       |			},
-       |			{
-       |				"href": "/individuals/expenses/employments/AA123456A/2019-20",
-       |				"method": "DELETE",
-       |				"rel": "delete-employment-expenses"
-       |			},
-       |			{
-       |				"href": "/individuals/expenses/employments/AA123456A/2019-20/ignore",
-       |				"method": "POST",
-       |				"rel": "ignore-employment-expenses"
-       |			}
-       |		]
-       |	}
-       |""".stripMargin
   )
 
   def event(auditResponse: AuditResponse): AuditEvent[ExpensesAuditDetail] =
@@ -153,17 +105,17 @@ class RetrieveEmploymentsExpensesControllerSpec
 
         MockRetrieveEmploymentsExpensesService
           .retrieveEmploymentsExpenses(requestData)
-          .returns(Future.successful(Right(ResponseWrapper(correlationId, responseBody))))
+          .returns(Future.successful(Right(ResponseWrapper(correlationId, responseModelLatest))))
 
         MockHateoasFactory
-          .wrap(responseBody, RetrieveEmploymentsExpensesHateoasData(nino, taxYear, source.toString))
-          .returns(HateoasWrapper(responseBody, testHateoasLinks))
+          .wrap(responseModelLatest, RetrieveEmploymentsExpensesHateoasData(nino, taxYear, source.toString))
+          .returns(HateoasWrapper(responseModelLatest, testHateoasLinks))
 
         val result: Future[Result] = controller.handleRequest(nino, taxYear, source.toString)(fakeRequest)
         status(result) shouldBe OK
         header("X-CorrelationId", result) shouldBe Some(correlationId)
 
-        val auditResponse: AuditResponse = AuditResponse(OK, None, Some(latestResponseBody))
+        val auditResponse: AuditResponse = AuditResponse(OK, None, Some(mtdResponseWithHateoasLinksLatest()))
         MockedAuditService.verifyAuditEvent(event(auditResponse)).once
       }
     }
