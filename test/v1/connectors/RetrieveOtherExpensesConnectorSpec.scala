@@ -16,8 +16,6 @@
 
 package v1.connectors
 
-import mocks.MockAppConfig
-import v1.mocks.MockHttpClient
 import v1.models.domain.Nino
 import v1.models.outcomes.ResponseWrapper
 import v1.models.request.retrieveOtherExpenses.RetrieveOtherExpensesRequest
@@ -30,7 +28,7 @@ class RetrieveOtherExpensesConnectorSpec extends ConnectorSpec {
   val nino: String    = "AA123456A"
   private val taxYear = "2019-20"
 
-  class Test extends MockHttpClient with MockAppConfig {
+  class Test { _: ConnectorTest =>
 
     val connector: RetrieveOtherExpensesConnector = new RetrieveOtherExpensesConnector(
       http = mockHttpClient,

@@ -16,8 +16,6 @@
 
 package v1.connectors
 
-import mocks.MockAppConfig
-import v1.mocks.MockHttpClient
 import v1.models.domain.Nino
 import v1.models.outcomes.ResponseWrapper
 import v1.models.request.deleteOtherExpenses.DeleteOtherExpensesRequest
@@ -29,7 +27,7 @@ class DeleteOtherExpensesConnectorSpec extends ConnectorSpec {
   val taxYear: String = "2017-18"
   val nino: String    = "AA123456A"
 
-  class Test extends MockHttpClient with MockAppConfig {
+  class Test { _: ConnectorTest =>
 
     val connector: DeleteOtherExpensesConnector = new DeleteOtherExpensesConnector(
       http = mockHttpClient,
