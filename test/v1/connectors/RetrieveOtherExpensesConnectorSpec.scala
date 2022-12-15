@@ -16,8 +16,6 @@
 
 package v1.connectors
 
-import mocks.MockAppConfig
-import v1.mocks.MockHttpClient
 import v1.models.domain.Nino
 import v1.models.outcomes.ResponseWrapper
 import v1.models.request.retrieveOtherExpenses.RetrieveOtherExpensesRequest
@@ -30,23 +28,19 @@ class RetrieveOtherExpensesConnectorSpec extends ConnectorSpec {
   val nino: String    = "AA123456A"
   private val taxYear = "2019-20"
 
-  class Test extends MockHttpClient with MockAppConfig {
+  trait Test { _: ConnectorTest =>
 
     val connector: RetrieveOtherExpensesConnector = new RetrieveOtherExpensesConnector(
       http = mockHttpClient,
       appConfig = mockAppConfig
     )
 
-    MockAppConfig.ifsR5BaseUrl returns baseUrl
-    MockAppConfig.ifsR5Token returns "ifs-token"
-    MockAppConfig.ifsR5Environment returns "ifs-environment"
-    MockAppConfig.ifsR5EnvironmentHeaders returns Some(allowedDownstreamHeaders)
   }
 
   "retrieveOtherExpenses" should {
     val request = RetrieveOtherExpensesRequest(Nino(nino), taxYear)
     "return a result" when {
-      "the downstream call is successful" in new Test {
+      "the downstream call is successful" in new IfsR5Test with Test {
         val outcome = Right(
           ResponseWrapper(
             correlationId,
@@ -57,13 +51,9 @@ class RetrieveOtherExpensesConnectorSpec extends ConnectorSpec {
             )
           ))
 
-        MockHttpClient
-          .get(
-            url = s"$baseUrl/income-tax/expenses/other/$nino/${request.taxYear}",
-            config = dummyDownstreamHeaderCarrierConfig,
-            requiredHeaders = requiredIfsHeaders,
-            excludedHeaders = excludedHeaders
-          )
+        willGet(
+          url = s"$baseUrl/income-tax/expenses/other/$nino/${request.taxYear}"
+        )
           .returns(Future.successful(outcome))
 
         await(connector.retrieveOtherExpenses(request)) shouldBe outcome

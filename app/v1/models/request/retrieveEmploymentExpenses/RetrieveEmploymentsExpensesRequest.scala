@@ -18,5 +18,6 @@ package v1.models.request.retrieveEmploymentExpenses
 
 import v1.models.domain.Nino
 import v1.models.domain.MtdSource
+import v1.models.request.TaxYear
 
-case class RetrieveEmploymentsExpensesRequest(nino: Nino, taxYear: String, source: MtdSource)
+case class RetrieveEmploymentsExpensesRequest(nino: Nino, taxYear: TaxYear, source: MtdSource)

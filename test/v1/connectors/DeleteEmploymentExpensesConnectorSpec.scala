@@ -25,10 +25,9 @@ import scala.concurrent.Future
 
 class DeleteEmploymentExpensesConnectorSpec extends ConnectorSpec {
 
-  val nino: String        = "AA123456A"
+  val nino: String = "AA123456A"
 
-  trait Test {
-    _: ConnectorTest =>
+  trait Test { _: ConnectorTest =>
     def taxYear: TaxYear
 
     protected val connector: DeleteEmploymentExpensesConnector =
@@ -40,7 +39,7 @@ class DeleteEmploymentExpensesConnectorSpec extends ConnectorSpec {
     protected val request: DeleteEmploymentExpensesRequest =
       DeleteEmploymentExpensesRequest(
         nino = Nino(nino),
-        taxYear = taxYear,
+        taxYear = taxYear
       )
 
   }
