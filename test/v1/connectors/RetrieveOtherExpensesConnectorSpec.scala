@@ -28,7 +28,7 @@ class RetrieveOtherExpensesConnectorSpec extends ConnectorSpec {
   val nino: String    = "AA123456A"
   private val taxYear = "2019-20"
 
-  class Test { _: ConnectorTest =>
+  trait Test { _: ConnectorTest =>
 
     val connector: RetrieveOtherExpensesConnector = new RetrieveOtherExpensesConnector(
       http = mockHttpClient,
@@ -40,7 +40,7 @@ class RetrieveOtherExpensesConnectorSpec extends ConnectorSpec {
   "retrieveOtherExpenses" should {
     val request = RetrieveOtherExpensesRequest(Nino(nino), taxYear)
     "return a result" when {
-      "the downstream call is successful" in new Test with IfsR5Test {
+      "the downstream call is successful" in new IfsR5Test with Test {
         val outcome = Right(
           ResponseWrapper(
             correlationId,

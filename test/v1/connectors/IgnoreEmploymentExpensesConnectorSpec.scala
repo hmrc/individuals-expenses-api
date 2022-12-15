@@ -28,7 +28,7 @@ class IgnoreEmploymentExpensesConnectorSpec extends ConnectorSpec {
   val nino: String                       = "AA123456A"
   val body: IgnoreEmploymentExpensesBody = IgnoreEmploymentExpensesBody(true)
 
-  class Test { _: ConnectorTest =>
+  trait Test { _: ConnectorTest =>
 
     val connector: IgnoreEmploymentExpensesConnector = new IgnoreEmploymentExpensesConnector(
       http = mockHttpClient,
@@ -40,7 +40,7 @@ class IgnoreEmploymentExpensesConnectorSpec extends ConnectorSpec {
   "ignore" should {
     val request = IgnoreEmploymentExpensesRequest(Nino(nino), taxYear)
 
-    "put a body and return 204 no body" in new Test with IfsR6Test {
+    "put a body and return 204 no body" in new IfsR6Test with Test {
       val outcome = Right(ResponseWrapper(correlationId, ()))
 
       willPut(

@@ -48,7 +48,7 @@ class RetrieveEmploymentsExpensesConnectorSpec extends ConnectorSpec {
 
   "retrieveEmploymentExpenses" should {
     "return a result" when {
-      "the downstream call is successful for a non-TYS tax year" in new Test with IfsR6Test {
+      "the downstream call is successful for a non-TYS tax year" in new IfsR6Test with Test {
         def taxYear: String = "2019-20"
         val outcome         = Right(ResponseWrapper(correlationId, responseModelUser))
 
@@ -58,7 +58,7 @@ class RetrieveEmploymentsExpensesConnectorSpec extends ConnectorSpec {
         await(connector.retrieveEmploymentExpenses(request)) shouldBe outcome
       }
 
-      "the downstream call is successful for a TYS tax year" in new Test with TysIfsTest {
+      "the downstream call is successful for a TYS tax year" in new TysIfsTest with Test {
         def taxYear: String = "2023-24"
         val outcome         = Right(ResponseWrapper(correlationId, responseModelUser))
 

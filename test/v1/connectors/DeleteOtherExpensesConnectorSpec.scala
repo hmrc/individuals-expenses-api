@@ -27,7 +27,7 @@ class DeleteOtherExpensesConnectorSpec extends ConnectorSpec {
   val taxYear: String = "2017-18"
   val nino: String    = "AA123456A"
 
-  class Test { _: ConnectorTest =>
+  trait Test { _: ConnectorTest =>
 
     val connector: DeleteOtherExpensesConnector = new DeleteOtherExpensesConnector(
       http = mockHttpClient,
@@ -40,7 +40,7 @@ class DeleteOtherExpensesConnectorSpec extends ConnectorSpec {
     val request = DeleteOtherExpensesRequest(Nino(nino), taxYear)
 
     "return a 204 with no body" when {
-      "the downstream call is successful" in new Test with IfsR5Test {
+      "the downstream call is successful" in new IfsR5Test with Test {
         val outcome = Right(ResponseWrapper(correlationId, ()))
 
         willDelete(

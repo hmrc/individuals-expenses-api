@@ -40,7 +40,7 @@ class AmendOtherExpensesConnectorSpec extends ConnectorSpec {
       ))
   )
 
-  class Test { _: ConnectorTest =>
+  trait Test { _: ConnectorTest =>
 
     val connector: AmendOtherExpensesConnector = new AmendOtherExpensesConnector(
       http = mockHttpClient,
@@ -52,7 +52,7 @@ class AmendOtherExpensesConnectorSpec extends ConnectorSpec {
   "amend" should {
     val request = AmendOtherExpensesRequest(Nino(nino), taxYear, body)
 
-    "put a body and return 204 no body" in new Test with IfsR5Test {
+    "put a body and return 204 no body" in new IfsR5Test with Test {
       val outcome = Right(ResponseWrapper(correlationId, ()))
 
       willPut(
