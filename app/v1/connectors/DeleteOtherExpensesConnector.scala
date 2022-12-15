@@ -16,8 +16,9 @@
 
 package v1.connectors
 
-import v1.connectors.DownstreamUri.IfsR5Uri
+import v1.connectors.DownstreamUri.{IfsR5Uri, TaxYearSpecificIfsUri}
 import config.AppConfig
+
 import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.HttpClient
@@ -34,9 +35,15 @@ class DeleteOtherExpensesConnector @Inject() (val http: HttpClient, val appConfi
       ec: ExecutionContext,
       correlationId: String): Future[DownstreamOutcome[Unit]] = {
 
-    delete(
-      uri = IfsR5Uri[Unit](s"income-tax/expenses/other/${request.nino.nino}/${request.taxYear}")
-    )
+    import request._
+
+    val uri = if (taxYear.useTaxYearSpecificApi) {
+      TaxYearSpecificIfsUri[Unit](s"/income-tax/expenses/other/${taxYear.asTysDownstream}/${nino.nino}")
+    } else {
+      IfsR5Uri[Unit](s"income-tax/expenses/other/${nino.nino}/${taxYear.asMtd}")
+    }
+
+    delete(uri)
   }
 
 }

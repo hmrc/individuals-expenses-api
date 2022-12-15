@@ -16,47 +16,45 @@
 
 package v1.connectors
 
-import mocks.MockAppConfig
-import v1.mocks.MockHttpClient
 import v1.models.domain.Nino
 import v1.models.outcomes.ResponseWrapper
+import v1.models.request.TaxYear
 import v1.models.request.deleteOtherExpenses.DeleteOtherExpensesRequest
 
 import scala.concurrent.Future
 
 class DeleteOtherExpensesConnectorSpec extends ConnectorSpec {
 
-  val taxYear: String = "2017-18"
-  val nino: String    = "AA123456A"
+  val nino: String = "AA123456A"
 
-  class Test extends MockHttpClient with MockAppConfig {
+  trait Test { _: ConnectorTest =>
+    def taxYear: TaxYear
+    protected val request = DeleteOtherExpensesRequest(Nino(nino), taxYear)
 
-    val connector: DeleteOtherExpensesConnector = new DeleteOtherExpensesConnector(
+    protected val connector: DeleteOtherExpensesConnector = new DeleteOtherExpensesConnector(
       http = mockHttpClient,
       appConfig = mockAppConfig
     )
 
-    MockAppConfig.ifsR5BaseUrl returns baseUrl
-    MockAppConfig.ifsR5Token returns "ifs-token"
-    MockAppConfig.ifsR5Environment returns "ifs-environment"
-    MockAppConfig.ifsR5EnvironmentHeaders returns Some(allowedDownstreamHeaders)
   }
 
   "deleteOtherExpenses" should {
-    val request = DeleteOtherExpensesRequest(Nino(nino), taxYear)
-
     "return a 204 with no body" when {
-      "the downstream call is successful" in new Test {
+      "the downstream call is successful" in new DesTest with Test {
+        val taxYear = TaxYear.fromMtd("2017-18")
         val outcome = Right(ResponseWrapper(correlationId, ()))
 
-        MockHttpClient
-          .delete(
-            url = s"$baseUrl/income-tax/expenses/other/$nino/${request.taxYear}",
-            config = dummyDownstreamHeaderCarrierConfig,
-            requiredHeaders = requiredIfsHeaders,
-            excludedHeaders = excludedHeaders
-          )
-          .returns(Future.successful(outcome))
+        willDelete(s"$baseUrl/income-tax/expenses/other/$nino/2017-18").returns(Future.successful(outcome))
+
+        await(connector.deleteOtherExpenses(request)) shouldBe outcome
+      }
+    }
+    "return a 204 with no body" when {
+      "a valid request is called for a Tax Year Specific tax year" in new TysIfsTest with Test {
+        val taxYear = TaxYear.fromMtd("2023-24")
+        val outcome = Right(ResponseWrapper(correlationId, ()))
+
+        willDelete(s"$baseUrl/income-tax/expenses/other/23-24/$nino").returns(Future.successful(outcome))
 
         await(connector.deleteOtherExpenses(request)) shouldBe outcome
       }
