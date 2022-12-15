@@ -18,30 +18,16 @@ package v1.models.response.RetrieveEmploymentExpenses
 
 import play.api.libs.json.Json
 import support.UnitSpec
+import v1.fixtures.RetrieveEmploymentsExpensesFixtures._
 import v1.models.response.retrieveEmploymentExpenses.Expenses
 import v1.models.utils.JsonErrorValidators
 
 class ExpensesSpec extends UnitSpec with JsonErrorValidators {
 
-  val expensesBody = Expenses(Some(1000.25), Some(1000.25), Some(1000.25), Some(1000.25), Some(1000.25), Some(1000.25), Some(1000.25), Some(1000.25))
-
-  val json = Json.parse(
-    """{
-      |  "businessTravelCosts": 1000.25,
-      |  "jobExpenses": 1000.25,
-      |  "flatRateJobExpenses": 1000.25,
-      |  "professionalSubscriptions": 1000.25,
-      |  "hotelAndMealExpenses": 1000.25,
-      |  "otherAndCapitalAllowances": 1000.25,
-      |  "vehicleExpenses": 1000.25,
-      |  "mileageAllowanceRelief": 1000.25
-      |}""".stripMargin
-  )
-
   "reads" when {
     "passed valid JSON" should {
       "return a valid model" in {
-        expensesBody shouldBe json.as[Expenses]
+        expensesModel shouldBe expensesJson.as[Expenses]
       }
     }
   }
@@ -49,7 +35,7 @@ class ExpensesSpec extends UnitSpec with JsonErrorValidators {
   "writes" when {
     "passed valid model" should {
       "return valid JSON" in {
-        Json.toJson(expensesBody) shouldBe json
+        Json.toJson(expensesModel) shouldBe expensesJson
       }
     }
   }

@@ -41,8 +41,8 @@ class DeleteOtherExpensesConnectorSpec extends ConnectorSpec {
   "deleteOtherExpenses" should {
     "return a 204 with no body" when {
       "the downstream call is successful" in new DesTest with Test {
-        val taxYear = TaxYear.fromMtd("2017-18")
-        val outcome = Right(ResponseWrapper(correlationId, ()))
+        def taxYear: TaxYear = TaxYear.fromMtd("2017-18")
+        val outcome          = Right(ResponseWrapper(correlationId, ()))
 
         willDelete(s"$baseUrl/income-tax/expenses/other/$nino/2017-18").returns(Future.successful(outcome))
 
@@ -51,8 +51,8 @@ class DeleteOtherExpensesConnectorSpec extends ConnectorSpec {
     }
     "return a 204 with no body" when {
       "a valid request is called for a Tax Year Specific tax year" in new TysIfsTest with Test {
-        val taxYear = TaxYear.fromMtd("2023-24")
-        val outcome = Right(ResponseWrapper(correlationId, ()))
+        def taxYear: TaxYear = TaxYear.fromMtd("2023-24")
+        val outcome          = Right(ResponseWrapper(correlationId, ()))
 
         willDelete(s"$baseUrl/income-tax/expenses/other/23-24/$nino").returns(Future.successful(outcome))
 
