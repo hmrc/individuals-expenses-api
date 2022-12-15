@@ -37,16 +37,12 @@ class RetrieveOtherExpensesConnectorSpec extends ConnectorSpec {
       appConfig = mockAppConfig
     )
 
-    MockAppConfig.ifsR5BaseUrl returns baseUrl
-    MockAppConfig.ifsR5Token returns "ifs-r5-token"
-    MockAppConfig.ifsR5Environment returns "ifs-r5-environment"
-    MockAppConfig.ifsR5EnvironmentHeaders returns Some(allowedDownstreamHeaders)
   }
 
   "retrieveOtherExpenses" should {
     val request = RetrieveOtherExpensesRequest(Nino(nino), taxYear)
     "return a result" when {
-      "the downstream call is successful" in new Test {
+      "the downstream call is successful" in new Test with IfsR5Test {
         val outcome = Right(
           ResponseWrapper(
             correlationId,
@@ -57,13 +53,9 @@ class RetrieveOtherExpensesConnectorSpec extends ConnectorSpec {
             )
           ))
 
-        MockHttpClient
-          .get(
-            url = s"$baseUrl/income-tax/expenses/other/$nino/${request.taxYear}",
-            config = dummyDownstreamHeaderCarrierConfig,
-            requiredHeaders = requiredIfsR5Headers,
-            excludedHeaders = excludedHeaders
-          )
+        willGet(
+          url = s"$baseUrl/income-tax/expenses/other/$nino/${request.taxYear}"
+        )
           .returns(Future.successful(outcome))
 
         await(connector.retrieveOtherExpenses(request)) shouldBe outcome

@@ -17,7 +17,7 @@
 package v1.endpoints
 
 import play.api.http.HeaderNames.ACCEPT
-import play.api.http.Status
+import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.libs.ws.{WSRequest, WSResponse}
 import play.api.test.Helpers.AUTHORIZATION
@@ -32,11 +32,11 @@ class RetrieveEmploymentsExpensesControllerISpec extends IntegrationBaseSpec {
     "return a 200 status code" when {
       "valid latest request is made" in new NonTysTest {
         override def setupStubs(): Unit = {
-          DownstreamStub.onSuccess(DownstreamStub.GET, downstreamUri, Map("view" -> latestSourceDownstream), Status.OK, downstreamResponseJsonLatest)
+          DownstreamStub.onSuccess(DownstreamStub.GET, downstreamUri, Map("view" -> latestSourceDownstream), OK, downstreamResponseJsonLatest)
         }
 
         val response: WSResponse = await(request(latestMtdUri).get())
-        response.status shouldBe Status.OK
+        response.status shouldBe OK
         response.json shouldBe mtdResponseWithHateoasLinksLatest()
         response.header("X-CorrelationId").nonEmpty shouldBe true
         response.header("Content-Type") shouldBe Some("application/json")
@@ -44,16 +44,11 @@ class RetrieveEmploymentsExpensesControllerISpec extends IntegrationBaseSpec {
 
       "valid hmrcHeld request is made" in new NonTysTest {
         override def setupStubs(): Unit = {
-          DownstreamStub.onSuccess(
-            DownstreamStub.GET,
-            downstreamUri,
-            Map("view" -> hmrcHeldSourceDownstream),
-            Status.OK,
-            downstreamResponseJsonHmrcHeld)
+          DownstreamStub.onSuccess(DownstreamStub.GET, downstreamUri, Map("view" -> hmrcHeldSourceDownstream), OK, downstreamResponseJsonHmrcHeld)
         }
 
         val response: WSResponse = await(request(hmrcHeldMtdUri).get())
-        response.status shouldBe Status.OK
+        response.status shouldBe OK
         response.json shouldBe mtdResponseWithHateoasLinksHmrcHeld
         response.header("X-CorrelationId").nonEmpty shouldBe true
         response.header("Content-Type") shouldBe Some("application/json")
@@ -61,11 +56,11 @@ class RetrieveEmploymentsExpensesControllerISpec extends IntegrationBaseSpec {
 
       "valid user request is made" in new NonTysTest {
         override def setupStubs(): Unit = {
-          DownstreamStub.onSuccess(DownstreamStub.GET, downstreamUri, Map("view" -> userSourceDownstream), Status.OK, downstreamResponseJsonCustomer)
+          DownstreamStub.onSuccess(DownstreamStub.GET, downstreamUri, Map("view" -> userSourceDownstream), OK, downstreamResponseJsonCustomer)
         }
 
         val response: WSResponse = await(request(userMtdUri).get())
-        response.status shouldBe Status.OK
+        response.status shouldBe OK
         response.json shouldBe mtdResponseWithHateoasLinksUser
         response.header("X-CorrelationId").nonEmpty shouldBe true
         response.header("Content-Type") shouldBe Some("application/json")
@@ -73,11 +68,11 @@ class RetrieveEmploymentsExpensesControllerISpec extends IntegrationBaseSpec {
 
       "valid request is made for a Tax Year Specific (TYS) tax year" in new TysIfsTest {
         override def setupStubs(): Unit = {
-          DownstreamStub.onSuccess(DownstreamStub.GET, downstreamUri, Map("view" -> latestSourceDownstream), Status.OK, downstreamResponseJsonLatest)
+          DownstreamStub.onSuccess(DownstreamStub.GET, downstreamUri, Map("view" -> latestSourceDownstream), OK, downstreamResponseJsonLatest)
         }
 
         val response: WSResponse = await(request(latestMtdUri).get())
-        response.status shouldBe Status.OK
+        response.status shouldBe OK
         response.json shouldBe mtdResponseWithHateoasLinksLatest(mtdTaxYear)
         response.header("X-CorrelationId").nonEmpty shouldBe true
         response.header("Content-Type") shouldBe Some("application/json")
@@ -105,11 +100,11 @@ class RetrieveEmploymentsExpensesControllerISpec extends IntegrationBaseSpec {
         }
 
         val input = Seq(
-          ("Walrus", "2019-20", "latest", Status.BAD_REQUEST, NinoFormatError),
-          ("AA123456A", "203100", "latest", Status.BAD_REQUEST, TaxYearFormatError),
-          ("AA123456A", "2019-20", "Walrus", Status.BAD_REQUEST, SourceFormatError),
-          ("AA123456A", "2017-18", "latest", Status.BAD_REQUEST, RuleTaxYearNotSupportedError),
-          ("AA123456A", "2018-20", "latest", Status.BAD_REQUEST, RuleTaxYearRangeInvalidError)
+          ("Walrus", "2019-20", "latest", BAD_REQUEST, NinoFormatError),
+          ("AA123456A", "203100", "latest", BAD_REQUEST, TaxYearFormatError),
+          ("AA123456A", "2019-20", "Walrus", BAD_REQUEST, SourceFormatError),
+          ("AA123456A", "2017-18", "latest", BAD_REQUEST, RuleTaxYearNotSupportedError),
+          ("AA123456A", "2018-20", "latest", BAD_REQUEST, RuleTaxYearRangeInvalidError)
         )
 
         input.foreach(args => (validationErrorTest _).tupled(args))
@@ -129,20 +124,20 @@ class RetrieveEmploymentsExpensesControllerISpec extends IntegrationBaseSpec {
         }
 
         val errors = List(
-          (Status.BAD_REQUEST, "INVALID_TAXABLE_ENTITY_ID", Status.BAD_REQUEST, NinoFormatError),
-          (Status.BAD_REQUEST, "INVALID_TAX_YEAR", Status.BAD_REQUEST, TaxYearFormatError),
-          (Status.BAD_REQUEST, "INVALID_VIEW", Status.BAD_REQUEST, SourceFormatError),
-          (Status.BAD_REQUEST, "INVALID_CORRELATIONID", Status.INTERNAL_SERVER_ERROR, StandardDownstreamError),
-          (Status.NOT_FOUND, "NO_DATA_FOUND", Status.NOT_FOUND, NotFoundError),
-          (Status.UNPROCESSABLE_ENTITY, "INVALID_DATE_RANGE", Status.BAD_REQUEST, RuleTaxYearNotSupportedError),
-          (Status.INTERNAL_SERVER_ERROR, "SERVER_ERROR", Status.INTERNAL_SERVER_ERROR, StandardDownstreamError),
-          (Status.SERVICE_UNAVAILABLE, "SERVICE_UNAVAILABLE", Status.INTERNAL_SERVER_ERROR, StandardDownstreamError)
+          (BAD_REQUEST, "INVALID_TAXABLE_ENTITY_ID", BAD_REQUEST, NinoFormatError),
+          (BAD_REQUEST, "INVALID_TAX_YEAR", BAD_REQUEST, TaxYearFormatError),
+          (BAD_REQUEST, "INVALID_VIEW", BAD_REQUEST, SourceFormatError),
+          (BAD_REQUEST, "INVALID_CORRELATIONID", INTERNAL_SERVER_ERROR, StandardDownstreamError),
+          (NOT_FOUND, "NO_DATA_FOUND", NOT_FOUND, NotFoundError),
+          (UNPROCESSABLE_ENTITY, "INVALID_DATE_RANGE", BAD_REQUEST, RuleTaxYearNotSupportedError),
+          (INTERNAL_SERVER_ERROR, "SERVER_ERROR", INTERNAL_SERVER_ERROR, StandardDownstreamError),
+          (SERVICE_UNAVAILABLE, "SERVICE_UNAVAILABLE", INTERNAL_SERVER_ERROR, StandardDownstreamError)
         )
 
         val extraTysErrors = List(
-          (Status.BAD_REQUEST, "INVALID_CORRELATION_ID", Status.INTERNAL_SERVER_ERROR, StandardDownstreamError),
-          (Status.NOT_FOUND, "NOT_FOUND", Status.NOT_FOUND, NotFoundError),
-          (Status.UNPROCESSABLE_ENTITY, "TAX_YEAR_NOT_SUPPORTED", Status.BAD_REQUEST, RuleTaxYearNotSupportedError)
+          (BAD_REQUEST, "INVALID_CORRELATION_ID", INTERNAL_SERVER_ERROR, StandardDownstreamError),
+          (NOT_FOUND, "NOT_FOUND", NOT_FOUND, NotFoundError),
+          (UNPROCESSABLE_ENTITY, "TAX_YEAR_NOT_SUPPORTED", BAD_REQUEST, RuleTaxYearNotSupportedError)
         )
 
         (errors ++ extraTysErrors).foreach(args => (serviceErrorTest _).tupled(args))
