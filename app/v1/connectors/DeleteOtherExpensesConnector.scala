@@ -38,9 +38,9 @@ class DeleteOtherExpensesConnector @Inject() (val http: HttpClient, val appConfi
     import request._
 
     val uri = if (taxYear.useTaxYearSpecificApi) {
-      TaxYearSpecificIfsUri[Unit](s"/income-tax/expenses/other/${taxYear.asTysDownstream}/${nino.nino}")
+      TaxYearSpecificIfsUri[Unit](s"income-tax/expenses/other/${taxYear.asTysDownstream}/${nino.value}")
     } else {
-      IfsR5Uri[Unit](s"income-tax/expenses/other/${nino.nino}/${taxYear.asMtd}")
+      IfsR5Uri[Unit](s"income-tax/expenses/other/${nino.value}/${taxYear.asMtd}")
     }
 
     delete(uri)

@@ -84,7 +84,7 @@ class DeleteOtherExpensesControllerSpec
 
   "handleRequest" should {
     "return NoContent" when {
-      "the request recieved is valid" in new Test {
+      "the request received is valid" in new Test {
 
         MockDeleteOtherExpensesRequestDataParser
           .parse(rawData)
@@ -158,14 +158,18 @@ class DeleteOtherExpensesControllerSpec
           }
         }
 
-        val input = Seq(
+        val errors = Seq(
           (NinoFormatError, BAD_REQUEST),
           (TaxYearFormatError, BAD_REQUEST),
+          (RuleTaxYearRangeInvalidError, BAD_REQUEST),
           (NotFoundError, NOT_FOUND),
           (StandardDownstreamError, INTERNAL_SERVER_ERROR)
         )
+        val extraTysErrors = List(
+          (RuleTaxYearNotSupportedError, BAD_REQUEST)
+        )
 
-        input.foreach(args => (serviceErrors _).tupled(args))
+        (errors ++ extraTysErrors).foreach(args => (serviceErrors _).tupled(args))
       }
     }
   }
