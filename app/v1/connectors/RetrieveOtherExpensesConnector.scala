@@ -21,7 +21,7 @@ import config.AppConfig
 import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.HttpClient
-import v1.connectors.DownstreamUri.IfsR5Uri
+import v1.connectors.DownstreamUri.{IfsR5Uri, TaxYearSpecificIfsUri}
 import v1.connectors.httpparsers.StandardDownstreamHttpParser._
 import v1.models.request.retrieveOtherExpenses.RetrieveOtherExpensesRequest
 import v1.models.response.retrieveOtherExpenses.RetrieveOtherExpensesResponse
@@ -36,11 +36,15 @@ class RetrieveOtherExpensesConnector @Inject() (val http: HttpClient, val appCon
       ec: ExecutionContext,
       correlationId: String): Future[DownstreamOutcome[RetrieveOtherExpensesResponse]] = {
 
-    val url = s"income-tax/expenses/other/${request.nino.nino}/${request.taxYear}"
+    import request._
 
-    get(
-      uri = IfsR5Uri[RetrieveOtherExpensesResponse](s"$url")
-    )
+    val downstreamUri = if (taxYear.useTaxYearSpecificApi) {
+      TaxYearSpecificIfsUri[RetrieveOtherExpensesResponse](s"income-tax/expenses/other/${taxYear.asTysDownstream}/${nino.value}")
+    } else {
+      IfsR5Uri[RetrieveOtherExpensesResponse](s"income-tax/expenses/other/${nino.value}/${taxYear.asMtd}")
+    }
+
+    get(uri = downstreamUri)
   }
 
 }

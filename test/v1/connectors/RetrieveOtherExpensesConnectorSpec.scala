@@ -18,6 +18,7 @@ package v1.connectors
 
 import v1.models.domain.Nino
 import v1.models.outcomes.ResponseWrapper
+import v1.models.request.TaxYear
 import v1.models.request.retrieveOtherExpenses.RetrieveOtherExpensesRequest
 import v1.models.response.retrieveOtherExpenses.{PatentRoyaltiesPayments, PaymentsToTradeUnionsForDeathBenefits, RetrieveOtherExpensesResponse}
 
@@ -25,35 +26,49 @@ import scala.concurrent.Future
 
 class RetrieveOtherExpensesConnectorSpec extends ConnectorSpec {
 
-  val nino: String    = "AA123456A"
-  private val taxYear = "2019-20"
+  val nino: String = "AA123456A"
+
+  val retrieveOtherExpensesResponse: RetrieveOtherExpensesResponse =
+    RetrieveOtherExpensesResponse(
+      "2019-04-04T01:01:01Z",
+      Some(PaymentsToTradeUnionsForDeathBenefits(Some("TRADE UNION PAYMENTS"), 5433.54)),
+      Some(PatentRoyaltiesPayments(Some("ROYALTIES PAYMENTS"), 98765.12))
+    )
 
   trait Test { _: ConnectorTest =>
+
+    def taxYear: String
 
     val connector: RetrieveOtherExpensesConnector = new RetrieveOtherExpensesConnector(
       http = mockHttpClient,
       appConfig = mockAppConfig
     )
 
+    lazy val request: RetrieveOtherExpensesRequest = RetrieveOtherExpensesRequest(Nino(nino), TaxYear.fromMtd(taxYear))
+
   }
 
-  "retrieveOtherExpenses" should {
-    val request = RetrieveOtherExpensesRequest(Nino(nino), taxYear)
-    "return a result" when {
-      "the downstream call is successful" in new IfsR5Test with Test {
-        val outcome = Right(
-          ResponseWrapper(
-            correlationId,
-            RetrieveOtherExpensesResponse(
-              "2019-04-04T01:01:01Z",
-              Some(PaymentsToTradeUnionsForDeathBenefits(Some("TRADE UNION PAYMENTS"), 5433.54)),
-              Some(PatentRoyaltiesPayments(Some("ROYALTIES PAYMENTS"), 98765.12))
-            )
-          ))
+  "RetrieveOtherExpensesConnector" should {
 
-        willGet(
-          url = s"$baseUrl/income-tax/expenses/other/$nino/${request.taxYear}"
-        )
+    "return a result" when {
+
+      "the downstream call is successful" in new IfsR5Test with Test {
+
+        def taxYear: String = "2021-22"
+        val outcome         = Right(ResponseWrapper(correlationId, retrieveOtherExpensesResponse))
+
+        willGet(url = s"$baseUrl/income-tax/expenses/other/$nino/2021-22")
+          .returns(Future.successful(outcome))
+
+        await(connector.retrieveOtherExpenses(request)) shouldBe outcome
+      }
+
+      "the downstream call is successful for a TYS tax year" in new TysIfsTest with Test {
+
+        def taxYear: String = "2023-24"
+        val outcome         = Right(ResponseWrapper(correlationId, retrieveOtherExpensesResponse))
+
+        willGet(url = s"$baseUrl/income-tax/expenses/other/23-24/$nino")
           .returns(Future.successful(outcome))
 
         await(connector.retrieveOtherExpenses(request)) shouldBe outcome
