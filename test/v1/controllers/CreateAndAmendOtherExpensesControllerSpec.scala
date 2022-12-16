@@ -140,7 +140,7 @@ class CreateAndAmendOtherExpensesControllerSpec
           .returns(Right(requestData))
 
         MockCreateAndAmendOtherExpensesService
-          .amend(requestData)
+          .createAndAmend(requestData)
           .returns(Future.successful(Right(ResponseWrapper(correlationId, ()))))
 
         MockHateoasFactory
@@ -198,7 +198,7 @@ class CreateAndAmendOtherExpensesControllerSpec
               .returns(Right(requestData))
 
             MockCreateAndAmendOtherExpensesService
-              .amend(requestData)
+              .createAndAmend(requestData)
               .returns(Future.successful(Left(ErrorWrapper(correlationId, mtdError))))
 
             val result: Future[Result] = controller.handleRequest(nino, taxYear)(fakePostRequest(requestBodyJson))

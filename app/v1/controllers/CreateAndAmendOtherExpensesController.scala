@@ -61,7 +61,7 @@ class CreateAndAmendOtherExpensesController @Inject() (val authService: Enrolmen
       val result =
         for {
           parsedRequest   <- EitherT.fromEither[Future](parser.parseRequest(rawData))
-          serviceResponse <- EitherT(service.amend(parsedRequest))
+          serviceResponse <- EitherT(service.createAndAmend(parsedRequest))
           vendorResponse <- EitherT.fromEither[Future](
             hateoasFactory.wrap(serviceResponse.responseData, CreateAndAmendOtherExpensesHateoasData(nino, taxYear)).asRight[ErrorWrapper])
         } yield {

@@ -66,7 +66,7 @@ class CreateAndAmendOtherExpensesConnectorSpec extends ConnectorSpec {
       )
         .returns(Future.successful(outcome))
 
-      await(connector.amend(request)) shouldBe outcome
+      await(connector.createAndAmend(request)) shouldBe outcome
     }
   }
 

@@ -56,7 +56,7 @@ class CreateAndAmendOtherExpensesServiceSpec extends ServiceSpec {
           .createAndAmend(requestData)
           .returns(Future.successful(Right(ResponseWrapper(correlationId, ()))))
 
-        await(service.amend(requestData)) shouldBe Right(ResponseWrapper(correlationId, ()))
+        await(service.createAndAmend(requestData)) shouldBe Right(ResponseWrapper(correlationId, ()))
       }
     }
   }
@@ -71,7 +71,7 @@ class CreateAndAmendOtherExpensesServiceSpec extends ServiceSpec {
             .createAndAmend(requestData)
             .returns(Future.successful(Left(ResponseWrapper(correlationId, DownstreamErrors.single(DownstreamErrorCode(desErrorCode))))))
 
-          await(service.amend(requestData)) shouldBe Left(ErrorWrapper(correlationId, error))
+          await(service.createAndAmend(requestData)) shouldBe Left(ErrorWrapper(correlationId, error))
         }
 
       val input = Seq(
