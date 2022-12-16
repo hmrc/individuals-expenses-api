@@ -18,12 +18,12 @@ package v1.controllers.requestParsers
 
 import play.api.libs.json.Json
 import support.UnitSpec
-import v1.mocks.validators.MockAmendOtherExpensesValidator
+import v1.mocks.validators.MockCreateAndAmendOtherExpensesValidator
 import v1.models.domain.Nino
 import v1.models.errors._
-import v1.models.request.amendOtherExpenses._
+import v1.models.request.createAndAmendOtherExpenses._
 
-class AmendOtherExpensesRequestParserSpec extends UnitSpec {
+class CreateAndAmendOtherExpensesRequestParserSpec extends UnitSpec {
 
   val nino                           = "AA123456B"
   val taxYear                        = "2017-18"
@@ -42,24 +42,24 @@ class AmendOtherExpensesRequestParserSpec extends UnitSpec {
       |""".stripMargin)
 
   val inputData =
-    AmendOtherExpensesRawData(nino, taxYear, requestBodyJson)
+    CreateAndAmendOtherExpensesRawData(nino, taxYear, requestBodyJson)
 
-  trait Test extends MockAmendOtherExpensesValidator {
-    lazy val parser = new AmendOtherExpensesRequestParser(mockValidator)
+  trait Test extends MockCreateAndAmendOtherExpensesValidator {
+    lazy val parser = new CreateAndAmendOtherExpensesRequestParser(mockValidator)
   }
 
   "parse" should {
 
     "return a request object" when {
       "valid request data is supplied" in new Test {
-        MockAmendOtherExpensesValidator.validate(inputData).returns(Nil)
+        MockCreateAndAmendOtherExpensesValidator.validate(inputData).returns(Nil)
 
         parser.parseRequest(inputData) shouldBe
           Right(
-            AmendOtherExpensesRequest(
+            CreateAndAmendOtherExpensesRequest(
               Nino(nino),
               taxYear,
-              AmendOtherExpensesBody(
+              CreateAndAmendOtherExpensesBody(
                 Some(PaymentsToTradeUnionsForDeathBenefits(Some("TRADE UNION PAYMENTS"), 1223.22)),
                 Some(PatentRoyaltiesPayments(Some("ROYALTIES PAYMENTS"), 1223.22))
               )
@@ -70,7 +70,7 @@ class AmendOtherExpensesRequestParserSpec extends UnitSpec {
     "return an ErrorWrapper" when {
 
       "a single validation error occurs" in new Test {
-        MockAmendOtherExpensesValidator
+        MockCreateAndAmendOtherExpensesValidator
           .validate(inputData)
           .returns(List(NinoFormatError))
 
@@ -79,7 +79,7 @@ class AmendOtherExpensesRequestParserSpec extends UnitSpec {
       }
 
       "multiple validation errors occur" in new Test {
-        MockAmendOtherExpensesValidator
+        MockCreateAndAmendOtherExpensesValidator
           .validate(inputData)
           .returns(List(NinoFormatError, TaxYearFormatError))
 

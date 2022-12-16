@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package v1.models.request.amendOtherExpenses
+package v1.models.request.createAndAmendOtherExpenses
 
 import play.api.libs.json.Json
 import support.UnitSpec
 import v1.models.utils.JsonErrorValidators
 
-class PaymentsToTradeUnionsForDeathBenefitsSpec extends UnitSpec with JsonErrorValidators {
+class PatentRoyaltiesPaymentsSpec extends UnitSpec with JsonErrorValidators {
 
-  val paymentsToTradeUnionsForDeathBenefits      = PaymentsToTradeUnionsForDeathBenefits(Some("TRADE UNION PAYMENTS"), 2314.32)
-  val emptyPaymentsToTradeUnionsForDeathBenefits = PaymentsToTradeUnionsForDeathBenefits(None, 2314.32)
+  val patentRoyaltiesPayments      = PatentRoyaltiesPayments(Some("ROYALTIES PAYMENT"), 2314.32)
+  val emptyPatentRoyaltiesPayments = PatentRoyaltiesPayments(None, 2314.32)
 
   val json = Json.parse(
     """{
-      |  "customerReference": "TRADE UNION PAYMENTS",
+      |  "customerReference": "ROYALTIES PAYMENT",
       |  "expenseAmount": 2314.32
       |}""".stripMargin
   )
@@ -41,29 +41,29 @@ class PaymentsToTradeUnionsForDeathBenefitsSpec extends UnitSpec with JsonErrorV
   "reads" when {
     "passed valid JSON" should {
       "return a valid model" in {
-        paymentsToTradeUnionsForDeathBenefits shouldBe json.as[PaymentsToTradeUnionsForDeathBenefits]
+        patentRoyaltiesPayments shouldBe json.as[PatentRoyaltiesPayments]
       }
     }
   }
 
   "read from empty JSON" should {
-    "convert empty MTD JSON into an empty PaymentsToTradeUnionsForDeathBenefits object" in {
-      emptyPaymentsToTradeUnionsForDeathBenefits shouldBe noReferenceJson.as[PaymentsToTradeUnionsForDeathBenefits]
+    "convert empty MTD JSON into an empty PatentRoyaltiesPayments object" in {
+      emptyPatentRoyaltiesPayments shouldBe noReferenceJson.as[PatentRoyaltiesPayments]
     }
   }
 
   "writes" when {
     "passed valid model" should {
       "return valid JSON" in {
-        Json.toJson(paymentsToTradeUnionsForDeathBenefits) shouldBe json
+        Json.toJson(patentRoyaltiesPayments) shouldBe json
       }
     }
   }
 
-  "written from an empty body" when {
+  "write from an empty body" when {
     "passed an empty model" should {
       "return an no reference JSON" in {
-        Json.toJson(emptyPaymentsToTradeUnionsForDeathBenefits) shouldBe noReferenceJson
+        Json.toJson(emptyPatentRoyaltiesPayments) shouldBe noReferenceJson
       }
     }
   }

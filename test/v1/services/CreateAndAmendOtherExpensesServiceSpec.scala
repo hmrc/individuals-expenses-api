@@ -16,30 +16,35 @@
 
 package v1.services
 
-import v1.mocks.connectors.MockAmendOtherExpensesConnector
+import v1.mocks.connectors.MockCreateAndAmendOtherExpensesConnector
 import v1.models.domain.Nino
 import v1.models.errors._
 import v1.models.outcomes.ResponseWrapper
-import v1.models.request.amendOtherExpenses.{AmendOtherExpensesBody, AmendOtherExpensesRequest, PatentRoyaltiesPayments, PaymentsToTradeUnionsForDeathBenefits}
+import v1.models.request.createAndAmendOtherExpenses.{
+  CreateAndAmendOtherExpensesBody,
+  CreateAndAmendOtherExpensesRequest,
+  PatentRoyaltiesPayments,
+  PaymentsToTradeUnionsForDeathBenefits
+}
 
 import scala.concurrent.Future
 
-class AmendOtherExpensesServiceSpec extends ServiceSpec {
+class CreateAndAmendOtherExpensesServiceSpec extends ServiceSpec {
 
   val taxYear    = "2017-18"
   val nino: Nino = Nino("AA123456A")
 
-  val body: AmendOtherExpensesBody = AmendOtherExpensesBody(
+  val body: CreateAndAmendOtherExpensesBody = CreateAndAmendOtherExpensesBody(
     Some(PaymentsToTradeUnionsForDeathBenefits(Some("TRADE UNION PAYMENTS"), 2000.99)),
     Some(PatentRoyaltiesPayments(Some("ROYALTIES PAYMENTS"), 2000.99))
   )
 
-  private val requestData = AmendOtherExpensesRequest(nino, taxYear, body)
+  private val requestData = CreateAndAmendOtherExpensesRequest(nino, taxYear, body)
 
-  trait Test extends MockAmendOtherExpensesConnector {
+  trait Test extends MockCreateAndAmendOtherExpensesConnector {
 
-    val service = new AmendOtherExpensesService(
-      connector = mockAmendOtherExpensesConnector
+    val service = new CreateAndAmendOtherExpensesService(
+      connector = mockCreateAndAmendOtherExpensesConnector
     )
 
   }
@@ -47,8 +52,8 @@ class AmendOtherExpensesServiceSpec extends ServiceSpec {
   "service" should {
     "service call successful" when {
       "return mapped result" in new Test {
-        MockAmendOtherExpensesConnector
-          .amend(requestData)
+        MockCreateAndAmendOtherExpensesConnector
+          .createAndAmend(requestData)
           .returns(Future.successful(Right(ResponseWrapper(correlationId, ()))))
 
         await(service.amend(requestData)) shouldBe Right(ResponseWrapper(correlationId, ()))
@@ -62,8 +67,8 @@ class AmendOtherExpensesServiceSpec extends ServiceSpec {
       def serviceError(desErrorCode: String, error: MtdError): Unit =
         s"a $desErrorCode error is returned from the service" in new Test {
 
-          MockAmendOtherExpensesConnector
-            .amend(requestData)
+          MockCreateAndAmendOtherExpensesConnector
+            .createAndAmend(requestData)
             .returns(Future.successful(Left(ResponseWrapper(correlationId, DownstreamErrors.single(DownstreamErrorCode(desErrorCode))))))
 
           await(service.amend(requestData)) shouldBe Left(ErrorWrapper(correlationId, error))

@@ -37,7 +37,7 @@ trait HateoasLinks {
   def retrieveOtherExpenses(appConfig: AppConfig, nino: String, taxYear: String): Link =
     Link(href = otherExpensesUri(appConfig, nino, taxYear), method = GET, rel = SELF)
 
-  def amendOtherExpenses(appConfig: AppConfig, nino: String, taxYear: String): Link =
+  def createAndAmendOtherExpenses(appConfig: AppConfig, nino: String, taxYear: String): Link =
     Link(href = otherExpensesUri(appConfig, nino, taxYear), method = PUT, rel = AMEND_EXPENSES_OTHER)
 
   def deleteOtherExpenses(appConfig: AppConfig, nino: String, taxYear: String): Link =

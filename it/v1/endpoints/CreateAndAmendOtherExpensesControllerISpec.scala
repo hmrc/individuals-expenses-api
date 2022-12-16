@@ -26,7 +26,7 @@ import support.IntegrationBaseSpec
 import v1.models.errors._
 import v1.stubs.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 
-class AmendOtherExpensesControllerISpec extends IntegrationBaseSpec {
+class CreateAndAmendOtherExpensesControllerISpec extends IntegrationBaseSpec {
 
   private trait Test {
 
