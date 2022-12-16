@@ -28,6 +28,7 @@ import v1.models.errors._
 import v1.models.hateoas.Method.GET
 import v1.models.hateoas.{HateoasWrapper, Link}
 import v1.models.outcomes.ResponseWrapper
+import v1.models.request.TaxYear
 import v1.models.request.retrieveOtherExpenses.{RetrieveOtherExpensesRawData, RetrieveOtherExpensesRequest}
 import v1.models.response.retrieveOtherExpenses._
 
@@ -67,7 +68,7 @@ class RetrieveOtherExpensesControllerSpec
   private val correlationId = "X-123"
 
   private val rawData     = RetrieveOtherExpensesRawData(nino, taxYear)
-  private val requestData = RetrieveOtherExpensesRequest(Nino(nino), taxYear)
+  private val requestData = RetrieveOtherExpensesRequest(Nino(nino), TaxYear.fromMtd(taxYear))
 
   private val testHateoasLink = Link(href = s"individuals/expenses/other/$nino/$taxYear", method = GET, rel = "self")
 
