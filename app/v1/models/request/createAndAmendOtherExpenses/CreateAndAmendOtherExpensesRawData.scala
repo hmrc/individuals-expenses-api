@@ -14,12 +14,9 @@
  * limitations under the License.
  */
 
-package v1.models.request.amendOtherExpenses
+package v1.models.request.createAndAmendOtherExpenses
 
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.json.JsValue
+import v1.models.request.RawData
 
-case class PatentRoyaltiesPayments(customerReference: Option[String], expenseAmount: BigDecimal)
-
-object PatentRoyaltiesPayments {
-  implicit val format: OFormat[PatentRoyaltiesPayments] = Json.format[PatentRoyaltiesPayments]
-}
+case class CreateAndAmendOtherExpensesRawData(nino: String, taxYear: String, body: JsValue) extends RawData

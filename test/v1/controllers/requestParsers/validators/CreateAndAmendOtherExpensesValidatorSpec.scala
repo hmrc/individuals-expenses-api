@@ -25,9 +25,9 @@ import support.UnitSpec
 import utils.{CurrentDateTime, CurrentTaxYear}
 import v1.mocks.{MockCurrentDateTime, MockCurrentTaxYear}
 import v1.models.errors._
-import v1.models.request.amendOtherExpenses.AmendOtherExpensesRawData
+import v1.models.request.createAndAmendOtherExpenses.CreateAndAmendOtherExpensesRawData
 
-class AmendOtherExpensesValidatorSpec extends UnitSpec {
+class CreateAndAmendOtherExpensesValidatorSpec extends UnitSpec {
 
   private val validNino    = "AA123456A"
   private val validTaxYear = "2021-22"
@@ -87,7 +87,7 @@ class AmendOtherExpensesValidatorSpec extends UnitSpec {
     implicit val appConfig: AppConfig           = mockAppConfig
     implicit val currentTaxYear: CurrentTaxYear = mockCurrentTaxYear
 
-    val validator = new AmendOtherExpensesValidator()
+    val validator = new CreateAndAmendOtherExpensesValidator()
 
     MockAppConfig.otherExpensesMinimumTaxYear.returns(2022)
 
@@ -104,40 +104,41 @@ class AmendOtherExpensesValidatorSpec extends UnitSpec {
   "running a validation" should {
     "return no errors" when {
       "a valid request is supplied" in new Test {
-        validator.validate(AmendOtherExpensesRawData(validNino, validTaxYear, requestBodyJson)) shouldBe Nil
+        validator.validate(CreateAndAmendOtherExpensesRawData(validNino, validTaxYear, requestBodyJson)) shouldBe Nil
       }
       "a valid request is supplied without decimal places in the JSON" in new Test {
-        validator.validate(AmendOtherExpensesRawData(validNino, validTaxYear, requestBodyJsonNoDecimals)) shouldBe Nil
+        validator.validate(CreateAndAmendOtherExpensesRawData(validNino, validTaxYear, requestBodyJsonNoDecimals)) shouldBe Nil
       }
       "a valid request is supplied without paymentsToTradeUnionsForDeathBenefits in the JSON" in new Test {
-        validator.validate(AmendOtherExpensesRawData(validNino, validTaxYear, requestBodyJsonNoPaymentsToTradeUnionsForDeathBenefits)) shouldBe Nil
+        validator.validate(
+          CreateAndAmendOtherExpensesRawData(validNino, validTaxYear, requestBodyJsonNoPaymentsToTradeUnionsForDeathBenefits)) shouldBe Nil
       }
       "a valid request is supplied without patentRoyaltiesPayments in the JSON" in new Test {
-        validator.validate(AmendOtherExpensesRawData(validNino, validTaxYear, requestBodyJsonNoPatentRoyaltiesPayments)) shouldBe Nil
+        validator.validate(CreateAndAmendOtherExpensesRawData(validNino, validTaxYear, requestBodyJsonNoPatentRoyaltiesPayments)) shouldBe Nil
       }
     }
 
     "return a path parameter error" when {
       "the nino is invalid" in new Test {
-        validator.validate(AmendOtherExpensesRawData("Walrus", validTaxYear, requestBodyJson)) shouldBe List(NinoFormatError)
+        validator.validate(CreateAndAmendOtherExpensesRawData("Walrus", validTaxYear, requestBodyJson)) shouldBe List(NinoFormatError)
       }
       "the taxYear format is invalid" in new Test {
-        validator.validate(AmendOtherExpensesRawData(validNino, "2000", requestBodyJson)) shouldBe List(TaxYearFormatError)
+        validator.validate(CreateAndAmendOtherExpensesRawData(validNino, "2000", requestBodyJson)) shouldBe List(TaxYearFormatError)
       }
       "the taxYear range is invalid" in new Test {
-        validator.validate(AmendOtherExpensesRawData(validNino, "2017-20", requestBodyJson)) shouldBe List(RuleTaxYearRangeInvalidError)
+        validator.validate(CreateAndAmendOtherExpensesRawData(validNino, "2017-20", requestBodyJson)) shouldBe List(RuleTaxYearRangeInvalidError)
       }
       "the taxYear is below the minimum" in new Test {
-        validator.validate(AmendOtherExpensesRawData(validNino, "2018-19", requestBodyJson)) shouldBe List(RuleTaxYearNotSupportedError)
+        validator.validate(CreateAndAmendOtherExpensesRawData(validNino, "2018-19", requestBodyJson)) shouldBe List(RuleTaxYearNotSupportedError)
       }
       "all path parameters are invalid" in new Test {
-        validator.validate(AmendOtherExpensesRawData("Walrus", "2000", requestBodyJson)) shouldBe List(NinoFormatError, TaxYearFormatError)
+        validator.validate(CreateAndAmendOtherExpensesRawData("Walrus", "2000", requestBodyJson)) shouldBe List(NinoFormatError, TaxYearFormatError)
       }
     }
 
     "return RuleIncorrectOrEmptyBodyError error" when {
       "an empty JSON body is submitted" in new Test {
-        validator.validate(AmendOtherExpensesRawData(validNino, validTaxYear, emptyJson)) shouldBe List(RuleIncorrectOrEmptyBodyError)
+        validator.validate(CreateAndAmendOtherExpensesRawData(validNino, validTaxYear, emptyJson)) shouldBe List(RuleIncorrectOrEmptyBodyError)
       }
       "at least one mandatory field is missing" in new Test {
         val json = Json.parse("""
@@ -148,7 +149,7 @@ class AmendOtherExpensesValidatorSpec extends UnitSpec {
             |    "expenseAmount": 1223
             |  }
             |}""".stripMargin)
-        validator.validate(AmendOtherExpensesRawData(validNino, validTaxYear, json)) shouldBe List(RuleIncorrectOrEmptyBodyError)
+        validator.validate(CreateAndAmendOtherExpensesRawData(validNino, validTaxYear, json)) shouldBe List(RuleIncorrectOrEmptyBodyError)
       }
     }
     "return a FORMAT_VALUE error" when {
@@ -164,7 +165,7 @@ class AmendOtherExpensesValidatorSpec extends UnitSpec {
             |    "expenseAmount": -1223
             |  }
             |}""".stripMargin)
-        validator.validate(AmendOtherExpensesRawData(validNino, validTaxYear, badJson)) shouldBe List(
+        validator.validate(CreateAndAmendOtherExpensesRawData(validNino, validTaxYear, badJson)) shouldBe List(
           ValueFormatError.copy(paths = Some(Seq("/patentRoyaltiesPayments/expenseAmount")))
         )
       }
@@ -180,7 +181,7 @@ class AmendOtherExpensesValidatorSpec extends UnitSpec {
             |    "expenseAmount": -1223
             |  }
             |}""".stripMargin)
-        validator.validate(AmendOtherExpensesRawData(validNino, validTaxYear, badJson)) shouldBe List(
+        validator.validate(CreateAndAmendOtherExpensesRawData(validNino, validTaxYear, badJson)) shouldBe List(
           ValueFormatError.copy(paths = Some(Seq("/paymentsToTradeUnionsForDeathBenefits/expenseAmount", "/patentRoyaltiesPayments/expenseAmount")))
         )
       }

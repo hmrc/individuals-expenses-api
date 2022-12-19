@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package v1.models.request.amendOtherExpenses
+package v1.models.request.createAndAmendOtherExpenses
 
 import play.api.libs.json.{Json, OFormat}
 
-case class PaymentsToTradeUnionsForDeathBenefits(customerReference: Option[String], expenseAmount: BigDecimal)
+case class CreateAndAmendOtherExpensesBody(paymentsToTradeUnionsForDeathBenefits: Option[PaymentsToTradeUnionsForDeathBenefits],
+                                           patentRoyaltiesPayments: Option[PatentRoyaltiesPayments])
 
-object PaymentsToTradeUnionsForDeathBenefits {
-  implicit val format: OFormat[PaymentsToTradeUnionsForDeathBenefits] = Json.format[PaymentsToTradeUnionsForDeathBenefits]
+object CreateAndAmendOtherExpensesBody {
+  implicit val format: OFormat[CreateAndAmendOtherExpensesBody] = Json.format[CreateAndAmendOtherExpensesBody]
 }

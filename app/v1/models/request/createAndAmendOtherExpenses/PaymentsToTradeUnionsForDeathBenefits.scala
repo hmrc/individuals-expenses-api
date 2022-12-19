@@ -14,8 +14,12 @@
  * limitations under the License.
  */
 
-package v1.models.request.amendOtherExpenses
+package v1.models.request.createAndAmendOtherExpenses
 
-import v1.models.domain.Nino
+import play.api.libs.json.{Json, OFormat}
 
-case class AmendOtherExpensesRequest(nino: Nino, taxYear: String, body: AmendOtherExpensesBody)
+case class PaymentsToTradeUnionsForDeathBenefits(customerReference: Option[String], expenseAmount: BigDecimal)
+
+object PaymentsToTradeUnionsForDeathBenefits {
+  implicit val format: OFormat[PaymentsToTradeUnionsForDeathBenefits] = Json.format[PaymentsToTradeUnionsForDeathBenefits]
+}
