@@ -69,6 +69,7 @@ class DeleteOtherExpensesServiceSpec extends ServiceSpec {
         "INVALID_TAXABLE_ENTITY_ID" -> NinoFormatError,
         "INVALID_TAX_YEAR"          -> TaxYearFormatError,
         "NO_DATA_FOUND"             -> NotFoundError,
+        "INVALID_CORRELATIONID"     -> StandardDownstreamError,
         "SERVER_ERROR"              -> StandardDownstreamError,
         "SERVICE_UNAVAILABLE"       -> StandardDownstreamError
       )
