@@ -98,10 +98,16 @@ class DeleteOtherExpensesController @Inject() (val authService: EnrolmentsAuthSe
 
   private def errorResult(errorWrapper: ErrorWrapper) = {
     (errorWrapper.error: @unchecked) match {
-      case NinoFormatError | BadRequestError | TaxYearFormatError | RuleTaxYearNotSupportedError | RuleTaxYearRangeInvalidError =>
+      case _
+          if errorWrapper.containsAnyOf(
+            NinoFormatError,
+            BadRequestError,
+            TaxYearFormatError,
+            RuleTaxYearNotSupportedError,
+            RuleTaxYearRangeInvalidError) =>
         BadRequest(Json.toJson(errorWrapper))
       case StandardDownstreamError => InternalServerError(Json.toJson(errorWrapper))
-      case NotFoundError   => NotFound(Json.toJson(errorWrapper))
+      case NotFoundError           => NotFound(Json.toJson(errorWrapper))
     }
   }
 

@@ -27,6 +27,7 @@ import v1.models.audit.{AuditError, AuditEvent, AuditResponse, ExpensesAuditDeta
 import v1.models.domain.Nino
 import v1.models.errors._
 import v1.models.outcomes.ResponseWrapper
+import v1.models.request.TaxYear
 import v1.models.request.deleteOtherExpenses.{DeleteOtherExpensesRawData, DeleteOtherExpensesRequest}
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -79,11 +80,11 @@ class DeleteOtherExpensesControllerSpec
     )
 
   private val rawData     = DeleteOtherExpensesRawData(nino, taxYear)
-  private val requestData = DeleteOtherExpensesRequest(Nino(nino), taxYear)
+  private val requestData = DeleteOtherExpensesRequest(Nino(nino), TaxYear.fromMtd(taxYear))
 
   "handleRequest" should {
     "return NoContent" when {
-      "the request recieved is valid" in new Test {
+      "the request received is valid" in new Test {
 
         MockDeleteOtherExpensesRequestDataParser
           .parse(rawData)
@@ -157,14 +158,18 @@ class DeleteOtherExpensesControllerSpec
           }
         }
 
-        val input = Seq(
+        val errors = Seq(
           (NinoFormatError, BAD_REQUEST),
           (TaxYearFormatError, BAD_REQUEST),
+          (RuleTaxYearRangeInvalidError, BAD_REQUEST),
           (NotFoundError, NOT_FOUND),
           (StandardDownstreamError, INTERNAL_SERVER_ERROR)
         )
+        val extraTysErrors = List(
+          (RuleTaxYearNotSupportedError, BAD_REQUEST)
+        )
 
-        input.foreach(args => (serviceErrors _).tupled(args))
+        (errors ++ extraTysErrors).foreach(args => (serviceErrors _).tupled(args))
       }
     }
   }

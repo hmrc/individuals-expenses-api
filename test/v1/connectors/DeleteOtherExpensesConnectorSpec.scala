@@ -18,18 +18,20 @@ package v1.connectors
 
 import v1.models.domain.Nino
 import v1.models.outcomes.ResponseWrapper
+import v1.models.request.TaxYear
 import v1.models.request.deleteOtherExpenses.DeleteOtherExpensesRequest
 
 import scala.concurrent.Future
 
 class DeleteOtherExpensesConnectorSpec extends ConnectorSpec {
 
-  val taxYear: String = "2017-18"
-  val nino: String    = "AA123456A"
+  val nino: String = "AA123456A"
 
   trait Test { _: ConnectorTest =>
+    def taxYear: TaxYear
+    protected val request = DeleteOtherExpensesRequest(Nino(nino), taxYear)
 
-    val connector: DeleteOtherExpensesConnector = new DeleteOtherExpensesConnector(
+    protected val connector: DeleteOtherExpensesConnector = new DeleteOtherExpensesConnector(
       http = mockHttpClient,
       appConfig = mockAppConfig
     )
@@ -37,19 +39,23 @@ class DeleteOtherExpensesConnectorSpec extends ConnectorSpec {
   }
 
   "deleteOtherExpenses" should {
-    val request = DeleteOtherExpensesRequest(Nino(nino), taxYear)
-
     "return a 204 with no body" when {
       "the downstream call is successful" in new IfsR5Test with Test {
-        val outcome = Right(ResponseWrapper(correlationId, ()))
+        def taxYear: TaxYear = TaxYear.fromMtd("2017-18")
+        val outcome          = Right(ResponseWrapper(correlationId, ()))
 
-        willDelete(
-          url = s"$baseUrl/income-tax/expenses/other/$nino/${request.taxYear}"
-        )
-          .returns(Future.successful(outcome))
+        willDelete(s"$baseUrl/income-tax/expenses/other/$nino/2017-18").returns(Future.successful(outcome))
 
         await(connector.deleteOtherExpenses(request)) shouldBe outcome
       }
+    }
+    "a valid request is called for a Tax Year Specific tax year" in new TysIfsTest with Test {
+      def taxYear: TaxYear = TaxYear.fromMtd("2023-24")
+      val outcome          = Right(ResponseWrapper(correlationId, ()))
+
+      willDelete(s"$baseUrl/income-tax/expenses/other/23-24/$nino").returns(Future.successful(outcome))
+
+      await(connector.deleteOtherExpenses(request)) shouldBe outcome
     }
   }
 

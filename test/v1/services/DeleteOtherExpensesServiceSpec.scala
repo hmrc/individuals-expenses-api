@@ -20,14 +20,15 @@ import v1.mocks.connectors.MockDeleteOtherExpensesConnector
 import v1.models.domain.Nino
 import v1.models.errors._
 import v1.models.outcomes.ResponseWrapper
+import v1.models.request.TaxYear
 import v1.models.request.deleteOtherExpenses.DeleteOtherExpensesRequest
 
 import scala.concurrent.Future
 
 class DeleteOtherExpensesServiceSpec extends ServiceSpec {
 
-  val taxYear    = "2017-18"
-  val nino: Nino = Nino("AA123456A")
+  private val taxYear    = TaxYear.fromMtd("2017-18")
+  private val nino: Nino = Nino("AA123456A")
 
   private val requestData = DeleteOtherExpensesRequest(nino, taxYear)
 
@@ -54,25 +55,31 @@ class DeleteOtherExpensesServiceSpec extends ServiceSpec {
   "unsuccessful" should {
     "map errors according to spec" when {
 
-      def serviceError(desErrorCode: String, error: MtdError): Unit =
-        s"a $desErrorCode error is returned from the service" in new Test {
+      def serviceError(downstreamErrorCode: String, error: MtdError): Unit =
+        s"a $downstreamErrorCode error is returned from the service" in new Test {
 
           MockDeleteOtherExpensesConnector
             .deleteOtherExpenses(requestData)
-            .returns(Future.successful(Left(ResponseWrapper(correlationId, DownstreamErrors.single(DownstreamErrorCode(desErrorCode))))))
+            .returns(Future.successful(Left(ResponseWrapper(correlationId, DownstreamErrors.single(DownstreamErrorCode(downstreamErrorCode))))))
 
           await(service.deleteOtherExpenses(requestData)) shouldBe Left(ErrorWrapper(correlationId, error))
         }
 
-      val input = Seq(
+      val errors = Seq(
         "INVALID_TAXABLE_ENTITY_ID" -> NinoFormatError,
-        "FORMAT_TAX_YEAR"           -> TaxYearFormatError,
+        "INVALID_TAX_YEAR"          -> TaxYearFormatError,
         "NO_DATA_FOUND"             -> NotFoundError,
+        "INVALID_CORRELATIONID"     -> StandardDownstreamError,
         "SERVER_ERROR"              -> StandardDownstreamError,
         "SERVICE_UNAVAILABLE"       -> StandardDownstreamError
       )
 
-      input.foreach(args => (serviceError _).tupled(args))
+      val extraTysErrors = Seq(
+        "INVALID_CORRELATION_ID" -> StandardDownstreamError,
+        "TAX_YEAR_NOT_SUPPORTED" -> RuleTaxYearNotSupportedError
+      )
+
+      (errors ++ extraTysErrors).foreach(args => (serviceError _).tupled(args))
     }
   }
 
