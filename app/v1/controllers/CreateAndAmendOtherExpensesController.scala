@@ -103,7 +103,7 @@ class CreateAndAmendOtherExpensesController @Inject() (val authService: Enrolmen
     }
 
   private def errorResult(errorWrapper: ErrorWrapper) = {
-    (errorWrapper.error: @unchecked) match {
+    (errorWrapper.error) match {
       case _
           if errorWrapper.containsAnyOf(
             NinoFormatError,

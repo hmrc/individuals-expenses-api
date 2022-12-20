@@ -27,86 +27,6 @@ import v1.stubs.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 
 class CreateAndAmendOtherExpensesControllerISpec extends IntegrationBaseSpec {
 
-  private trait Test {
-
-    val nino: String = "AA123456A"
-
-    val requestBodyJson: JsValue = Json.parse(
-      s"""
-         |{
-         |  "paymentsToTradeUnionsForDeathBenefits": {
-         |    "customerReference": "TRADE UNION PAYMENTS",
-         |    "expenseAmount": 5000.99
-         |  },
-         |  "patentRoyaltiesPayments":{
-         |    "customerReference": "ROYALTIES PAYMENTS",
-         |    "expenseAmount": 5000.99
-         |  }
-         |}
-         |""".stripMargin
-    )
-
-    val responseBody = Json.parse(s"""
-                                     |{
-                                     |  "links": [
-                                     |    {
-                                     |      "href": "/individuals/expenses/other/$nino/$taxYear",
-                                     |      "method": "GET",
-                                     |      "rel": "self"
-                                     |    },
-                                     |    {
-                                     |      "href": "/individuals/expenses/other/$nino/$taxYear",
-                                     |      "method": "PUT",
-                                     |      "rel": "amend-expenses-other"
-                                     |    },
-                                     |    {
-                                     |      "href": "/individuals/expenses/other/$nino/$taxYear",
-                                     |      "method": "DELETE",
-                                     |      "rel": "delete-expenses-other"
-                                     |    }
-                                     |  ]
-                                     |}
-                                     |""".stripMargin)
-
-    def uri: String = s"/other/$nino/$taxYear"
-
-    def taxYear: String
-    def downstreamUri: String
-
-    def setupStubs(): Unit
-
-    def request(): WSRequest = {
-      AuditStub.audit()
-      AuthStub.authorised()
-      MtdIdLookupStub.ninoFound(nino)
-      setupStubs()
-      buildRequest(uri)
-        .withHttpHeaders(
-          (ACCEPT, "application/vnd.hmrc.1.0+json"),
-          (AUTHORIZATION, "Bearer 123") // some bearer token
-        )
-    }
-
-    def errorBody(code: String): String =
-      s"""
-         |      {
-         |        "code": "$code",
-         |        "reason": "downstream message"
-         |      }
-    """.stripMargin
-
-  }
-
-  private trait NonTysTest extends Test {
-    def taxYear: String       = "2021-22"
-    def downstreamUri: String = s"/income-tax/expenses/other/$nino/2021-22"
-  }
-
-  private trait TysIfsTest extends Test {
-    def taxYear: String       = "2023-24"
-    def downstreamUri: String = s"/income-tax/expenses/other/23-24/$nino"
-  }
-
   "Calling the create and amend endpoint" should {
     "return a 200 status code" when {
       "any valid request is made" in new NonTysTest {
@@ -271,6 +191,86 @@ class CreateAndAmendOtherExpensesControllerISpec extends IntegrationBaseSpec {
         (errors ++ extraTysErrors).foreach(args => (serviceErrorTest _).tupled(args))
       }
     }
+  }
+
+  private trait Test {
+
+    val nino: String = "AA123456A"
+
+    val requestBodyJson: JsValue = Json.parse(
+      s"""
+         |{
+         |  "paymentsToTradeUnionsForDeathBenefits": {
+         |    "customerReference": "TRADE UNION PAYMENTS",
+         |    "expenseAmount": 5000.99
+         |  },
+         |  "patentRoyaltiesPayments":{
+         |    "customerReference": "ROYALTIES PAYMENTS",
+         |    "expenseAmount": 5000.99
+         |  }
+         |}
+         |""".stripMargin
+    )
+
+    val responseBody = Json.parse(s"""
+                                     |{
+                                     |  "links": [
+                                     |    {
+                                     |      "href": "/individuals/expenses/other/$nino/$taxYear",
+                                     |      "method": "GET",
+                                     |      "rel": "self"
+                                     |    },
+                                     |    {
+                                     |      "href": "/individuals/expenses/other/$nino/$taxYear",
+                                     |      "method": "PUT",
+                                     |      "rel": "amend-expenses-other"
+                                     |    },
+                                     |    {
+                                     |      "href": "/individuals/expenses/other/$nino/$taxYear",
+                                     |      "method": "DELETE",
+                                     |      "rel": "delete-expenses-other"
+                                     |    }
+                                     |  ]
+                                     |}
+                                     |""".stripMargin)
+
+    def uri: String = s"/other/$nino/$taxYear"
+
+    def taxYear: String
+    def downstreamUri: String
+
+    def setupStubs(): Unit
+
+    def request(): WSRequest = {
+      AuditStub.audit()
+      AuthStub.authorised()
+      MtdIdLookupStub.ninoFound(nino)
+      setupStubs()
+      buildRequest(uri)
+        .withHttpHeaders(
+          (ACCEPT, "application/vnd.hmrc.1.0+json"),
+          (AUTHORIZATION, "Bearer 123") // some bearer token
+        )
+    }
+
+    def errorBody(code: String): String =
+      s"""
+         |      {
+         |        "code": "$code",
+         |        "reason": "downstream message"
+         |      }
+    """.stripMargin
+
+  }
+
+  private trait NonTysTest extends Test {
+    def taxYear: String       = "2021-22"
+    def downstreamUri: String = s"/income-tax/expenses/other/$nino/2021-22"
+  }
+
+  private trait TysIfsTest extends Test {
+    def taxYear: String       = "2023-24"
+    def downstreamUri: String = s"/income-tax/expenses/other/23-24/$nino"
   }
 
 }

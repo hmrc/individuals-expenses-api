@@ -47,7 +47,7 @@ class CreateAndAmendOtherExpensesService @Inject() (connector: CreateAndAmendOth
 
   private def downstreamErrorMap: Map[String, MtdError] = {
 
-    val ifsErrors = Map(
+    val errors = Map(
       "INVALID_TAXABLE_ENTITY_ID" -> NinoFormatError,
       "INVALID_TAX_YEAR"          -> TaxYearFormatError,
       "INVALID_PAYLOAD"           -> StandardDownstreamError,
@@ -55,12 +55,12 @@ class CreateAndAmendOtherExpensesService @Inject() (connector: CreateAndAmendOth
       "SERVER_ERROR"              -> StandardDownstreamError,
       "SERVICE_UNAVAILABLE"       -> StandardDownstreamError
     )
-    val tysErrors = Map(
+    val extraTysErrors = Map(
       "INVALID_CORRELATION_ID" -> StandardDownstreamError,
       "TAX_YEAR_NOT_SUPPORTED" -> RuleTaxYearNotSupportedError
     )
 
-    ifsErrors ++ tysErrors
+    errors ++ extraTysErrors
   }
 
 }

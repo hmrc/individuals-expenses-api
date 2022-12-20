@@ -46,8 +46,8 @@ class CreateAndAmendOtherExpensesServiceSpec extends ServiceSpec {
   }
 
   "CreateAndAmendOtherExpensesService" should {
-    "service call successful" when {
-      "return mapped result" in new Test {
+    "CreateAndAmendOtherExpenses" must {
+      "return correct result for a success" in new Test {
         MockCreateAndAmendOtherExpensesConnector
           .createAndAmend(requestData)
           .returns(Future.successful(Right(ResponseWrapper(correlationId, ()))))
@@ -57,36 +57,34 @@ class CreateAndAmendOtherExpensesServiceSpec extends ServiceSpec {
     }
   }
 
-  "unsuccessful" should {
-    "map errors according to spec" when {
+  "map errors according to spec" when {
 
-      def serviceError(downstreamErrorCode: String, error: MtdError): Unit =
-        s"a $downstreamErrorCode error is returned from the service" in new Test {
+    def serviceError(downstreamErrorCode: String, error: MtdError): Unit =
+      s"return ${error.code} error when $downstreamErrorCode error is returned from the service" in new Test {
 
-          MockCreateAndAmendOtherExpensesConnector
-            .createAndAmend(requestData)
-            .returns(Future.successful(Left(ResponseWrapper(correlationId, DownstreamErrors.single(DownstreamErrorCode(downstreamErrorCode))))))
+        MockCreateAndAmendOtherExpensesConnector
+          .createAndAmend(requestData)
+          .returns(Future.successful(Left(ResponseWrapper(correlationId, DownstreamErrors.single(DownstreamErrorCode(downstreamErrorCode))))))
 
-          await(service.createAndAmend(requestData)) shouldBe Left(ErrorWrapper(correlationId, error))
-        }
+        await(service.createAndAmend(requestData)) shouldBe Left(ErrorWrapper(correlationId, error))
+      }
 
-      val errors = Seq(
-        ("INVALID_TAXABLE_ENTITY_ID", NinoFormatError),
-        ("INVALID_TAX_YEAR", TaxYearFormatError),
-        ("INVALID_CORRELATIONID", StandardDownstreamError),
-        ("INVALID_PAYLOAD", StandardDownstreamError),
-        ("UNPROCESSABLE_ENTITY", StandardDownstreamError),
-        ("SERVER_ERROR", StandardDownstreamError),
-        ("SERVICE_UNAVAILABLE", StandardDownstreamError)
-      )
+    val errors = Seq(
+      ("INVALID_TAXABLE_ENTITY_ID", NinoFormatError),
+      ("INVALID_TAX_YEAR", TaxYearFormatError),
+      ("INVALID_CORRELATIONID", StandardDownstreamError),
+      ("INVALID_PAYLOAD", StandardDownstreamError),
+      ("UNPROCESSABLE_ENTITY", StandardDownstreamError),
+      ("SERVER_ERROR", StandardDownstreamError),
+      ("SERVICE_UNAVAILABLE", StandardDownstreamError)
+    )
 
-      val extraTysErrors = Seq(
-        ("INVALID_CORRELATION_ID", StandardDownstreamError),
-        ("TAX_YEAR_NOT_SUPPORTED", RuleTaxYearNotSupportedError)
-      )
+    val extraTysErrors = Seq(
+      ("INVALID_CORRELATION_ID", StandardDownstreamError),
+      ("TAX_YEAR_NOT_SUPPORTED", RuleTaxYearNotSupportedError)
+    )
 
-      (errors ++ extraTysErrors).foreach(args => (serviceError _).tupled(args))
-    }
+    (errors ++ extraTysErrors).foreach(args => (serviceError _).tupled(args))
   }
 
 }
