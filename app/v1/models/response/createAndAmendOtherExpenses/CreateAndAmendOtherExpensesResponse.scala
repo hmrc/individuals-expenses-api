@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package v1.models.response.amendOtherExpenses
+package v1.models.response.createAndAmendOtherExpenses
 
 import config.AppConfig
 import v1.hateoas.{HateoasLinks, HateoasLinksFactory}
 import v1.models.hateoas.{HateoasData, Link}
 
-object AmendOtherExpensesResponse extends HateoasLinks {
+object CreateAndAmendOtherExpensesResponse extends HateoasLinks {
 
-  implicit object AmendOtherExpensesLinksFactory extends HateoasLinksFactory[Unit, AmendOtherExpensesHateoasData] {
+  implicit object CreateAndAmendOtherExpensesLinksFactory extends HateoasLinksFactory[Unit, CreateAndAmendOtherExpensesHateoasData] {
 
-    override def links(appConfig: AppConfig, data: AmendOtherExpensesHateoasData): Seq[Link] = {
+    override def links(appConfig: AppConfig, data: CreateAndAmendOtherExpensesHateoasData): Seq[Link] = {
       import data._
       Seq(
         retrieveOtherExpenses(appConfig, nino, taxYear),
-        amendOtherExpenses(appConfig, nino, taxYear),
+        createAndAmendOtherExpenses(appConfig, nino, taxYear),
         deleteOtherExpenses(appConfig, nino, taxYear)
       )
     }
@@ -37,4 +37,4 @@ object AmendOtherExpensesResponse extends HateoasLinks {
 
 }
 
-case class AmendOtherExpensesHateoasData(nino: String, taxYear: String) extends HateoasData
+case class CreateAndAmendOtherExpensesHateoasData(nino: String, taxYear: String) extends HateoasData

@@ -23,14 +23,14 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.HttpClient
 import v1.connectors.DownstreamUri.{IfsR5Uri, TaxYearSpecificIfsUri}
 import v1.connectors.httpparsers.StandardDownstreamHttpParser._
-import v1.models.request.amendOtherExpenses.AmendOtherExpensesRequest
+import v1.models.request.createAndAmendOtherExpenses.CreateAndAmendOtherExpensesRequest
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class AmendOtherExpensesConnector @Inject() (val http: HttpClient, val appConfig: AppConfig) extends BaseDownstreamConnector {
+class CreateAndAmendOtherExpensesConnector @Inject() (val http: HttpClient, val appConfig: AppConfig) extends BaseDownstreamConnector {
 
-  def amend(request: AmendOtherExpensesRequest)(implicit
+  def createAndAmend(request: CreateAndAmendOtherExpensesRequest)(implicit
       hc: HeaderCarrier,
       ec: ExecutionContext,
       correlationId: String): Future[DownstreamOutcome[Unit]] = {

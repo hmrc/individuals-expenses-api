@@ -25,7 +25,7 @@ import support.IntegrationBaseSpec
 import v1.models.errors._
 import v1.stubs.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 
-class AmendOtherExpensesControllerISpec extends IntegrationBaseSpec {
+class CreateAndAmendOtherExpensesControllerISpec extends IntegrationBaseSpec {
 
   private trait Test {
 
@@ -107,7 +107,7 @@ class AmendOtherExpensesControllerISpec extends IntegrationBaseSpec {
     def downstreamUri: String = s"/income-tax/expenses/other/23-24/$nino"
   }
 
-  "Calling the amend endpoint" should {
+  "Calling the create and amend endpoint" should {
     "return a 200 status code" when {
       "any valid request is made" in new NonTysTest {
         override def setupStubs(): Unit = {

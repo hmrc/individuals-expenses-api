@@ -21,7 +21,7 @@ import play.api.mvc.Result
 import uk.gov.hmrc.http.HeaderCarrier
 import v1.mocks.MockIdGenerator
 import v1.mocks.hateoas.MockHateoasFactory
-import v1.mocks.requestParsers.MockAmendOtherExpensesRequestParser
+import v1.mocks.requestParsers.MockCreateAndAmendOtherExpensesRequestParser
 import v1.mocks.services._
 import v1.models.audit.{AuditError, AuditEvent, AuditResponse, ExpensesAuditDetail}
 import v1.models.domain.Nino
@@ -30,18 +30,18 @@ import v1.models.hateoas.Method.{DELETE, GET, PUT}
 import v1.models.hateoas.{HateoasWrapper, Link}
 import v1.models.outcomes.ResponseWrapper
 import v1.models.request.TaxYear
-import v1.models.request.amendOtherExpenses._
-import v1.models.response.amendOtherExpenses.AmendOtherExpensesHateoasData
+import v1.models.request.createAndAmendOtherExpenses._
+import v1.models.response.createAndAmendOtherExpenses.CreateAndAmendOtherExpensesHateoasData
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class AmendOtherExpensesControllerSpec
+class CreateAndAmendOtherExpensesControllerSpec
     extends ControllerBaseSpec
     with MockEnrolmentsAuthService
     with MockMtdIdLookupService
-    with MockAmendOtherExpensesService
-    with MockAmendOtherExpensesRequestParser
+    with MockCreateAndAmendOtherExpensesService
+    with MockCreateAndAmendOtherExpensesRequestParser
     with MockHateoasFactory
     with MockAuditService
     with MockIdGenerator {
@@ -56,7 +56,7 @@ class AmendOtherExpensesControllerSpec
     Link(href = s"/individuals/expenses/other/$nino/$taxYear", method = DELETE, rel = "delete-expenses-other")
   )
 
-  private val requestBody = AmendOtherExpensesBody(
+  private val requestBody = CreateAndAmendOtherExpensesBody(
     Some(PaymentsToTradeUnionsForDeathBenefits(Some("TRADE UNION PAYMENTS"), 1223.22)),
     Some(PatentRoyaltiesPayments(Some("ROYALTIES PAYMENTS"), 1223.22))
   )
@@ -74,13 +74,13 @@ class AmendOtherExpensesControllerSpec
       |}
       |""".stripMargin)
 
-  private val rawData     = AmendOtherExpensesRawData(nino, taxYear, requestBodyJson)
-  private val requestData = AmendOtherExpensesRequest(Nino(nino), TaxYear.fromMtd(taxYear), requestBody)
+  private val rawData     = CreateAndAmendOtherExpensesRawData(nino, taxYear, requestBodyJson)
+  private val requestData = CreateAndAmendOtherExpensesRequest(Nino(nino), TaxYear.fromMtd(taxYear), requestBody)
 
   trait Test {
     val hc: HeaderCarrier = HeaderCarrier()
 
-    val controller = new AmendOtherExpensesController(
+    val controller = new CreateAndAmendOtherExpensesController(
       authService = mockEnrolmentsAuthService,
       lookupService = mockMtdIdLookupService,
       parser = mockRequestParser,
@@ -136,16 +136,16 @@ class AmendOtherExpensesControllerSpec
     "return Ok" when {
       "the request received is valid" in new Test {
 
-        MockAmendOtherExpensesRequestParser
+        MockCreateAndAmendOtherExpensesRequestParser
           .parseRequest(rawData)
           .returns(Right(requestData))
 
-        MockAmendOtherExpensesService
-          .amend(requestData)
+        MockCreateAndAmendOtherExpensesService
+          .createAndAmend(requestData)
           .returns(Future.successful(Right(ResponseWrapper(correlationId, ()))))
 
         MockHateoasFactory
-          .wrap((), AmendOtherExpensesHateoasData(nino, taxYear))
+          .wrap((), CreateAndAmendOtherExpensesHateoasData(nino, taxYear))
           .returns(HateoasWrapper((), testHateoasLinks))
 
         val result: Future[Result] = controller.handleRequest(nino, taxYear)(fakePostRequest(requestBodyJson))
@@ -162,7 +162,7 @@ class AmendOtherExpensesControllerSpec
         def errorsFromParserTester(error: MtdError, expectedStatus: Int): Unit = {
           s"a ${error.code} error is returned from the parser" in new Test {
 
-            MockAmendOtherExpensesRequestParser
+            MockCreateAndAmendOtherExpensesRequestParser
               .parseRequest(rawData)
               .returns(Left(ErrorWrapper(correlationId, error, None)))
 
@@ -195,12 +195,12 @@ class AmendOtherExpensesControllerSpec
         def serviceErrors(mtdError: MtdError, expectedStatus: Int): Unit = {
           s"a $mtdError error is returned from the service" in new Test {
 
-            MockAmendOtherExpensesRequestParser
+            MockCreateAndAmendOtherExpensesRequestParser
               .parseRequest(rawData)
               .returns(Right(requestData))
 
-            MockAmendOtherExpensesService
-              .amend(requestData)
+            MockCreateAndAmendOtherExpensesService
+              .createAndAmend(requestData)
               .returns(Future.successful(Left(ErrorWrapper(correlationId, mtdError))))
 
             val result: Future[Result] = controller.handleRequest(nino, taxYear)(fakePostRequest(requestBodyJson))

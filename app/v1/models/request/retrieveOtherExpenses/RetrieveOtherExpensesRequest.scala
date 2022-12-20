@@ -17,5 +17,6 @@
 package v1.models.request.retrieveOtherExpenses
 
 import v1.models.domain.Nino
+import v1.models.request.TaxYear
 
-case class RetrieveOtherExpensesRequest(nino: Nino, taxYear: String)
+case class RetrieveOtherExpensesRequest(nino: Nino, taxYear: TaxYear)

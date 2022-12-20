@@ -30,9 +30,7 @@ import v1.support.DownstreamResponseMappingSupport
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class RetrieveOtherExpensesService @Inject() (retrieveOtherExpensesConnector: RetrieveOtherExpensesConnector)
-    extends DownstreamResponseMappingSupport
-    with Logging {
+class RetrieveOtherExpensesService @Inject() (connector: RetrieveOtherExpensesConnector) extends DownstreamResponseMappingSupport with Logging {
 
   def retrieveOtherExpenses(request: RetrieveOtherExpensesRequest)(implicit
       hc: HeaderCarrier,
@@ -41,18 +39,27 @@ class RetrieveOtherExpensesService @Inject() (retrieveOtherExpensesConnector: Re
       correlationId: String): Future[RetrieveOtherExpensesServiceOutcome] = {
 
     val result = for {
-      desResponseWrapper <- EitherT(retrieveOtherExpensesConnector.retrieveOtherExpenses(request)).leftMap(mapDownstreamErrors(desErrorMap))
-    } yield desResponseWrapper
+      downstreamResponseWrapper <- EitherT(connector.retrieveOtherExpenses(request)).leftMap(mapDownstreamErrors(errorMap))
+    } yield downstreamResponseWrapper
     result.value
   }
 
-  private def desErrorMap: Map[String, MtdError] =
-    Map(
+  private def errorMap: Map[String, MtdError] = {
+    val errors = Map(
       "INVALID_TAXABLE_ENTITY_ID" -> NinoFormatError,
       "FORMAT_TAX_YEAR"           -> TaxYearFormatError,
       "NO_DATA_FOUND"             -> NotFoundError,
+      "INVALID_CORRELATIONID"     -> StandardDownstreamError,
       "SERVER_ERROR"              -> StandardDownstreamError,
       "SERVICE_UNAVAILABLE"       -> StandardDownstreamError
     )
+
+    val extraTysErrors = Map(
+      "INVALID_CORRELATION_ID" -> StandardDownstreamError,
+      "TAX_YEAR_NOT_SUPPORTED" -> RuleTaxYearNotSupportedError
+    )
+
+    errors ++ extraTysErrors
+  }
 
 }

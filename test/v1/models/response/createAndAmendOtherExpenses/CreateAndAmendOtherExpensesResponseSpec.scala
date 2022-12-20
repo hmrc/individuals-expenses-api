@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package v1.models.response.amendOtherExpenses
+package v1.models.response.createAndAmendOtherExpenses
 
 import mocks.MockAppConfig
 import support.UnitSpec
 import v1.models.hateoas.Link
 import v1.models.hateoas.Method.{DELETE, GET, PUT}
 
-class AmendOtherExpensesResponseSpec extends UnitSpec with MockAppConfig {
+class CreateAndAmendOtherExpensesResponseSpec extends UnitSpec with MockAppConfig {
 
   "LinksFactory" should {
     "return the correct links" in {
@@ -29,7 +29,9 @@ class AmendOtherExpensesResponseSpec extends UnitSpec with MockAppConfig {
       val taxYear = "mytaxyear"
 
       MockAppConfig.apiGatewayContext.returns("my/context").anyNumberOfTimes
-      AmendOtherExpensesResponse.AmendOtherExpensesLinksFactory.links(mockAppConfig, AmendOtherExpensesHateoasData(nino, taxYear)) shouldBe
+      CreateAndAmendOtherExpensesResponse.CreateAndAmendOtherExpensesLinksFactory.links(
+        mockAppConfig,
+        CreateAndAmendOtherExpensesHateoasData(nino, taxYear)) shouldBe
         Seq(
           Link(s"/my/context/other/$nino/$taxYear", GET, "self"),
           Link(s"/my/context/other/$nino/$taxYear", PUT, "amend-expenses-other"),

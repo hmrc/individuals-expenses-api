@@ -19,13 +19,13 @@ package v1.connectors
 import v1.models.domain.Nino
 import v1.models.outcomes.ResponseWrapper
 import v1.models.request.TaxYear
-import v1.models.request.amendOtherExpenses._
+import v1.models.request.createAndAmendOtherExpenses._
 
 import scala.concurrent.Future
 
-class AmendOtherExpensesConnectorSpec extends ConnectorSpec {
+class CreateAndAmendOtherExpensesConnectorSpec extends ConnectorSpec {
 
-  "amend" should {
+  "CreateAndAmendOtherExpensesConnector" should {
     "return the expected response for a non-TYS request" when {
       "a valid request is made" in new IfsR5Test with Test {
         def taxYear: String = "2021-22"
@@ -38,7 +38,7 @@ class AmendOtherExpensesConnectorSpec extends ConnectorSpec {
         )
           .returns(Future.successful(outcome))
 
-        await(connector.amend(request)) shouldBe outcome
+        await(connector.createAndAmend(request)) shouldBe outcome
       }
     }
     "return the expected response for a TYS request" when {
@@ -53,7 +53,7 @@ class AmendOtherExpensesConnectorSpec extends ConnectorSpec {
         )
           .returns(Future.successful(outcome))
 
-        await(connector.amend(request)) shouldBe outcome
+        await(connector.createAndAmend(request)) shouldBe outcome
       }
     }
   }
@@ -64,12 +64,12 @@ class AmendOtherExpensesConnectorSpec extends ConnectorSpec {
     val nino: String = "AA123456A"
     def taxYear: String
 
-    val connector: AmendOtherExpensesConnector = new AmendOtherExpensesConnector(
+    val connector: CreateAndAmendOtherExpensesConnector = new CreateAndAmendOtherExpensesConnector(
       http = mockHttpClient,
       appConfig = mockAppConfig
     )
 
-    val body: AmendOtherExpensesBody = AmendOtherExpensesBody(
+    val body: CreateAndAmendOtherExpensesBody = CreateAndAmendOtherExpensesBody(
       Some(
         PaymentsToTradeUnionsForDeathBenefits(
           Some("TRADE UNION PAYMENTS"),
@@ -82,7 +82,7 @@ class AmendOtherExpensesConnectorSpec extends ConnectorSpec {
         ))
     )
 
-    lazy val request: AmendOtherExpensesRequest = AmendOtherExpensesRequest(Nino(nino), TaxYear.fromMtd(taxYear), body)
+    lazy val request: CreateAndAmendOtherExpensesRequest = CreateAndAmendOtherExpensesRequest(Nino(nino), TaxYear.fromMtd(taxYear), body)
   }
 
 }

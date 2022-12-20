@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package v1.models.request.amendOtherExpenses
+package v1.models.request.createAndAmendOtherExpenses
 
 import v1.models.domain.Nino
 import v1.models.request.TaxYear
 
-case class AmendOtherExpensesRequest(nino: Nino, taxYear: TaxYear, body: AmendOtherExpensesBody)
+case class CreateAndAmendOtherExpensesRequest(nino: Nino, taxYear: TaxYear, body: CreateAndAmendOtherExpensesBody)
