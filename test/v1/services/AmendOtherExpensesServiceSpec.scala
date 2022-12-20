@@ -27,7 +27,7 @@ import scala.concurrent.Future
 
 class AmendOtherExpensesServiceSpec extends ServiceSpec {
 
-  val taxYear    = "2019-20"
+  val taxYear    = "2021-22"
   val nino: Nino = Nino("AA123456A")
 
   val body: AmendOtherExpensesBody = AmendOtherExpensesBody(

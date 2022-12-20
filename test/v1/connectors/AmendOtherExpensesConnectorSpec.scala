@@ -19,7 +19,7 @@ package v1.connectors
 import v1.models.domain.Nino
 import v1.models.outcomes.ResponseWrapper
 import v1.models.request.TaxYear
-import v1.models.request.amendOtherExpenses.{AmendOtherExpensesBody, AmendOtherExpensesRequest}
+import v1.models.request.amendOtherExpenses._
 
 import scala.concurrent.Future
 
@@ -28,12 +28,12 @@ class AmendOtherExpensesConnectorSpec extends ConnectorSpec {
   "amend" should {
     "return the expected response for a non-TYS request" when {
       "a valid request is made" in new IfsR5Test with Test {
-        def taxYear: String = "2019-20"
+        def taxYear: String = "2021-22"
 
         val outcome = Right(ResponseWrapper(correlationId, ()))
 
         willPut(
-          url = s"$baseUrl/income-tax/expenses/other/$nino/2019-20",
+          url = s"$baseUrl/income-tax/expenses/other/$nino/2021-22",
           body = body
         )
           .returns(Future.successful(outcome))
@@ -69,7 +69,18 @@ class AmendOtherExpensesConnectorSpec extends ConnectorSpec {
       appConfig = mockAppConfig
     )
 
-    val body: AmendOtherExpensesBody = AmendOtherExpensesBody(None, None)
+    val body: AmendOtherExpensesBody = AmendOtherExpensesBody(
+      Some(
+        PaymentsToTradeUnionsForDeathBenefits(
+          Some("TRADE UNION PAYMENTS"),
+          2000.99
+        )),
+      Some(
+        PatentRoyaltiesPayments(
+          Some("ROYALTIES PAYMENTS"),
+          2000.99
+        ))
+    )
 
     lazy val request: AmendOtherExpensesRequest = AmendOtherExpensesRequest(Nino(nino), TaxYear.fromMtd(taxYear), body)
   }

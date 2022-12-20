@@ -47,7 +47,7 @@ class AmendOtherExpensesControllerSpec
     with MockIdGenerator {
 
   private val nino          = "AA123456A"
-  private val taxYear       = "2019-20"
+  private val taxYear       = "2021-22"
   private val correlationId = "X-123"
 
   private val testHateoasLinks = Seq(
