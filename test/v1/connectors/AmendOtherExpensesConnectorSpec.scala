@@ -18,51 +18,60 @@ package v1.connectors
 
 import v1.models.domain.Nino
 import v1.models.outcomes.ResponseWrapper
-import v1.models.request.amendOtherExpenses.{AmendOtherExpensesBody, AmendOtherExpensesRequest, PatentRoyaltiesPayments, PaymentsToTradeUnionsForDeathBenefits}
+import v1.models.request.TaxYear
+import v1.models.request.amendOtherExpenses.{AmendOtherExpensesBody, AmendOtherExpensesRequest}
 
 import scala.concurrent.Future
 
 class AmendOtherExpensesConnectorSpec extends ConnectorSpec {
 
-  val taxYear: String = "2017-18"
-  val nino: String    = "AA123456A"
+  "amend" should {
+    "return the expected response for a non-TYS request" when {
+      "a valid request is made" in new IfsR5Test with Test {
+        def taxYear: String = "2019-20"
 
-  val body: AmendOtherExpensesBody = AmendOtherExpensesBody(
-    Some(
-      PaymentsToTradeUnionsForDeathBenefits(
-        Some("TRADE UNION PAYMENTS"),
-        2000.99
-      )),
-    Some(
-      PatentRoyaltiesPayments(
-        Some("ROYALTIES PAYMENTS"),
-        2000.99
-      ))
-  )
+        val outcome = Right(ResponseWrapper(correlationId, ()))
 
-  trait Test { _: ConnectorTest =>
+        willPut(
+          url = s"$baseUrl/income-tax/expenses/other/$nino/2019-20",
+          body = body
+        )
+          .returns(Future.successful(outcome))
+
+        await(connector.amend(request)) shouldBe outcome
+      }
+    }
+    "return the expected response for a TYS request" when {
+      "a valid request is made" in new TysIfsTest with Test {
+        def taxYear: String = "2023-24"
+
+        val outcome = Right(ResponseWrapper(correlationId, ()))
+
+        willPut(
+          url = s"$baseUrl/income-tax/expenses/other/23-24/$nino",
+          body = body
+        )
+          .returns(Future.successful(outcome))
+
+        await(connector.amend(request)) shouldBe outcome
+      }
+    }
+  }
+
+  trait Test {
+    _: ConnectorTest =>
+
+    val nino: String = "AA123456A"
+    def taxYear: String
 
     val connector: AmendOtherExpensesConnector = new AmendOtherExpensesConnector(
       http = mockHttpClient,
       appConfig = mockAppConfig
     )
 
-  }
+    val body: AmendOtherExpensesBody = AmendOtherExpensesBody(None, None)
 
-  "amend" should {
-    val request = AmendOtherExpensesRequest(Nino(nino), taxYear, body)
-
-    "put a body and return 204 no body" in new IfsR5Test with Test {
-      val outcome = Right(ResponseWrapper(correlationId, ()))
-
-      willPut(
-        url = s"$baseUrl/income-tax/expenses/other/$nino/$taxYear",
-        body = body
-      )
-        .returns(Future.successful(outcome))
-
-      await(connector.amend(request)) shouldBe outcome
-    }
+    lazy val request: AmendOtherExpensesRequest = AmendOtherExpensesRequest(Nino(nino), TaxYear.fromMtd(taxYear), body)
   }
 
 }

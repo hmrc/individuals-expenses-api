@@ -21,12 +21,13 @@ import support.UnitSpec
 import v1.mocks.validators.MockAmendOtherExpensesValidator
 import v1.models.domain.Nino
 import v1.models.errors._
+import v1.models.request.TaxYear
 import v1.models.request.amendOtherExpenses._
 
 class AmendOtherExpensesRequestParserSpec extends UnitSpec {
 
   val nino                           = "AA123456B"
-  val taxYear                        = "2017-18"
+  val taxYear                        = "2019-20"
   implicit val correlationId: String = "a1e8057e-fbbc-47a8-a8b4-78d9f015c253"
 
   private val requestBodyJson = Json.parse("""{
@@ -58,7 +59,7 @@ class AmendOtherExpensesRequestParserSpec extends UnitSpec {
           Right(
             AmendOtherExpensesRequest(
               Nino(nino),
-              taxYear,
+              TaxYear.fromMtd(taxYear),
               AmendOtherExpensesBody(
                 Some(PaymentsToTradeUnionsForDeathBenefits(Some("TRADE UNION PAYMENTS"), 1223.22)),
                 Some(PatentRoyaltiesPayments(Some("ROYALTIES PAYMENTS"), 1223.22))

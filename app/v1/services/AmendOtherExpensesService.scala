@@ -38,18 +38,27 @@ class AmendOtherExpensesService @Inject() (connector: AmendOtherExpensesConnecto
       logContext: EndpointLogContext,
       correlationId: String): Future[AmendOtherExpensesServiceOutcome] = {
 
-    val result = for {
-      desResponseWrapper <- EitherT(connector.amend(request)).leftMap(mapDownstreamErrors(desErrorMap))
-    } yield desResponseWrapper
+    val result = EitherT(connector.amend(request)).leftMap(mapDownstreamErrors(downstreamErrorMap))
+
     result.value
   }
 
-  private def desErrorMap: Map[String, MtdError] =
-    Map(
+  private def downstreamErrorMap: Map[String, MtdError] = {
+
+    val ifsErrors = Map(
       "INVALID_TAXABLE_ENTITY_ID" -> NinoFormatError,
-      "FORMAT_TAX_YEAR"           -> TaxYearFormatError,
+      "INVALID_TAX_YEAR"          -> TaxYearFormatError,
+      "INVALID_PAYLOAD"           -> StandardDownstreamError,
+      "UNPROCESSABLE_ENTITY"      -> StandardDownstreamError,
       "SERVER_ERROR"              -> StandardDownstreamError,
       "SERVICE_UNAVAILABLE"       -> StandardDownstreamError
     )
+    val tysErrors = Map(
+      "INVALID_CORRELATION_ID" -> StandardDownstreamError,
+      "TAX_YEAR_NOT_SUPPORTED" -> RuleTaxYearNotSupportedError
+    )
+
+    ifsErrors ++ tysErrors
+  }
 
 }

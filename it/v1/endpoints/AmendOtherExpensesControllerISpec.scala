@@ -28,86 +28,30 @@ import v1.stubs.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 
 class AmendOtherExpensesControllerISpec extends IntegrationBaseSpec {
 
-  private trait Test {
-
-    val nino: String    = "AA123456A"
-    val taxYear: String = "2021-22"
-
-    val amount: BigDecimal = 5000.99
-
-    val requestBodyJson: JsValue = Json.parse(
-      s"""
-         |{
-         |  "paymentsToTradeUnionsForDeathBenefits": {
-         |    "customerReference": "TRADE UNION PAYMENTS",
-         |    "expenseAmount": $amount
-         |  },
-         |  "patentRoyaltiesPayments":{
-         |    "customerReference": "ROYALTIES PAYMENTS",
-         |    "expenseAmount": $amount
-         |  }
-         |}
-         |""".stripMargin
-    )
-
-    val responseBody = Json.parse(s"""
-         |{
-         |  "links": [
-         |    {
-         |      "href": "/individuals/expenses/other/$nino/$taxYear",
-         |      "method": "GET",
-         |      "rel": "self"
-         |    },
-         |    {
-         |      "href": "/individuals/expenses/other/$nino/$taxYear",
-         |      "method": "PUT",
-         |      "rel": "amend-expenses-other"
-         |    },
-         |    {
-         |      "href": "/individuals/expenses/other/$nino/$taxYear",
-         |      "method": "DELETE",
-         |      "rel": "delete-expenses-other"
-         |    }
-         |  ]
-         |}
-         |""".stripMargin)
-
-    def uri: String = s"/other/$nino/$taxYear"
-
-    def desUri: String = s"/income-tax/expenses/other/$nino/$taxYear"
-
-    def setupStubs(): StubMapping
-
-    def request(): WSRequest = {
-      setupStubs()
-      buildRequest(uri)
-        .withHttpHeaders(
-          (ACCEPT, "application/vnd.hmrc.1.0+json"),
-          (AUTHORIZATION, "Bearer 123") // some bearer token
-        )
-    }
-
-    def errorBody(code: String): String =
-      s"""
-         |      {
-         |        "code": "$code",
-         |        "reason": "des message"
-         |      }
-    """.stripMargin
-
-  }
-
   "Calling the amend endpoint" should {
 
     "return a 200 status code" when {
 
-      "any valid request is made" in new Test {
-
+      "any valid request is made" in new NonTysTest {
         override def setupStubs(): StubMapping = {
           AuditStub.audit()
           AuthStub.authorised()
           MtdIdLookupStub.ninoFound(nino)
-          DownstreamStub.onSuccess(DownstreamStub.PUT, desUri, NO_CONTENT, JsObject.empty)
+          DownstreamStub.onSuccess(DownstreamStub.PUT, downstreamUri, NO_CONTENT, JsObject.empty)
+        }
+
+        val response: WSResponse = await(request().put(requestBodyJson))
+        response.status shouldBe OK
+        response.json shouldBe responseBody
+        response.header("X-CorrelationId").nonEmpty shouldBe true
+      }
+
+      "any valid request with a Tax Year Specific (TYS) tax year is made" in new TysIfsTest {
+        override def setupStubs(): StubMapping = {
+          AuditStub.audit()
+          AuthStub.authorised()
+          MtdIdLookupStub.ninoFound(nino)
+          DownstreamStub.onSuccess(DownstreamStub.PUT, downstreamUri, NO_CONTENT, JsObject.empty)
         }
 
         val response: WSResponse = await(request().put(requestBodyJson))
@@ -120,7 +64,7 @@ class AmendOtherExpensesControllerISpec extends IntegrationBaseSpec {
     "return error according to spec" when {
 
       "validation error" when {
-        s"an invalid NINO is provided" in new Test {
+        s"an invalid NINO is provided" in new NonTysTest {
           override val nino: String = "INVALID_NINO"
 
           override def setupStubs(): StubMapping = {
@@ -133,7 +77,7 @@ class AmendOtherExpensesControllerISpec extends IntegrationBaseSpec {
           response.status shouldBe BAD_REQUEST
           response.json shouldBe Json.toJson(NinoFormatError)
         }
-        s"an invalid taxYear is provided" in new Test {
+        s"an invalid taxYear is provided" in new NonTysTest {
           override val taxYear: String = "INVALID_TAXYEAR"
 
           override def setupStubs(): StubMapping = {
@@ -146,7 +90,7 @@ class AmendOtherExpensesControllerISpec extends IntegrationBaseSpec {
           response.status shouldBe BAD_REQUEST
           response.json shouldBe Json.toJson(TaxYearFormatError)
         }
-        s"a taxYear before the minimum in sandbox of 2019-20 is provided" in new Test {
+        s"a taxYear before the minimum in sandbox of 2019-20 is provided" in new NonTysTest {
           override val taxYear: String = "2018-19"
 
           override def setupStubs(): StubMapping = {
@@ -159,7 +103,7 @@ class AmendOtherExpensesControllerISpec extends IntegrationBaseSpec {
           response.status shouldBe BAD_REQUEST
           response.json shouldBe Json.toJson(RuleTaxYearNotSupportedError)
         }
-        s"an invalid amount is provided" in new Test {
+        s"an invalid amount is provided" in new NonTysTest {
           override val requestBodyJson: JsValue = Json.parse(
             s"""
                |{
@@ -186,7 +130,7 @@ class AmendOtherExpensesControllerISpec extends IntegrationBaseSpec {
           response.json shouldBe Json.toJson(ValueFormatError.copy(paths =
             Some(Seq("/paymentsToTradeUnionsForDeathBenefits/expenseAmount", "/patentRoyaltiesPayments/expenseAmount"))))
         }
-        s"an invalid customer reference is provided" in new Test {
+        s"an invalid customer reference is provided" in new NonTysTest {
           override val requestBodyJson: JsValue = Json.parse(
             s"""
                |{
@@ -213,7 +157,7 @@ class AmendOtherExpensesControllerISpec extends IntegrationBaseSpec {
           response.json shouldBe Json.toJson(CustomerReferenceFormatError.copy(paths =
             Some(Seq("/paymentsToTradeUnionsForDeathBenefits/customerReference", "/patentRoyaltiesPayments/customerReference"))))
         }
-        s"a taxYear with range of greater than a year is provided" in new Test {
+        s"a taxYear with range of greater than a year is provided" in new NonTysTest {
           override val taxYear: String = "2019-21"
 
           override def setupStubs(): StubMapping = {
@@ -226,7 +170,7 @@ class AmendOtherExpensesControllerISpec extends IntegrationBaseSpec {
           response.status shouldBe BAD_REQUEST
           response.json shouldBe Json.toJson(RuleTaxYearRangeInvalidError)
         }
-        s"an empty body is provided" in new Test {
+        s"an empty body is provided" in new NonTysTest {
           override val requestBodyJson: JsValue = Json.parse("""{}""")
 
           override def setupStubs(): StubMapping = {
@@ -239,7 +183,7 @@ class AmendOtherExpensesControllerISpec extends IntegrationBaseSpec {
           response.status shouldBe BAD_REQUEST
           response.json shouldBe Json.toJson(RuleIncorrectOrEmptyBodyError)
         }
-        s"a body missing mandatory fields is provided" in new Test {
+        s"a body missing mandatory fields is provided" in new NonTysTest {
           override val requestBodyJson: JsValue = Json.parse("""{
               | "paymentsToTradeUnionsForDeathBenefits": {},
               | "patentRoyaltiesPayments": {}
@@ -258,15 +202,15 @@ class AmendOtherExpensesControllerISpec extends IntegrationBaseSpec {
 
       }
 
-      "des service error" when {
-        def serviceErrorTest(desStatus: Int, desCode: String, expectedStatus: Int, expectedBody: MtdError): Unit = {
-          s"des returns an $desCode error and status $desStatus" in new Test {
+      "downstream service error" when {
+        def serviceErrorTest(downstreamStatus: Int, downstreamCode: String, expectedStatus: Int, expectedBody: MtdError): Unit = {
+          s"downstream returns an $downstreamCode error and status $downstreamStatus" in new NonTysTest {
 
             override def setupStubs(): StubMapping = {
               AuditStub.audit()
               AuthStub.authorised()
               MtdIdLookupStub.ninoFound(nino)
-              DownstreamStub.onError(DownstreamStub.PUT, desUri, desStatus, errorBody(desCode))
+              DownstreamStub.onError(DownstreamStub.PUT, downstreamUri, downstreamStatus, errorBody(downstreamCode))
             }
 
             val response: WSResponse = await(request().put(requestBodyJson))
@@ -275,16 +219,103 @@ class AmendOtherExpensesControllerISpec extends IntegrationBaseSpec {
           }
         }
 
-        val input = Seq(
+        val errors = Seq(
           (BAD_REQUEST, "INVALID_TAXABLE_ENTITY_ID", BAD_REQUEST, NinoFormatError),
-          (BAD_REQUEST, "FORMAT_TAX_YEAR", BAD_REQUEST, TaxYearFormatError),
-          (SERVICE_UNAVAILABLE, "SERVICE_UNAVAILABLE", INTERNAL_SERVER_ERROR, StandardDownstreamError),
-          (INTERNAL_SERVER_ERROR, "SERVER_ERROR", INTERNAL_SERVER_ERROR, StandardDownstreamError)
+          (BAD_REQUEST, "INVALID_TAX_YEAR", BAD_REQUEST, TaxYearFormatError),
+          (BAD_REQUEST, "INVALID_CORRELATIONID", INTERNAL_SERVER_ERROR, StandardDownstreamError),
+          (BAD_REQUEST, "INVALID_PAYLOAD", INTERNAL_SERVER_ERROR, StandardDownstreamError),
+          (UNPROCESSABLE_ENTITY, "UNPROCESSABLE_ENTITY", INTERNAL_SERVER_ERROR, StandardDownstreamError),
+          (INTERNAL_SERVER_ERROR, "SERVER_ERROR", INTERNAL_SERVER_ERROR, StandardDownstreamError),
+          (SERVICE_UNAVAILABLE, "SERVICE_UNAVAILABLE", INTERNAL_SERVER_ERROR, StandardDownstreamError)
         )
 
-        input.foreach(args => (serviceErrorTest _).tupled(args))
+        val extraTysErrors = Seq(
+          (BAD_REQUEST, "INVALID_CORRELATION_ID", INTERNAL_SERVER_ERROR, StandardDownstreamError),
+          (UNPROCESSABLE_ENTITY, "TAX_YEAR_NOT_SUPPORTED", BAD_REQUEST, RuleTaxYearNotSupportedError)
+        )
+
+        (errors ++ extraTysErrors).foreach(args => (serviceErrorTest _).tupled(args))
       }
     }
+  }
+
+  private trait Test {
+
+    val nino: String = "AA123456A"
+
+    val amount: BigDecimal = 5000.99
+
+    val requestBodyJson: JsValue = Json.parse(
+      s"""
+         |{
+         |  "paymentsToTradeUnionsForDeathBenefits": {
+         |    "customerReference": "TRADE UNION PAYMENTS",
+         |    "expenseAmount": $amount
+         |  },
+         |  "patentRoyaltiesPayments":{
+         |    "customerReference": "ROYALTIES PAYMENTS",
+         |    "expenseAmount": $amount
+         |  }
+         |}
+         |""".stripMargin
+    )
+
+    val responseBody = Json.parse(s"""
+                                     |{
+                                     |  "links": [
+                                     |    {
+                                     |      "href": "/individuals/expenses/other/$nino/$taxYear",
+                                     |      "method": "GET",
+                                     |      "rel": "self"
+                                     |    },
+                                     |    {
+                                     |      "href": "/individuals/expenses/other/$nino/$taxYear",
+                                     |      "method": "PUT",
+                                     |      "rel": "amend-expenses-other"
+                                     |    },
+                                     |    {
+                                     |      "href": "/individuals/expenses/other/$nino/$taxYear",
+                                     |      "method": "DELETE",
+                                     |      "rel": "delete-expenses-other"
+                                     |    }
+                                     |  ]
+                                     |}
+                                     |""".stripMargin)
+
+    def uri: String = s"/other/$nino/$taxYear"
+
+    def taxYear: String
+    def downstreamUri: String
+
+    def setupStubs(): StubMapping
+
+    def request(): WSRequest = {
+      setupStubs()
+      buildRequest(uri)
+        .withHttpHeaders(
+          (ACCEPT, "application/vnd.hmrc.1.0+json"),
+          (AUTHORIZATION, "Bearer 123") // some bearer token
+        )
+    }
+
+    def errorBody(code: String): String =
+      s"""
+         |      {
+         |        "code": "$code",
+         |        "reason": "downstream message"
+         |      }
+    """.stripMargin
+
+  }
+
+  private trait NonTysTest extends Test {
+    def taxYear: String       = "2019-20"
+    def downstreamUri: String = s"/income-tax/expenses/other/$nino/2019-20"
+  }
+
+  private trait TysIfsTest extends Test {
+    def taxYear: String       = "2023-24"
+    def downstreamUri: String = s"/income-tax/expenses/other/23-24/$nino"
   }
 
 }

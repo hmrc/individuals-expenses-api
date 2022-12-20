@@ -17,5 +17,6 @@
 package v1.models.request.amendOtherExpenses
 
 import v1.models.domain.Nino
+import v1.models.request.TaxYear
 
-case class AmendOtherExpensesRequest(nino: Nino, taxYear: String, body: AmendOtherExpensesBody)
+case class AmendOtherExpensesRequest(nino: Nino, taxYear: TaxYear, body: AmendOtherExpensesBody)
