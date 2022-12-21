@@ -10,27 +10,27 @@ is:
   - errors.incorrectOrEmptyBody
   - errors.formatCustomerRef
   - errors.clientOrAgentNotAuthorised
-displayName: Amend Other Expenses
-description: This endpoint allows a developer to amend expenses income for trade union and patent royalties. A National Insurance number and tax year must be provided.
-(annotations.sandboxData): !include scenarios/amend_other_expenses.md
+displayName: Create and Amend Other Expenses
+description: This endpoint enables you to create and amend expenses income for trade union and patent royalties. A National Insurance number and tax year must be provided.
+(annotations.sandboxData): !include scenarios/create_and_amend_other_expenses.md
 (annotations.scope): "write:self-assessment"
 securedBy: [ sec.oauth_2_0: { scopes: [ "write:self-assessment" ] } ]
 body:
   application/json:
-    type: !include schemas/amend_other_expenses/request.json
+    type: !include schemas/create_and_amend_other_expenses/request.json
     examples:
      example-1:
       description: Default Example
-      value: !include examples/amend_other_expenses/request.json
+      value: !include examples/create_and_amend_other_expenses/request.json
 responses:
   200:
     body:
       application/json:
-        type: !include schemas/amend_other_expenses/response.json
+        type: !include schemas/create_and_amend_other_expenses/response.json
         examples:
           example-1:
             description: Default Example
-            value: !include examples/amend_other_expenses/response.json
+            value: !include examples/create_and_amend_other_expenses/response.json
     headers:
       X-CorrelationId:
         example: c75f40a6-a3df-4429-a697-471eeec46435
