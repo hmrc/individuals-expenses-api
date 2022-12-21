@@ -22,13 +22,14 @@ import uk.gov.hmrc.http.HeaderCarrier
 import v1.mocks.MockIdGenerator
 import v1.mocks.hateoas.MockHateoasFactory
 import v1.mocks.requestParsers.MockCreateAndAmendOtherExpensesRequestParser
-import v1.mocks.services.{MockCreateAndAmendOtherExpensesService, MockAuditService, MockEnrolmentsAuthService, MockMtdIdLookupService}
+import v1.mocks.services._
 import v1.models.audit.{AuditError, AuditEvent, AuditResponse, ExpensesAuditDetail}
 import v1.models.domain.Nino
 import v1.models.errors._
 import v1.models.hateoas.Method.{DELETE, GET, PUT}
 import v1.models.hateoas.{HateoasWrapper, Link}
 import v1.models.outcomes.ResponseWrapper
+import v1.models.request.TaxYear
 import v1.models.request.createAndAmendOtherExpenses._
 import v1.models.response.createAndAmendOtherExpenses.CreateAndAmendOtherExpensesHateoasData
 
@@ -46,7 +47,7 @@ class CreateAndAmendOtherExpensesControllerSpec
     with MockIdGenerator {
 
   private val nino          = "AA123456A"
-  private val taxYear       = "2019-20"
+  private val taxYear       = "2021-22"
   private val correlationId = "X-123"
 
   private val testHateoasLinks = Seq(
@@ -74,7 +75,7 @@ class CreateAndAmendOtherExpensesControllerSpec
       |""".stripMargin)
 
   private val rawData     = CreateAndAmendOtherExpensesRawData(nino, taxYear, requestBodyJson)
-  private val requestData = CreateAndAmendOtherExpensesRequest(Nino(nino), taxYear, requestBody)
+  private val requestData = CreateAndAmendOtherExpensesRequest(Nino(nino), TaxYear.fromMtd(taxYear), requestBody)
 
   trait Test {
     val hc: HeaderCarrier = HeaderCarrier()
@@ -179,11 +180,12 @@ class CreateAndAmendOtherExpensesControllerSpec
         val input = Seq(
           (BadRequestError, BAD_REQUEST),
           (NinoFormatError, BAD_REQUEST),
-          (RuleTaxYearRangeInvalidError, BAD_REQUEST),
-          (RuleTaxYearNotSupportedError, BAD_REQUEST),
-          (RuleIncorrectOrEmptyBodyError, BAD_REQUEST),
           (TaxYearFormatError, BAD_REQUEST),
-          (CustomerReferenceFormatError, BAD_REQUEST)
+          (RuleTaxYearNotSupportedError, BAD_REQUEST),
+          (CustomerReferenceFormatError, BAD_REQUEST),
+          (RuleTaxYearRangeInvalidError, BAD_REQUEST),
+          (RuleIncorrectOrEmptyBodyError, BAD_REQUEST),
+          (ValueFormatError, BAD_REQUEST)
         )
 
         input.foreach(args => (errorsFromParserTester _).tupled(args))
@@ -215,7 +217,8 @@ class CreateAndAmendOtherExpensesControllerSpec
         val input = Seq(
           (NinoFormatError, BAD_REQUEST),
           (TaxYearFormatError, BAD_REQUEST),
-          (StandardDownstreamError, INTERNAL_SERVER_ERROR)
+          (StandardDownstreamError, INTERNAL_SERVER_ERROR),
+          (RuleTaxYearNotSupportedError, BAD_REQUEST)
         )
 
         input.foreach(args => (serviceErrors _).tupled(args))

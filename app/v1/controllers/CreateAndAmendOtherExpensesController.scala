@@ -62,9 +62,8 @@ class CreateAndAmendOtherExpensesController @Inject() (val authService: Enrolmen
         for {
           parsedRequest   <- EitherT.fromEither[Future](parser.parseRequest(rawData))
           serviceResponse <- EitherT(service.createAndAmend(parsedRequest))
-          vendorResponse <- EitherT.fromEither[Future](
-            hateoasFactory.wrap(serviceResponse.responseData, CreateAndAmendOtherExpensesHateoasData(nino, taxYear)).asRight[ErrorWrapper])
         } yield {
+          val vendorResponse = hateoasFactory.wrap(serviceResponse.responseData, CreateAndAmendOtherExpensesHateoasData(nino, taxYear))
           logger.info(
             s"[${endpointLogContext.controllerName}][${endpointLogContext.endpointName}] - " +
               s"Success response received with CorrelationId: ${serviceResponse.correlationId}")
@@ -104,10 +103,18 @@ class CreateAndAmendOtherExpensesController @Inject() (val authService: Enrolmen
     }
 
   private def errorResult(errorWrapper: ErrorWrapper) = {
-    (errorWrapper.error: @unchecked) match {
-      case NinoFormatError | BadRequestError | TaxYearFormatError | RuleTaxYearNotSupportedError | MtdErrorWithCustomMessage(
-            CustomerReferenceFormatError.code) | RuleTaxYearRangeInvalidError | RuleIncorrectOrEmptyBodyError | MtdErrorWithCustomMessage(
-            ValueFormatError.code) =>
+    (errorWrapper.error) match {
+      case _
+          if errorWrapper.containsAnyOf(
+            NinoFormatError,
+            BadRequestError,
+            TaxYearFormatError,
+            RuleTaxYearNotSupportedError,
+            CustomerReferenceFormatError,
+            RuleTaxYearRangeInvalidError,
+            RuleIncorrectOrEmptyBodyError,
+            ValueFormatError
+          ) =>
         BadRequest(Json.toJson(errorWrapper))
       case StandardDownstreamError => InternalServerError(Json.toJson(errorWrapper))
     }
