@@ -16,6 +16,8 @@
 
 package v1.controllers
 
+import mocks.MockAppConfig
+import play.api.Configuration
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Result
 import uk.gov.hmrc.http.HeaderCarrier
@@ -29,6 +31,7 @@ import v1.models.errors._
 import v1.models.hateoas.Method.{DELETE, GET}
 import v1.models.hateoas.{HateoasWrapper, Link}
 import v1.models.outcomes.ResponseWrapper
+import v1.models.request.TaxYear
 import v1.models.request.ignoreEmploymentExpenses._
 import v1.models.response.ignoreEmploymentExpenses.IgnoreEmploymentExpensesHateoasData
 
@@ -43,6 +46,7 @@ class IgnoreEmploymentExpensesControllerSpec
     with MockIgnoreEmploymentExpensesRequestParser
     with MockHateoasFactory
     with MockAuditService
+    with MockAppConfig
     with MockIdGenerator {
 
   private val nino          = "AA123456A"
@@ -86,7 +90,7 @@ class IgnoreEmploymentExpensesControllerSpec
     )
 
   private val rawData     = IgnoreEmploymentExpensesRawData(nino, taxYear)
-  private val requestData = IgnoreEmploymentExpensesRequest(Nino(nino), taxYear)
+  private val requestData = IgnoreEmploymentExpensesRequest(Nino(nino), TaxYear.fromMtd(taxYear))
 
   trait Test {
     val hc = HeaderCarrier()
@@ -94,6 +98,7 @@ class IgnoreEmploymentExpensesControllerSpec
     val controller = new IgnoreEmploymentExpensesController(
       authService = mockEnrolmentsAuthService,
       lookupService = mockMtdIdLookupService,
+      appConfig = mockAppConfig,
       parser = mockRequestParser,
       service = mockService,
       auditService = mockAuditService,
@@ -102,6 +107,7 @@ class IgnoreEmploymentExpensesControllerSpec
       idGenerator = mockIdGenerator
     )
 
+    MockAppConfig.featureSwitches.returns(Configuration("allowTemporalValidationSuspension.enabled" -> true)).anyNumberOfTimes()
     MockedMtdIdLookupService.lookup(nino).returns(Future.successful(Right("test-mtd-id")))
     MockedEnrolmentsAuthService.authoriseUser()
     MockIdGenerator.generateCorrelationId.returns(correlationId)
@@ -187,14 +193,18 @@ class IgnoreEmploymentExpensesControllerSpec
           }
         }
 
-        val input = Seq(
+        val errors = List(
           (NinoFormatError, BAD_REQUEST),
           (TaxYearFormatError, BAD_REQUEST),
           (RuleTaxYearNotEndedError, BAD_REQUEST),
           (StandardDownstreamError, INTERNAL_SERVER_ERROR)
         )
 
-        input.foreach(args => (serviceErrors _).tupled(args))
+        val extraTysErrors = List(
+          (RuleTaxYearNotSupportedError, BAD_REQUEST)
+        )
+
+        (errors ++ extraTysErrors).foreach(args => (serviceErrors _).tupled(args))
       }
     }
   }

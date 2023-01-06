@@ -16,9 +16,7 @@
 
 package v1.services
 
-import cats.data.EitherT
 import cats.implicits._
-import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Logging
 import v1.connectors.IgnoreEmploymentExpensesConnector
@@ -27,6 +25,7 @@ import v1.models.errors._
 import v1.models.request.ignoreEmploymentExpenses.IgnoreEmploymentExpensesRequest
 import v1.support.DownstreamResponseMappingSupport
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -38,15 +37,11 @@ class IgnoreEmploymentExpensesService @Inject() (connector: IgnoreEmploymentExpe
       logContext: EndpointLogContext,
       correlationId: String): Future[IgnoreEmploymentExpensesServiceOutcome] = {
 
-    val result = for {
-      desResponseWrapper <- EitherT(connector.ignore(request)).leftMap(mapDownstreamErrors(desErrorMap))
-    } yield desResponseWrapper
-
-    result.value
+    connector.ignore(request).map(_.leftMap(mapDownstreamErrors(downstreamErrorMap)))
   }
 
-  private def desErrorMap =
-    Map(
+  private def downstreamErrorMap = {
+    val errors = Map(
       "INVALID_TAXABLE_ENTITY_ID"       -> NinoFormatError,
       "INVALID_TAX_YEAR"                -> TaxYearFormatError,
       "INVALID_CORRELATIONID"           -> StandardDownstreamError,
@@ -56,5 +51,13 @@ class IgnoreEmploymentExpensesService @Inject() (connector: IgnoreEmploymentExpe
       "SERVER_ERROR"                    -> StandardDownstreamError,
       "SERVICE_UNAVAILABLE"             -> StandardDownstreamError
     )
+
+    val extraTysErrors = Map(
+      "INVALID_CORRELATION_ID" -> StandardDownstreamError,
+      "TAX_YEAR_NOT_SUPPORTED" -> RuleTaxYearNotSupportedError
+    )
+
+    errors ++ extraTysErrors
+  }
 
 }

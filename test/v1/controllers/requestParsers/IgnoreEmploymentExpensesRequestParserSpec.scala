@@ -20,6 +20,7 @@ import support.UnitSpec
 import v1.mocks.validators.MockIgnoreEmploymentExpensesValidator
 import v1.models.domain.Nino
 import v1.models.errors._
+import v1.models.request.TaxYear
 import v1.models.request.ignoreEmploymentExpenses._
 
 class IgnoreEmploymentExpensesRequestParserSpec extends UnitSpec {
@@ -42,7 +43,7 @@ class IgnoreEmploymentExpensesRequestParserSpec extends UnitSpec {
         MockIgnoreEmploymentExpensesValidator.validate(inputData).returns(Nil)
 
         parser.parseRequest(inputData) shouldBe
-          Right(IgnoreEmploymentExpensesRequest(Nino(nino), taxYear))
+          Right(IgnoreEmploymentExpensesRequest(Nino(nino), TaxYear.fromMtd(taxYear)))
       }
     }
 
