@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -79,6 +79,12 @@ class NinoSpec extends UnitSpec {
   "Removing a suffix" should {
     "produce a nino without a suffix" in {
       Nino("AA111111A").withoutSuffix shouldBe "AA111111"
+    }
+  }
+
+  "toString" should {
+    "return the value of the nino" in {
+      Nino("AA111111A").toString shouldBe "AA111111A"
     }
   }
 
