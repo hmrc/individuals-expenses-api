@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package v1.models.response.amendEmploymentExpenses
+package v1.models.response.createAndAmendEmploymentExpenses
 
 import config.AppConfig
 import v1.hateoas.{HateoasLinks, HateoasLinksFactory}
 import v1.models.hateoas.{HateoasData, Link}
 
-object AmendEmploymentExpensesResponse extends HateoasLinks {
+object CreateAndAmendEmploymentExpensesResponse extends HateoasLinks {
 
-  implicit object AmendOrderLinksFactory extends HateoasLinksFactory[Unit, AmendEmploymentExpensesHateoasData] {
+  implicit object AmendOrderLinksFactory extends HateoasLinksFactory[Unit, CreateAndAmendEmploymentExpensesHateoasData] {
 
-    override def links(appConfig: AppConfig, data: AmendEmploymentExpensesHateoasData): Seq[Link] = {
+    override def links(appConfig: AppConfig, data: CreateAndAmendEmploymentExpensesHateoasData): Seq[Link] = {
       import data._
       Seq(
         retrieveEmploymentExpenses(appConfig, nino, taxYear),
-        amendEmploymentExpenses(appConfig, nino, taxYear),
+        createAndAmendEmploymentExpenses(appConfig, nino, taxYear),
         deleteEmploymentExpenses(appConfig, nino, taxYear)
       )
     }
@@ -37,4 +37,4 @@ object AmendEmploymentExpensesResponse extends HateoasLinks {
 
 }
 
-case class AmendEmploymentExpensesHateoasData(nino: String, taxYear: String) extends HateoasData
+case class CreateAndAmendEmploymentExpensesHateoasData(nino: String, taxYear: String) extends HateoasData

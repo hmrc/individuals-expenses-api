@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,20 +16,20 @@
 
 package v1.services
 
-import v1.mocks.connectors.MockAmendEmploymentExpensesConnector
+import v1.mocks.connectors.MockCreateAndAmendEmploymentExpensesConnector
 import v1.models.domain.Nino
 import v1.models.errors._
 import v1.models.outcomes.ResponseWrapper
-import v1.models.request.amendEmploymentExpenses.{AmendEmploymentExpensesBody, AmendEmploymentExpensesRequest, Expenses}
+import v1.models.request.createAndAmendEmploymentExpenses.{CreateAndAmendEmploymentExpensesBody, CreateAndAmendEmploymentExpensesRequest, Expenses}
 
 import scala.concurrent.Future
 
-class AmendEmploymentExpensesServiceSpec extends ServiceSpec {
+class CreateAndAmendEmploymentExpensesServiceSpec extends ServiceSpec {
 
   val taxYear    = "2021-22"
   val nino: Nino = Nino("AA123456A")
 
-  val body: AmendEmploymentExpensesBody = AmendEmploymentExpensesBody(
+  val body: CreateAndAmendEmploymentExpensesBody = CreateAndAmendEmploymentExpensesBody(
     Expenses(
       Some(123.12),
       Some(123.12),
@@ -42,12 +42,12 @@ class AmendEmploymentExpensesServiceSpec extends ServiceSpec {
     )
   )
 
-  private val requestData = AmendEmploymentExpensesRequest(nino, taxYear, body)
+  private val requestData = CreateAndAmendEmploymentExpensesRequest(nino, taxYear, body)
 
-  trait Test extends MockAmendEmploymentExpensesConnector {
+  trait Test extends MockCreateAndAmendEmploymentExpensesConnector {
 
-    val service = new AmendEmploymentExpensesService(
-      connector = mockAmendEmploymentExpensesConnector
+    val service = new CreateAndAmendEmploymentExpensesService(
+      connector = mockCreateAndAmendEmploymentExpensesConnector
     )
 
   }
@@ -55,7 +55,7 @@ class AmendEmploymentExpensesServiceSpec extends ServiceSpec {
   "service" should {
     "service call successful" when {
       "return mapped result" in new Test {
-        MockAmendEmploymentExpensesConnector
+        MockCreateAndAmendEmploymentExpensesConnector
           .amend(requestData)
           .returns(Future.successful(Right(ResponseWrapper(correlationId, ()))))
 
@@ -70,7 +70,7 @@ class AmendEmploymentExpensesServiceSpec extends ServiceSpec {
       def serviceError(desErrorCode: String, error: MtdError): Unit =
         s"a $desErrorCode error is returned from the service" in new Test {
 
-          MockAmendEmploymentExpensesConnector
+          MockCreateAndAmendEmploymentExpensesConnector
             .amend(requestData)
             .returns(Future.successful(Left(ResponseWrapper(correlationId, DownstreamErrors.single(DownstreamErrorCode(desErrorCode))))))
 

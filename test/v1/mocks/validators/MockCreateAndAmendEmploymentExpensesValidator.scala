@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,16 +20,16 @@ import org.scalamock.handlers.CallHandler1
 import org.scalamock.scalatest.MockFactory
 import v1.controllers.requestParsers.validators.AmendEmploymentExpensesValidator
 import v1.models.errors.MtdError
-import v1.models.request.amendEmploymentExpenses.AmendEmploymentExpensesRawData
+import v1.models.request.createAndAmendEmploymentExpenses.CreateAndAmendEmploymentExpensesRawData
 
-class MockAmendEmploymentExpensesValidator extends MockFactory {
+class MockCreateAndAmendEmploymentExpensesValidator extends MockFactory {
   val mockValidator: AmendEmploymentExpensesValidator = mock[AmendEmploymentExpensesValidator]
 
-  object MockAmendEmploymentExpensesValidator {
+  object MockCreateAndAmendEmploymentExpensesValidator {
 
-    def validate(data: AmendEmploymentExpensesRawData): CallHandler1[AmendEmploymentExpensesRawData, List[MtdError]] = {
+    def validate(data: CreateAndAmendEmploymentExpensesRawData): CallHandler1[CreateAndAmendEmploymentExpensesRawData, List[MtdError]] = {
       (mockValidator
-        .validate(_: AmendEmploymentExpensesRawData))
+        .validate(_: CreateAndAmendEmploymentExpensesRawData))
         .expects(data)
     }
 

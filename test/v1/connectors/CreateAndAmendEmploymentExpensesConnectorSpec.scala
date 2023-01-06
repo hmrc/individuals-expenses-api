@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,16 +18,16 @@ package v1.connectors
 
 import v1.models.domain.Nino
 import v1.models.outcomes.ResponseWrapper
-import v1.models.request.amendEmploymentExpenses.{AmendEmploymentExpensesBody, AmendEmploymentExpensesRequest, Expenses}
+import v1.models.request.createAndAmendEmploymentExpenses.{CreateAndAmendEmploymentExpensesBody, CreateAndAmendEmploymentExpensesRequest, Expenses}
 
 import scala.concurrent.Future
 
-class AmendEmploymentExpensesConnectorSpec extends ConnectorSpec {
+class CreateAndAmendEmploymentExpensesConnectorSpec extends ConnectorSpec {
 
   val taxYear: String = "2021-22"
   val nino: String    = "AA123456A"
 
-  val body: AmendEmploymentExpensesBody = AmendEmploymentExpensesBody(
+  val body: CreateAndAmendEmploymentExpensesBody = CreateAndAmendEmploymentExpensesBody(
     Expenses(
       Some(123.12),
       Some(123.12),
@@ -42,7 +42,7 @@ class AmendEmploymentExpensesConnectorSpec extends ConnectorSpec {
 
   trait Test { _: ConnectorTest =>
 
-    val connector: AmendEmploymentExpensesConnector = new AmendEmploymentExpensesConnector(
+    val connector: CreateAndAmendEmploymentExpensesConnector = new CreateAndAmendEmploymentExpensesConnector(
       http = mockHttpClient,
       appConfig = mockAppConfig
     )
@@ -50,7 +50,7 @@ class AmendEmploymentExpensesConnectorSpec extends ConnectorSpec {
   }
 
   "amend" should {
-    val request = AmendEmploymentExpensesRequest(Nino(nino), taxYear, body)
+    val request = CreateAndAmendEmploymentExpensesRequest(Nino(nino), taxYear, body)
 
     "put a body and return 204 no body" in new IfsR6Test with Test {
       val outcome = Right(ResponseWrapper(correlationId, ()))

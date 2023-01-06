@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,20 +22,20 @@ import uk.gov.hmrc.http.HeaderCarrier
 import v1.controllers.EndpointLogContext
 import v1.models.errors.ErrorWrapper
 import v1.models.outcomes.ResponseWrapper
-import v1.models.request.amendEmploymentExpenses.AmendEmploymentExpensesRequest
-import v1.services.AmendEmploymentExpensesService
+import v1.models.request.createAndAmendEmploymentExpenses.CreateAndAmendEmploymentExpensesRequest
+import v1.services.CreateAndAmendEmploymentExpensesService
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockAmendEmploymentExpensesService extends MockFactory {
+trait MockCreateAndAmendEmploymentExpensesService extends MockFactory {
 
-  val mockService: AmendEmploymentExpensesService = mock[AmendEmploymentExpensesService]
+  val mockService: CreateAndAmendEmploymentExpensesService = mock[CreateAndAmendEmploymentExpensesService]
 
-  object MockAmendEmploymentExpensesService {
+  object MockCreateAndAmendEmploymentExpensesService {
 
-    def amend(requestData: AmendEmploymentExpensesRequest): CallHandler[Future[Either[ErrorWrapper, ResponseWrapper[Unit]]]] = {
+    def amend(requestData: CreateAndAmendEmploymentExpensesRequest): CallHandler[Future[Either[ErrorWrapper, ResponseWrapper[Unit]]]] = {
       (mockService
-        .amend(_: AmendEmploymentExpensesRequest)(_: HeaderCarrier, _: ExecutionContext, _: EndpointLogContext, _: String))
+        .amend(_: CreateAndAmendEmploymentExpensesRequest)(_: HeaderCarrier, _: ExecutionContext, _: EndpointLogContext, _: String))
         .expects(requestData, *, *, *, *)
     }
 

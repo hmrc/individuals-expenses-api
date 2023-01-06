@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,12 +19,16 @@ package v1.controllers.requestParsers
 import javax.inject.Inject
 import v1.models.domain.Nino
 import v1.controllers.requestParsers.validators.AmendEmploymentExpensesValidator
-import v1.models.request.amendEmploymentExpenses.{AmendEmploymentExpensesBody, AmendEmploymentExpensesRawData, AmendEmploymentExpensesRequest}
+import v1.models.request.createAndAmendEmploymentExpenses.{
+  CreateAndAmendEmploymentExpensesBody,
+  CreateAndAmendEmploymentExpensesRawData,
+  CreateAndAmendEmploymentExpensesRequest
+}
 
 class AmendEmploymentExpensesRequestParser @Inject() (val validator: AmendEmploymentExpensesValidator)
-    extends RequestParser[AmendEmploymentExpensesRawData, AmendEmploymentExpensesRequest] {
+    extends RequestParser[CreateAndAmendEmploymentExpensesRawData, CreateAndAmendEmploymentExpensesRequest] {
 
-  override protected def requestFor(data: AmendEmploymentExpensesRawData): AmendEmploymentExpensesRequest =
-    AmendEmploymentExpensesRequest(Nino(data.nino), data.taxYear, data.body.as[AmendEmploymentExpensesBody])
+  override protected def requestFor(data: CreateAndAmendEmploymentExpensesRawData): CreateAndAmendEmploymentExpensesRequest =
+    CreateAndAmendEmploymentExpensesRequest(Nino(data.nino), data.taxYear, data.body.as[CreateAndAmendEmploymentExpensesBody])
 
 }

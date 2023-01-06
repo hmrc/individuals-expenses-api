@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,7 +46,7 @@ trait HateoasLinks {
   def retrieveEmploymentExpenses(appConfig: AppConfig, nino: String, taxYear: String): Link =
     Link(href = employmentExpensesUri(appConfig, nino, taxYear), method = GET, rel = SELF)
 
-  def amendEmploymentExpenses(appConfig: AppConfig, nino: String, taxYear: String): Link =
+  def createAndAmendEmploymentExpenses(appConfig: AppConfig, nino: String, taxYear: String): Link =
     Link(href = employmentExpensesUri(appConfig, nino, taxYear), method = PUT, rel = AMEND_EMPLOYMENT_EXPENSES)
 
   def deleteEmploymentExpenses(appConfig: AppConfig, nino: String, taxYear: String): Link =

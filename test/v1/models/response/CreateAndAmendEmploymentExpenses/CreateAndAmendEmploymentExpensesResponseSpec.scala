@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package v1.models.response.AmendEmploymentExpenses
+package v1.models.response.CreateAndAmendEmploymentExpenses
 
 import mocks.MockAppConfig
 import support.UnitSpec
 import v1.models.hateoas.Link
 import v1.models.hateoas.Method.{DELETE, GET, PUT}
-import v1.models.response.amendEmploymentExpenses.{AmendEmploymentExpensesHateoasData, AmendEmploymentExpensesResponse}
+import v1.models.response.createAndAmendEmploymentExpenses.{CreateAndAmendEmploymentExpensesHateoasData, CreateAndAmendEmploymentExpensesResponse}
 
-class AmendEmploymentExpensesResponseSpec extends UnitSpec with MockAppConfig {
+class CreateAndAmendEmploymentExpensesResponseSpec extends UnitSpec with MockAppConfig {
 
   "LinksFactory" should {
     "return the correct links" in {
@@ -30,7 +30,9 @@ class AmendEmploymentExpensesResponseSpec extends UnitSpec with MockAppConfig {
       val taxYear = "mytaxyear"
 
       MockAppConfig.apiGatewayContext.returns("my/context").anyNumberOfTimes
-      AmendEmploymentExpensesResponse.AmendOrderLinksFactory.links(mockAppConfig, AmendEmploymentExpensesHateoasData(nino, taxYear)) shouldBe
+      CreateAndAmendEmploymentExpensesResponse.AmendOrderLinksFactory.links(
+        mockAppConfig,
+        CreateAndAmendEmploymentExpensesHateoasData(nino, taxYear)) shouldBe
         Seq(
           Link(s"/my/context/employments/$nino/$taxYear", GET, "self"),
           Link(s"/my/context/employments/$nino/$taxYear", PUT, "amend-employment-expenses"),

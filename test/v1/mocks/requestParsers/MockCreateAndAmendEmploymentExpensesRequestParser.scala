@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,16 +20,16 @@ import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
 import v1.controllers.requestParsers.AmendEmploymentExpensesRequestParser
 import v1.models.errors.ErrorWrapper
-import v1.models.request.amendEmploymentExpenses.{AmendEmploymentExpensesRawData, AmendEmploymentExpensesRequest}
+import v1.models.request.createAndAmendEmploymentExpenses.{CreateAndAmendEmploymentExpensesRawData, CreateAndAmendEmploymentExpensesRequest}
 
-trait MockAmendEmploymentExpensesRequestParser extends MockFactory {
+trait MockCreateAndAmendEmploymentExpensesRequestParser extends MockFactory {
 
   val mockRequestParser: AmendEmploymentExpensesRequestParser = mock[AmendEmploymentExpensesRequestParser]
 
-  object MockAmendEmploymentExpensesRequestParser {
+  object MockCreateAndAmendEmploymentExpensesRequestParser {
 
-    def parseRequest(data: AmendEmploymentExpensesRawData): CallHandler[Either[ErrorWrapper, AmendEmploymentExpensesRequest]] = {
-      (mockRequestParser.parseRequest(_: AmendEmploymentExpensesRawData)(_: String)).expects(data, *)
+    def parseRequest(data: CreateAndAmendEmploymentExpensesRawData): CallHandler[Either[ErrorWrapper, CreateAndAmendEmploymentExpensesRequest]] = {
+      (mockRequestParser.parseRequest(_: CreateAndAmendEmploymentExpensesRawData)(_: String)).expects(data, *)
     }
 
   }
