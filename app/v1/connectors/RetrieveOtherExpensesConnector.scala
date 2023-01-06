@@ -39,9 +39,9 @@ class RetrieveOtherExpensesConnector @Inject() (val http: HttpClient, val appCon
     import request._
 
     val downstreamUri = if (taxYear.useTaxYearSpecificApi) {
-      TaxYearSpecificIfsUri[RetrieveOtherExpensesResponse](s"income-tax/expenses/other/${taxYear.asTysDownstream}/${nino.value}")
+      TaxYearSpecificIfsUri[RetrieveOtherExpensesResponse](s"income-tax/expenses/other/${taxYear.asTysDownstream}/$nino")
     } else {
-      IfsR5Uri[RetrieveOtherExpensesResponse](s"income-tax/expenses/other/${nino.value}/${taxYear.asMtd}")
+      IfsR5Uri[RetrieveOtherExpensesResponse](s"income-tax/expenses/other/$nino/${taxYear.asMtd}")
     }
 
     get(uri = downstreamUri)

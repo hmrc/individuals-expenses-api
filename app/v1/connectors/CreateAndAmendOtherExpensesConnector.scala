@@ -38,9 +38,9 @@ class CreateAndAmendOtherExpensesConnector @Inject() (val http: HttpClient, val 
     import request._
 
     val downstreamUri = if (taxYear.useTaxYearSpecificApi) {
-      TaxYearSpecificIfsUri[Unit](s"income-tax/expenses/other/${taxYear.asTysDownstream}/${nino.nino}")
+      TaxYearSpecificIfsUri[Unit](s"income-tax/expenses/other/${taxYear.asTysDownstream}/$nino")
     } else {
-      IfsR5Uri[Unit](s"income-tax/expenses/other/${nino.nino}/${taxYear.asMtd}")
+      IfsR5Uri[Unit](s"income-tax/expenses/other/$nino/${taxYear.asMtd}")
     }
 
     put(

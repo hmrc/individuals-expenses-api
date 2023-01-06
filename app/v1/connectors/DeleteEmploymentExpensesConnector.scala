@@ -16,16 +16,14 @@
 
 package v1.connectors
 
-import v1.connectors.DownstreamUri.{DesUri, TaxYearSpecificIfsUri}
 import config.AppConfig
 import play.api.http.Status.NO_CONTENT
-
-import javax.inject.{Inject, Singleton}
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.http.HttpClient
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import v1.connectors.DownstreamUri.{DesUri, TaxYearSpecificIfsUri}
 import v1.connectors.httpparsers.StandardDownstreamHttpParser._
 import v1.models.request.deleteEmploymentExpenses.DeleteEmploymentExpensesRequest
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -38,12 +36,14 @@ class DeleteEmploymentExpensesConnector @Inject() (val http: HttpClient, val app
 
     implicit val successCode: SuccessCode = SuccessCode(NO_CONTENT)
 
+    import request._
+
     val downstreamUri =
       if (request.taxYear.useTaxYearSpecificApi) {
-        TaxYearSpecificIfsUri[Unit](s"income-tax/expenses/employments/${request.taxYear.asTysDownstream}/${request.nino.nino}")
+        TaxYearSpecificIfsUri[Unit](s"income-tax/expenses/employments/${taxYear.asTysDownstream}/$nino")
       } else {
         // The endpoint uses the MTD tax year format:
-        DesUri[Unit](s"income-tax/expenses/employments/${request.nino.nino}/${request.taxYear.asMtd}")
+        DesUri[Unit](s"income-tax/expenses/employments/$nino/${taxYear.asMtd}")
       }
 
     delete(
