@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,9 +38,9 @@ class DeleteOtherExpensesConnector @Inject() (val http: HttpClient, val appConfi
     import request._
 
     val uri = if (taxYear.useTaxYearSpecificApi) {
-      TaxYearSpecificIfsUri[Unit](s"income-tax/expenses/other/${taxYear.asTysDownstream}/${nino.value}")
+      TaxYearSpecificIfsUri[Unit](s"income-tax/expenses/other/${taxYear.asTysDownstream}/$nino")
     } else {
-      IfsR5Uri[Unit](s"income-tax/expenses/other/${nino.value}/${taxYear.asMtd}")
+      IfsR5Uri[Unit](s"income-tax/expenses/other/$nino/${taxYear.asMtd}")
     }
 
     delete(uri)
