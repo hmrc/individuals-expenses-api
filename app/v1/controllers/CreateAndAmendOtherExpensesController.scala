@@ -24,32 +24,32 @@ import play.api.mvc.{Action, ControllerComponents}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.http.connector.AuditResult
 import utils.{IdGenerator, Logging}
-import v1.controllers.requestParsers.AmendOtherExpensesRequestParser
+import v1.controllers.requestParsers.CreateAndAmendOtherExpensesRequestParser
 import v1.hateoas.HateoasFactory
 import v1.models.audit.{AuditEvent, AuditResponse, ExpensesAuditDetail}
 import v1.models.errors._
-import v1.models.request.amendOtherExpenses.AmendOtherExpensesRawData
-import v1.models.response.amendOtherExpenses.AmendOtherExpensesHateoasData
-import v1.models.response.amendOtherExpenses.AmendOtherExpensesResponse.AmendOtherExpensesLinksFactory
-import v1.services.{AmendOtherExpensesService, AuditService, EnrolmentsAuthService, MtdIdLookupService}
+import v1.models.request.createAndAmendOtherExpenses.CreateAndAmendOtherExpensesRawData
+import v1.models.response.createAndAmendOtherExpenses.CreateAndAmendOtherExpensesHateoasData
+import v1.models.response.createAndAmendOtherExpenses.CreateAndAmendOtherExpensesResponse.CreateAndAmendOtherExpensesLinksFactory
+import v1.services.{CreateAndAmendOtherExpensesService, AuditService, EnrolmentsAuthService, MtdIdLookupService}
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class AmendOtherExpensesController @Inject() (val authService: EnrolmentsAuthService,
-                                              val lookupService: MtdIdLookupService,
-                                              parser: AmendOtherExpensesRequestParser,
-                                              service: AmendOtherExpensesService,
-                                              auditService: AuditService,
-                                              hateoasFactory: HateoasFactory,
-                                              cc: ControllerComponents,
-                                              val idGenerator: IdGenerator)(implicit ec: ExecutionContext)
+class CreateAndAmendOtherExpensesController @Inject() (val authService: EnrolmentsAuthService,
+                                                       val lookupService: MtdIdLookupService,
+                                                       parser: CreateAndAmendOtherExpensesRequestParser,
+                                                       service: CreateAndAmendOtherExpensesService,
+                                                       auditService: AuditService,
+                                                       hateoasFactory: HateoasFactory,
+                                                       cc: ControllerComponents,
+                                                       val idGenerator: IdGenerator)(implicit ec: ExecutionContext)
     extends AuthorisedController(cc)
     with BaseController
     with Logging {
 
   implicit val endpointLogContext: EndpointLogContext =
-    EndpointLogContext(controllerName = "AmendOtherExpensesController", endpointName = "amendOtherExpenses")
+    EndpointLogContext(controllerName = "CreateAndAmendOtherExpensesController", endpointName = "createAndAmendOtherExpenses")
 
   def handleRequest(nino: String, taxYear: String): Action[JsValue] =
     authorisedAction(nino).async(parse.json) { implicit request =>
@@ -57,14 +57,13 @@ class AmendOtherExpensesController @Inject() (val authService: EnrolmentsAuthSer
       logger.info(message = s"[${endpointLogContext.controllerName}][${endpointLogContext.endpointName}] " +
         s"with correlationId : $correlationId")
 
-      val rawData = AmendOtherExpensesRawData(nino, taxYear, request.body)
+      val rawData = CreateAndAmendOtherExpensesRawData(nino, taxYear, request.body)
       val result =
         for {
           parsedRequest   <- EitherT.fromEither[Future](parser.parseRequest(rawData))
-          serviceResponse <- EitherT(service.amend(parsedRequest))
-          vendorResponse <- EitherT.fromEither[Future](
-            hateoasFactory.wrap(serviceResponse.responseData, AmendOtherExpensesHateoasData(nino, taxYear)).asRight[ErrorWrapper])
+          serviceResponse <- EitherT(service.createAndAmend(parsedRequest))
         } yield {
+          val vendorResponse = hateoasFactory.wrap(serviceResponse.responseData, CreateAndAmendOtherExpensesHateoasData(nino, taxYear))
           logger.info(
             s"[${endpointLogContext.controllerName}][${endpointLogContext.endpointName}] - " +
               s"Success response received with CorrelationId: ${serviceResponse.correlationId}")
@@ -104,10 +103,18 @@ class AmendOtherExpensesController @Inject() (val authService: EnrolmentsAuthSer
     }
 
   private def errorResult(errorWrapper: ErrorWrapper) = {
-    (errorWrapper.error: @unchecked) match {
-      case NinoFormatError | BadRequestError | TaxYearFormatError | RuleTaxYearNotSupportedError | MtdErrorWithCustomMessage(
-            CustomerReferenceFormatError.code) | RuleTaxYearRangeInvalidError | RuleIncorrectOrEmptyBodyError | MtdErrorWithCustomMessage(
-            ValueFormatError.code) =>
+    (errorWrapper.error) match {
+      case _
+          if errorWrapper.containsAnyOf(
+            NinoFormatError,
+            BadRequestError,
+            TaxYearFormatError,
+            RuleTaxYearNotSupportedError,
+            CustomerReferenceFormatError,
+            RuleTaxYearRangeInvalidError,
+            RuleIncorrectOrEmptyBodyError,
+            ValueFormatError
+          ) =>
         BadRequest(Json.toJson(errorWrapper))
       case StandardDownstreamError => InternalServerError(Json.toJson(errorWrapper))
     }

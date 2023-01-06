@@ -83,12 +83,12 @@ class RetrieveOtherExpensesResponseSpec extends UnitSpec with MockAppConfig {
       }
     }
     "passed empty JSON with missing Patents" should {
-      "convert JSON into an empty AmendOtherExpensesBody object" in {
+      "convert JSON into an empty CreateAndAmendOtherExpensesBody object" in {
         retrieveOtherExpensesBodyWithoutPatents shouldBe patentsMissingJson.as[RetrieveOtherExpensesResponse]
       }
     }
     "passed empty JSON with missing Payments" should {
-      "convert JSON into an empty AmendOtherExpensesBody object" in {
+      "convert JSON into an empty CreateAndAmendOtherExpensesBody object" in {
         retrieveOtherExpensesBodyWithoutPayments shouldBe paymentsMissingJson.as[RetrieveOtherExpensesResponse]
       }
     }

@@ -33,7 +33,7 @@ object RetrieveOtherExpensesResponse extends HateoasLinks {
     override def links(appConfig: AppConfig, data: RetrieveOtherExpensesHateoasData): Seq[Link] = {
       import data._
       Seq(
-        amendOtherExpenses(appConfig, nino, taxYear),
+        createAndAmendOtherExpenses(appConfig, nino, taxYear),
         retrieveOtherExpenses(appConfig, nino, taxYear),
         deleteOtherExpenses(appConfig, nino, taxYear)
       )

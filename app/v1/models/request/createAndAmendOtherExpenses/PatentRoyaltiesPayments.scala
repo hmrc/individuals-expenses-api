@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package v1.models.request.amendOtherExpenses
+package v1.models.request.createAndAmendOtherExpenses
 
 import play.api.libs.json.{Json, OFormat}
 

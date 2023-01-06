@@ -20,6 +20,7 @@ import support.UnitSpec
 import v1.mocks.validators.MockDeleteOtherExpensesValidator
 import v1.models.domain.Nino
 import v1.models.errors.{BadRequestError, ErrorWrapper, NinoFormatError, TaxYearFormatError}
+import v1.models.request.TaxYear
 import v1.models.request.deleteOtherExpenses.{DeleteOtherExpensesRawData, DeleteOtherExpensesRequest}
 
 class DeleteOtherExpensesRequestParserSpec extends UnitSpec {
@@ -28,7 +29,7 @@ class DeleteOtherExpensesRequestParserSpec extends UnitSpec {
   val taxYear                        = "2019-20"
   implicit val correlationId: String = "a1e8057e-fbbc-47a8-a8b4-78d9f015c253"
 
-  val inputData = DeleteOtherExpensesRawData(nino, taxYear)
+  val rawData = DeleteOtherExpensesRawData(nino, taxYear)
 
   trait Test extends MockDeleteOtherExpensesValidator {
     lazy val parser = new DeleteOtherExpensesRequestParser(mockValidator)
@@ -38,10 +39,10 @@ class DeleteOtherExpensesRequestParserSpec extends UnitSpec {
 
     "return a request object" when {
       "valid request data is supplied" in new Test {
-        MockDeleteOtherExpensesValidator.validate(inputData).returns(Nil)
+        MockDeleteOtherExpensesValidator.validate(rawData).returns(Nil)
 
-        parser.parseRequest(inputData) shouldBe
-          Right(DeleteOtherExpensesRequest(Nino(nino), "2019-20"))
+        parser.parseRequest(rawData) shouldBe
+          Right(DeleteOtherExpensesRequest(Nino(nino), TaxYear.fromMtd(taxYear)))
       }
     }
 
@@ -49,19 +50,19 @@ class DeleteOtherExpensesRequestParserSpec extends UnitSpec {
 
       "a single validation error occurs" in new Test {
         MockDeleteOtherExpensesValidator
-          .validate(inputData)
+          .validate(rawData)
           .returns(List(NinoFormatError))
 
-        parser.parseRequest(inputData) shouldBe
+        parser.parseRequest(rawData) shouldBe
           Left(ErrorWrapper(correlationId, NinoFormatError, None))
       }
 
       "multiple validation errors occur" in new Test {
         MockDeleteOtherExpensesValidator
-          .validate(inputData)
+          .validate(rawData)
           .returns(List(NinoFormatError, TaxYearFormatError))
 
-        parser.parseRequest(inputData) shouldBe
+        parser.parseRequest(rawData) shouldBe
           Left(ErrorWrapper(correlationId, BadRequestError, Some(Seq(NinoFormatError, TaxYearFormatError))))
       }
     }

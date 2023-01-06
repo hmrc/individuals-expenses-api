@@ -17,5 +17,6 @@
 package v1.models.request.deleteOtherExpenses
 
 import v1.models.domain.Nino
+import v1.models.request.TaxYear
 
-case class DeleteOtherExpensesRequest(nino: Nino, taxYear: String)
+case class DeleteOtherExpensesRequest(nino: Nino, taxYear: TaxYear)

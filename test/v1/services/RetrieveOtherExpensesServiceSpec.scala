@@ -20,6 +20,7 @@ import v1.mocks.connectors.MockRetrieveOtherExpensesConnector
 import v1.models.domain.Nino
 import v1.models.errors._
 import v1.models.outcomes.ResponseWrapper
+import v1.models.request.TaxYear
 import v1.models.request.retrieveOtherExpenses.RetrieveOtherExpensesRequest
 import v1.models.response.retrieveOtherExpenses._
 
@@ -27,8 +28,8 @@ import scala.concurrent.Future
 
 class RetrieveOtherExpensesServiceSpec extends ServiceSpec {
 
-  val taxYear    = "2017-18"
-  val nino: Nino = Nino("AA123456A")
+  val taxYear = "2017-18"
+  val nino    = Nino("AA123456A")
 
   val body: RetrieveOtherExpensesResponse = RetrieveOtherExpensesResponse(
     "2019-04-04T01:01:01Z",
@@ -36,19 +37,19 @@ class RetrieveOtherExpensesServiceSpec extends ServiceSpec {
     Some(PatentRoyaltiesPayments(Some("ROYALTIES PAYMENTS"), 5423.65))
   )
 
-  private val requestData = RetrieveOtherExpensesRequest(nino, taxYear)
+  private val requestData = RetrieveOtherExpensesRequest(nino, TaxYear.fromMtd(taxYear))
 
   trait Test extends MockRetrieveOtherExpensesConnector {
 
-    val service = new RetrieveOtherExpensesService(
-      retrieveOtherExpensesConnector = mockRetrieveOtherExpensesConnector
-    )
-
+    val service = new RetrieveOtherExpensesService(connector = mockRetrieveOtherExpensesConnector)
   }
 
   "service" should {
+
     "service call successful" when {
+
       "return mapped result" in new Test {
+
         MockRetrieveOtherExpensesConnector
           .retrieveOtherExpenses(requestData)
           .returns(Future.successful(Right(ResponseWrapper(correlationId, body))))
@@ -59,27 +60,33 @@ class RetrieveOtherExpensesServiceSpec extends ServiceSpec {
   }
 
   "unsuccessful" should {
+
     "map errors according to spec" when {
 
-      def serviceError(desErrorCode: String, error: MtdError): Unit =
-        s"a $desErrorCode error is returned from the service" in new Test {
+      def serviceError(downstreamErrorCode: String, error: MtdError): Unit =
+        s"a $downstreamErrorCode error is returned from the service" in new Test {
 
           MockRetrieveOtherExpensesConnector
             .retrieveOtherExpenses(requestData)
-            .returns(Future.successful(Left(ResponseWrapper(correlationId, DownstreamErrors.single(DownstreamErrorCode(desErrorCode))))))
+            .returns(Future.successful(Left(ResponseWrapper(correlationId, DownstreamErrors.single(DownstreamErrorCode(downstreamErrorCode))))))
 
           await(service.retrieveOtherExpenses(requestData)) shouldBe Left(ErrorWrapper(correlationId, error))
         }
 
-      val input = Seq(
+      val errors = Seq(
         "INVALID_TAXABLE_ENTITY_ID" -> NinoFormatError,
         "FORMAT_TAX_YEAR"           -> TaxYearFormatError,
         "NO_DATA_FOUND"             -> NotFoundError,
+        "INVALID_CORRELATIONID"     -> StandardDownstreamError,
         "SERVER_ERROR"              -> StandardDownstreamError,
         "SERVICE_UNAVAILABLE"       -> StandardDownstreamError
       )
+      val extraTysErrors = Seq(
+        "INVALID_CORRELATION_ID" -> StandardDownstreamError,
+        "TAX_YEAR_NOT_SUPPORTED" -> RuleTaxYearNotSupportedError
+      )
 
-      input.foreach(args => (serviceError _).tupled(args))
+      (errors ++ extraTysErrors).foreach(args => (serviceError _).tupled(args))
     }
   }
 

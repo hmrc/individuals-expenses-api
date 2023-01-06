@@ -14,22 +14,23 @@
  * limitations under the License.
  */
 
-package v1.models.request.amendOtherExpenses
+package v1.models.request.createAndAmendOtherExpenses
 
 import play.api.libs.json.Json
 import support.UnitSpec
 import v1.models.utils.JsonErrorValidators
 
-class AmendOtherExpensesBodySpec extends UnitSpec with JsonErrorValidators {
+class CreateAndAmendOtherExpensesBodySpec extends UnitSpec with JsonErrorValidators {
 
-  val amendOtherExpensesBody = AmendOtherExpensesBody(
+  val createAndAmendOtherExpensesBody = CreateAndAmendOtherExpensesBody(
     Some(PaymentsToTradeUnionsForDeathBenefits(Some("TRADE UNION PAYMENTS"), 2314.32)),
     Some(PatentRoyaltiesPayments(Some("ROYALTIES PAYMENTS"), 2314.32)))
 
-  val amendOtherExpensesBodyWithoutPatents =
-    AmendOtherExpensesBody(Some(PaymentsToTradeUnionsForDeathBenefits(Some("TRADE UNION PAYMENTS"), 2314.32)), None)
+  val createAndAmendOtherExpensesBodyWithoutPatents =
+    CreateAndAmendOtherExpensesBody(Some(PaymentsToTradeUnionsForDeathBenefits(Some("TRADE UNION PAYMENTS"), 2314.32)), None)
 
-  val amendOtherExpensesBodyWithoutPayments = AmendOtherExpensesBody(None, Some(PatentRoyaltiesPayments(Some("ROYALTIES PAYMENTS"), 2314.32)))
+  val createAndAmendOtherExpensesBodyWithoutPayments =
+    CreateAndAmendOtherExpensesBody(None, Some(PatentRoyaltiesPayments(Some("ROYALTIES PAYMENTS"), 2314.32)))
 
   val json = Json.parse(
     """{
@@ -65,38 +66,38 @@ class AmendOtherExpensesBodySpec extends UnitSpec with JsonErrorValidators {
   "reads" when {
     "passed valid JSON" should {
       "return a valid model" in {
-        amendOtherExpensesBody shouldBe json.as[AmendOtherExpensesBody]
+        createAndAmendOtherExpensesBody shouldBe json.as[CreateAndAmendOtherExpensesBody]
       }
     }
   }
 
   "read from empty JSON with missing Patents" should {
-    "convert JSON into an empty AmendOtherExpensesBody object" in {
-      amendOtherExpensesBodyWithoutPatents shouldBe patentsMissingJson.as[AmendOtherExpensesBody]
+    "convert JSON into an empty CreateAndAmendOtherExpensesBody object" in {
+      createAndAmendOtherExpensesBodyWithoutPatents shouldBe patentsMissingJson.as[CreateAndAmendOtherExpensesBody]
     }
   }
 
   "read from empty JSON with missing Payments" should {
-    "convert JSON into an empty AmendOtherExpensesBody object" in {
-      amendOtherExpensesBodyWithoutPayments shouldBe paymentsMissingJson.as[AmendOtherExpensesBody]
+    "convert JSON into an empty CreateAndAmendOtherExpensesBody object" in {
+      createAndAmendOtherExpensesBodyWithoutPayments shouldBe paymentsMissingJson.as[CreateAndAmendOtherExpensesBody]
     }
   }
 
   "writes" when {
     "passed valid model" should {
       "return valid JSON" in {
-        Json.toJson(amendOtherExpensesBody) shouldBe json
+        Json.toJson(createAndAmendOtherExpensesBody) shouldBe json
       }
     }
     "write from an empty body" when {
       "passed a model missing patents" should {
         "return an empty JSON" in {
-          Json.toJson(amendOtherExpensesBodyWithoutPatents) shouldBe patentsMissingJson
+          Json.toJson(createAndAmendOtherExpensesBodyWithoutPatents) shouldBe patentsMissingJson
         }
       }
       "passed a model missing payments" should {
         "return an empty JSON" in {
-          Json.toJson(amendOtherExpensesBodyWithoutPayments) shouldBe paymentsMissingJson
+          Json.toJson(createAndAmendOtherExpensesBodyWithoutPayments) shouldBe paymentsMissingJson
         }
       }
     }

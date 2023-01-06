@@ -21,33 +21,33 @@ import config.AppConfig
 import javax.inject.Inject
 import utils.{CurrentDateTime, CurrentTaxYear}
 import v1.models.errors._
-import v1.models.request.amendOtherExpenses._
+import v1.models.request.createAndAmendOtherExpenses._
 
-class AmendOtherExpensesValidator @Inject() (implicit currentDateTime: CurrentDateTime, appConfig: AppConfig, currentTaxYear: CurrentTaxYear)
-    extends Validator[AmendOtherExpensesRawData] {
+class CreateAndAmendOtherExpensesValidator @Inject() (implicit currentDateTime: CurrentDateTime, appConfig: AppConfig, currentTaxYear: CurrentTaxYear)
+    extends Validator[CreateAndAmendOtherExpensesRawData] {
   private val validationSet = List(parameterFormatValidation, bodyFormatValidation, parameterRuleValidation, bodyFieldValidation)
 
-  private def parameterFormatValidation: AmendOtherExpensesRawData => List[List[MtdError]] = (data: AmendOtherExpensesRawData) => {
+  private def parameterFormatValidation: CreateAndAmendOtherExpensesRawData => List[List[MtdError]] = (data: CreateAndAmendOtherExpensesRawData) => {
     List(
       NinoValidation.validate(data.nino),
       TaxYearValidation.validate(data.taxYear)
     )
   }
 
-  private def bodyFormatValidation: AmendOtherExpensesRawData => List[List[MtdError]] = { data =>
+  private def bodyFormatValidation: CreateAndAmendOtherExpensesRawData => List[List[MtdError]] = { data =>
     List(
-      JsonFormatValidation.validate[AmendOtherExpensesBody](data.body, RuleIncorrectOrEmptyBodyError)
+      JsonFormatValidation.validate[CreateAndAmendOtherExpensesBody](data.body, RuleIncorrectOrEmptyBodyError)
     )
   }
 
-  private def parameterRuleValidation: AmendOtherExpensesRawData => List[List[MtdError]] = { data =>
+  private def parameterRuleValidation: CreateAndAmendOtherExpensesRawData => List[List[MtdError]] = { data =>
     List(
       MtdTaxYearValidation.validate(data.taxYear, appConfig.otherExpensesMinimumTaxYear)
     )
   }
 
-  private def bodyFieldValidation: AmendOtherExpensesRawData => List[List[MtdError]] = { data =>
-    val body = data.body.as[AmendOtherExpensesBody]
+  private def bodyFieldValidation: CreateAndAmendOtherExpensesRawData => List[List[MtdError]] = { data =>
+    val body = data.body.as[CreateAndAmendOtherExpensesBody]
 
     List(
       flattenErrors(
@@ -85,7 +85,7 @@ class AmendOtherExpensesValidator @Inject() (implicit currentDateTime: CurrentDa
     ).flatten
   }
 
-  override def validate(data: AmendOtherExpensesRawData): List[MtdError] = {
+  override def validate(data: CreateAndAmendOtherExpensesRawData): List[MtdError] = {
     run(validationSet, data).distinct
   }
 
