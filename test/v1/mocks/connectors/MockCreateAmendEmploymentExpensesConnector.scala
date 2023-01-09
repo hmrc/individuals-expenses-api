@@ -19,20 +19,26 @@ package v1.mocks.connectors
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
 import uk.gov.hmrc.http.HeaderCarrier
-import v1.connectors.{AmendEmploymentExpensesConnector, DownstreamOutcome}
-import v1.models.request.amendEmploymentExpenses.AmendEmploymentExpensesRequest
+import v1.connectors.{CreateAmendEmploymentExpensesConnector, DownstreamOutcome}
+import v1.models.request.CreateAmendEmploymentExpenses.CreateAmendEmploymentExpensesRequest
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockAmendEmploymentExpensesConnector extends MockFactory {
+trait MockCreateAmendEmploymentExpensesConnector extends MockFactory {
 
-  val mockAmendEmploymentExpensesConnector: AmendEmploymentExpensesConnector = mock[AmendEmploymentExpensesConnector]
+  val mockAmendEmploymentExpensesConnector: CreateAmendEmploymentExpensesConnector = mock[CreateAmendEmploymentExpensesConnector]
 
   object MockAmendEmploymentExpensesConnector {
 
-    def amend(requestData: AmendEmploymentExpensesRequest): CallHandler[Future[DownstreamOutcome[Unit]]] = {
-      (mockAmendEmploymentExpensesConnector
-        .amend(_: AmendEmploymentExpensesRequest)(_: HeaderCarrier, _: ExecutionContext, _: String))
+    def amend(requestData: CreateAmendEmploymentExpensesRequest): CallHandler[Future[DownstreamOutcome[Unit]]] = {
+      (
+        mockAmendEmploymentExpensesConnector
+          .createAmendEmploymentExpenses(_: CreateAmendEmploymentExpensesRequest)(
+            _: HeaderCarrier,
+            _: ExecutionContext,
+            _: String
+          )
+        )
         .expects(requestData, *, *, *)
     }
 

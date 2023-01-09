@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package v1.models.request.amendEmploymentExpenses
+package v1.models.request.CreateAmendEmploymentExpenses
 
-import play.api.libs.json.JsValue
-import v1.models.request.RawData
+import v1.models.domain.Nino
+import v1.models.request.TaxYear
 
-case class AmendEmploymentExpensesRawData(nino: String, taxYear: String, body: JsValue) extends RawData
+case class CreateAmendEmploymentExpensesRequest(nino: Nino, taxYear: TaxYear, body: AmendEmploymentExpensesBody)

@@ -22,20 +22,24 @@ import uk.gov.hmrc.http.HeaderCarrier
 import v1.controllers.EndpointLogContext
 import v1.models.errors.ErrorWrapper
 import v1.models.outcomes.ResponseWrapper
-import v1.models.request.amendEmploymentExpenses.AmendEmploymentExpensesRequest
-import v1.services.AmendEmploymentExpensesService
+import v1.models.request.CreateAmendEmploymentExpenses.CreateAmendEmploymentExpensesRequest
+import v1.services.CreateAmendEmploymentExpensesService
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockAmendEmploymentExpensesService extends MockFactory {
+trait MockCreateAmendEmploymentExpensesService extends MockFactory {
 
-  val mockService: AmendEmploymentExpensesService = mock[AmendEmploymentExpensesService]
+  val mockService: CreateAmendEmploymentExpensesService = mock[CreateAmendEmploymentExpensesService]
 
   object MockAmendEmploymentExpensesService {
 
-    def amend(requestData: AmendEmploymentExpensesRequest): CallHandler[Future[Either[ErrorWrapper, ResponseWrapper[Unit]]]] = {
+    def amend(requestData: CreateAmendEmploymentExpensesRequest): CallHandler[Future[Either[ErrorWrapper, ResponseWrapper[Unit]]]] = {
       (mockService
-        .amend(_: AmendEmploymentExpensesRequest)(_: HeaderCarrier, _: ExecutionContext, _: EndpointLogContext, _: String))
+        .createAmendEmploymentExpenses(_: CreateAmendEmploymentExpensesRequest)(
+          _: HeaderCarrier,
+          _: ExecutionContext,
+          _: EndpointLogContext,
+          _: String))
         .expects(requestData, *, *, *, *)
     }
 

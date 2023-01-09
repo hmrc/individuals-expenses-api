@@ -21,39 +21,43 @@ import javax.inject.Inject
 import utils.{CurrentDateTime, CurrentTaxYear}
 import v1.controllers.requestParsers.validators.validations._
 import v1.models.errors.{MtdError, RuleIncorrectOrEmptyBodyError}
-import v1.models.request.amendEmploymentExpenses.{AmendEmploymentExpensesBody, AmendEmploymentExpensesRawData, Expenses}
+import v1.models.request.CreateAmendEmploymentExpenses.{AmendEmploymentExpensesBody, CreateAmendEmploymentExpensesRawData, Expenses}
 
-class AmendEmploymentExpensesValidator @Inject() (implicit currentDateTime: CurrentDateTime, appConfig: AppConfig, currentTaxYear: CurrentTaxYear)
-    extends Validator[AmendEmploymentExpensesRawData] {
+class CreateAmendEmploymentExpensesValidator @Inject() (implicit
+    currentDateTime: CurrentDateTime,
+    appConfig: AppConfig,
+    currentTaxYear: CurrentTaxYear)
+    extends Validator[CreateAmendEmploymentExpensesRawData] {
 
   private val validationSet =
     List(parameterFormatValidation, bodyFormatValidation, parameterRuleValidation, incorrectOrEmptyBodySubmittedValidation, bodyFieldValidation)
 
-  private def parameterFormatValidation: AmendEmploymentExpensesRawData => List[List[MtdError]] = (data: AmendEmploymentExpensesRawData) => {
-    List(
-      NinoValidation.validate(data.nino),
-      TaxYearValidation.validate(data.taxYear)
-    )
-  }
+  private def parameterFormatValidation: CreateAmendEmploymentExpensesRawData => List[List[MtdError]] =
+    (data: CreateAmendEmploymentExpensesRawData) => {
+      List(
+        NinoValidation.validate(data.nino),
+        TaxYearValidation.validate(data.taxYear)
+      )
+    }
 
-  private def bodyFormatValidation: AmendEmploymentExpensesRawData => List[List[MtdError]] = { data =>
+  private def bodyFormatValidation: CreateAmendEmploymentExpensesRawData => List[List[MtdError]] = { data =>
     List(
       JsonFormatValidation.validate[AmendEmploymentExpensesBody](data.body, RuleIncorrectOrEmptyBodyError)
     )
   }
 
-  private def parameterRuleValidation: AmendEmploymentExpensesRawData => List[List[MtdError]] = { data =>
+  private def parameterRuleValidation: CreateAmendEmploymentExpensesRawData => List[List[MtdError]] = { data =>
     List(
-      MtdTaxYearValidation.validate(data.taxYear, appConfig.employmentExpensesMinimumTaxYear, true)
+      MtdTaxYearValidation.validate(data.taxYear, appConfig.employmentExpensesMinimumTaxYear, data.temporalValidationEnabled)
     )
   }
 
-  private def incorrectOrEmptyBodySubmittedValidation: AmendEmploymentExpensesRawData => List[List[MtdError]] = { data =>
+  private def incorrectOrEmptyBodySubmittedValidation: CreateAmendEmploymentExpensesRawData => List[List[MtdError]] = { data =>
     val body = data.body.as[AmendEmploymentExpensesBody]
     if (body.isIncorrectOrEmptyBody) List(List(RuleIncorrectOrEmptyBodyError)) else NoValidationErrors
   }
 
-  private def bodyFieldValidation: AmendEmploymentExpensesRawData => List[List[MtdError]] = { data =>
+  private def bodyFieldValidation: CreateAmendEmploymentExpensesRawData => List[List[MtdError]] = { data =>
     val body = data.body.as[AmendEmploymentExpensesBody]
 
     List(
@@ -101,7 +105,7 @@ class AmendEmploymentExpensesValidator @Inject() (implicit currentDateTime: Curr
     ).flatten
   }
 
-  override def validate(data: AmendEmploymentExpensesRawData): List[MtdError] = {
+  override def validate(data: CreateAmendEmploymentExpensesRawData): List[MtdError] = {
     run(validationSet, data).distinct
   }
 

@@ -18,18 +18,18 @@ package v1.mocks.validators
 
 import org.scalamock.handlers.CallHandler1
 import org.scalamock.scalatest.MockFactory
-import v1.controllers.requestParsers.validators.AmendEmploymentExpensesValidator
+import v1.controllers.requestParsers.validators.CreateAmendEmploymentExpensesValidator
 import v1.models.errors.MtdError
-import v1.models.request.amendEmploymentExpenses.AmendEmploymentExpensesRawData
+import v1.models.request.CreateAmendEmploymentExpenses.CreateAmendEmploymentExpensesRawData
 
-class MockAmendEmploymentExpensesValidator extends MockFactory {
-  val mockValidator: AmendEmploymentExpensesValidator = mock[AmendEmploymentExpensesValidator]
+class MockCreateAmendEmploymentExpensesValidator extends MockFactory {
+  val mockValidator: CreateAmendEmploymentExpensesValidator = mock[CreateAmendEmploymentExpensesValidator]
 
   object MockAmendEmploymentExpensesValidator {
 
-    def validate(data: AmendEmploymentExpensesRawData): CallHandler1[AmendEmploymentExpensesRawData, List[MtdError]] = {
+    def validate(data: CreateAmendEmploymentExpensesRawData): CallHandler1[CreateAmendEmploymentExpensesRawData, List[MtdError]] = {
       (mockValidator
-        .validate(_: AmendEmploymentExpensesRawData))
+        .validate(_: CreateAmendEmploymentExpensesRawData))
         .expects(data)
     }
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package v1.models.request.amendEmploymentExpenses
+package v1.models.request.CreateAmendEmploymentExpenses
 
 import play.api.libs.json.Json
 import support.UnitSpec

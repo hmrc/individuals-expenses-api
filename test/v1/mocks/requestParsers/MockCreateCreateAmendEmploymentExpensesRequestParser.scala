@@ -18,18 +18,18 @@ package v1.mocks.requestParsers
 
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
-import v1.controllers.requestParsers.AmendEmploymentExpensesRequestParser
+import v1.controllers.requestParsers.CreateAmendEmploymentExpensesRequestParser
 import v1.models.errors.ErrorWrapper
-import v1.models.request.amendEmploymentExpenses.{AmendEmploymentExpensesRawData, AmendEmploymentExpensesRequest}
+import v1.models.request.CreateAmendEmploymentExpenses.{CreateAmendEmploymentExpensesRawData, CreateAmendEmploymentExpensesRequest}
 
-trait MockAmendEmploymentExpensesRequestParser extends MockFactory {
+trait MockCreateCreateAmendEmploymentExpensesRequestParser extends MockFactory {
 
-  val mockRequestParser: AmendEmploymentExpensesRequestParser = mock[AmendEmploymentExpensesRequestParser]
+  val mockRequestParser: CreateAmendEmploymentExpensesRequestParser = mock[CreateAmendEmploymentExpensesRequestParser]
 
   object MockAmendEmploymentExpensesRequestParser {
 
-    def parseRequest(data: AmendEmploymentExpensesRawData): CallHandler[Either[ErrorWrapper, AmendEmploymentExpensesRequest]] = {
-      (mockRequestParser.parseRequest(_: AmendEmploymentExpensesRawData)(_: String)).expects(data, *)
+    def parseRequest(data: CreateAmendEmploymentExpensesRawData): CallHandler[Either[ErrorWrapper, CreateAmendEmploymentExpensesRequest]] = {
+      (mockRequestParser.parseRequest(_: CreateAmendEmploymentExpensesRawData)(_: String)).expects(data, *)
     }
 
   }
