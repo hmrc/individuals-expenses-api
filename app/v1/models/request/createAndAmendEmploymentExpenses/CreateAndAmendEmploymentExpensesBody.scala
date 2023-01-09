@@ -14,9 +14,14 @@
  * limitations under the License.
  */
 
-package v1.models.request.amendEmploymentExpenses
+package v1.models.request.createAndAmendEmploymentExpenses
 
-import play.api.libs.json.JsValue
-import v1.models.request.RawData
+import play.api.libs.json.{Json, OFormat}
 
-case class AmendEmploymentExpensesRawData(nino: String, taxYear: String, body: JsValue) extends RawData
+case class CreateAndAmendEmploymentExpensesBody(expenses: Expenses) {
+  def isIncorrectOrEmptyBody: Boolean = expenses.isEmpty
+}
+
+object CreateAndAmendEmploymentExpensesBody {
+  implicit val format: OFormat[CreateAndAmendEmploymentExpensesBody] = Json.format[CreateAndAmendEmploymentExpensesBody]
+}

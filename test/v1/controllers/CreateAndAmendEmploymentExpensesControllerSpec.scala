@@ -21,26 +21,26 @@ import play.api.mvc.Result
 import uk.gov.hmrc.http.HeaderCarrier
 import v1.mocks.MockIdGenerator
 import v1.mocks.hateoas.MockHateoasFactory
-import v1.mocks.requestParsers.MockAmendEmploymentExpensesRequestParser
-import v1.mocks.services.{MockAmendEmploymentExpensesService, MockAuditService, MockEnrolmentsAuthService, MockMtdIdLookupService}
+import v1.mocks.requestParsers.MockCreateAndCreateAndAmendEmploymentExpensesRequestParser
+import v1.mocks.services.{MockAuditService, MockCreateAndAmendEmploymentExpensesService, MockEnrolmentsAuthService, MockMtdIdLookupService}
 import v1.models.audit.{AuditError, AuditEvent, AuditResponse, ExpensesAuditDetail}
 import v1.models.domain.Nino
 import v1.models.errors._
 import v1.models.hateoas.Method.{DELETE, GET, PUT}
 import v1.models.hateoas.{HateoasWrapper, Link}
 import v1.models.outcomes.ResponseWrapper
-import v1.models.request.amendEmploymentExpenses._
-import v1.models.response.amendEmploymentExpenses.AmendEmploymentExpensesHateoasData
+import v1.models.request.createAndAmendEmploymentExpenses._
+import v1.models.response.createAndAmendEmploymentExpenses.CreateAndAmendEmploymentExpensesHateoasData
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class AmendEmploymentExpensesControllerSpec
+class CreateAndAmendEmploymentExpensesControllerSpec
     extends ControllerBaseSpec
     with MockEnrolmentsAuthService
     with MockMtdIdLookupService
-    with MockAmendEmploymentExpensesService
-    with MockAmendEmploymentExpensesRequestParser
+    with MockCreateAndAmendEmploymentExpensesService
+    with MockCreateAndCreateAndAmendEmploymentExpensesRequestParser
     with MockHateoasFactory
     with MockAuditService
     with MockIdGenerator {
@@ -55,7 +55,7 @@ class AmendEmploymentExpensesControllerSpec
     Link(href = s"/individuals/expenses/employments/$nino/$taxYear", method = DELETE, rel = "delete-employment-expenses")
   )
 
-  private val requestBody = AmendEmploymentExpensesBody(
+  private val requestBody = CreateAndAmendEmploymentExpensesBody(
     Expenses(
       Some(123.12),
       Some(123.12),
@@ -119,13 +119,13 @@ class AmendEmploymentExpensesControllerSpec
       )
     )
 
-  private val rawData     = AmendEmploymentExpensesRawData(nino, taxYear, requestBodyJson)
-  private val requestData = AmendEmploymentExpensesRequest(Nino(nino), taxYear, requestBody)
+  private val rawData     = CreateAndAmendEmploymentExpensesRawData(nino, taxYear, requestBodyJson)
+  private val requestData = CreateAndAmendEmploymentExpensesRequest(Nino(nino), taxYear, requestBody)
 
   trait Test {
     val hc: HeaderCarrier = HeaderCarrier()
 
-    val controller = new AmendEmploymentExpensesController(
+    val controller = new CreateAndAmendEmploymentExpensesController(
       authService = mockEnrolmentsAuthService,
       lookupService = mockMtdIdLookupService,
       parser = mockRequestParser,
@@ -145,16 +145,16 @@ class AmendEmploymentExpensesControllerSpec
     "return Ok" when {
       "the request received is valid" in new Test {
 
-        MockAmendEmploymentExpensesRequestParser
+        MockCreateAndAmendEmploymentExpensesRequestParser
           .parseRequest(rawData)
           .returns(Right(requestData))
 
-        MockAmendEmploymentExpensesService
+        MockCreateAndAmendEmploymentExpensesService
           .amend(requestData)
           .returns(Future.successful(Right(ResponseWrapper(correlationId, ()))))
 
         MockHateoasFactory
-          .wrap((), AmendEmploymentExpensesHateoasData(nino, taxYear))
+          .wrap((), CreateAndAmendEmploymentExpensesHateoasData(nino, taxYear))
           .returns(HateoasWrapper((), testHateoasLinks))
 
         val result: Future[Result] = controller.handleRequest(nino, taxYear)(fakePostRequest(requestBodyJson))
@@ -171,7 +171,7 @@ class AmendEmploymentExpensesControllerSpec
         def errorsFromParserTester(error: MtdError, expectedStatus: Int): Unit = {
           s"a ${error.code} error is returned from the parser" in new Test {
 
-            MockAmendEmploymentExpensesRequestParser
+            MockCreateAndAmendEmploymentExpensesRequestParser
               .parseRequest(rawData)
               .returns(Left(ErrorWrapper(correlationId, error, None)))
 
@@ -204,11 +204,11 @@ class AmendEmploymentExpensesControllerSpec
         def serviceErrors(mtdError: MtdError, expectedStatus: Int): Unit = {
           s"a $mtdError error is returned from the service" in new Test {
 
-            MockAmendEmploymentExpensesRequestParser
+            MockCreateAndAmendEmploymentExpensesRequestParser
               .parseRequest(rawData)
               .returns(Right(requestData))
 
-            MockAmendEmploymentExpensesService
+            MockCreateAndAmendEmploymentExpensesService
               .amend(requestData)
               .returns(Future.successful(Left(ErrorWrapper(correlationId, mtdError))))
 

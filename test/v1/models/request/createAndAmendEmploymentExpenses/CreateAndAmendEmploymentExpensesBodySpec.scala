@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package v1.models.request.amendEmploymentExpenses
+package v1.models.request.createAndAmendEmploymentExpenses
 
 import play.api.libs.json.Json
 import support.UnitSpec
 import v1.models.utils.JsonErrorValidators
 
-class AmendEmploymentExpensesBodySpec extends UnitSpec with JsonErrorValidators {
+class CreateAndAmendEmploymentExpensesBodySpec extends UnitSpec with JsonErrorValidators {
 
-  val amendEmploymentExpensesBody = AmendEmploymentExpensesBody(
+  val createAndAmendEmploymentExpensesBody = CreateAndAmendEmploymentExpensesBody(
     Expenses(Some(123.12), Some(123.12), Some(123.12), Some(123.12), Some(123.12), Some(123.12), Some(123.12), Some(123.12)))
 
   val json = Json.parse(
@@ -45,7 +45,7 @@ class AmendEmploymentExpensesBodySpec extends UnitSpec with JsonErrorValidators 
   "reads" when {
     "passed valid JSON" should {
       "return a valid model" in {
-        amendEmploymentExpensesBody shouldBe json.as[AmendEmploymentExpensesBody]
+        createAndAmendEmploymentExpensesBody shouldBe json.as[CreateAndAmendEmploymentExpensesBody]
       }
     }
   }
@@ -53,7 +53,7 @@ class AmendEmploymentExpensesBodySpec extends UnitSpec with JsonErrorValidators 
   "writes" when {
     "passed valid model" should {
       "return valid JSON" in {
-        Json.toJson(amendEmploymentExpensesBody) shouldBe json
+        Json.toJson(createAndAmendEmploymentExpensesBody) shouldBe json
       }
     }
   }
@@ -62,11 +62,11 @@ class AmendEmploymentExpensesBodySpec extends UnitSpec with JsonErrorValidators 
     "return true" when {
       "expenses is empty" in {
         val expenses = Expenses(None, None, None, None, None, None, None, None)
-        AmendEmploymentExpensesBody(expenses).isIncorrectOrEmptyBody shouldBe true
+        CreateAndAmendEmploymentExpensesBody(expenses).isIncorrectOrEmptyBody shouldBe true
       }
       "expenses is not empty" in {
         val expenses = Expenses(Some(1), None, None, None, None, None, None, None)
-        AmendEmploymentExpensesBody(expenses).isIncorrectOrEmptyBody shouldBe false
+        CreateAndAmendEmploymentExpensesBody(expenses).isIncorrectOrEmptyBody shouldBe false
       }
     }
   }

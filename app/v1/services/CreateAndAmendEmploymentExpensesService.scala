@@ -21,22 +21,24 @@ import cats.implicits._
 import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Logging
-import v1.connectors.AmendEmploymentExpensesConnector
+import v1.connectors.CreateAndAmendEmploymentExpensesConnector
 import v1.controllers.EndpointLogContext
 import v1.models.errors._
-import v1.models.request.amendEmploymentExpenses.AmendEmploymentExpensesRequest
+import v1.models.request.createAndAmendEmploymentExpenses.CreateAndAmendEmploymentExpensesRequest
 import v1.support.DownstreamResponseMappingSupport
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class AmendEmploymentExpensesService @Inject() (connector: AmendEmploymentExpensesConnector) extends DownstreamResponseMappingSupport with Logging {
+class CreateAndAmendEmploymentExpensesService @Inject() (connector: CreateAndAmendEmploymentExpensesConnector)
+    extends DownstreamResponseMappingSupport
+    with Logging {
 
-  def amend(request: AmendEmploymentExpensesRequest)(implicit
+  def createAmend(request: CreateAndAmendEmploymentExpensesRequest)(implicit
       hc: HeaderCarrier,
       ec: ExecutionContext,
       logContext: EndpointLogContext,
-      correlationId: String): Future[AmendEmploymentExpensesServiceOutcome] = {
+      correlationId: String): Future[CreateAndAmendEmploymentExpensesServiceOutcome] = {
 
     val result = for {
       desResponseWrapper <- EitherT(connector.amend(request)).leftMap(mapDownstreamErrors(desErrorMap))

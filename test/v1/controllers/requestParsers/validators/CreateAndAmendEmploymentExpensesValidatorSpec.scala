@@ -25,9 +25,9 @@ import support.UnitSpec
 import utils.{CurrentDateTime, CurrentTaxYear}
 import v1.mocks.{MockCurrentDateTime, MockCurrentTaxYear}
 import v1.models.errors._
-import v1.models.request.amendEmploymentExpenses.AmendEmploymentExpensesRawData
+import v1.models.request.createAndAmendEmploymentExpenses.CreateAndAmendEmploymentExpensesRawData
 
-class AmendEmploymentExpensesValidatorSpec extends UnitSpec {
+class CreateAndAmendEmploymentExpensesValidatorSpec extends UnitSpec {
 
   private val validNino    = "AA123456A"
   private val validTaxYear = "2019-20"
@@ -184,7 +184,7 @@ class AmendEmploymentExpensesValidatorSpec extends UnitSpec {
     implicit val appConfig: AppConfig           = mockAppConfig
     implicit val currentTaxYear: CurrentTaxYear = mockCurrentTaxYear
 
-    val validator = new AmendEmploymentExpensesValidator()
+    val validator = new CreateAndAmendEmploymentExpensesValidator()
 
     MockAppConfig.employmentExpensesMinimumTaxYear.returns(2020)
 
@@ -201,63 +201,65 @@ class AmendEmploymentExpensesValidatorSpec extends UnitSpec {
   "running a validation" should {
     "return no errors" when {
       "a valid request is supplied" in new Test {
-        validator.validate(AmendEmploymentExpensesRawData(validNino, validTaxYear, requestBodyJson)) shouldBe Nil
+        validator.validate(CreateAndAmendEmploymentExpensesRawData(validNino, validTaxYear, requestBodyJson)) shouldBe Nil
       }
       "a valid request is supplied without decimal places in the JSON" in new Test {
-        validator.validate(AmendEmploymentExpensesRawData(validNino, validTaxYear, requestBodyJsonNoDecimals)) shouldBe Nil
+        validator.validate(CreateAndAmendEmploymentExpensesRawData(validNino, validTaxYear, requestBodyJsonNoDecimals)) shouldBe Nil
       }
       "a valid request is supplied without businessTravelCosts in the JSON" in new Test {
-        validator.validate(AmendEmploymentExpensesRawData(validNino, validTaxYear, requestBodyJsonNoBusinessTravelCosts)) shouldBe Nil
+        validator.validate(CreateAndAmendEmploymentExpensesRawData(validNino, validTaxYear, requestBodyJsonNoBusinessTravelCosts)) shouldBe Nil
       }
       "a valid request is supplied without jobExpenses in the JSON" in new Test {
-        validator.validate(AmendEmploymentExpensesRawData(validNino, validTaxYear, requestBodyJsonNoJobExpenses)) shouldBe Nil
+        validator.validate(CreateAndAmendEmploymentExpensesRawData(validNino, validTaxYear, requestBodyJsonNoJobExpenses)) shouldBe Nil
       }
       "a valid request is supplied without flatRateJobExpenses in the JSON" in new Test {
-        validator.validate(AmendEmploymentExpensesRawData(validNino, validTaxYear, requestBodyJsonNoFlatRateJobExpenses)) shouldBe Nil
+        validator.validate(CreateAndAmendEmploymentExpensesRawData(validNino, validTaxYear, requestBodyJsonNoFlatRateJobExpenses)) shouldBe Nil
       }
       "a valid request is supplied without professionalSubscriptions in the JSON" in new Test {
-        validator.validate(AmendEmploymentExpensesRawData(validNino, validTaxYear, requestBodyJsonNoProfessionalSubscriptions)) shouldBe Nil
+        validator.validate(CreateAndAmendEmploymentExpensesRawData(validNino, validTaxYear, requestBodyJsonNoProfessionalSubscriptions)) shouldBe Nil
       }
       "a valid request is supplied without hotelAndMealExpenses in the JSON" in new Test {
-        validator.validate(AmendEmploymentExpensesRawData(validNino, validTaxYear, requestBodyJsonNoHotelAndMealExpenses)) shouldBe Nil
+        validator.validate(CreateAndAmendEmploymentExpensesRawData(validNino, validTaxYear, requestBodyJsonNoHotelAndMealExpenses)) shouldBe Nil
       }
       "a valid request is supplied without otherAndCapitalAllowances in the JSON" in new Test {
-        validator.validate(AmendEmploymentExpensesRawData(validNino, validTaxYear, requestBodyJsonNoOtherAndCapitalAllowances)) shouldBe Nil
+        validator.validate(CreateAndAmendEmploymentExpensesRawData(validNino, validTaxYear, requestBodyJsonNoOtherAndCapitalAllowances)) shouldBe Nil
       }
       "a valid request is supplied without vehicleExpenses in the JSON" in new Test {
-        validator.validate(AmendEmploymentExpensesRawData(validNino, validTaxYear, requestBodyJsonNoVehicleExpenses)) shouldBe Nil
+        validator.validate(CreateAndAmendEmploymentExpensesRawData(validNino, validTaxYear, requestBodyJsonNoVehicleExpenses)) shouldBe Nil
       }
       "a valid request is supplied without mileageAllowanceRelief in the JSON" in new Test {
-        validator.validate(AmendEmploymentExpensesRawData(validNino, validTaxYear, requestBodyJsonNoMileageAllowanceRelief)) shouldBe Nil
+        validator.validate(CreateAndAmendEmploymentExpensesRawData(validNino, validTaxYear, requestBodyJsonNoMileageAllowanceRelief)) shouldBe Nil
       }
     }
 
     "return a path parameter error" when {
       "the nino is invalid" in new Test {
-        validator.validate(AmendEmploymentExpensesRawData("A12344A", validTaxYear, requestBodyJson)) shouldBe List(NinoFormatError)
+        validator.validate(CreateAndAmendEmploymentExpensesRawData("A12344A", validTaxYear, requestBodyJson)) shouldBe List(NinoFormatError)
       }
       "the taxYear format is invalid" in new Test {
-        validator.validate(AmendEmploymentExpensesRawData(validNino, "2000", requestBodyJson)) shouldBe List(TaxYearFormatError)
+        validator.validate(CreateAndAmendEmploymentExpensesRawData(validNino, "2000", requestBodyJson)) shouldBe List(TaxYearFormatError)
       }
       "the taxYear range is invalid" in new Test {
-        validator.validate(AmendEmploymentExpensesRawData(validNino, "2021-24", requestBodyJson)) shouldBe List(RuleTaxYearRangeInvalidError)
+        validator.validate(CreateAndAmendEmploymentExpensesRawData(validNino, "2021-24", requestBodyJson)) shouldBe List(RuleTaxYearRangeInvalidError)
       }
       "the taxYear is below the minimum tax year" in new Test {
-        validator.validate(AmendEmploymentExpensesRawData(validNino, "2016-17", requestBodyJson)) shouldBe List(RuleTaxYearNotSupportedError)
+        validator.validate(CreateAndAmendEmploymentExpensesRawData(validNino, "2016-17", requestBodyJson)) shouldBe List(RuleTaxYearNotSupportedError)
       }
       "the taxYear has not yet ended" in new Test {
-        validator.validate(AmendEmploymentExpensesRawData(validNino, "2022-23", requestBodyJson)) shouldBe List(RuleTaxYearNotEndedError)
+        validator.validate(CreateAndAmendEmploymentExpensesRawData(validNino, "2022-23", requestBodyJson)) shouldBe List(RuleTaxYearNotEndedError)
       }
       "all path parameters are invalid" in new Test {
-        validator.validate(AmendEmploymentExpensesRawData("A12344A", "2000", requestBodyJson)) shouldBe List(NinoFormatError, TaxYearFormatError)
+        validator.validate(CreateAndAmendEmploymentExpensesRawData("A12344A", "2000", requestBodyJson)) shouldBe List(
+          NinoFormatError,
+          TaxYearFormatError)
       }
     }
     "return RuleIncorrectOrEmptyBodyError error" when {
       "an empty JSON body is submitted" in new Test {
-        validator.validate(AmendEmploymentExpensesRawData(validNino, validTaxYear, emptyJson)) shouldBe List(RuleIncorrectOrEmptyBodyError)
+        validator.validate(CreateAndAmendEmploymentExpensesRawData(validNino, validTaxYear, emptyJson)) shouldBe List(RuleIncorrectOrEmptyBodyError)
       }
       "an empty expenses object is submitted" in new Test {
-        validator.validate(AmendEmploymentExpensesRawData(validNino, validTaxYear, requestBodyJsonEmptyExpensesObject)) shouldBe List(
+        validator.validate(CreateAndAmendEmploymentExpensesRawData(validNino, validTaxYear, requestBodyJsonEmptyExpensesObject)) shouldBe List(
           RuleIncorrectOrEmptyBodyError)
       }
     }
@@ -276,7 +278,7 @@ class AmendEmploymentExpensesValidatorSpec extends UnitSpec {
             |        "mileageAllowanceRelief": 123.12
             |    }
             |}""".stripMargin)
-        validator.validate(AmendEmploymentExpensesRawData(validNino, validTaxYear, badJson)) shouldBe List(
+        validator.validate(CreateAndAmendEmploymentExpensesRawData(validNino, validTaxYear, badJson)) shouldBe List(
           ValueFormatError.copy(paths = Some(Seq("/expenses/businessTravelCosts")))
         )
       }
@@ -294,7 +296,7 @@ class AmendEmploymentExpensesValidatorSpec extends UnitSpec {
             |        "mileageAllowanceRelief": -123.12
             |    }
             |}""".stripMargin)
-        validator.validate(AmendEmploymentExpensesRawData(validNino, validTaxYear, badjson)) shouldBe List(
+        validator.validate(CreateAndAmendEmploymentExpensesRawData(validNino, validTaxYear, badjson)) shouldBe List(
           ValueFormatError.copy(paths = Some(Seq(
             "/expenses/businessTravelCosts",
             "/expenses/jobExpenses",
