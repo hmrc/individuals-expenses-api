@@ -18,6 +18,8 @@ package v1.controllers
 
 import cats.data.EitherT
 import cats.implicits._
+import config.{AppConfig, FeatureSwitches}
+
 import javax.inject.{Inject, Singleton}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
@@ -38,6 +40,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class IgnoreEmploymentExpensesController @Inject() (val authService: EnrolmentsAuthService,
                                                     val lookupService: MtdIdLookupService,
+                                                    appConfig: AppConfig,
                                                     parser: IgnoreEmploymentExpensesRequestParser,
                                                     service: IgnoreEmploymentExpensesService,
                                                     hateoasFactory: HateoasFactory,
@@ -57,14 +60,19 @@ class IgnoreEmploymentExpensesController @Inject() (val authService: EnrolmentsA
       logger.info(message = s"[${endpointLogContext.controllerName}][${endpointLogContext.endpointName}] " +
         s"with correlationId : $correlationId")
 
-      val rawData = IgnoreEmploymentExpensesRawData(nino, taxYear)
+      val rawData = IgnoreEmploymentExpensesRawData(
+        nino = nino,
+        taxYear = taxYear,
+        temporalValidationEnabled = FeatureSwitches()(appConfig).isTemporalValidationEnabled
+      )
+
       val result =
         for {
           parsedRequest   <- EitherT.fromEither[Future](parser.parseRequest(rawData))
           serviceResponse <- EitherT(service.ignore(parsedRequest))
-          vendorResponse <- EitherT.fromEither[Future](
-            hateoasFactory.wrap(serviceResponse.responseData, IgnoreEmploymentExpensesHateoasData(nino, taxYear)).asRight[ErrorWrapper])
         } yield {
+          val vendorResponse = hateoasFactory.wrap(serviceResponse.responseData, IgnoreEmploymentExpensesHateoasData(nino, taxYear))
+
           logger.info(
             s"[${endpointLogContext.controllerName}][${endpointLogContext.endpointName}] - " +
               s"Success response received with CorrelationId: ${serviceResponse.correlationId}")
@@ -105,11 +113,17 @@ class IgnoreEmploymentExpensesController @Inject() (val authService: EnrolmentsA
 
   private def errorResult(errorWrapper: ErrorWrapper) = {
     (errorWrapper.error: @unchecked) match {
-      case NinoFormatError | BadRequestError | TaxYearFormatError | RuleTaxYearRangeInvalidError | RuleTaxYearNotSupportedError |
-          RuleTaxYearNotEndedError =>
+      case _
+          if errorWrapper.containsAnyOf(
+            NinoFormatError,
+            BadRequestError,
+            TaxYearFormatError,
+            RuleTaxYearRangeInvalidError,
+            RuleTaxYearNotSupportedError,
+            RuleTaxYearNotEndedError) =>
         BadRequest(Json.toJson(errorWrapper))
       case StandardDownstreamError => InternalServerError(Json.toJson(errorWrapper))
-      case NotFoundError   => NotFound(Json.toJson(errorWrapper))
+      case NotFoundError           => NotFound(Json.toJson(errorWrapper))
     }
   }
 

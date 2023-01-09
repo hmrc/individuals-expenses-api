@@ -77,6 +77,9 @@ class IgnoreEmploymentExpensesValidatorSpec extends UnitSpec {
       "the taxYear has not ended" in new Test {
         validator.validate(IgnoreEmploymentExpensesRawData(validNino, "2023-24")) shouldBe List(RuleTaxYearNotEndedError)
       }
+      "the taxYear has not ended but temporal validation is disabled" in new Test {
+        validator.validate(IgnoreEmploymentExpensesRawData(validNino, "2023-24", temporalValidationEnabled = false)) shouldBe Nil
+      }
       "all path parameters are invalid" in new Test {
         validator.validate(IgnoreEmploymentExpensesRawData("Walrus", "2000")) shouldBe List(NinoFormatError, TaxYearFormatError)
       }

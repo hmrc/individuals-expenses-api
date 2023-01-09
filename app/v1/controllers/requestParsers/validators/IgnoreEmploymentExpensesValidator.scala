@@ -17,11 +17,12 @@
 package v1.controllers.requestParsers.validators
 
 import config.AppConfig
-import javax.inject.Inject
 import utils.{CurrentDateTime, CurrentTaxYear}
 import v1.controllers.requestParsers.validators.validations._
 import v1.models.errors._
 import v1.models.request.ignoreEmploymentExpenses._
+
+import javax.inject.Inject
 
 class IgnoreEmploymentExpensesValidator @Inject() (implicit currentDateTime: CurrentDateTime, appConfig: AppConfig, currentTaxYear: CurrentTaxYear)
     extends Validator[IgnoreEmploymentExpensesRawData] {
@@ -36,7 +37,7 @@ class IgnoreEmploymentExpensesValidator @Inject() (implicit currentDateTime: Cur
 
   private def parameterRuleValidation: IgnoreEmploymentExpensesRawData => List[List[MtdError]] = { data =>
     List(
-      MtdTaxYearValidation.validate(data.taxYear, appConfig.employmentExpensesMinimumTaxYear, checkCurrentTaxYear = true)
+      MtdTaxYearValidation.validate(data.taxYear, appConfig.employmentExpensesMinimumTaxYear, checkCurrentTaxYear = data.temporalValidationEnabled)
     )
   }
 

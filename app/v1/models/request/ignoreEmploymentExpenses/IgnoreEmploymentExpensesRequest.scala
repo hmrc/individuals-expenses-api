@@ -17,5 +17,6 @@
 package v1.models.request.ignoreEmploymentExpenses
 
 import v1.models.domain.Nino
+import v1.models.request.TaxYear
 
-case class IgnoreEmploymentExpensesRequest(nino: Nino, taxYear: String)
+case class IgnoreEmploymentExpensesRequest(nino: Nino, taxYear: TaxYear)

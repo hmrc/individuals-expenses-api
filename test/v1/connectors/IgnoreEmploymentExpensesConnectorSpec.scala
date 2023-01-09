@@ -18,14 +18,13 @@ package v1.connectors
 
 import v1.models.domain.Nino
 import v1.models.outcomes.ResponseWrapper
+import v1.models.request.TaxYear
 import v1.models.request.ignoreEmploymentExpenses.{IgnoreEmploymentExpensesBody, IgnoreEmploymentExpensesRequest}
 
 import scala.concurrent.Future
 
 class IgnoreEmploymentExpensesConnectorSpec extends ConnectorSpec {
 
-  val taxYear: String                    = "2021-22"
-  val nino: String                       = "AA123456A"
   val body: IgnoreEmploymentExpensesBody = IgnoreEmploymentExpensesBody(true)
 
   trait Test { _: ConnectorTest =>
@@ -35,21 +34,35 @@ class IgnoreEmploymentExpensesConnectorSpec extends ConnectorSpec {
       appConfig = mockAppConfig
     )
 
+    val outcome = Right(ResponseWrapper(correlationId, ()))
+
   }
 
   "ignore" should {
-    val request = IgnoreEmploymentExpensesRequest(Nino(nino), taxYear)
+    "return the expected response for a non-TYS request" when {
+      "a valid request is made" in new IfsR6Test with Test {
+        val request = IgnoreEmploymentExpensesRequest(Nino("AA123456A"), TaxYear.fromMtd("2021-22"))
 
-    "put a body and return 204 no body" in new IfsR6Test with Test {
-      val outcome = Right(ResponseWrapper(correlationId, ()))
+        willPut(
+          url = s"$baseUrl/income-tax/expenses/employments/AA123456A/2021-22",
+          body = body
+        ).returns(Future.successful(outcome))
 
-      willPut(
-        url = s"$baseUrl/income-tax/expenses/employments/$nino/$taxYear",
-        body = body
-      )
-        .returns(Future.successful(outcome))
+        await(connector.ignore(request)) shouldBe outcome
+      }
+    }
 
-      await(connector.ignore(request)) shouldBe outcome
+    "return the expected response for a TYS request" when {
+      "a valid request is made" in new TysIfsTest with Test {
+        val request = IgnoreEmploymentExpensesRequest(Nino("AA123456A"), TaxYear.fromMtd("2023-24"))
+
+        willPut(
+          url = s"$baseUrl/income-tax/23-24/expenses/employments/AA123456A",
+          body = body
+        ).returns(Future.successful(outcome))
+
+        await(connector.ignore(request)) shouldBe outcome
+      }
     }
   }
 
