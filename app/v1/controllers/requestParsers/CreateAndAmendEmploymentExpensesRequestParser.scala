@@ -18,14 +18,14 @@ package v1.controllers.requestParsers
 
 import javax.inject.Inject
 import v1.models.domain.Nino
-import v1.controllers.requestParsers.validators.AmendEmploymentExpensesValidator
+import v1.controllers.requestParsers.validators.CreateAndAmendEmploymentExpensesValidator
 import v1.models.request.createAndAmendEmploymentExpenses.{
   CreateAndAmendEmploymentExpensesBody,
   CreateAndAmendEmploymentExpensesRawData,
   CreateAndAmendEmploymentExpensesRequest
 }
 
-class AmendEmploymentExpensesRequestParser @Inject() (val validator: AmendEmploymentExpensesValidator)
+class CreateAndAmendEmploymentExpensesRequestParser @Inject() (val validator: CreateAndAmendEmploymentExpensesValidator)
     extends RequestParser[CreateAndAmendEmploymentExpensesRawData, CreateAndAmendEmploymentExpensesRequest] {
 
   override protected def requestFor(data: CreateAndAmendEmploymentExpensesRawData): CreateAndAmendEmploymentExpensesRequest =

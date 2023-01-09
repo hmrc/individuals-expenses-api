@@ -27,7 +27,7 @@ import v1.mocks.{MockCurrentDateTime, MockCurrentTaxYear}
 import v1.models.errors._
 import v1.models.request.createAndAmendEmploymentExpenses.CreateAndAmendEmploymentExpensesRawData
 
-class AmendEmploymentExpensesValidatorSpec extends UnitSpec {
+class CreateAndAmendEmploymentExpensesValidatorSpec extends UnitSpec {
 
   private val validNino    = "AA123456A"
   private val validTaxYear = "2019-20"
@@ -184,7 +184,7 @@ class AmendEmploymentExpensesValidatorSpec extends UnitSpec {
     implicit val appConfig: AppConfig           = mockAppConfig
     implicit val currentTaxYear: CurrentTaxYear = mockCurrentTaxYear
 
-    val validator = new AmendEmploymentExpensesValidator()
+    val validator = new CreateAndAmendEmploymentExpensesValidator()
 
     MockAppConfig.employmentExpensesMinimumTaxYear.returns(2020)
 

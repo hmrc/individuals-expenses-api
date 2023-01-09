@@ -18,12 +18,12 @@ package v1.controllers.requestParsers
 
 import play.api.libs.json.Json
 import support.UnitSpec
-import v1.mocks.validators.MockCreateAndAmendEmploymentExpensesValidator
+import v1.mocks.validators.MockCreateAndCreateAndAmendEmploymentExpensesValidator
 import v1.models.domain.Nino
 import v1.models.errors.{BadRequestError, ErrorWrapper, NinoFormatError, TaxYearFormatError}
 import v1.models.request.createAndAmendEmploymentExpenses._
 
-class CreateAndAmendEmploymentExpensesRequestParserSpec extends UnitSpec {
+class CreateAndCreateAndAmendEmploymentExpensesRequestParserSpec extends UnitSpec {
 
   val nino                           = "AA123456B"
   val taxYear                        = "2017-18"
@@ -46,8 +46,8 @@ class CreateAndAmendEmploymentExpensesRequestParserSpec extends UnitSpec {
   val inputData =
     CreateAndAmendEmploymentExpensesRawData(nino, taxYear, requestBodyJson)
 
-  trait Test extends MockCreateAndAmendEmploymentExpensesValidator {
-    lazy val parser = new AmendEmploymentExpensesRequestParser(mockValidator)
+  trait Test extends MockCreateAndCreateAndAmendEmploymentExpensesValidator {
+    lazy val parser = new CreateAndAmendEmploymentExpensesRequestParser(mockValidator)
   }
 
   "parse" should {

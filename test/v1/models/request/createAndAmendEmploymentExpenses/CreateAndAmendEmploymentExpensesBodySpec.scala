@@ -22,7 +22,7 @@ import v1.models.utils.JsonErrorValidators
 
 class CreateAndAmendEmploymentExpensesBodySpec extends UnitSpec with JsonErrorValidators {
 
-  val amendEmploymentExpensesBody = CreateAndAmendEmploymentExpensesBody(
+  val createAndAmendEmploymentExpensesBody = CreateAndAmendEmploymentExpensesBody(
     Expenses(Some(123.12), Some(123.12), Some(123.12), Some(123.12), Some(123.12), Some(123.12), Some(123.12), Some(123.12)))
 
   val json = Json.parse(
@@ -45,7 +45,7 @@ class CreateAndAmendEmploymentExpensesBodySpec extends UnitSpec with JsonErrorVa
   "reads" when {
     "passed valid JSON" should {
       "return a valid model" in {
-        amendEmploymentExpensesBody shouldBe json.as[CreateAndAmendEmploymentExpensesBody]
+        createAndAmendEmploymentExpensesBody shouldBe json.as[CreateAndAmendEmploymentExpensesBody]
       }
     }
   }
@@ -53,7 +53,7 @@ class CreateAndAmendEmploymentExpensesBodySpec extends UnitSpec with JsonErrorVa
   "writes" when {
     "passed valid model" should {
       "return valid JSON" in {
-        Json.toJson(amendEmploymentExpensesBody) shouldBe json
+        Json.toJson(createAndAmendEmploymentExpensesBody) shouldBe json
       }
     }
   }

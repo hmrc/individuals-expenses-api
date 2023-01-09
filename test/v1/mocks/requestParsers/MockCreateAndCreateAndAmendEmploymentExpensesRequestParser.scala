@@ -18,13 +18,13 @@ package v1.mocks.requestParsers
 
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
-import v1.controllers.requestParsers.AmendEmploymentExpensesRequestParser
+import v1.controllers.requestParsers.CreateAndAmendEmploymentExpensesRequestParser
 import v1.models.errors.ErrorWrapper
 import v1.models.request.createAndAmendEmploymentExpenses.{CreateAndAmendEmploymentExpensesRawData, CreateAndAmendEmploymentExpensesRequest}
 
-trait MockCreateAndAmendEmploymentExpensesRequestParser extends MockFactory {
+trait MockCreateAndCreateAndAmendEmploymentExpensesRequestParser extends MockFactory {
 
-  val mockRequestParser: AmendEmploymentExpensesRequestParser = mock[AmendEmploymentExpensesRequestParser]
+  val mockRequestParser: CreateAndAmendEmploymentExpensesRequestParser = mock[CreateAndAmendEmploymentExpensesRequestParser]
 
   object MockCreateAndAmendEmploymentExpensesRequestParser {
 

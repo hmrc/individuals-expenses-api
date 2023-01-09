@@ -18,12 +18,12 @@ package v1.mocks.validators
 
 import org.scalamock.handlers.CallHandler1
 import org.scalamock.scalatest.MockFactory
-import v1.controllers.requestParsers.validators.AmendEmploymentExpensesValidator
+import v1.controllers.requestParsers.validators.CreateAndAmendEmploymentExpensesValidator
 import v1.models.errors.MtdError
 import v1.models.request.createAndAmendEmploymentExpenses.CreateAndAmendEmploymentExpensesRawData
 
-class MockCreateAndAmendEmploymentExpensesValidator extends MockFactory {
-  val mockValidator: AmendEmploymentExpensesValidator = mock[AmendEmploymentExpensesValidator]
+class MockCreateAndCreateAndAmendEmploymentExpensesValidator extends MockFactory {
+  val mockValidator: CreateAndAmendEmploymentExpensesValidator = mock[CreateAndAmendEmploymentExpensesValidator]
 
   object MockCreateAndAmendEmploymentExpensesValidator {
 

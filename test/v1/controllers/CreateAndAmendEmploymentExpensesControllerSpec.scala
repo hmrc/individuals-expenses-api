@@ -21,7 +21,7 @@ import play.api.mvc.Result
 import uk.gov.hmrc.http.HeaderCarrier
 import v1.mocks.MockIdGenerator
 import v1.mocks.hateoas.MockHateoasFactory
-import v1.mocks.requestParsers.MockCreateAndAmendEmploymentExpensesRequestParser
+import v1.mocks.requestParsers.MockCreateAndCreateAndAmendEmploymentExpensesRequestParser
 import v1.mocks.services.{MockAuditService, MockCreateAndAmendEmploymentExpensesService, MockEnrolmentsAuthService, MockMtdIdLookupService}
 import v1.models.audit.{AuditError, AuditEvent, AuditResponse, ExpensesAuditDetail}
 import v1.models.domain.Nino
@@ -30,7 +30,7 @@ import v1.models.hateoas.Method.{DELETE, GET, PUT}
 import v1.models.hateoas.{HateoasWrapper, Link}
 import v1.models.outcomes.ResponseWrapper
 import v1.models.request.createAndAmendEmploymentExpenses._
-import v1.models.response.createAndAmendEmploymentExpenses.{CreateAndAmendEmploymentExpensesHateoasData}
+import v1.models.response.createAndAmendEmploymentExpenses.CreateAndAmendEmploymentExpensesHateoasData
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -40,7 +40,7 @@ class CreateAndAmendEmploymentExpensesControllerSpec
     with MockEnrolmentsAuthService
     with MockMtdIdLookupService
     with MockCreateAndAmendEmploymentExpensesService
-    with MockCreateAndAmendEmploymentExpensesRequestParser
+    with MockCreateAndCreateAndAmendEmploymentExpensesRequestParser
     with MockHateoasFactory
     with MockAuditService
     with MockIdGenerator {

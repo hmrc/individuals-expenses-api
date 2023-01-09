@@ -23,7 +23,10 @@ import v1.controllers.requestParsers.validators.validations._
 import v1.models.errors.{MtdError, RuleIncorrectOrEmptyBodyError}
 import v1.models.request.createAndAmendEmploymentExpenses.{CreateAndAmendEmploymentExpensesBody, CreateAndAmendEmploymentExpensesRawData, Expenses}
 
-class AmendEmploymentExpensesValidator @Inject() (implicit currentDateTime: CurrentDateTime, appConfig: AppConfig, currentTaxYear: CurrentTaxYear)
+class CreateAndAmendEmploymentExpensesValidator @Inject() (implicit
+    currentDateTime: CurrentDateTime,
+    appConfig: AppConfig,
+    currentTaxYear: CurrentTaxYear)
     extends Validator[CreateAndAmendEmploymentExpensesRawData] {
 
   private val validationSet =

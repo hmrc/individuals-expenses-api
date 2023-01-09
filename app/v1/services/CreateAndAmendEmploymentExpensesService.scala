@@ -34,11 +34,11 @@ class CreateAndAmendEmploymentExpensesService @Inject() (connector: CreateAndAme
     extends DownstreamResponseMappingSupport
     with Logging {
 
-  def amend(request: CreateAndAmendEmploymentExpensesRequest)(implicit
+  def createAmend(request: CreateAndAmendEmploymentExpensesRequest)(implicit
       hc: HeaderCarrier,
       ec: ExecutionContext,
       logContext: EndpointLogContext,
-      correlationId: String): Future[AmendEmploymentExpensesServiceOutcome] = {
+      correlationId: String): Future[CreateAndAmendEmploymentExpensesServiceOutcome] = {
 
     val result = for {
       desResponseWrapper <- EitherT(connector.amend(request)).leftMap(mapDownstreamErrors(desErrorMap))
