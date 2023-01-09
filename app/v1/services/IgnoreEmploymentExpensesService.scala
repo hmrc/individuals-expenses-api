@@ -40,7 +40,7 @@ class IgnoreEmploymentExpensesService @Inject() (connector: IgnoreEmploymentExpe
     connector.ignore(request).map(_.leftMap(mapDownstreamErrors(downstreamErrorMap)))
   }
 
-  private def downstreamErrorMap = {
+  private val downstreamErrorMap = {
     val errors = Map(
       "INVALID_TAXABLE_ENTITY_ID"       -> NinoFormatError,
       "INVALID_TAX_YEAR"                -> TaxYearFormatError,
