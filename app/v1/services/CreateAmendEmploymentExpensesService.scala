@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,32 +21,32 @@ import cats.implicits._
 import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Logging
-import v1.connectors.AmendEmploymentExpensesConnector
+import v1.connectors.CreateAmendEmploymentExpensesConnector
 import v1.controllers.EndpointLogContext
 import v1.models.errors._
-import v1.models.request.amendEmploymentExpenses.AmendEmploymentExpensesRequest
+import v1.models.request.amendEmploymentExpenses.CreateAmendEmploymentExpensesRequest
 import v1.support.DownstreamResponseMappingSupport
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class AmendEmploymentExpensesService @Inject() (connector: AmendEmploymentExpensesConnector) extends DownstreamResponseMappingSupport with Logging {
+class CreateAmendEmploymentExpensesService @Inject() (connector: CreateAmendEmploymentExpensesConnector)
+    extends DownstreamResponseMappingSupport
+    with Logging {
 
-  def amend(request: AmendEmploymentExpensesRequest)(implicit
+  def createAmendEmploymentExpenses(request: CreateAmendEmploymentExpensesRequest)(implicit
       hc: HeaderCarrier,
       ec: ExecutionContext,
       logContext: EndpointLogContext,
       correlationId: String): Future[AmendEmploymentExpensesServiceOutcome] = {
 
-    val result = for {
-      desResponseWrapper <- EitherT(connector.amend(request)).leftMap(mapDownstreamErrors(desErrorMap))
-    } yield desResponseWrapper
+    val result = EitherT(connector.createAmendEmploymentExpenses(request)).leftMap(mapDownstreamErrors(downstreamErrorMap))
 
     result.value
   }
 
-  private def desErrorMap: Map[String, MtdError] =
-    Map(
+  private val downstreamErrorMap: Map[String, MtdError] = {
+    val errors = Map(
       "INVALID_TAXABLE_ENTITY_ID"       -> NinoFormatError,
       "INVALID_TAX_YEAR"                -> TaxYearFormatError,
       "INVALID_CORRELATIONID"           -> StandardDownstreamError,
@@ -56,5 +56,12 @@ class AmendEmploymentExpensesService @Inject() (connector: AmendEmploymentExpens
       "SERVER_ERROR"                    -> StandardDownstreamError,
       "SERVICE_UNAVAILABLE"             -> StandardDownstreamError
     )
+    val extraTysErrors = Map(
+      "INVALID_CORRELATION_ID" -> StandardDownstreamError,
+      "TAX_YEAR_NOT_SUPPORTED" -> RuleTaxYearNotSupportedError
+    )
+
+    errors ++ extraTysErrors
+  }
 
 }

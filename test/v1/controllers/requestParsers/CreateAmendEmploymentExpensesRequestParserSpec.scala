@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,15 +18,22 @@ package v1.controllers.requestParsers
 
 import play.api.libs.json.Json
 import support.UnitSpec
-import v1.mocks.validators.MockAmendEmploymentExpensesValidator
+import v1.mocks.validators.MockCreateAmendEmploymentExpensesValidator
 import v1.models.domain.Nino
 import v1.models.errors.{BadRequestError, ErrorWrapper, NinoFormatError, TaxYearFormatError}
-import v1.models.request.amendEmploymentExpenses.{AmendEmploymentExpensesBody, AmendEmploymentExpensesRawData, AmendEmploymentExpensesRequest, Expenses}
+import v1.models.request.TaxYear
+import v1.models.request.amendEmploymentExpenses.{
+  AmendEmploymentExpensesBody,
+  CreateAmendEmploymentExpensesRawData,
+  CreateAmendEmploymentExpensesRequest,
+  Expenses
+}
 
-class AmendEmploymentExpensesRequestParserSpec extends UnitSpec {
+class CreateAmendEmploymentExpensesRequestParserSpec extends UnitSpec {
 
-  val nino                           = "AA123456B"
-  val taxYear                        = "2017-18"
+  val nino    = "AA123456B"
+  val taxYear = "2017-18"
+
   implicit val correlationId: String = "a1e8057e-fbbc-47a8-a8b4-78d9f015c253"
 
   private val requestBodyJson = Json.parse("""
@@ -43,37 +50,31 @@ class AmendEmploymentExpensesRequestParserSpec extends UnitSpec {
       |    }
       |}""".stripMargin)
 
-  val inputData =
-    AmendEmploymentExpensesRawData(nino, taxYear, requestBodyJson)
+  private val rawData: CreateAmendEmploymentExpensesRawData =
+    CreateAmendEmploymentExpensesRawData(nino = nino, taxYear = taxYear, body = requestBodyJson)
 
-  trait Test extends MockAmendEmploymentExpensesValidator {
-    lazy val parser = new AmendEmploymentExpensesRequestParser(mockValidator)
+  private val requestData = CreateAmendEmploymentExpensesRequest(
+    nino = Nino(nino),
+    taxYear = TaxYear.fromMtd(taxYear),
+    body = AmendEmploymentExpensesBody(
+      Expenses(Some(123.12), Some(123.12), Some(123.12), Some(123.12), Some(123.12), Some(123.12), Some(123.12), Some(123.12))
+    )
+  )
+
+  trait Test extends MockCreateAmendEmploymentExpensesValidator {
+
+    lazy val parser = new CreateAmendEmploymentExpensesRequestParser(mockValidator)
   }
 
   "parse" should {
 
     "return a request object" when {
-      "valid request data is supplied" in new Test {
-        MockAmendEmploymentExpensesValidator.validate(inputData).returns(Nil)
 
-        parser.parseRequest(inputData) shouldBe
-          Right(
-            AmendEmploymentExpensesRequest(
-              Nino(nino),
-              taxYear,
-              AmendEmploymentExpensesBody(
-                Expenses(
-                  Some(123.12),
-                  Some(123.12),
-                  Some(123.12),
-                  Some(123.12),
-                  Some(123.12),
-                  Some(123.12),
-                  Some(123.12),
-                  Some(123.12)
-                )
-              )
-            ))
+      "valid request data is supplied" in new Test {
+
+        MockAmendEmploymentExpensesValidator.validate(rawData).returns(Nil)
+
+        parser.parseRequest(rawData) shouldBe Right(requestData)
       }
     }
 
@@ -81,19 +82,19 @@ class AmendEmploymentExpensesRequestParserSpec extends UnitSpec {
 
       "a single validation error occurs" in new Test {
         MockAmendEmploymentExpensesValidator
-          .validate(inputData)
+          .validate(rawData)
           .returns(List(NinoFormatError))
 
-        parser.parseRequest(inputData) shouldBe
+        parser.parseRequest(rawData) shouldBe
           Left(ErrorWrapper(correlationId, NinoFormatError, None))
       }
 
       "multiple validation errors occur" in new Test {
         MockAmendEmploymentExpensesValidator
-          .validate(inputData)
+          .validate(rawData)
           .returns(List(NinoFormatError, TaxYearFormatError))
 
-        parser.parseRequest(inputData) shouldBe
+        parser.parseRequest(rawData) shouldBe
           Left(ErrorWrapper(correlationId, BadRequestError, Some(Seq(NinoFormatError, TaxYearFormatError))))
       }
     }

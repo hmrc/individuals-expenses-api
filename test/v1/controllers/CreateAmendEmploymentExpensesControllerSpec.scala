@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,38 +16,42 @@
 
 package v1.controllers
 
+import play.api.Configuration
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Result
 import uk.gov.hmrc.http.HeaderCarrier
+import mocks.MockAppConfig
 import v1.mocks.MockIdGenerator
 import v1.mocks.hateoas.MockHateoasFactory
-import v1.mocks.requestParsers.MockAmendEmploymentExpensesRequestParser
-import v1.mocks.services.{MockAmendEmploymentExpensesService, MockAuditService, MockEnrolmentsAuthService, MockMtdIdLookupService}
+import v1.mocks.requestParsers.MockCreateCreateAmendEmploymentExpensesRequestParser
+import v1.mocks.services.{MockAuditService, MockCreateAmendEmploymentExpensesService, MockEnrolmentsAuthService, MockMtdIdLookupService}
 import v1.models.audit.{AuditError, AuditEvent, AuditResponse, ExpensesAuditDetail}
 import v1.models.domain.Nino
 import v1.models.errors._
 import v1.models.hateoas.Method.{DELETE, GET, PUT}
 import v1.models.hateoas.{HateoasWrapper, Link}
 import v1.models.outcomes.ResponseWrapper
+import v1.models.request.TaxYear
 import v1.models.request.amendEmploymentExpenses._
 import v1.models.response.amendEmploymentExpenses.AmendEmploymentExpensesHateoasData
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class AmendEmploymentExpensesControllerSpec
+class CreateAmendEmploymentExpensesControllerSpec
     extends ControllerBaseSpec
     with MockEnrolmentsAuthService
+    with MockAppConfig
     with MockMtdIdLookupService
-    with MockAmendEmploymentExpensesService
-    with MockAmendEmploymentExpensesRequestParser
+    with MockCreateAmendEmploymentExpensesService
+    with MockCreateCreateAmendEmploymentExpensesRequestParser
     with MockHateoasFactory
     with MockAuditService
     with MockIdGenerator {
 
-  private val nino                  = "AA123456A"
-  private val taxYear               = "2021-22"
-  private val correlationId: String = "X-123"
+  private val nino          = "AA123456A"
+  private val taxYear       = "2021-22"
+  private val correlationId = "X-123"
 
   private val testHateoasLinks = Seq(
     Link(href = s"/individuals/expenses/employments/$nino/$taxYear", method = GET, rel = "self"),
@@ -119,30 +123,13 @@ class AmendEmploymentExpensesControllerSpec
       )
     )
 
-  private val rawData     = AmendEmploymentExpensesRawData(nino, taxYear, requestBodyJson)
-  private val requestData = AmendEmploymentExpensesRequest(Nino(nino), taxYear, requestBody)
-
-  trait Test {
-    val hc: HeaderCarrier = HeaderCarrier()
-
-    val controller = new AmendEmploymentExpensesController(
-      authService = mockEnrolmentsAuthService,
-      lookupService = mockMtdIdLookupService,
-      parser = mockRequestParser,
-      service = mockService,
-      auditService = mockAuditService,
-      hateoasFactory = mockHateoasFactory,
-      cc = cc,
-      idGenerator = mockIdGenerator
-    )
-
-    MockedMtdIdLookupService.lookup(nino).returns(Future.successful(Right("test-mtd-id")))
-    MockedEnrolmentsAuthService.authoriseUser()
-    MockIdGenerator.generateCorrelationId.returns(correlationId)
-  }
+  private val rawData     = CreateAmendEmploymentExpensesRawData(nino, taxYear, requestBodyJson)
+  private val requestData = CreateAmendEmploymentExpensesRequest(Nino(nino), TaxYear.fromMtd(taxYear), requestBody)
 
   "handleRequest" should {
-    "return Ok" when {
+
+    "return OK" when {
+
       "the request received is valid" in new Test {
 
         MockAmendEmploymentExpensesRequestParser
@@ -167,7 +154,9 @@ class AmendEmploymentExpensesControllerSpec
     }
 
     "return the error as per spec" when {
+
       "parser errors occur" should {
+
         def errorsFromParserTester(error: MtdError, expectedStatus: Int): Unit = {
           s"a ${error.code} error is returned from the parser" in new Test {
 
@@ -201,6 +190,7 @@ class AmendEmploymentExpensesControllerSpec
       }
 
       "service errors occur" should {
+
         def serviceErrors(mtdError: MtdError, expectedStatus: Int): Unit = {
           s"a $mtdError error is returned from the service" in new Test {
 
@@ -225,6 +215,8 @@ class AmendEmploymentExpensesControllerSpec
 
         val input = Seq(
           (NinoFormatError, BAD_REQUEST),
+          (TaxYearFormatError, BAD_REQUEST),
+          (RuleTaxYearNotSupportedError, BAD_REQUEST),
           (RuleTaxYearNotEndedError, BAD_REQUEST),
           (NotFoundError, NOT_FOUND),
           (StandardDownstreamError, INTERNAL_SERVER_ERROR)
@@ -233,6 +225,26 @@ class AmendEmploymentExpensesControllerSpec
         input.foreach(args => (serviceErrors _).tupled(args))
       }
     }
+  }
+
+  trait Test {
+    val hc: HeaderCarrier = HeaderCarrier()
+
+    val controller = new CreateAmendEmploymentExpensesController(
+      authService = mockEnrolmentsAuthService,
+      lookupService = mockMtdIdLookupService,
+      parser = mockRequestParser,
+      service = mockService,
+      auditService = mockAuditService,
+      hateoasFactory = mockHateoasFactory,
+      cc = cc,
+      idGenerator = mockIdGenerator
+    )
+
+    MockedMtdIdLookupService.lookup(nino).returns(Future.successful(Right("test-mtd-id")))
+    MockedEnrolmentsAuthService.authoriseUser()
+    MockIdGenerator.generateCorrelationId.returns(correlationId)
+    MockAppConfig.featureSwitches.returns(Configuration("allowTemporalValidationSuspension.enabled" -> true)).anyNumberOfTimes()
   }
 
 }

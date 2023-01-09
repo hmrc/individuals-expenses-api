@@ -18,14 +18,18 @@ package v1.controllers.requestParsers
 
 import javax.inject.Inject
 import v1.models.domain.Nino
-import v1.controllers.requestParsers.validators.DeleteEmploymentExpensesValidator
+import v1.controllers.requestParsers.validators.CreateAmendEmploymentExpensesValidator
 import v1.models.request.TaxYear
-import v1.models.request.deleteEmploymentExpenses.{DeleteEmploymentExpensesRawData, DeleteEmploymentExpensesRequest}
+import v1.models.request.amendEmploymentExpenses.{
+  AmendEmploymentExpensesBody,
+  CreateAmendEmploymentExpensesRawData,
+  CreateAmendEmploymentExpensesRequest
+}
 
-class DeleteEmploymentExpensesRequestParser @Inject() (val validator: DeleteEmploymentExpensesValidator)
-    extends RequestParser[DeleteEmploymentExpensesRawData, DeleteEmploymentExpensesRequest] {
+class CreateAmendEmploymentExpensesRequestParser @Inject() (val validator: CreateAmendEmploymentExpensesValidator)
+    extends RequestParser[CreateAmendEmploymentExpensesRawData, CreateAmendEmploymentExpensesRequest] {
 
-  override protected def requestFor(data: DeleteEmploymentExpensesRawData): DeleteEmploymentExpensesRequest =
-    DeleteEmploymentExpensesRequest(Nino(data.nino), TaxYear.fromMtd(data.taxYear))
+  override protected def requestFor(data: CreateAmendEmploymentExpensesRawData): CreateAmendEmploymentExpensesRequest =
+    CreateAmendEmploymentExpensesRequest(Nino(data.nino), TaxYear.fromMtd(data.taxYear), data.body.as[AmendEmploymentExpensesBody])
 
 }
