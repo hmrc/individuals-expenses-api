@@ -16,7 +16,7 @@
 
 package v1.services
 
-import cats.data.EitherT
+import cats.implicits.toBifunctorOps
 import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Logging
@@ -39,9 +39,8 @@ class CreateAndAmendEmploymentExpensesService @Inject() (connector: CreateAndAme
       logContext: EndpointLogContext,
       correlationId: String): Future[CreateAndAmendEmploymentExpensesServiceOutcome] = {
 
-    val result = EitherT(connector.createAmendEmploymentExpenses(request)).leftMap(mapDownstreamErrors(downstreamErrorMap))
+    connector.createAmendEmploymentExpenses(request).map(_.leftMap(mapDownstreamErrors(downstreamErrorMap)))
 
-    result.value
   }
 
   private val downstreamErrorMap: Map[String, MtdError] = {
