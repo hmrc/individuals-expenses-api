@@ -22,7 +22,7 @@ import v1.controllers.requestParsers.CreateAndAmendEmploymentExpensesRequestPars
 import v1.models.errors.ErrorWrapper
 import v1.models.request.createAndAmendEmploymentExpenses.{CreateAndAmendEmploymentExpensesRawData, CreateAndAmendEmploymentExpensesRequest}
 
-trait MockCreateAndCreateAndAmendEmploymentExpensesRequestParser extends MockFactory {
+trait MockCreateAndAmendEmploymentExpensesRequestParser extends MockFactory {
 
   val mockRequestParser: CreateAndAmendEmploymentExpensesRequestParser = mock[CreateAndAmendEmploymentExpensesRequestParser]
 

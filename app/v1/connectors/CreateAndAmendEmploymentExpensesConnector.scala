@@ -18,6 +18,7 @@ package v1.connectors
 
 import v1.connectors.DownstreamUri._
 import config.AppConfig
+
 import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.HttpClient
@@ -29,15 +30,21 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class CreateAndAmendEmploymentExpensesConnector @Inject() (val http: HttpClient, val appConfig: AppConfig) extends BaseDownstreamConnector {
 
-  def amend(request: CreateAndAmendEmploymentExpensesRequest)(implicit
-      hc: HeaderCarrier,
-      ec: ExecutionContext,
-      correlationId: String): Future[DownstreamOutcome[Unit]] = {
+  def createAmendEmploymentExpenses(request: CreateAndAmendEmploymentExpensesRequest)(implicit
+                                                                                   hc: HeaderCarrier,
+                                                                                   ec: ExecutionContext,
+                                                                                   correlationId: String): Future[DownstreamOutcome[Unit]] = {
 
-    put(
-      body = request.body,
-      uri = IfsR6Uri[Unit](s"income-tax/expenses/employments/${request.nino}/${request.taxYear}")
-    )
+    import request._
+
+    val downstreamUri = if (taxYear.useTaxYearSpecificApi) {
+      TaxYearSpecificIfsUri[Unit](s"income-tax/${taxYear.asTysDownstream}/expenses/employments/${nino.value}")
+    } else {
+      IfsR6Uri[Unit](s"income-tax/expenses/employments/${nino.value}/${taxYear.asMtd}")
+    }
+
+    put(body = body, uri = downstreamUri)
   }
 
 }
+

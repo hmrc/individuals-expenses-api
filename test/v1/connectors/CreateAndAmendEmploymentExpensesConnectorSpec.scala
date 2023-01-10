@@ -18,14 +18,14 @@ package v1.connectors
 
 import v1.models.domain.Nino
 import v1.models.outcomes.ResponseWrapper
+import v1.models.request.TaxYear
 import v1.models.request.createAndAmendEmploymentExpenses.{CreateAndAmendEmploymentExpensesBody, CreateAndAmendEmploymentExpensesRequest, Expenses}
 
 import scala.concurrent.Future
 
 class CreateAndAmendEmploymentExpensesConnectorSpec extends ConnectorSpec {
 
-  val taxYear: String = "2021-22"
-  val nino: String    = "AA123456A"
+  val nino: String = "AA123456A"
 
   val body: CreateAndAmendEmploymentExpensesBody = CreateAndAmendEmploymentExpensesBody(
     Expenses(
@@ -40,29 +40,57 @@ class CreateAndAmendEmploymentExpensesConnectorSpec extends ConnectorSpec {
     )
   )
 
-  trait Test { _: ConnectorTest =>
+  trait Test {
+    _: ConnectorTest =>
+
+    def taxYear: TaxYear
 
     val connector: CreateAndAmendEmploymentExpensesConnector = new CreateAndAmendEmploymentExpensesConnector(
       http = mockHttpClient,
       appConfig = mockAppConfig
     )
 
+    val request: CreateAndAmendEmploymentExpensesRequest = CreateAndAmendEmploymentExpensesRequest(Nino(nino), taxYear, body)
+
   }
 
-  "amend" should {
-    val request = CreateAndAmendEmploymentExpensesRequest(Nino(nino), taxYear, body)
+  "CreateAmendEmploymentExpensesConnector" when {
 
-    "put a body and return 204 no body" in new IfsR6Test with Test {
-      val outcome = Right(ResponseWrapper(correlationId, ()))
+    "amend" should {
 
-      willPut(
-        url = s"$baseUrl/income-tax/expenses/employments/$nino/$taxYear",
-        body = body
-      )
-        .returns(Future.successful(outcome))
+      "put a body and return 204 no body" in new IfsR6Test with Test {
 
-      await(connector.amend(request)) shouldBe outcome
+        def taxYear: TaxYear = TaxYear.fromMtd("2021-22")
+
+        val outcome = Right(ResponseWrapper(correlationId, ()))
+
+        willPut(
+          url = s"$baseUrl/income-tax/expenses/employments/$nino/2021-22",
+          body = body
+        )
+          .returns(Future.successful(outcome))
+
+        await(connector.createAmendEmploymentExpenses(request)) shouldBe outcome
+
+      }
+
+      "put a body and return 204 no body for a TYS request" in new TysIfsTest with Test {
+
+        def taxYear: TaxYear = TaxYear.fromMtd("2023-24")
+
+        val outcome = Right(ResponseWrapper(correlationId, ()))
+
+        willPut(
+          url = s"$baseUrl/income-tax/23-24/expenses/employments/$nino",
+          body = body
+        )
+          .returns(Future.successful(outcome))
+
+        await(connector.createAmendEmploymentExpenses(request)) shouldBe outcome
+
+      }
     }
+
   }
 
 }

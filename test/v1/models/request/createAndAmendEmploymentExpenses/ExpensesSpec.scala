@@ -22,9 +22,10 @@ import v1.models.utils.JsonErrorValidators
 
 class ExpensesSpec extends UnitSpec with JsonErrorValidators {
 
-  val expensesBody = Expenses(Some(123.12), Some(123.12), Some(123.12), Some(123.12), Some(123.12), Some(123.12), Some(123.12), Some(123.12))
+  val expensesBody: Expenses =
+    Expenses(Some(123.12), Some(123.12), Some(123.12), Some(123.12), Some(123.12), Some(123.12), Some(123.12), Some(123.12))
 
-  val json = Json.parse(
+  val json: JsValue = Json.parse(
     """
       |{
       |    "businessTravelCosts": 123.12,

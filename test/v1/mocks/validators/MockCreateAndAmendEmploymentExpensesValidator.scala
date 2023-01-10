@@ -22,7 +22,7 @@ import v1.controllers.requestParsers.validators.CreateAndAmendEmploymentExpenses
 import v1.models.errors.MtdError
 import v1.models.request.createAndAmendEmploymentExpenses.CreateAndAmendEmploymentExpensesRawData
 
-class MockCreateAndCreateAndAmendEmploymentExpensesValidator extends MockFactory {
+class MockCreateAndAmendEmploymentExpensesValidator extends MockFactory {
   val mockValidator: CreateAndAmendEmploymentExpensesValidator = mock[CreateAndAmendEmploymentExpensesValidator]
 
   object MockCreateAndAmendEmploymentExpensesValidator {

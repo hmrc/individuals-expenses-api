@@ -17,6 +17,7 @@
 package v1.services
 
 import cats.data.EitherT
+
 import javax.inject.{Inject, Singleton}
 import cats.implicits._
 import uk.gov.hmrc.http.HeaderCarrier

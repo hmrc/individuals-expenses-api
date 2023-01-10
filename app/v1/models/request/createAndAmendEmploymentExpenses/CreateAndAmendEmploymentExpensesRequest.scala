@@ -17,5 +17,6 @@
 package v1.models.request.createAndAmendEmploymentExpenses
 
 import v1.models.domain.Nino
+import v1.models.request.TaxYear
 
-case class CreateAndAmendEmploymentExpensesRequest(nino: Nino, taxYear: String, body: CreateAndAmendEmploymentExpensesBody)
+case class CreateAndAmendEmploymentExpensesRequest(nino: Nino, taxYear: TaxYear, body: CreateAndAmendEmploymentExpensesBody)

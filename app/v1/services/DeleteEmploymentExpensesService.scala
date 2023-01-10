@@ -17,7 +17,6 @@
 package v1.services
 
 import cats.data.EitherT
-
 import javax.inject.{Inject, Singleton}
 import cats.implicits._
 import uk.gov.hmrc.http.HeaderCarrier
@@ -41,7 +40,7 @@ class DeleteEmploymentExpensesService @Inject() (deleteEmploymentExpensesConnect
       logContext: EndpointLogContext,
       correlationId: String): Future[DeleteEmploymentExpensesServiceOutcome] = {
 
-    val result =  EitherT(deleteEmploymentExpensesConnector.deleteEmploymentExpenses(request)).leftMap(mapDownstreamErrors(errorMap))
+    val result = EitherT(deleteEmploymentExpensesConnector.deleteEmploymentExpenses(request)).leftMap(mapDownstreamErrors(errorMap))
 
     result.value
   }

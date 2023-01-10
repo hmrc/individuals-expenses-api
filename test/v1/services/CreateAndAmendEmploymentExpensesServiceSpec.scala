@@ -20,14 +20,15 @@ import v1.mocks.connectors.MockCreateAndAmendEmploymentExpensesConnector
 import v1.models.domain.Nino
 import v1.models.errors._
 import v1.models.outcomes.ResponseWrapper
+import v1.models.request.TaxYear
 import v1.models.request.createAndAmendEmploymentExpenses.{CreateAndAmendEmploymentExpensesBody, CreateAndAmendEmploymentExpensesRequest, Expenses}
 
 import scala.concurrent.Future
 
 class CreateAndAmendEmploymentExpensesServiceSpec extends ServiceSpec {
 
-  val taxYear    = "2021-22"
-  val nino: Nino = Nino("AA123456A")
+  val taxYear: TaxYear = TaxYear.fromMtd("2021-22")
+  val nino: Nino       = Nino("AA123456A")
 
   val body: CreateAndAmendEmploymentExpensesBody = CreateAndAmendEmploymentExpensesBody(
     Expenses(
@@ -44,40 +45,36 @@ class CreateAndAmendEmploymentExpensesServiceSpec extends ServiceSpec {
 
   private val requestData = CreateAndAmendEmploymentExpensesRequest(nino, taxYear, body)
 
-  trait Test extends MockCreateAndAmendEmploymentExpensesConnector {
-
-    val service = new CreateAndAmendEmploymentExpensesService(
-      connector = mockCreateAndAmendEmploymentExpensesConnector
-    )
-
-  }
-
   "service" should {
+
     "service call successful" when {
+
       "return mapped result" in new Test {
+
         MockCreateAndAmendEmploymentExpensesConnector
           .amend(requestData)
           .returns(Future.successful(Right(ResponseWrapper(correlationId, ()))))
 
-        await(service.createAmend(requestData)) shouldBe Right(ResponseWrapper(correlationId, ()))
+        await(service.createAndAmendEmploymentExpenses(requestData)) shouldBe Right(ResponseWrapper(correlationId, ()))
       }
     }
   }
 
   "unsuccessful" should {
+
     "map errors according to spec" when {
 
-      def serviceError(desErrorCode: String, error: MtdError): Unit =
-        s"a $desErrorCode error is returned from the service" in new Test {
+      def serviceError(downstreamErrorCode: String, error: MtdError): Unit =
+        s"a $downstreamErrorCode error is returned from the service" in new Test {
 
           MockCreateAndAmendEmploymentExpensesConnector
             .amend(requestData)
-            .returns(Future.successful(Left(ResponseWrapper(correlationId, DownstreamErrors.single(DownstreamErrorCode(desErrorCode))))))
+            .returns(Future.successful(Left(ResponseWrapper(correlationId, DownstreamErrors.single(DownstreamErrorCode(downstreamErrorCode))))))
 
-          await(service.createAmend(requestData)) shouldBe Left(ErrorWrapper(correlationId, error))
+          await(service.createAndAmendEmploymentExpenses(requestData)) shouldBe Left(ErrorWrapper(correlationId, error))
         }
 
-      val input = Seq(
+      val errors = Seq(
         "INVALID_TAXABLE_ENTITY_ID"       -> NinoFormatError,
         "INVALID_TAX_YEAR"                -> TaxYearFormatError,
         "INVALID_CORRELATIONID"           -> StandardDownstreamError,
@@ -88,8 +85,21 @@ class CreateAndAmendEmploymentExpensesServiceSpec extends ServiceSpec {
         "SERVICE_UNAVAILABLE"             -> StandardDownstreamError
       )
 
-      input.foreach(args => (serviceError _).tupled(args))
+      val extraTysErrors = Seq(
+        "INVALID_CORRELATION_ID" -> StandardDownstreamError,
+        "TAX_YEAR_NOT_SUPPORTED" -> RuleTaxYearNotSupportedError
+      )
+
+      (errors ++ extraTysErrors).foreach(args => (serviceError _).tupled(args))
     }
+  }
+
+  trait Test extends MockCreateAndAmendEmploymentExpensesConnector {
+
+    val service = new CreateAndAmendEmploymentExpensesService(
+      connector = mockCreateAndAmendEmploymentExpensesConnector
+    )
+
   }
 
 }
