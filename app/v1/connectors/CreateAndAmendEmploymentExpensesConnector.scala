@@ -29,15 +29,20 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class CreateAndAmendEmploymentExpensesConnector @Inject() (val http: HttpClient, val appConfig: AppConfig) extends BaseDownstreamConnector {
 
-  def amend(request: CreateAndAmendEmploymentExpensesRequest)(implicit
+  def createAmendEmploymentExpenses(request: CreateAndAmendEmploymentExpensesRequest)(implicit
       hc: HeaderCarrier,
       ec: ExecutionContext,
       correlationId: String): Future[DownstreamOutcome[Unit]] = {
 
-    put(
-      body = request.body,
-      uri = IfsR6Uri[Unit](s"income-tax/expenses/employments/${request.nino}/${request.taxYear}")
-    )
+    import request._
+
+    val downstreamUri = if (taxYear.useTaxYearSpecificApi) {
+      TaxYearSpecificIfsUri[Unit](s"income-tax/${taxYear.asTysDownstream}/expenses/employments/$nino")
+    } else {
+      IfsR6Uri[Unit](s"income-tax/expenses/employments/$nino/${taxYear.asMtd}")
+    }
+
+    put(body = body, uri = downstreamUri)
   }
 
 }

@@ -16,15 +16,16 @@
 
 package v1.models.request.createAndAmendEmploymentExpenses
 
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.Json
 import support.UnitSpec
 import v1.models.utils.JsonErrorValidators
 
 class ExpensesSpec extends UnitSpec with JsonErrorValidators {
 
-  val expensesBody = Expenses(Some(123.12), Some(123.12), Some(123.12), Some(123.12), Some(123.12), Some(123.12), Some(123.12), Some(123.12))
+  val expensesBody: Expenses =
+    Expenses(Some(123.12), Some(123.12), Some(123.12), Some(123.12), Some(123.12), Some(123.12), Some(123.12), Some(123.12))
 
-  val json = Json.parse(
+  private val json = Json.parse(
     """
       |{
       |    "businessTravelCosts": 123.12,
@@ -38,10 +39,6 @@ class ExpensesSpec extends UnitSpec with JsonErrorValidators {
       |}
       |""".stripMargin
   )
-
-  val minJson: JsValue = Json.parse("""
-      |{}
-      |""".stripMargin)
 
   val minModel: Expenses = Expenses(None, None, None, None, None, None, None, None)
 

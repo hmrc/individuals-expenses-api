@@ -16,27 +16,187 @@
 
 package v1.endpoints
 
-import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import play.api.http.HeaderNames.ACCEPT
+import support.IntegrationBaseSpec
+import v1.models.errors._
 import play.api.http.Status._
 import play.api.libs.json.{JsObject, JsValue, Json}
 import play.api.libs.ws.{WSRequest, WSResponse}
 import play.api.test.Helpers.AUTHORIZATION
-import support.IntegrationBaseSpec
-import v1.models.errors._
 import v1.stubs.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 
 class CreateAndAmendEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
 
+  "Calling the amend endpoint" should {
+
+    "return a 200 status code" when {
+
+      "any valid request is made" in new NonTysTest {
+
+        override def setupStubs(): Unit =
+          DownstreamStub.onSuccess(DownstreamStub.PUT, downstreamUri, NO_CONTENT, JsObject.empty)
+
+        val response: WSResponse = await(request().put(requestBodyJson))
+        response.status shouldBe OK
+        response.json shouldBe hateoasResponse
+        response.header("X-CorrelationId").nonEmpty shouldBe true
+      }
+
+      "any valid TYS request is made" in new TysIfsTest {
+
+        override def setupStubs(): Unit =
+          DownstreamStub.onSuccess(DownstreamStub.PUT, downstreamUri, NO_CONTENT, JsObject.empty)
+
+        val response: WSResponse = await(request().put(requestBodyJson))
+        response.status shouldBe OK
+        response.json shouldBe hateoasResponse
+        response.header("X-CorrelationId").nonEmpty shouldBe true
+      }
+    }
+
+    "return error according to spec" when {
+
+      "validation error" when {
+
+        s"an invalid NINO is provided" in new NonTysTest {
+          override val nino: String = "INVALID_NINO"
+
+          val response: WSResponse = await(request().put(requestBodyJson))
+          response.status shouldBe BAD_REQUEST
+          response.json shouldBe Json.toJson(NinoFormatError)
+        }
+        s"an invalid taxYear is provided" in new NonTysTest {
+          override val taxYear: String = "INVALID_TAXYEAR"
+
+          val response: WSResponse = await(request().put(requestBodyJson))
+          response.status shouldBe BAD_REQUEST
+          response.json shouldBe Json.toJson(TaxYearFormatError)
+        }
+
+        s"a taxYear with range of greater than a year is provided" in new NonTysTest {
+          override val taxYear: String = "2019-21"
+
+          val response: WSResponse = await(request().put(requestBodyJson))
+          response.status shouldBe BAD_REQUEST
+          response.json shouldBe Json.toJson(RuleTaxYearRangeInvalidError)
+        }
+
+        s"a taxYear below minimum is provided" in new NonTysTest {
+          override val taxYear: String = "2018-19"
+
+          val response: WSResponse = await(request().put(requestBodyJson))
+          response.status shouldBe BAD_REQUEST
+          response.json shouldBe Json.toJson(RuleTaxYearNotSupportedError)
+        }
+
+        s"a taxYear that hasn't ended is provided" in new NonTysTest {
+          override val taxYear: String = "2022-23"
+
+          val response: WSResponse = await(request().put(requestBodyJson))
+          response.status shouldBe BAD_REQUEST
+          response.json shouldBe Json.toJson(RuleTaxYearNotEndedError)
+        }
+
+        s"an invalid amount is provided" in new NonTysTest {
+
+          override val requestBodyJson: JsValue = Json.parse(
+            s"""
+               |{
+               |    "expenses": {
+               |        "businessTravelCosts": -1,
+               |        "jobExpenses": -1,
+               |        "flatRateJobExpenses": -1,
+               |        "professionalSubscriptions": -1,
+               |        "hotelAndMealExpenses": -1,
+               |        "otherAndCapitalAllowances": -1,
+               |        "vehicleExpenses": -1,
+               |        "mileageAllowanceRelief": -1
+               |    }
+               |}
+               |""".stripMargin
+          )
+
+          val response: WSResponse = await(request().put(requestBodyJson))
+          response.status shouldBe BAD_REQUEST
+          response.json shouldBe Json.toJson(ValueFormatError.copy(paths = Some(Seq(
+            "/expenses/businessTravelCosts",
+            "/expenses/jobExpenses",
+            "/expenses/flatRateJobExpenses",
+            "/expenses/professionalSubscriptions",
+            "/expenses/hotelAndMealExpenses",
+            "/expenses/otherAndCapitalAllowances",
+            "/expenses/vehicleExpenses",
+            "/expenses/mileageAllowanceRelief"
+          ))))
+        }
+
+        s"an empty body is provided" in new NonTysTest {
+
+          override val requestBodyJson: JsValue = Json.parse("""{}""")
+
+          val response: WSResponse = await(request().put(requestBodyJson))
+          response.status shouldBe BAD_REQUEST
+          response.json shouldBe Json.toJson(RuleIncorrectOrEmptyBodyError)
+        }
+
+        s"an empty expenses body is provided" in new NonTysTest {
+
+          override val requestBodyJson: JsValue = Json.parse("""
+                                                               |{
+                                                               |    "expenses": {}
+                                                               |}
+                                                               |""".stripMargin)
+
+          val response: WSResponse = await(request().put(requestBodyJson))
+          response.status shouldBe BAD_REQUEST
+          response.json shouldBe Json.toJson(RuleIncorrectOrEmptyBodyError)
+        }
+      }
+
+      "downstream service error" when {
+
+        def serviceErrorTest(downstreamStatus: Int, downstreamCode: String, expectedStatus: Int, expectedBody: MtdError): Unit = {
+          s"downstream returns an $downstreamCode error and status $downstreamStatus" in new NonTysTest {
+
+            override def setupStubs(): Unit =
+              DownstreamStub.onError(DownstreamStub.PUT, downstreamUri, downstreamStatus, errorBody(downstreamCode))
+
+            val response: WSResponse = await(request().put(requestBodyJson))
+            response.status shouldBe expectedStatus
+            response.json shouldBe Json.toJson(expectedBody)
+          }
+        }
+
+        val errors = List(
+          (BAD_REQUEST, "INVALID_TAXABLE_ENTITY_ID", BAD_REQUEST, NinoFormatError),
+          (BAD_REQUEST, "INVALID_TAX_YEAR", BAD_REQUEST, TaxYearFormatError),
+          (BAD_REQUEST, "INVALID_CORRELATIONID", INTERNAL_SERVER_ERROR, StandardDownstreamError),
+          (BAD_REQUEST, "INVALID_PAYLOAD", INTERNAL_SERVER_ERROR, StandardDownstreamError),
+          (UNPROCESSABLE_ENTITY, "INVALID_REQUEST_BEFORE_TAX_YEAR", BAD_REQUEST, RuleTaxYearNotEndedError),
+          (NOT_FOUND, "INCOME_SOURCE_NOT_FOUND", NOT_FOUND, NotFoundError),
+          (INTERNAL_SERVER_ERROR, "SERVER_ERROR", INTERNAL_SERVER_ERROR, StandardDownstreamError),
+          (SERVICE_UNAVAILABLE, "SERVICE_UNAVAILABLE", INTERNAL_SERVER_ERROR, StandardDownstreamError)
+        )
+
+        val extraTysErrors = List(
+          (BAD_REQUEST, "INVALID_CORRELATION_ID", INTERNAL_SERVER_ERROR, StandardDownstreamError),
+          (UNPROCESSABLE_ENTITY, "TAX_YEAR_NOT_SUPPORTED", BAD_REQUEST, RuleTaxYearNotSupportedError)
+        )
+
+        (errors ++ extraTysErrors).foreach(args => (serviceErrorTest _).tupled(args))
+      }
+    }
+  }
+
   private trait Test {
 
-    val nino: String    = "AA123456A"
-    val taxYear: String = "2019-20"
+    val nino: String = "AA123456A"
+
+    val taxYear: String
 
     val amount: BigDecimal = 123.12
 
-    val requestBodyJson: JsValue = Json.parse(
-      s"""
+    def requestBodyJson: JsValue = Json.parse(s"""
          |{
          |    "expenses": {
          |        "businessTravelCosts": $amount,
@@ -49,10 +209,9 @@ class CreateAndAmendEmploymentExpensesControllerISpec extends IntegrationBaseSpe
          |        "mileageAllowanceRelief": $amount
          |    }
          |}
-         |""".stripMargin
-    )
+         |""".stripMargin)
 
-    val responseBody = Json.parse(s"""
+    lazy val hateoasResponse: JsValue = Json.parse(s"""
          |{
          |  "links": [
          |    {
@@ -74,15 +233,18 @@ class CreateAndAmendEmploymentExpensesControllerISpec extends IntegrationBaseSpe
          |}
          |""".stripMargin)
 
-    def uri: String = s"/employments/$nino/$taxYear"
+    private lazy val mtdUri: String = s"/employments/$nino/$taxYear"
 
-    def ifsUri: String = s"/income-tax/expenses/employments/$nino/$taxYear"
+    def downstreamUri: String
 
-    def setupStubs(): StubMapping
+    def setupStubs(): Unit = ()
 
     def request(): WSRequest = {
+      AuditStub.audit()
+      AuthStub.authorised()
+      MtdIdLookupStub.ninoFound(nino)
       setupStubs()
-      buildRequest(uri)
+      buildRequest(mtdUri)
         .withHttpHeaders(
           (ACCEPT, "application/vnd.hmrc.1.0+json"),
           (AUTHORIZATION, "Bearer 123") // some bearer token
@@ -103,200 +265,20 @@ class CreateAndAmendEmploymentExpensesControllerISpec extends IntegrationBaseSpe
 
   }
 
-  "Calling the amend endpoint" should {
+  private trait NonTysTest extends Test {
 
-    "return a 200 status code" when {
+    val taxYear = "2021-22"
 
-      "any valid request is made" in new Test {
+    val downstreamUri = s"/income-tax/expenses/employments/$nino/$taxYear"
+  }
 
-        override def setupStubs(): StubMapping = {
-          AuditStub.audit()
-          AuthStub.authorised()
-          MtdIdLookupStub.ninoFound(nino)
-          DownstreamStub.onSuccess(DownstreamStub.PUT, ifsUri, NO_CONTENT, JsObject.empty)
-        }
+  private trait TysIfsTest extends Test {
 
-        val response: WSResponse = await(request().put(requestBodyJson))
-        response.status shouldBe OK
-        response.json shouldBe responseBody
-        response.header("X-CorrelationId").nonEmpty shouldBe true
-      }
-    }
+    val taxYear = "2023-24"
 
-    "return error according to spec" when {
+    val downstreamUri = s"/income-tax/23-24/expenses/employments/$nino"
 
-      "validation error" when {
-        s"an invalid NINO is provided" in new Test {
-          override val nino: String = "INVALID_NINO"
-
-          override def setupStubs(): StubMapping = {
-            AuditStub.audit()
-            AuthStub.authorised()
-            MtdIdLookupStub.ninoFound(nino)
-          }
-
-          val response: WSResponse = await(request().put(requestBodyJson))
-          response.status shouldBe BAD_REQUEST
-          response.json shouldBe Json.toJson(NinoFormatError)
-        }
-        s"an invalid taxYear is provided" in new Test {
-          override val taxYear: String = "INVALID_TAXYEAR"
-
-          override def setupStubs(): StubMapping = {
-            AuditStub.audit()
-            AuthStub.authorised()
-            MtdIdLookupStub.ninoFound(nino)
-          }
-
-          val response: WSResponse = await(request().put(requestBodyJson))
-          response.status shouldBe BAD_REQUEST
-          response.json shouldBe Json.toJson(TaxYearFormatError)
-        }
-
-        s"an invalid amount is provided" in new Test {
-          override val requestBodyJson: JsValue = Json.parse(
-            s"""
-               |{
-               |    "expenses": {
-               |        "businessTravelCosts": -1,
-               |        "jobExpenses": -1,
-               |        "flatRateJobExpenses": -1,
-               |        "professionalSubscriptions": -1,
-               |        "hotelAndMealExpenses": -1,
-               |        "otherAndCapitalAllowances": -1,
-               |        "vehicleExpenses": -1,
-               |        "mileageAllowanceRelief": -1
-               |    }
-               |}
-               |""".stripMargin
-          )
-
-          override def setupStubs(): StubMapping = {
-            AuditStub.audit()
-            AuthStub.authorised()
-            MtdIdLookupStub.ninoFound(nino)
-          }
-
-          val response: WSResponse = await(request().put(requestBodyJson))
-          response.status shouldBe BAD_REQUEST
-          response.json shouldBe Json.toJson(ValueFormatError.copy(paths = Some(Seq(
-            "/expenses/businessTravelCosts",
-            "/expenses/jobExpenses",
-            "/expenses/flatRateJobExpenses",
-            "/expenses/professionalSubscriptions",
-            "/expenses/hotelAndMealExpenses",
-            "/expenses/otherAndCapitalAllowances",
-            "/expenses/vehicleExpenses",
-            "/expenses/mileageAllowanceRelief"
-          ))))
-        }
-
-        s"a taxYear with range of greater than a year is provided" in new Test {
-          override val taxYear: String = "2019-21"
-
-          override def setupStubs(): StubMapping = {
-            AuditStub.audit()
-            AuthStub.authorised()
-            MtdIdLookupStub.ninoFound(nino)
-          }
-
-          val response: WSResponse = await(request().put(requestBodyJson))
-          response.status shouldBe BAD_REQUEST
-          response.json shouldBe Json.toJson(RuleTaxYearRangeInvalidError)
-        }
-
-        s"a taxYear below minimum is provided" in new Test {
-          override val taxYear: String = "2018-19"
-
-          override def setupStubs(): StubMapping = {
-            AuditStub.audit()
-            AuthStub.authorised()
-            MtdIdLookupStub.ninoFound(nino)
-          }
-
-          val response: WSResponse = await(request().put(requestBodyJson))
-          response.status shouldBe BAD_REQUEST
-          response.json shouldBe Json.toJson(RuleTaxYearNotSupportedError)
-        }
-
-        s"a taxYear that hasn't ended is provided" in new Test {
-          override val taxYear: String = "2022-23"
-
-          override def setupStubs(): StubMapping = {
-            AuditStub.audit()
-            AuthStub.authorised()
-            MtdIdLookupStub.ninoFound(nino)
-          }
-
-          val response: WSResponse = await(request().put(requestBodyJson))
-          response.status shouldBe BAD_REQUEST
-          response.json shouldBe Json.toJson(RuleTaxYearNotEndedError)
-        }
-
-        s"an empty body is provided" in new Test {
-          override val requestBodyJson: JsValue = Json.parse("""{}""")
-
-          override def setupStubs(): StubMapping = {
-            AuditStub.audit()
-            AuthStub.authorised()
-            MtdIdLookupStub.ninoFound(nino)
-          }
-
-          val response: WSResponse = await(request().put(requestBodyJson))
-          response.status shouldBe BAD_REQUEST
-          response.json shouldBe Json.toJson(RuleIncorrectOrEmptyBodyError)
-        }
-        s"an empty expenses body is provided" in new Test {
-          override val requestBodyJson: JsValue = Json.parse("""
-              |{
-              |    "expenses": {}
-              |}
-              |""".stripMargin)
-
-          override def setupStubs(): StubMapping = {
-            AuditStub.audit()
-            AuthStub.authorised()
-            MtdIdLookupStub.ninoFound(nino)
-          }
-
-          val response: WSResponse = await(request().put(requestBodyJson))
-          response.status shouldBe BAD_REQUEST
-          response.json shouldBe Json.toJson(RuleIncorrectOrEmptyBodyError)
-        }
-
-      }
-
-      "downstream service error" when {
-        def serviceErrorTest(ifsStatus: Int, ifsCode: String, expectedStatus: Int, expectedBody: MtdError): Unit = {
-          s"downstream returns an $ifsCode error and status $ifsStatus" in new Test {
-
-            override def setupStubs(): StubMapping = {
-              AuditStub.audit()
-              AuthStub.authorised()
-              MtdIdLookupStub.ninoFound(nino)
-              DownstreamStub.onError(DownstreamStub.PUT, ifsUri, ifsStatus, errorBody(ifsCode))
-            }
-
-            val response: WSResponse = await(request().put(requestBodyJson))
-            response.status shouldBe expectedStatus
-            response.json shouldBe Json.toJson(expectedBody)
-          }
-        }
-
-        val input = Seq(
-          (BAD_REQUEST, "INVALID_TAXABLE_ENTITY_ID", BAD_REQUEST, NinoFormatError),
-          (BAD_REQUEST, "INVALID_TAX_YEAR", BAD_REQUEST, TaxYearFormatError),
-          (BAD_REQUEST, "INVALID_CORRELATIONID", INTERNAL_SERVER_ERROR, StandardDownstreamError),
-          (BAD_REQUEST, "INVALID_PAYLOAD", INTERNAL_SERVER_ERROR, StandardDownstreamError),
-          (UNPROCESSABLE_ENTITY, "INVALID_REQUEST_BEFORE_TAX_YEAR", BAD_REQUEST, RuleTaxYearNotEndedError),
-          (NOT_FOUND, "INCOME_SOURCE_NOT_FOUND", NOT_FOUND, NotFoundError),
-          (INTERNAL_SERVER_ERROR, "SERVER_ERROR", INTERNAL_SERVER_ERROR, StandardDownstreamError),
-          (SERVICE_UNAVAILABLE, "SERVICE_UNAVAILABLE", INTERNAL_SERVER_ERROR, StandardDownstreamError)
-        )
-
-        input.foreach(args => (serviceErrorTest _).tupled(args))
-      }
-    }
+    override def request(): WSRequest = super.request().addHttpHeaders("suspend-temporal-validations" -> "true")
   }
 
 }

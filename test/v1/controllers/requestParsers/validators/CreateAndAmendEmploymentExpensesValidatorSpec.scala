@@ -20,7 +20,7 @@ import config.AppConfig
 import mocks.MockAppConfig
 import org.joda.time.DateTime
 import org.joda.time.format.{DateTimeFormat, DateTimeFormatter}
-import play.api.libs.json.Json
+import play.api.libs.json.{JsValue, Json}
 import support.UnitSpec
 import utils.{CurrentDateTime, CurrentTaxYear}
 import v1.mocks.{MockCurrentDateTime, MockCurrentTaxYear}
@@ -34,141 +34,141 @@ class CreateAndAmendEmploymentExpensesValidatorSpec extends UnitSpec {
   private val date         = DateTime.parse("2020-08-05")
 
   private val requestBodyJson = Json.parse("""
-      |{
-      |    "expenses": {
-      |        "businessTravelCosts": 123.12,
-      |        "jobExpenses": 123.12,
-      |        "flatRateJobExpenses": 123.12,
-      |        "professionalSubscriptions": 123.12,
-      |        "hotelAndMealExpenses": 123.12,
-      |        "otherAndCapitalAllowances": 123.12,
-      |        "vehicleExpenses": 123.12,
-      |        "mileageAllowanceRelief": 123.12
-      |    }
-      |}""".stripMargin)
+                                             |{
+                                             |    "expenses": {
+                                             |        "businessTravelCosts": 123.12,
+                                             |        "jobExpenses": 123.12,
+                                             |        "flatRateJobExpenses": 123.12,
+                                             |        "professionalSubscriptions": 123.12,
+                                             |        "hotelAndMealExpenses": 123.12,
+                                             |        "otherAndCapitalAllowances": 123.12,
+                                             |        "vehicleExpenses": 123.12,
+                                             |        "mileageAllowanceRelief": 123.12
+                                             |    }
+                                             |}""".stripMargin)
 
   private val requestBodyJsonNoDecimals = Json.parse("""
-      |{
-      |    "expenses": {
-      |        "businessTravelCosts": 123,
-      |        "jobExpenses": 123,
-      |        "flatRateJobExpenses": 123,
-      |        "professionalSubscriptions": 123,
-      |        "hotelAndMealExpenses": 123,
-      |        "otherAndCapitalAllowances": 123,
-      |        "vehicleExpenses": 123,
-      |        "mileageAllowanceRelief": 123
-      |    }
-      |}""".stripMargin)
+                                                       |{
+                                                       |    "expenses": {
+                                                       |        "businessTravelCosts": 123,
+                                                       |        "jobExpenses": 123,
+                                                       |        "flatRateJobExpenses": 123,
+                                                       |        "professionalSubscriptions": 123,
+                                                       |        "hotelAndMealExpenses": 123,
+                                                       |        "otherAndCapitalAllowances": 123,
+                                                       |        "vehicleExpenses": 123,
+                                                       |        "mileageAllowanceRelief": 123
+                                                       |    }
+                                                       |}""".stripMargin)
 
   private val requestBodyJsonNoBusinessTravelCosts = Json.parse("""
-      |{
-      |    "expenses": {
-      |        "jobExpenses": 123,
-      |        "flatRateJobExpenses": 123,
-      |        "professionalSubscriptions": 123,
-      |        "hotelAndMealExpenses": 123,
-      |        "otherAndCapitalAllowances": 123,
-      |        "vehicleExpenses": 123,
-      |        "mileageAllowanceRelief": 123
-      |    }
-      |}""".stripMargin)
+                                                                  |{
+                                                                  |    "expenses": {
+                                                                  |        "jobExpenses": 123,
+                                                                  |        "flatRateJobExpenses": 123,
+                                                                  |        "professionalSubscriptions": 123,
+                                                                  |        "hotelAndMealExpenses": 123,
+                                                                  |        "otherAndCapitalAllowances": 123,
+                                                                  |        "vehicleExpenses": 123,
+                                                                  |        "mileageAllowanceRelief": 123
+                                                                  |    }
+                                                                  |}""".stripMargin)
 
   private val requestBodyJsonNoJobExpenses = Json.parse("""
-      |{
-      |    "expenses": {
-      |        "businessTravelCosts": 123,
-      |        "flatRateJobExpenses": 123,
-      |        "professionalSubscriptions": 123,
-      |        "hotelAndMealExpenses": 123,
-      |        "otherAndCapitalAllowances": 123,
-      |        "vehicleExpenses": 123,
-      |        "mileageAllowanceRelief": 123
-      |    }
-      |}""".stripMargin)
+                                                          |{
+                                                          |    "expenses": {
+                                                          |        "businessTravelCosts": 123,
+                                                          |        "flatRateJobExpenses": 123,
+                                                          |        "professionalSubscriptions": 123,
+                                                          |        "hotelAndMealExpenses": 123,
+                                                          |        "otherAndCapitalAllowances": 123,
+                                                          |        "vehicleExpenses": 123,
+                                                          |        "mileageAllowanceRelief": 123
+                                                          |    }
+                                                          |}""".stripMargin)
 
   private val requestBodyJsonNoFlatRateJobExpenses = Json.parse("""
-      |{
-      |    "expenses": {
-      |        "businessTravelCosts": 123,
-      |        "jobExpenses": 123,
-      |        "professionalSubscriptions": 123,
-      |        "hotelAndMealExpenses": 123,
-      |        "otherAndCapitalAllowances": 123,
-      |        "vehicleExpenses": 123,
-      |        "mileageAllowanceRelief": 123
-      |    }
-      |}""".stripMargin)
+                                                                  |{
+                                                                  |    "expenses": {
+                                                                  |        "businessTravelCosts": 123,
+                                                                  |        "jobExpenses": 123,
+                                                                  |        "professionalSubscriptions": 123,
+                                                                  |        "hotelAndMealExpenses": 123,
+                                                                  |        "otherAndCapitalAllowances": 123,
+                                                                  |        "vehicleExpenses": 123,
+                                                                  |        "mileageAllowanceRelief": 123
+                                                                  |    }
+                                                                  |}""".stripMargin)
 
   private val requestBodyJsonNoProfessionalSubscriptions = Json.parse("""
-      |{
-      |    "expenses": {
-      |        "businessTravelCosts": 123,
-      |        "jobExpenses": 123,
-      |        "flatRateJobExpenses": 123,
-      |        "hotelAndMealExpenses": 123,
-      |        "otherAndCapitalAllowances": 123,
-      |        "vehicleExpenses": 123,
-      |        "mileageAllowanceRelief": 123
-      |    }
-      |}""".stripMargin)
+                                                                        |{
+                                                                        |    "expenses": {
+                                                                        |        "businessTravelCosts": 123,
+                                                                        |        "jobExpenses": 123,
+                                                                        |        "flatRateJobExpenses": 123,
+                                                                        |        "hotelAndMealExpenses": 123,
+                                                                        |        "otherAndCapitalAllowances": 123,
+                                                                        |        "vehicleExpenses": 123,
+                                                                        |        "mileageAllowanceRelief": 123
+                                                                        |    }
+                                                                        |}""".stripMargin)
 
   private val requestBodyJsonNoHotelAndMealExpenses = Json.parse("""
-      |{
-      |    "expenses": {
-      |        "businessTravelCosts": 123,
-      |        "jobExpenses": 123,
-      |        "flatRateJobExpenses": 123,
-      |        "professionalSubscriptions": 123,
-      |        "otherAndCapitalAllowances": 123,
-      |        "vehicleExpenses": 123,
-      |        "mileageAllowanceRelief": 123
-      |    }
-      |}""".stripMargin)
+                                                                   |{
+                                                                   |    "expenses": {
+                                                                   |        "businessTravelCosts": 123,
+                                                                   |        "jobExpenses": 123,
+                                                                   |        "flatRateJobExpenses": 123,
+                                                                   |        "professionalSubscriptions": 123,
+                                                                   |        "otherAndCapitalAllowances": 123,
+                                                                   |        "vehicleExpenses": 123,
+                                                                   |        "mileageAllowanceRelief": 123
+                                                                   |    }
+                                                                   |}""".stripMargin)
 
   private val requestBodyJsonNoOtherAndCapitalAllowances = Json.parse("""
-      |{
-      |    "expenses": {
-      |        "businessTravelCosts": 123,
-      |        "jobExpenses": 123,
-      |        "flatRateJobExpenses": 123,
-      |        "professionalSubscriptions": 123,
-      |        "hotelAndMealExpenses": 123,
-      |        "vehicleExpenses": 123,
-      |        "mileageAllowanceRelief": 123
-      |    }
-      |}""".stripMargin)
+                                                                        |{
+                                                                        |    "expenses": {
+                                                                        |        "businessTravelCosts": 123,
+                                                                        |        "jobExpenses": 123,
+                                                                        |        "flatRateJobExpenses": 123,
+                                                                        |        "professionalSubscriptions": 123,
+                                                                        |        "hotelAndMealExpenses": 123,
+                                                                        |        "vehicleExpenses": 123,
+                                                                        |        "mileageAllowanceRelief": 123
+                                                                        |    }
+                                                                        |}""".stripMargin)
 
   private val requestBodyJsonNoVehicleExpenses = Json.parse("""
-      |{
-      |    "expenses": {
-      |        "businessTravelCosts": 123,
-      |        "jobExpenses": 123,
-      |        "flatRateJobExpenses": 123,
-      |        "professionalSubscriptions": 123,
-      |        "hotelAndMealExpenses": 123,
-      |        "otherAndCapitalAllowances": 123,
-      |        "mileageAllowanceRelief": 123
-      |    }
-      |}""".stripMargin)
+                                                              |{
+                                                              |    "expenses": {
+                                                              |        "businessTravelCosts": 123,
+                                                              |        "jobExpenses": 123,
+                                                              |        "flatRateJobExpenses": 123,
+                                                              |        "professionalSubscriptions": 123,
+                                                              |        "hotelAndMealExpenses": 123,
+                                                              |        "otherAndCapitalAllowances": 123,
+                                                              |        "mileageAllowanceRelief": 123
+                                                              |    }
+                                                              |}""".stripMargin)
 
   private val requestBodyJsonNoMileageAllowanceRelief = Json.parse("""
-      |{
-      |    "expenses": {
-      |        "businessTravelCosts": 123,
-      |        "jobExpenses": 123,
-      |        "flatRateJobExpenses": 123,
-      |        "professionalSubscriptions": 123,
-      |        "hotelAndMealExpenses": 123,
-      |        "otherAndCapitalAllowances": 123,
-      |        "vehicleExpenses": 123
-      |    }
-      |}""".stripMargin)
+                                                                     |{
+                                                                     |    "expenses": {
+                                                                     |        "businessTravelCosts": 123,
+                                                                     |        "jobExpenses": 123,
+                                                                     |        "flatRateJobExpenses": 123,
+                                                                     |        "professionalSubscriptions": 123,
+                                                                     |        "hotelAndMealExpenses": 123,
+                                                                     |        "otherAndCapitalAllowances": 123,
+                                                                     |        "vehicleExpenses": 123
+                                                                     |    }
+                                                                     |}""".stripMargin)
 
   private val requestBodyJsonEmptyExpensesObject = Json.parse("""
-      |{
-      |    "expenses": {}
-      |}""".stripMargin)
+                                                                |{
+                                                                |    "expenses": {}
+                                                                |}""".stripMargin)
 
   private val emptyJson = Json.parse(
     """
@@ -248,6 +248,10 @@ class CreateAndAmendEmploymentExpensesValidatorSpec extends UnitSpec {
       "the taxYear has not yet ended" in new Test {
         validator.validate(CreateAndAmendEmploymentExpensesRawData(validNino, "2022-23", requestBodyJson)) shouldBe List(RuleTaxYearNotEndedError)
       }
+      "the taxYear has not ended but temporal validation is disabled" in new Test {
+        validator.validate(
+          CreateAndAmendEmploymentExpensesRawData(validNino, "2023-24", requestBodyJson, temporalValidationEnabled = false)) shouldBe Nil
+      }
       "all path parameters are invalid" in new Test {
         validator.validate(CreateAndAmendEmploymentExpensesRawData("A12344A", "2000", requestBodyJson)) shouldBe List(
           NinoFormatError,
@@ -265,37 +269,37 @@ class CreateAndAmendEmploymentExpensesValidatorSpec extends UnitSpec {
     }
     "return a FORMAT_VALUE error" when {
       "a value field is below 0" in new Test {
-        val badJson = Json.parse("""
-            |{
-            |    "expenses": {
-            |        "businessTravelCosts": -123.12,
-            |        "jobExpenses": 123.12,
-            |        "flatRateJobExpenses": 123.12,
-            |        "professionalSubscriptions": 123.12,
-            |        "hotelAndMealExpenses": 123.12,
-            |        "otherAndCapitalAllowances": 123.12,
-            |        "vehicleExpenses": 123.12,
-            |        "mileageAllowanceRelief": 123.12
-            |    }
-            |}""".stripMargin)
+        val badJson: JsValue = Json.parse("""
+                                            |{
+                                            |    "expenses": {
+                                            |        "businessTravelCosts": -123.12,
+                                            |        "jobExpenses": 123.12,
+                                            |        "flatRateJobExpenses": 123.12,
+                                            |        "professionalSubscriptions": 123.12,
+                                            |        "hotelAndMealExpenses": 123.12,
+                                            |        "otherAndCapitalAllowances": 123.12,
+                                            |        "vehicleExpenses": 123.12,
+                                            |        "mileageAllowanceRelief": 123.12
+                                            |    }
+                                            |}""".stripMargin)
         validator.validate(CreateAndAmendEmploymentExpensesRawData(validNino, validTaxYear, badJson)) shouldBe List(
           ValueFormatError.copy(paths = Some(Seq("/expenses/businessTravelCosts")))
         )
       }
       "multiple fields are below 0" in new Test {
-        val badjson = Json.parse("""
-            |{
-            |    "expenses": {
-            |        "businessTravelCosts": -123.12,
-            |        "jobExpenses": -123.12,
-            |        "flatRateJobExpenses": -123.12,
-            |        "professionalSubscriptions": -123.12,
-            |        "hotelAndMealExpenses": -123.12,
-            |        "otherAndCapitalAllowances": -123.12,
-            |        "vehicleExpenses": -123.12,
-            |        "mileageAllowanceRelief": -123.12
-            |    }
-            |}""".stripMargin)
+        val badjson: JsValue = Json.parse("""
+                                            |{
+                                            |    "expenses": {
+                                            |        "businessTravelCosts": -123.12,
+                                            |        "jobExpenses": -123.12,
+                                            |        "flatRateJobExpenses": -123.12,
+                                            |        "professionalSubscriptions": -123.12,
+                                            |        "hotelAndMealExpenses": -123.12,
+                                            |        "otherAndCapitalAllowances": -123.12,
+                                            |        "vehicleExpenses": -123.12,
+                                            |        "mileageAllowanceRelief": -123.12
+                                            |    }
+                                            |}""".stripMargin)
         validator.validate(CreateAndAmendEmploymentExpensesRawData(validNino, validTaxYear, badjson)) shouldBe List(
           ValueFormatError.copy(paths = Some(Seq(
             "/expenses/businessTravelCosts",
