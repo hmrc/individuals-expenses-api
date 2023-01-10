@@ -17,6 +17,7 @@
 package v1.controllers.requestParsers.validators
 
 import config.AppConfig
+
 import javax.inject.Inject
 import utils.{CurrentDateTime, CurrentTaxYear}
 import v1.controllers.requestParsers.validators.validations._
@@ -48,7 +49,7 @@ class CreateAndAmendEmploymentExpensesValidator @Inject() (implicit
 
   private def parameterRuleValidation: CreateAndAmendEmploymentExpensesRawData => List[List[MtdError]] = { data =>
     List(
-      MtdTaxYearValidation.validate(data.taxYear, appConfig.employmentExpensesMinimumTaxYear, true)
+      MtdTaxYearValidation.validate(data.taxYear, appConfig.employmentExpensesMinimumTaxYear, data.temporalValidationEnabled)
     )
   }
 

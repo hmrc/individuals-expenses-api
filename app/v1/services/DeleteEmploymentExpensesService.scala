@@ -16,8 +16,6 @@
 
 package v1.services
 
-import cats.data.EitherT
-
 import javax.inject.{Inject, Singleton}
 import cats.implicits._
 import uk.gov.hmrc.http.HeaderCarrier
@@ -41,12 +39,11 @@ class DeleteEmploymentExpensesService @Inject() (deleteEmploymentExpensesConnect
       logContext: EndpointLogContext,
       correlationId: String): Future[DeleteEmploymentExpensesServiceOutcome] = {
 
-    val result =  EitherT(deleteEmploymentExpensesConnector.deleteEmploymentExpenses(request)).leftMap(mapDownstreamErrors(errorMap))
+    deleteEmploymentExpensesConnector.deleteEmploymentExpenses(request).map(_.leftMap(mapDownstreamErrors(errorMap)))
 
-    result.value
   }
 
-  private def errorMap: Map[String, MtdError] = {
+  private val errorMap: Map[String, MtdError] = {
     val errorMap = Map(
       "INVALID_TAXABLE_ENTITY_ID" -> NinoFormatError,
       "INVALID_TAX_YEAR"          -> TaxYearFormatError,

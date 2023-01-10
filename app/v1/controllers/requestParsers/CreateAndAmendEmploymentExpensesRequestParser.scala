@@ -19,6 +19,7 @@ package v1.controllers.requestParsers
 import javax.inject.Inject
 import v1.models.domain.Nino
 import v1.controllers.requestParsers.validators.CreateAndAmendEmploymentExpensesValidator
+import v1.models.request.TaxYear
 import v1.models.request.createAndAmendEmploymentExpenses.{
   CreateAndAmendEmploymentExpensesBody,
   CreateAndAmendEmploymentExpensesRawData,
@@ -29,6 +30,6 @@ class CreateAndAmendEmploymentExpensesRequestParser @Inject() (val validator: Cr
     extends RequestParser[CreateAndAmendEmploymentExpensesRawData, CreateAndAmendEmploymentExpensesRequest] {
 
   override protected def requestFor(data: CreateAndAmendEmploymentExpensesRawData): CreateAndAmendEmploymentExpensesRequest =
-    CreateAndAmendEmploymentExpensesRequest(Nino(data.nino), data.taxYear, data.body.as[CreateAndAmendEmploymentExpensesBody])
+    CreateAndAmendEmploymentExpensesRequest(Nino(data.nino), TaxYear.fromMtd(data.taxYear), data.body.as[CreateAndAmendEmploymentExpensesBody])
 
 }

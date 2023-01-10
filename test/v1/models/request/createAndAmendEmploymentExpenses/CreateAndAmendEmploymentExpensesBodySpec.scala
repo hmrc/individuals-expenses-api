@@ -16,16 +16,16 @@
 
 package v1.models.request.createAndAmendEmploymentExpenses
 
-import play.api.libs.json.Json
+import play.api.libs.json.{JsValue, Json}
 import support.UnitSpec
 import v1.models.utils.JsonErrorValidators
 
 class CreateAndAmendEmploymentExpensesBodySpec extends UnitSpec with JsonErrorValidators {
 
-  val createAndAmendEmploymentExpensesBody = CreateAndAmendEmploymentExpensesBody(
+  val createAndAmendEmploymentExpensesBody: CreateAndAmendEmploymentExpensesBody = CreateAndAmendEmploymentExpensesBody(
     Expenses(Some(123.12), Some(123.12), Some(123.12), Some(123.12), Some(123.12), Some(123.12), Some(123.12), Some(123.12)))
 
-  val json = Json.parse(
+  val json: JsValue = Json.parse(
     """
       |{
       |    "expenses": {

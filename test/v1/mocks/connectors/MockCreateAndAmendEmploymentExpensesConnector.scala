@@ -31,8 +31,14 @@ trait MockCreateAndAmendEmploymentExpensesConnector extends MockFactory {
   object MockCreateAndAmendEmploymentExpensesConnector {
 
     def amend(requestData: CreateAndAmendEmploymentExpensesRequest): CallHandler[Future[DownstreamOutcome[Unit]]] = {
-      (mockCreateAndAmendEmploymentExpensesConnector
-        .amend(_: CreateAndAmendEmploymentExpensesRequest)(_: HeaderCarrier, _: ExecutionContext, _: String))
+      (
+        mockCreateAndAmendEmploymentExpensesConnector
+          .createAmendEmploymentExpenses(_: CreateAndAmendEmploymentExpensesRequest)(
+            _: HeaderCarrier,
+            _: ExecutionContext,
+            _: String
+          )
+        )
         .expects(requestData, *, *, *)
     }
 
