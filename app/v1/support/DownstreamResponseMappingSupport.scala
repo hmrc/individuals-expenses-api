@@ -16,12 +16,10 @@
 
 package v1.support
 
-import play.api.libs.json.Writes
 import utils.Logging
 import v1.controllers.EndpointLogContext
 import v1.models.errors._
 import v1.models.outcomes.ResponseWrapper
-import play.api.libs.json.{JsObject, Json, Writes}
 
 trait DownstreamResponseMappingSupport {
   self: Logging =>
