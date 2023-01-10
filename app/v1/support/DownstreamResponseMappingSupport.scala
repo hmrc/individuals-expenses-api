@@ -26,14 +26,6 @@ import play.api.libs.json.{JsObject, Json, Writes}
 trait DownstreamResponseMappingSupport {
   self: Logging =>
 
-  final def validateRetrieveResponse[T: Writes](downstreamResponseWrapper: ResponseWrapper[T]): Either[ErrorWrapper, ResponseWrapper[T]] = {
-    if (Json.toJson(downstreamResponseWrapper.responseData) == JsObject.empty) {
-      Left(ErrorWrapper(downstreamResponseWrapper.correlationId, NotFoundError, None))
-    } else {
-      Right(downstreamResponseWrapper)
-    }
-  }
-
   final def mapDownstreamErrors[D](errorCodeMap: PartialFunction[String, MtdError])(downstreamResponseWrapper: ResponseWrapper[DownstreamError])(
       implicit logContext: EndpointLogContext): ErrorWrapper = {
 
