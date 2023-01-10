@@ -179,7 +179,7 @@ class CreateAndAmendEmploymentExpensesControllerSpec
           }
         }
 
-        val input = Seq(
+        val input = List(
           (BadRequestError, BAD_REQUEST),
           (NinoFormatError, BAD_REQUEST),
           (TaxYearFormatError, BAD_REQUEST),
@@ -217,7 +217,7 @@ class CreateAndAmendEmploymentExpensesControllerSpec
           }
         }
 
-        val input = Seq(
+        val input = List(
           (NinoFormatError, BAD_REQUEST),
           (TaxYearFormatError, BAD_REQUEST),
           (RuleTaxYearNotSupportedError, BAD_REQUEST),

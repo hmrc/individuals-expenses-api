@@ -167,7 +167,7 @@ class CreateAndAmendEmploymentExpensesControllerISpec extends IntegrationBaseSpe
           }
         }
 
-        val errors = Seq(
+        val errors = List(
           (BAD_REQUEST, "INVALID_TAXABLE_ENTITY_ID", BAD_REQUEST, NinoFormatError),
           (BAD_REQUEST, "INVALID_TAX_YEAR", BAD_REQUEST, TaxYearFormatError),
           (BAD_REQUEST, "INVALID_CORRELATIONID", INTERNAL_SERVER_ERROR, StandardDownstreamError),
@@ -178,7 +178,7 @@ class CreateAndAmendEmploymentExpensesControllerISpec extends IntegrationBaseSpe
           (SERVICE_UNAVAILABLE, "SERVICE_UNAVAILABLE", INTERNAL_SERVER_ERROR, StandardDownstreamError)
         )
 
-        val extraTysErrors = Seq(
+        val extraTysErrors = List(
           (BAD_REQUEST, "INVALID_CORRELATION_ID", INTERNAL_SERVER_ERROR, StandardDownstreamError),
           (UNPROCESSABLE_ENTITY, "TAX_YEAR_NOT_SUPPORTED", BAD_REQUEST, RuleTaxYearNotSupportedError)
         )
@@ -192,12 +192,11 @@ class CreateAndAmendEmploymentExpensesControllerISpec extends IntegrationBaseSpe
 
     val nino: String = "AA123456A"
 
-    def taxYear: String
+    val taxYear: String
 
     val amount: BigDecimal = 123.12
 
-    def requestBodyJson: JsValue = Json.parse(
-      s"""
+    def requestBodyJson: JsValue = Json.parse(s"""
          |{
          |    "expenses": {
          |        "businessTravelCosts": $amount,
@@ -210,32 +209,31 @@ class CreateAndAmendEmploymentExpensesControllerISpec extends IntegrationBaseSpe
          |        "mileageAllowanceRelief": $amount
          |    }
          |}
-         |""".stripMargin
-    )
+         |""".stripMargin)
 
-    val hateoasResponse: JsValue = Json.parse(s"""
-                                                 |{
-                                                 |  "links": [
-                                                 |    {
-                                                 |      "href": "/individuals/expenses/employments/$nino/$taxYear",
-                                                 |      "method": "GET",
-                                                 |      "rel": "self"
-                                                 |    },
-                                                 |    {
-                                                 |      "href": "/individuals/expenses/employments/$nino/$taxYear",
-                                                 |      "method": "PUT",
-                                                 |      "rel": "amend-employment-expenses"
-                                                 |    },
-                                                 |    {
-                                                 |      "href": "/individuals/expenses/employments/$nino/$taxYear",
-                                                 |      "method": "DELETE",
-                                                 |      "rel": "delete-employment-expenses"
-                                                 |    }
-                                                 |  ]
-                                                 |}
-                                                 |""".stripMargin)
+    lazy val hateoasResponse: JsValue = Json.parse(s"""
+         |{
+         |  "links": [
+         |    {
+         |      "href": "/individuals/expenses/employments/$nino/$taxYear",
+         |      "method": "GET",
+         |      "rel": "self"
+         |    },
+         |    {
+         |      "href": "/individuals/expenses/employments/$nino/$taxYear",
+         |      "method": "PUT",
+         |      "rel": "amend-employment-expenses"
+         |    },
+         |    {
+         |      "href": "/individuals/expenses/employments/$nino/$taxYear",
+         |      "method": "DELETE",
+         |      "rel": "delete-employment-expenses"
+         |    }
+         |  ]
+         |}
+         |""".stripMargin)
 
-    def uri: String = s"/employments/$nino/$taxYear"
+    private lazy val mtdUri: String = s"/employments/$nino/$taxYear"
 
     def downstreamUri: String
 
@@ -246,7 +244,7 @@ class CreateAndAmendEmploymentExpensesControllerISpec extends IntegrationBaseSpe
       AuthStub.authorised()
       MtdIdLookupStub.ninoFound(nino)
       setupStubs()
-      buildRequest(uri)
+      buildRequest(mtdUri)
         .withHttpHeaders(
           (ACCEPT, "application/vnd.hmrc.1.0+json"),
           (AUTHORIZATION, "Bearer 123") // some bearer token
@@ -269,16 +267,16 @@ class CreateAndAmendEmploymentExpensesControllerISpec extends IntegrationBaseSpe
 
   private trait NonTysTest extends Test {
 
-    def taxYear: String = "2021-22"
+    val taxYear = "2021-22"
 
-    def downstreamUri: String = s"/income-tax/expenses/employments/$nino/$taxYear"
+    val downstreamUri = s"/income-tax/expenses/employments/$nino/$taxYear"
   }
 
   private trait TysIfsTest extends Test {
 
-    def taxYear: String = "2023-24"
+    val taxYear = "2023-24"
 
-    def downstreamUri: String = s"/income-tax/23-24/expenses/employments/$nino"
+    val downstreamUri = s"/income-tax/23-24/expenses/employments/$nino"
 
     override def request(): WSRequest = super.request().addHttpHeaders("suspend-temporal-validations" -> "true")
   }

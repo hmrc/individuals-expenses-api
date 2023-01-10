@@ -74,7 +74,9 @@ class CreateAndAmendEmploymentExpensesRequestParserSpec extends UnitSpec {
 
         MockCreateAndAmendEmploymentExpensesValidator.validate(rawData).returns(Nil)
 
-        parser.parseRequest(rawData) shouldBe Right(requestData)
+        val result: Either[ErrorWrapper, CreateAndAmendEmploymentExpensesRequest] = parser.parseRequest(rawData)
+
+        result shouldBe Right(requestData)
       }
     }
 
@@ -85,8 +87,9 @@ class CreateAndAmendEmploymentExpensesRequestParserSpec extends UnitSpec {
           .validate(rawData)
           .returns(List(NinoFormatError))
 
-        parser.parseRequest(rawData) shouldBe
-          Left(ErrorWrapper(correlationId, NinoFormatError, None))
+        val result = parser.parseRequest(rawData)
+
+        result shouldBe Left(ErrorWrapper(correlationId, NinoFormatError, None))
       }
 
       "multiple validation errors occur" in new Test {
@@ -94,8 +97,9 @@ class CreateAndAmendEmploymentExpensesRequestParserSpec extends UnitSpec {
           .validate(rawData)
           .returns(List(NinoFormatError, TaxYearFormatError))
 
-        parser.parseRequest(rawData) shouldBe
-          Left(ErrorWrapper(correlationId, BadRequestError, Some(Seq(NinoFormatError, TaxYearFormatError))))
+        val result: Either[ErrorWrapper, CreateAndAmendEmploymentExpensesRequest] = parser.parseRequest(rawData)
+
+        result shouldBe Left(ErrorWrapper(correlationId, BadRequestError, Some(Seq(NinoFormatError, TaxYearFormatError))))
       }
     }
   }

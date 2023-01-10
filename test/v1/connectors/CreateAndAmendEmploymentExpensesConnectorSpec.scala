@@ -62,15 +62,17 @@ class CreateAndAmendEmploymentExpensesConnectorSpec extends ConnectorSpec {
 
         def taxYear: TaxYear = TaxYear.fromMtd("2021-22")
 
-        val outcome = Right(ResponseWrapper(correlationId, ()))
+        val expectedOutcome = Right(ResponseWrapper(correlationId, ()))
 
         willPut(
           url = s"$baseUrl/income-tax/expenses/employments/$nino/2021-22",
           body = body
         )
-          .returns(Future.successful(outcome))
+          .returns(Future.successful(expectedOutcome))
 
-        await(connector.createAmendEmploymentExpenses(request)) shouldBe outcome
+        val result: DownstreamOutcome[Unit] = await(connector.createAmendEmploymentExpenses(request))
+
+        result shouldBe expectedOutcome
 
       }
 
@@ -78,15 +80,17 @@ class CreateAndAmendEmploymentExpensesConnectorSpec extends ConnectorSpec {
 
         def taxYear: TaxYear = TaxYear.fromMtd("2023-24")
 
-        val outcome = Right(ResponseWrapper(correlationId, ()))
+        val expectedOutcome = Right(ResponseWrapper(correlationId, ()))
 
         willPut(
           url = s"$baseUrl/income-tax/23-24/expenses/employments/$nino",
           body = body
         )
-          .returns(Future.successful(outcome))
+          .returns(Future.successful(expectedOutcome))
 
-        await(connector.createAmendEmploymentExpenses(request)) shouldBe outcome
+        val result: DownstreamOutcome[Unit] = await(connector.createAmendEmploymentExpenses(request))
+
+        result shouldBe expectedOutcome
 
       }
     }
