@@ -12,7 +12,11 @@ is:
   - errors.clientOrAgentNotAuthorised
   - errors.notFoundEmployments
 displayName: Create and Amend Employment Expenses
-description: 'This endpoint allows a developer to add or update existing employment expenses and can only be used after the tax year has ended.<br>Making an amendment will override the expense and remove the "dateIgnored" flag from HMRC expenses.<br>This endpoint requires a National Insurance number and tax year.'
+description: | 
+  This endpoint enables you to add or update existing employment expenses. This endpoint can only be used after the tax 
+  year has ended. A National Insurance number and tax year are required.
+  
+  Amending an expense will override the expense and remove the "dateIgnored" flag from HMRC-provided expenses.
 (annotations.sandboxData): !include scenarios/create_and_amend_employment_expenses.md
 (annotations.scope): "write:self-assessment"
 securedBy: [ sec.oauth_2_0: { scopes: [ "write:self-assessment" ] } ]
