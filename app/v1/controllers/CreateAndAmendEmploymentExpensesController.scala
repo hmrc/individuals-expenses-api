@@ -18,6 +18,8 @@ package v1.controllers
 
 import cats.data.EitherT
 import cats.implicits._
+import config.{AppConfig, FeatureSwitches}
+
 import javax.inject.{Inject, Singleton}
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, ControllerComponents}
@@ -31,7 +33,7 @@ import v1.models.errors._
 import v1.models.request.createAndAmendEmploymentExpenses.CreateAndAmendEmploymentExpensesRawData
 import v1.models.response.createAndAmendEmploymentExpenses.CreateAndAmendEmploymentExpensesHateoasData
 import v1.models.response.createAndAmendEmploymentExpenses.CreateAndAmendEmploymentExpensesResponse.AmendOrderLinksFactory
-import v1.services.{CreateAndAmendEmploymentExpensesService, AuditService, EnrolmentsAuthService, MtdIdLookupService}
+import v1.services.{AuditService, CreateAndAmendEmploymentExpensesService, EnrolmentsAuthService, MtdIdLookupService}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -39,6 +41,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class CreateAndAmendEmploymentExpensesController @Inject() (val authService: EnrolmentsAuthService,
                                                             val lookupService: MtdIdLookupService,
                                                             parser: CreateAndAmendEmploymentExpensesRequestParser,
+                                                            appConfig: AppConfig,
                                                             service: CreateAndAmendEmploymentExpensesService,
                                                             hateoasFactory: HateoasFactory,
                                                             auditService: AuditService,
@@ -57,11 +60,17 @@ class CreateAndAmendEmploymentExpensesController @Inject() (val authService: Enr
       logger.info(message = s"[${endpointLogContext.controllerName}][${endpointLogContext.endpointName}] " +
         s"with correlationId : $correlationId")
 
-      val rawData = CreateAndAmendEmploymentExpensesRawData(nino, taxYear, request.body)
+      val rawData = CreateAndAmendEmploymentExpensesRawData(
+        nino = nino,
+        taxYear = taxYear,
+        body = request.body,
+        temporalValidationEnabled = FeatureSwitches()(appConfig).isTemporalValidationEnabled
+      )
+
       val result =
         for {
           parsedRequest   <- EitherT.fromEither[Future](parser.parseRequest(rawData))
-          serviceResponse <- EitherT(service.createAmend(parsedRequest))
+          serviceResponse <- EitherT(service.createAndAmendEmploymentExpenses(parsedRequest))
           vendorResponse <- EitherT.fromEither[Future](
             hateoasFactory.wrap(serviceResponse.responseData, CreateAndAmendEmploymentExpensesHateoasData(nino, taxYear)).asRight[ErrorWrapper])
         } yield {
@@ -104,10 +113,20 @@ class CreateAndAmendEmploymentExpensesController @Inject() (val authService: Enr
     }
 
   private def errorResult(errorWrapper: ErrorWrapper) = {
-    (errorWrapper.error: @unchecked) match {
-      case NinoFormatError | BadRequestError | TaxYearFormatError | RuleTaxYearRangeInvalidError | RuleIncorrectOrEmptyBodyError |
-          RuleTaxYearNotSupportedError | RuleTaxYearNotEndedError | MtdErrorWithCustomMessage(ValueFormatError.code) =>
+    errorWrapper.error match {
+      case _
+          if errorWrapper.containsAnyOf(
+            NinoFormatError,
+            BadRequestError,
+            TaxYearFormatError,
+            RuleTaxYearRangeInvalidError,
+            RuleIncorrectOrEmptyBodyError,
+            RuleTaxYearNotSupportedError,
+            RuleTaxYearNotEndedError,
+            ValueFormatError
+          ) =>
         BadRequest(Json.toJson(errorWrapper))
+
       case StandardDownstreamError => InternalServerError(Json.toJson(errorWrapper))
       case NotFoundError           => NotFound(Json.toJson(errorWrapper))
     }
