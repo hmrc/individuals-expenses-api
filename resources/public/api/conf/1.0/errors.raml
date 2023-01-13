@@ -134,35 +134,13 @@ traits:
                 value:
                   code: RULE_TAX_YEAR_RANGE_INVALID
   ruleTaxYearNotEnded:
-      responses:
-        400:
-          body:
-            application/json:
-              type: types.errorResponse
-              examples:
-                ruleTaxYearNotEnded:
-                  description: The submission has been made before the Tax year it relates to has ended.
-                  value:
-                    code: RULE_TAX_YEAR_NOT_ENDED
-  formatSelfEmploymentId:
     responses:
       400:
         body:
           application/json:
             type: types.errorResponse
             examples:
-              formatSelfEmploymentId:
-                description: The format of the self-employment ID is not valid.
+              ruleTaxYearNotEnded:
+                description: The submission has been made before the Tax year it relates to has ended.
                 value:
-                  code: FORMAT_SELF_EMPLOYMENT_ID
-  ruleSelfEmploymentId:
-    responses:
-      400:
-        body:
-          application/json:
-            type: types.errorResponse
-            examples:
-              ruleSelfEmploymentId:
-                description: A self-employment ID can only be supplied for a self-employment business type.
-                value:
-                  code: RULE_SELF_EMPLOYMENT_ID
+                  code: RULE_TAX_YEAR_NOT_ENDED

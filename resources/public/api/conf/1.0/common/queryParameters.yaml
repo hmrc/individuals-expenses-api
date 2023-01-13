@@ -1,0 +1,8 @@
+uses:
+  types: https://developer.service.hmrc.gov.uk/api-documentation/assets/common/modules/types.raml
+
+traits:
+  source:
+    description: 'Specifies the source of data to be returned. If source is not provided, the latest submitted values will be returned.<p>Limited to the following possible values:</p><ol><li>hmrcHeld</li><li>user</li><li>latest</li></ol>'
+    example: "latest"
+    required: false

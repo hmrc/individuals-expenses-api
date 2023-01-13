@@ -1,0 +1,6 @@
+put:
+  $ref: "./other_expenses_create_and_amend.yaml"
+get:
+  $ref: "./other_expenses_retrieve.yaml"
+delete:
+  $ref: "./other_expenses_delete.yaml"

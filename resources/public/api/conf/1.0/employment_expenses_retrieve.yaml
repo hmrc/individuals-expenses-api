@@ -1,0 +1,108 @@
+summary: Retrieve Employment Expenses
+description: |
+  This endpoint enables you to retrieve existing employment expenses.
+  A National Insurance number and tax year must be provided.
+  
+  ### Test data
+  <p>Scenario simulations using Gov-Test-Scenario headers are only available in the sandbox environment.</p>
+  <table>
+      <thead>
+          <tr>
+              <th>Header Value (Gov-Test-Scenario)</th>
+              <th>Scenario</th>
+          </tr>
+      </thead>
+      <tbody>
+        <tr>
+            <td><p>N/A - DEFAULT<br><strong>?source=user</strong></p></td>
+            <td><p>Requesting <strong>user</strong> source simulates success response with User provided financial details.</p></td>
+        </tr>
+        <tr>
+            <td><p>N/A - DEFAULT<br><strong>?source=hmrcHeld</strong></p></td>
+            <td><p>Requesting <strong>hmrcHeld</strong> source simulates success response with HMRC held financial details.</p></td>
+        </tr>
+        <tr>
+            <td><p>N/A - DEFAULT<br><strong>?source=latest</strong></p></td>
+            <td><p>Requesting <strong>latest</strong> source simulates success response with Latest financial details submitted.</p></td>
+        </tr>
+        <tr>
+            <td><p>NOT_FOUND</p></td>
+            <td><p>Simulates the scenario where no data is found.</p></td>
+         </tr>
+      </tbody>
+  </table>
+
+tags:
+  - Employment Expenses
+
+parameters:
+  - $ref: './common/pathParameters.yaml#/components/parameters/nino'
+  - $ref: './common/pathParameters.yaml#/components/parameters/taxYear'
+  - $ref: './common/queryParameters.yaml#/traits/source'
+  - $ref: './common/headers.yaml#/components/parameters/acceptHeader'
+  - $ref: './common/headers.yaml#/components/parameters/authorizationReadScopeHeader'
+  - $ref: './common/headers.yaml#/components/parameters/testScenarioHeader'
+
+security:
+  - User-Restricted:
+      - read:self-assessment
+
+responses:
+  "200":
+    description: Success
+    headers:
+      X-CorrelationId:
+        $ref: './common/headers.yaml#/components/parameters/correlationId'
+    content:
+      application/json:
+        schema:
+          $ref: './schemas/retrieve_employment_expenses_response.json'
+        examples:
+          example-1:
+            description: Example user response
+            value:
+              $ref: './examples/retrieve_employment_expenses/user.json'
+          example-2:
+            description: Example hmrcHeld response
+            value:
+              $ref: './examples/retrieve_employment_expenses/hmrc_held.json'
+          example-3:
+            description: Example latest response
+            value:
+              $ref: './examples/retrieve_employment_expenses/latest.json'
+
+  "400":
+    description: Bad request
+    content:
+      application/json:
+        schema:
+          $ref: './schemas/error-response.yaml'
+        examples:
+          FORMAT_NINO:
+            $ref: './common/errors.yaml#/components/examples/formatNino'
+          FORMAT_TAX_YEAR:
+            $ref: './common/errors.yaml#/components/examples/formatTaxYear'
+          RULE_TAX_YEAR_NOT_SUPPORTED:
+            $ref: './common/errors.yaml#/components/examples/ruleTaxYearNotSupported'
+          RULE_TAX_YEAR_RANGE_INVALID:
+            $ref: './common/errors.yaml#/components/examples/ruleTaxYearRangeInvalid'
+
+  "403":
+    description: Forbidden
+    content:
+      application/json:
+        schema:
+          $ref: './schemas/error-response.yaml'
+        examples:
+          CLIENT_OR_AGENT_NOT_AUTHORISED:
+            $ref: './common/errors.yaml#/components/examples/clientOrAgentNotAuthorised'
+
+  "404":
+    description: Not Found
+    content:
+      application/json:
+        schema:
+          $ref: './schemas/error-response.yaml'
+        examples:
+          MATCHING_RESOURCE_NOT_FOUND:
+            $ref: './common/errors.yaml#/components/examples/notFound'

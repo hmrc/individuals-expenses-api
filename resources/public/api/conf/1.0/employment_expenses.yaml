@@ -1,0 +1,6 @@
+put:
+  $ref: "./employment_expenses_create_and_amend.yaml"
+get:
+  $ref: "./employment_expenses_retrieve.yaml"
+delete:
+  $ref: "./employment_expenses_delete.yaml"
