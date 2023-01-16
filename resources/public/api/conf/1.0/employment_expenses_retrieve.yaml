@@ -36,12 +36,12 @@ tags:
   - Employment Expenses
 
 parameters:
-  - $ref: './common/pathParameters.yaml#/parameters/nino'
-  - $ref: './common/pathParameters.yaml#/parameters/taxYear'
-  - $ref: './common/queryParameters.yaml#/parameters/source'
-  - $ref: './common/headers.yaml#/parameters/acceptHeader'
-  - $ref: './common/headers.yaml#/parameters/authorizationReadScopeHeader'
-  - $ref: './common/headers.yaml#/parameters/testScenarioHeader'
+  - $ref: './common/pathParameters.yaml#/components/parameters/nino'
+  - $ref: './common/pathParameters.yaml#/components/parameters/taxYear'
+  - $ref: './common/queryParameters.yaml#/components/parameters/source'
+  - $ref: './common/headers.yaml#/components/parameters/acceptHeader'
+  - $ref: './common/headers.yaml#/components/parameters/authorizationReadScopeHeader'
+  - $ref: './common/headers.yaml#/components/parameters/testScenarioHeader'
 
 security:
   - User-Restricted:
@@ -52,7 +52,7 @@ responses:
     description: Success
     headers:
       X-CorrelationId:
-        $ref: './common/headers.yaml#/parameters/correlationId'
+        $ref: './common/headers.yaml#/components/parameters/correlationId'
     content:
       application/json:
         schema:

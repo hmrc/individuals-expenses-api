@@ -87,6 +87,7 @@ class DocumentationControllerISpec extends IntegrationBaseSpec {
       val parserResult = Try(new OpenAPIV3Parser().readContents(contents))
       parserResult.isSuccess shouldBe true
 
+      val xx = parserResult.toOption
       val openAPI = Option(parserResult.get.getOpenAPI)
       openAPI.isEmpty shouldBe false
       openAPI.get.getOpenapi shouldBe "3.0.3"
