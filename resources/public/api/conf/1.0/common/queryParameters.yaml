@@ -1,0 +1,13 @@
+uses:
+  types: https://developer.service.hmrc.gov.uk/api-documentation/assets/common/modules/types.raml
+
+components:
+  parameters:
+    source:
+      in: query
+      name: source
+      description: 'Specifies the source of data to be returned. If source is not provided, the latest submitted values will be returned.'
+      schema:
+        type: string
+        enum: [ user, hmrcHeld, latest ]
+        example: latest
