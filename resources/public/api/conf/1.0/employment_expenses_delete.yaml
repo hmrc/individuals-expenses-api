@@ -80,4 +80,7 @@ responses:
           $ref: './schemas/error-response.yaml'
         examples:
           MATCHING_RESOURCE_NOT_FOUND:
-            $ref: './common/errors.yaml#/components/examples/notFound'
+            description: The supplied income source could not be found.
+            value:
+              code: MATCHING_RESOURCE_NOT_FOUND
+              message: Matching resource not found
