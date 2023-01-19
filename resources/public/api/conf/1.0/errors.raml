@@ -11,7 +11,7 @@ traits:
           application/json:
             type: types.errorResponse
             example:
-              description: The matching resource is not found.
+              description: The supplied income source could not be found.
               value:
                 code: MATCHING_RESOURCE_NOT_FOUND
   notFoundEmployments:
@@ -42,7 +42,9 @@ traits:
             type: types.errorResponse
             examples:
               clientOrAgentNotAuthorised:
-                description: 'The client or agent is not authorised. This is because: the client is not subscribed to MTD, the agent is not subscribed to Agent Services, or the client has not authorised the agent to act on their behalf.'
+                description: |
+                  The client or agent is not authorised. This is because: the client is not subscribed to MTD, the agent
+                  is not subscribed to Agent Services, or the client has not authorised the agent to act on their behalf.
                 value:
                   code: CLIENT_OR_AGENT_NOT_AUTHORISED
   formatNino:
@@ -119,7 +121,9 @@ traits:
             type: types.errorResponse
             examples:
               rule_TaxYearNotSupported:
-                description: The specified tax year is not supported. Either the tax year specified is before the minimum tax year value, or it is after the maximum tax year value.
+                description: | 
+                  The specified tax year is not supported. Either the tax year specified is before the minimum tax year 
+                  value, or it is after the maximum tax year value.
                 value:
                   code: RULE_TAX_YEAR_NOT_SUPPORTED
   ruleTaxYearRangeInvalid:
