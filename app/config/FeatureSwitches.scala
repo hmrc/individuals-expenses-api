@@ -69,7 +69,7 @@ trait OpenApiFeature {
 
   def matches(requestedVersion: String, filename: String): Boolean = requestedVersion == version && matches(filename)
 
-  def matches(filename: String): Boolean = fileMatchers.exists(_.findFirstIn(filename).isDefined)
+  private[config] def matches(filename: String): Boolean = fileMatchers.exists(_.findFirstIn(filename).isDefined)
 }
 
 case object OpenApiFeatureTest extends OpenApiFeature {
