@@ -52,7 +52,7 @@ class DocumentationController @Inject() (selfAssessmentApiDefinition: ApiDefinit
 
 object DocumentationController {
 
-  def filenameWithFeatureName(filename: String, feature: OpenApiFeature): String = {
+  private[config] def filenameWithFeatureName(filename: String, feature: OpenApiFeature): String = {
     val dotIdx = filename.lastIndexOf(".")
     if (dotIdx == -1) {
       s"${filename}_${feature.key}"
