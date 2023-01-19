@@ -29,7 +29,7 @@ class CreateAndAmendEmploymentExpensesResponseSpec extends UnitSpec with MockApp
       val nino    = "mynino"
       val taxYear = "mytaxyear"
 
-      MockAppConfig.apiGatewayContext.returns("my/context").anyNumberOfTimes
+      MockedAppConfig.apiGatewayContext.returns("my/context").anyNumberOfTimes
       CreateAndAmendEmploymentExpensesResponse.AmendOrderLinksFactory.links(
         mockAppConfig,
         CreateAndAmendEmploymentExpensesHateoasData(nino, taxYear)) shouldBe
