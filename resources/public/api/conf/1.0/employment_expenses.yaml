@@ -1,6 +1,28 @@
 put:
-  $ref: "./employment_expenses_create_and_amend.yaml"
+  $ref: "./employment_expenses_create_and_amend.yaml"  
+  summary: Create and Amend Employment Expenses
+  security:
+    - User-Restricted:
+        - write:self-assessment
+
+
 get:
   $ref: "./employment_expenses_retrieve.yaml"
+  summary: Retrieve Employment Expenses
+  security:
+    - User-Restricted:
+        - read:self-assessment
+  parameters:
+    - $ref: './common/pathParameters.yaml#/components/parameters/nino'
+    - $ref: './common/pathParameters.yaml#/components/parameters/taxYear'
+    - $ref: './common/queryParameters.yaml#/components/parameters/source'
+    - $ref: './common/headers.yaml#/components/parameters/acceptHeader'
+    - $ref: './common/headers.yaml#/components/parameters/authorizationReadScopeHeader'
+    - $ref: './common/headers.yaml#/components/parameters/testScenarioHeader'
+
 delete:
   $ref: "./employment_expenses_delete.yaml"
+  summary: Delete Employment Expenses
+  security:
+    - User-Restricted:
+        - write:self-assessment
