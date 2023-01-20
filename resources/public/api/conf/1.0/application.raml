@@ -67,7 +67,12 @@ uses:
             description: 'The tax year the data applies to, for example, 2021-22. The start year and end year must not span two tax years. The minimum tax year is 2021-22. No gaps are allowed, for example, 2020-22 is not valid. (The minimum tax year in Sandbox is 2019-20.)'
             example: "2021-22"
         put: !include create_and_amend_employment_expenses.raml
-        get: !include retrieve_employment_expenses.raml
         delete: !include delete_employment_expenses.raml
         /ignore:
           post: !include ignore_employment_expenses.raml
+      /{taxYear}?source={source}:
+        uriParameters:
+          taxYear:
+            description: 'The tax year the data applies to, for example, 2021-22. The start year and end year must not span two tax years. The minimum tax year is 2021-22. No gaps are allowed, for example, 2020-22 is not valid. (The minimum tax year in Sandbox is 2019-20.)'
+            example: "2021-22"
+        get: !include retrieve_employment_expenses.raml

@@ -54,6 +54,8 @@ tags:
 paths:
   /individuals/expenses/employments/{nino}/{taxYear}:
     $ref: "./employment_expenses.yaml"
+  /individuals/expenses/employments/{nino}/{taxYear}?source={source}:
+    $ref: "./employment_expenses_retrieve.yaml"
   /individuals/expenses/employments/{nino}/{taxYear}/ignore:
     $ref: "./employment_expenses_ignore.yaml"
   /individuals/expenses/other/{nino}/{taxYear}:

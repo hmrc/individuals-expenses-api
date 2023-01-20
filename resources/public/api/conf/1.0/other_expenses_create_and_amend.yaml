@@ -75,6 +75,8 @@ responses:
             $ref: './common/errors.yaml#/components/examples/formatTaxYear'
           FORMAT_VALUE:
             $ref: './common/errors.yaml#/components/examples/formatValue'
+          FORMAT_CUSTOMER_REFERENCE:
+            $ref: './common/errors.yaml#/components/examples/formatCustomerRef'
           RULE_INCORRECT_OR_EMPTY_BODY_SUBMITTED:
             $ref: './common/errors.yaml#/components/examples/ruleIncorrectOrEmptyBody'
           RULE_TAX_YEAR_NOT_SUPPORTED:
