@@ -7,6 +7,16 @@ traits:
   source:
     queryParameters:
       source:
-        description: 'Specifies the source of data to be returned. If source is not provided, the latest submitted values will be returned.<p>Limited to the following possible values:</p><ol><li>hmrcHeld</li><li>user</li><li>latest</li></ol>'
+        description: |
+          Specifies the source of data to be returned. Defaults to "latest" if not provided, which combines the HMRC and
+          user-provided overridden values.
+          Limited to the following possible values:
+        
+          - 'hmrcHeld' - This will query the HMRC held data only
+
+          - 'user' - This will query customer submitted data only
+
+          - 'latest' - This will return the latest of HMRC held and Customer data based on the latest timestamp in HMRC
+            held (where multiple timestamps are present) or IBD data
         required: false
 

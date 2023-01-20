@@ -11,7 +11,7 @@ traits:
           application/json:
             type: types.errorResponse
             example:
-              description: The supplied income source could not be found.
+              description: The matching resource is not found.
               value:
                 code: MATCHING_RESOURCE_NOT_FOUND
   notFoundEmployments:
@@ -22,6 +22,16 @@ traits:
             type: types.errorResponse
             example:
               description: Employments could not be found for the supplied NINO.
+              value:
+                code: MATCHING_RESOURCE_NOT_FOUND
+  notFoundDeleteEmployments:
+    responses:
+      404:
+        body:
+          application/json:
+            type: types.errorResponse
+            example:
+              description: The supplied income source could not be found.
               value:
                 code: MATCHING_RESOURCE_NOT_FOUND
   notFoundExpenses:

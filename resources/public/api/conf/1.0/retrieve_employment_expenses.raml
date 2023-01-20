@@ -14,22 +14,6 @@ description: This endpoint enables you to retrieve existing employment expenses.
 (annotations.sandboxData): !include scenarios/retrieve_employment_expenses.md
 (annotations.scope): "read:self-assessment"
 securedBy: [ sec.oauth_2_0: { scopes: [ "read:self-assessment" ] } ]
-queryParameters:
-  source:
-    description: |
-      Specifies the source of data to be returned. Defaults to "latest" if not provided, which combines the HMRC and 
-      user-provided overridden values.
-      
-      Limited to the following possible values:
-        - 'hmrcHeld' - This will query the HMRC held data only
-      
-        - 'user' - This will query customer submitted data only
-      
-        - 'latest' - This will return the latest of HMRC held and Customer data based on the latest timestamp in HMRC 
-           held (where multiple timestamps are present) or IBD data
-    type: string
-    example: hmrcHeld
-    required: false
 responses:
   200:
     body:
