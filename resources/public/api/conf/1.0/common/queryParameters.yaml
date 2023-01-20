@@ -1,6 +1,3 @@
-uses:
-  types: https://developer.service.hmrc.gov.uk/api-documentation/assets/common/modules/types.raml
-
 components:
   parameters:
     source:
