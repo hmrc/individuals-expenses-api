@@ -47,10 +47,10 @@ class BaseDownstreamConnectorSpec extends ConnectorSpec {
       val appConfig: AppConfig = mockAppConfig
     }
 
-    MockAppConfig.desBaseUrl returns baseUrl
-    MockAppConfig.desToken returns "des-token"
-    MockAppConfig.desEnvironment returns "des-environment"
-    MockAppConfig.desEnvironmentHeaders returns desEnvironmentHeaders
+    MockedAppConfig.desBaseUrl returns baseUrl
+    MockedAppConfig.desToken returns "des-token"
+    MockedAppConfig.desEnvironment returns "des-environment"
+    MockedAppConfig.desEnvironmentHeaders returns desEnvironmentHeaders
   }
 
   class IfsR5Test(ifsR5EnvironmentHeaders: Option[Seq[String]]) extends MockHttpClient with MockAppConfig {
@@ -60,10 +60,10 @@ class BaseDownstreamConnectorSpec extends ConnectorSpec {
       val appConfig: AppConfig = mockAppConfig
     }
 
-    MockAppConfig.ifsR5BaseUrl returns baseUrl
-    MockAppConfig.ifsR5Token returns "ifs-token"
-    MockAppConfig.ifsR5Environment returns "ifs-environment"
-    MockAppConfig.ifsR5EnvironmentHeaders returns ifsR5EnvironmentHeaders
+    MockedAppConfig.ifsR5BaseUrl returns baseUrl
+    MockedAppConfig.ifsR5Token returns "ifs-token"
+    MockedAppConfig.ifsR5Environment returns "ifs-environment"
+    MockedAppConfig.ifsR5EnvironmentHeaders returns ifsR5EnvironmentHeaders
   }
 
   class IfsR6Test(ifsR6EnvironmentHeaders: Option[Seq[String]]) extends MockHttpClient with MockAppConfig {
@@ -73,10 +73,10 @@ class BaseDownstreamConnectorSpec extends ConnectorSpec {
       val appConfig: AppConfig = mockAppConfig
     }
 
-    MockAppConfig.ifsR6BaseUrl returns baseUrl
-    MockAppConfig.ifsR6Token returns "ifs-token"
-    MockAppConfig.ifsR6Environment returns "ifs-environment"
-    MockAppConfig.ifsR6EnvironmentHeaders returns ifsR6EnvironmentHeaders
+    MockedAppConfig.ifsR6BaseUrl returns baseUrl
+    MockedAppConfig.ifsR6Token returns "ifs-token"
+    MockedAppConfig.ifsR6Environment returns "ifs-environment"
+    MockedAppConfig.ifsR6EnvironmentHeaders returns ifsR6EnvironmentHeaders
   }
 
   "BaseDownstreamConnector" when {

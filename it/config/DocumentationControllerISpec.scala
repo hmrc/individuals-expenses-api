@@ -18,7 +18,7 @@ package config
 
 import io.swagger.v3.parser.OpenAPIV3Parser
 import play.api.http.Status
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
 import support.IntegrationBaseSpec
 
@@ -26,7 +26,7 @@ import scala.util.Try
 
 class DocumentationControllerISpec extends IntegrationBaseSpec {
 
-  val apiDefinitionJson: JsValue = Json.parse(
+  private val apiDefinitionJson = Json.parse(
     """
     |{
     |   "scopes":[
@@ -64,35 +64,50 @@ class DocumentationControllerISpec extends IntegrationBaseSpec {
 
   "GET /api/definition" should {
     "return a 200 with the correct response body" in {
-      val response: WSResponse = await(buildRequest("/api/definition").get())
-      response.status shouldBe Status.OK
+      val response = get("/api/definition")
       Json.parse(response.body) shouldBe apiDefinitionJson
     }
   }
 
   "a RAML documentation request" must {
     "return the documentation" in {
-      val response: WSResponse = await(buildRequest("/api/conf/1.0/application.raml").get())
-      response.status shouldBe Status.OK
+      val response = get("/api/conf/1.0/application.raml")
       response.body[String] should startWith("#%RAML 1.0")
     }
   }
 
   "an OAS documentation request" must {
     "return the documentation that passes OAS V3 parser" in {
-      val response: WSResponse = await(buildRequest("/api/conf/1.0/application.yaml").get())
-      response.status shouldBe Status.OK
+      val response = get("/api/conf/1.0/application.yaml")
 
-      val contents     = response.body[String]
-      val parserResult = Try(new OpenAPIV3Parser().readContents(contents))
+      val body         = response.body[String]
+      val parserResult = Try(new OpenAPIV3Parser().readContents(body))
       parserResult.isSuccess shouldBe true
 
-      val openAPI = Option(parserResult.get.getOpenAPI)
-      openAPI.isEmpty shouldBe false
-      openAPI.get.getOpenapi shouldBe "3.0.3"
-      openAPI.get.getInfo.getTitle shouldBe "Individuals Expenses (MTD)"
-      openAPI.get.getInfo.getVersion shouldBe "1.0"
+      val openAPI = Option(parserResult.get.getOpenAPI).getOrElse(fail("openAPI wasn't defined"))
+      openAPI.getOpenapi shouldBe "3.0.3"
+      openAPI.getInfo.getTitle shouldBe "Individuals Expenses (MTD)"
+      openAPI.getInfo.getVersion shouldBe "1.0"
     }
+
+    "return the expected endpoint description" when {
+      "the relevant feature switch is enabled" in {
+        val response = get("/api/conf/1.0/employment_expenses_retrieve.yaml")
+        val body     = response.body[String]
+        withClue("From other_expenses_retrieve.yaml") {
+          body should not include ("Gov-Test-Scenario headers is only available in")
+        }
+        withClue("From other_expenses_retrieve_openApiFeatureTest.yaml") {
+          body should include("Gov-Test-Scenario headers are available only in")
+        }
+      }
+    }
+  }
+
+  private def get(path: String): WSResponse = {
+    val response: WSResponse = await(buildRequest(path).get())
+    response.status shouldBe Status.OK
+    response
   }
 
 }

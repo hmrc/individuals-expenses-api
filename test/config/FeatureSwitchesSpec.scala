@@ -24,7 +24,7 @@ import support.UnitSpec
 class FeatureSwitchesSpec extends UnitSpec {
 
   "a feature switch" should {
-    "be true" when {
+    "be enabled" when {
 
       "absent from the config" in {
         val configuration   = Configuration.empty
@@ -33,17 +33,16 @@ class FeatureSwitchesSpec extends UnitSpec {
         featureSwitches.isTaxYearSpecificApiEnabled shouldBe true
       }
 
-      "enabled" in {
+      "explicitly true" in {
         val configuration   = Configuration("tys-api.enabled" -> true)
         val featureSwitches = FeatureSwitches(configuration)
 
         featureSwitches.isTaxYearSpecificApiEnabled shouldBe true
-
       }
     }
 
-    "be false" when {
-      "disabled" in {
+    "be disabled" when {
+      "explicitly false" in {
         val configuration   = Configuration("tys-api.enabled" -> false)
         val featureSwitches = FeatureSwitches(configuration)
 
@@ -52,7 +51,7 @@ class FeatureSwitchesSpec extends UnitSpec {
     }
   }
 
-  "isVersionEnabled()" should {
+  "isVersionEnabled" should {
     val configuration = Configuration(
       "version-1.enabled" -> true,
       "version-2.enabled" -> false
@@ -128,6 +127,30 @@ class FeatureSwitchesSpec extends UnitSpec {
       }
     }
 
+  }
+
+  "OpenApiFeature.matches" should {
+
+    case object AFeature extends OpenApiFeature {
+      val key     = "openApiFeatureTest"
+      val version = "any"
+      val fileMatchers = List(
+        "^employment_expenses_retrieve\\.yaml$".r,
+        "^other_expenses_retrieve\\.yaml$".r
+      )
+
+    }
+
+    "return true for a matching filename" in {
+      AFeature.matches("employment_expenses_retrieve.yaml") shouldBe true
+    }
+
+    "return false for non-matching filenames" in {
+      AFeature.matches("something_different.yaml") shouldBe false
+      AFeature.matches("employment_expenses_retrieve.YAML") shouldBe false
+      AFeature.matches("employment_expenses_retrieve.yaml_AND_MORE") shouldBe false
+      AFeature.matches("MORE_AND_employment_expenses_retrieve.yaml") shouldBe false
+    }
   }
 
 }
