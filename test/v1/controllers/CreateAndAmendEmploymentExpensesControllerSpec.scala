@@ -77,41 +77,41 @@ class CreateAndAmendEmploymentExpensesControllerSpec
   )
 
   private val requestBodyJson = Json.parse("""
-                                             |{
-                                             |    "expenses": {
-                                             |        "businessTravelCosts": 123.12,
-                                             |        "jobExpenses": 123.12,
-                                             |        "flatRateJobExpenses": 123.12,
-                                             |        "professionalSubscriptions": 123.12,
-                                             |        "hotelAndMealExpenses": 123.12,
-                                             |        "otherAndCapitalAllowances": 123.12,
-                                             |        "vehicleExpenses": 123.12,
-                                             |        "mileageAllowanceRelief": 123.12
-                                             |    }
-                                             |}
-                                             |""".stripMargin)
+     |{
+     |    "expenses": {
+     |        "businessTravelCosts": 123.12,
+     |        "jobExpenses": 123.12,
+     |        "flatRateJobExpenses": 123.12,
+     |        "professionalSubscriptions": 123.12,
+     |        "hotelAndMealExpenses": 123.12,
+     |        "otherAndCapitalAllowances": 123.12,
+     |        "vehicleExpenses": 123.12,
+     |        "mileageAllowanceRelief": 123.12
+     |    }
+     |}
+     |""".stripMargin)
 
   private val responseBody = Json.parse(s"""
-                                           |{
-                                           |  "links": [
-                                           |    {
-                                           |      "href": "/individuals/expenses/employments/$nino/$taxYear",
-                                           |      "method": "GET",
-                                           |      "rel": "self"
-                                           |    },
-                                           |    {
-                                           |      "href": "/individuals/expenses/employments/$nino/$taxYear",
-                                           |      "method": "PUT",
-                                           |      "rel": "amend-employment-expenses"
-                                           |    },
-                                           |    {
-                                           |      "href": "/individuals/expenses/employments/$nino/$taxYear",
-                                           |      "method": "DELETE",
-                                           |      "rel": "delete-employment-expenses"
-                                           |    }
-                                           |  ]
-                                           |}
-                                           |""".stripMargin)
+     |{
+     |  "links": [
+     |    {
+     |      "href": "/individuals/expenses/employments/$nino/$taxYear",
+     |      "method": "GET",
+     |      "rel": "self"
+     |    },
+     |    {
+     |      "href": "/individuals/expenses/employments/$nino/$taxYear",
+     |      "method": "PUT",
+     |      "rel": "amend-employment-expenses"
+     |    },
+     |    {
+     |      "href": "/individuals/expenses/employments/$nino/$taxYear",
+     |      "method": "DELETE",
+     |      "rel": "delete-employment-expenses"
+     |    }
+     |  ]
+     |}
+     |""".stripMargin)
 
   def event(auditResponse: AuditResponse, requestBody: Option[JsValue]): AuditEvent[ExpensesAuditDetail] =
     AuditEvent(
@@ -249,7 +249,7 @@ class CreateAndAmendEmploymentExpensesControllerSpec
     MockedMtdIdLookupService.lookup(nino).returns(Future.successful(Right("test-mtd-id")))
     MockedEnrolmentsAuthService.authoriseUser()
     MockIdGenerator.generateCorrelationId.returns(correlationId)
-    MockAppConfig.featureSwitches.returns(Configuration("allowTemporalValidationSuspension.enabled" -> true)).anyNumberOfTimes()
+    MockedAppConfig.featureSwitches.returns(Configuration("allowTemporalValidationSuspension.enabled" -> true)).anyNumberOfTimes()
   }
 
 }

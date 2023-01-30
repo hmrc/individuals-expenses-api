@@ -4,7 +4,7 @@ description: |
   A National Insurance number and tax year must be provided.
   
   ### Test data
-  <p>Scenario simulations using Gov-Test-Scenario headers is only available in the sandbox environment.</p>
+  <p>Scenario simulations using Gov-Test-Scenario headers are available only in the sandbox environment.</p>
   <table>
       <thead>
           <tr>
@@ -48,6 +48,19 @@ responses:
       application/json:
         schema:
           $ref: './schemas/retrieve_other_expenses_response.json'
+        examples:
+          example-1:
+            description: Example user response
+            value:
+              $ref: './examples/retrieve_other_expenses/user.json'
+          example-2:
+            description: Example hmrcHeld response
+            value:
+              $ref: './examples/retrieve_other_expenses/hmrc_held.json'
+          example-3:
+            description: Example latest response
+            value:
+              $ref: './examples/retrieve_other_expenses/latest.json'
 
   "400":
     description: Bad request

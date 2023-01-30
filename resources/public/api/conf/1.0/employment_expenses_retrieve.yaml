@@ -58,15 +58,15 @@ responses:
         schema:
           $ref: './schemas/retrieve_employment_expenses_response.json'
         examples:
-          example-1:
+          example-user-response:
             description: Example user response
             value:
               $ref: './examples/retrieve_employment_expenses/user.json'
-          example-2:
+          example-hmrcHeld-response:
             description: Example hmrcHeld response
             value:
               $ref: './examples/retrieve_employment_expenses/hmrc_held.json'
-          example-3:
+          example-latest-response:
             description: Example latest response
             value:
               $ref: './examples/retrieve_employment_expenses/latest.json'
