@@ -16,11 +16,11 @@
 
 package v1.controllers.requestParsers
 
-import javax.inject.Inject
-import v1.models.domain.Nino
+import api.models.domain.{Nino, TaxYear}
 import v1.controllers.requestParsers.validators.DeleteEmploymentExpensesValidator
-import v1.models.request.TaxYear
 import v1.models.request.deleteEmploymentExpenses.{DeleteEmploymentExpensesRawData, DeleteEmploymentExpensesRequest}
+
+import javax.inject.Inject
 
 class DeleteEmploymentExpensesRequestParser @Inject() (val validator: DeleteEmploymentExpensesValidator)
     extends RequestParser[DeleteEmploymentExpensesRawData, DeleteEmploymentExpensesRequest] {

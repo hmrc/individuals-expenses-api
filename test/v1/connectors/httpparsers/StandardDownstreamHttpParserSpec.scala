@@ -16,13 +16,14 @@
 
 package v1.connectors.httpparsers
 
+import api.models.errors.{BVRError, DownstreamErrorCode, DownstreamErrors, MtdError, OutboundError, StandardDownstreamError}
+import api.models.outcomes.ResponseWrapper
 import play.api.http.Status._
 import play.api.libs.json.{JsValue, Json, Reads}
 import support.UnitSpec
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 import v1.connectors.DownstreamOutcome
 import v1.models.errors._
-import v1.models.outcomes.ResponseWrapper
 
 // WLOG if Reads tested elsewhere
 case class SomeModel(data: String)
@@ -38,7 +39,7 @@ class StandardDownstreamHttpParserSpec extends UnitSpec {
 
   val correlationId = "a1e8057e-fbbc-47a8-a8b4-78d9f015c253"
 
-  import v1.connectors.httpparsers.StandardDownstreamHttpParser._
+  import api.connectors.httpParsers.StandardDownstreamHttpParser._
 
   val httpReads: HttpReads[DownstreamOutcome[Unit]] = implicitly
 

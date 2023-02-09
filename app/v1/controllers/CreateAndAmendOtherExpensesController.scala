@@ -16,23 +16,25 @@
 
 package v1.controllers
 
+import api.controllers.{AuthorisedController, EndpointLogContext}
+import api.hateoas.HateoasFactory
+import api.models.audit.{AuditEvent, AuditResponse, GenericAuditDetail}
+import api.models.errors._
+import api.services.{AuditService, EnrolmentsAuthService, MtdIdLookupService}
 import cats.data.EitherT
 import cats.implicits._
-import javax.inject.{Inject, Singleton}
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, ControllerComponents}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.http.connector.AuditResult
 import utils.{IdGenerator, Logging}
 import v1.controllers.requestParsers.CreateAndAmendOtherExpensesRequestParser
-import v1.hateoas.HateoasFactory
-import v1.models.audit.{AuditEvent, AuditResponse, ExpensesAuditDetail}
-import v1.models.errors._
 import v1.models.request.createAndAmendOtherExpenses.CreateAndAmendOtherExpensesRawData
 import v1.models.response.createAndAmendOtherExpenses.CreateAndAmendOtherExpensesHateoasData
 import v1.models.response.createAndAmendOtherExpenses.CreateAndAmendOtherExpensesResponse.CreateAndAmendOtherExpensesLinksFactory
-import v1.services.{CreateAndAmendOtherExpensesService, AuditService, EnrolmentsAuthService, MtdIdLookupService}
+import v1.services.CreateAndAmendOtherExpensesService
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -45,7 +47,6 @@ class CreateAndAmendOtherExpensesController @Inject() (val authService: Enrolmen
                                                        cc: ControllerComponents,
                                                        val idGenerator: IdGenerator)(implicit ec: ExecutionContext)
     extends AuthorisedController(cc)
-    with BaseController
     with Logging {
 
   implicit val endpointLogContext: EndpointLogContext =
@@ -69,12 +70,12 @@ class CreateAndAmendOtherExpensesController @Inject() (val authService: Enrolmen
               s"Success response received with CorrelationId: ${serviceResponse.correlationId}")
 
           auditSubmission(
-            ExpensesAuditDetail(
+            GenericAuditDetail(
               userDetails = request.userDetails,
               params = Map("nino" -> nino, "taxYear" -> taxYear),
-              requestBody = Some(request.body),
+              request = Some(request.body),
               `X-CorrelationId` = serviceResponse.correlationId,
-              auditResponse = AuditResponse(httpStatus = OK, response = Right(Some(Json.toJson(vendorResponse))))
+              response = AuditResponse(httpStatus = OK, response = Right(Some(Json.toJson(vendorResponse))))
             )
           )
 
@@ -90,12 +91,12 @@ class CreateAndAmendOtherExpensesController @Inject() (val authService: Enrolmen
             s"Error response received with CorrelationId: $resCorrelationId")
 
         auditSubmission(
-          ExpensesAuditDetail(
+          GenericAuditDetail(
             userDetails = request.userDetails,
             params = Map("nino" -> nino, "taxYear" -> taxYear),
-            requestBody = Some(request.body),
+            request = Some(request.body),
             `X-CorrelationId` = resCorrelationId,
-            auditResponse = AuditResponse(httpStatus = result.header.status, response = Left(errorWrapper.auditErrors))
+            response = AuditResponse(httpStatus = result.header.status, response = Left(errorWrapper.auditErrors))
           ))
 
         result
@@ -120,7 +121,7 @@ class CreateAndAmendOtherExpensesController @Inject() (val authService: Enrolmen
     }
   }
 
-  private def auditSubmission(details: ExpensesAuditDetail)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[AuditResult] = {
+  private def auditSubmission(details: GenericAuditDetail)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[AuditResult] = {
 
     val event = AuditEvent(
       auditType = "CreateAmendOtherExpenses",

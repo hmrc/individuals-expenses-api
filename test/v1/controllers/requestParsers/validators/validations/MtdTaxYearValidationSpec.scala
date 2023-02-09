@@ -16,6 +16,7 @@
 
 package v1.controllers.requestParsers.validators.validations
 
+import api.models.errors.{RuleTaxYearNotEndedError, RuleTaxYearNotSupportedError}
 import config.AppConfig
 import mocks.MockAppConfig
 import org.joda.time.DateTime
@@ -24,7 +25,6 @@ import org.scalamock.handlers.CallHandler
 import support.UnitSpec
 import utils.{CurrentDateTime, CurrentTaxYear}
 import v1.mocks.{MockCurrentDateTime, MockCurrentTaxYear}
-import v1.models.errors.{RuleTaxYearNotEndedError, RuleTaxYearNotSupportedError}
 import v1.models.utils.JsonErrorValidators
 
 class MtdTaxYearValidationSpec extends UnitSpec with JsonErrorValidators {

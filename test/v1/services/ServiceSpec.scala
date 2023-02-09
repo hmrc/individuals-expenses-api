@@ -16,10 +16,10 @@
 
 package v1.services
 
+import api.controllers.EndpointLogContext
 import play.api.http.{HeaderNames, MimeTypes, Status}
 import support.UnitSpec
 import uk.gov.hmrc.http.HeaderCarrier
-import v1.controllers.EndpointLogContext
 
 import scala.concurrent.ExecutionContext
 

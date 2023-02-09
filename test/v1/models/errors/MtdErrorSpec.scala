@@ -16,6 +16,7 @@
 
 package v1.models.errors
 
+import api.models.errors.MtdError
 import play.api.libs.json.Json
 import support.UnitSpec
 

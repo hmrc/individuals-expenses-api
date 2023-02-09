@@ -16,8 +16,9 @@
 
 package v1.services
 
+import api.models.errors.{NinoFormatError, StandardDownstreamError, UnauthorisedError}
+import api.services.MtdIdLookupService
 import v1.mocks.connectors.MockMtdIdLookupConnector
-import v1.models.errors.{StandardDownstreamError, NinoFormatError, UnauthorisedError}
 
 import scala.concurrent.Future
 

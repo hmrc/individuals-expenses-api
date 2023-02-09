@@ -17,6 +17,7 @@
 package v1.routing
 
 import akka.actor.ActorSystem
+import api.models.errors.{InvalidAcceptHeaderError, UnsupportedVersionError}
 import mocks.MockAppConfig
 import org.scalatest.Inside
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
@@ -30,7 +31,6 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import routing.{VersionRoutingMap, VersionRoutingRequestHandler}
 import support.UnitSpec
-import v1.models.errors.{InvalidAcceptHeaderError, UnsupportedVersionError}
 
 class VersionRoutingRequestHandlerSpec extends UnitSpec with Inside with MockAppConfig with GuiceOneAppPerSuite {
   test =>

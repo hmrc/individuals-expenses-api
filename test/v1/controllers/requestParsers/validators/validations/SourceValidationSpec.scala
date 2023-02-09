@@ -16,8 +16,8 @@
 
 package v1.controllers.requestParsers.validators.validations
 
+import api.models.errors.SourceFormatError
 import support.UnitSpec
-import v1.models.errors.SourceFormatError
 
 class SourceValidationSpec extends UnitSpec {
 

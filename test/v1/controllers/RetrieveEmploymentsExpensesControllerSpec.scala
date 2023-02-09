@@ -16,6 +16,10 @@
 
 package v1.controllers
 
+import api.models.audit.{AuditError, AuditEvent, AuditResponse, GenericAuditDetail}
+import api.models.domain.{MtdSource, Nino, TaxYear}
+import api.models.errors.{BadRequestError, ErrorWrapper, MtdError, NinoFormatError, NotFoundError, RuleTaxYearRangeInvalidError, SourceFormatError, StandardDownstreamError, TaxYearFormatError}
+import api.models.hateoas.{HateoasWrapper, Link}
 import play.api.libs.json.Json
 import play.api.mvc.Result
 import uk.gov.hmrc.http.HeaderCarrier
@@ -24,13 +28,9 @@ import v1.mocks.MockIdGenerator
 import v1.mocks.hateoas.MockHateoasFactory
 import v1.mocks.requestParsers.MockRetrieveEmploymentsExpensesRequestParser
 import v1.mocks.services.{MockAuditService, MockEnrolmentsAuthService, MockMtdIdLookupService, MockRetrieveEmploymentsExpensesService}
-import v1.models.audit.{AuditError, AuditEvent, AuditResponse, ExpensesAuditDetail}
-import v1.models.domain.{MtdSource, Nino}
 import v1.models.errors._
-import v1.models.hateoas.Method.{DELETE, GET, POST, PUT}
-import v1.models.hateoas.{HateoasWrapper, Link}
-import v1.models.outcomes.ResponseWrapper
-import v1.models.request.TaxYear
+import api.models.hateoas.Method.{DELETE, GET, POST, PUT}
+import api.models.outcomes.ResponseWrapper
 import v1.models.request.retrieveEmploymentExpenses.{RetrieveEmploymentsExpensesRawData, RetrieveEmploymentsExpensesRequest}
 import v1.models.response.retrieveEmploymentExpenses.RetrieveEmploymentsExpensesHateoasData
 
@@ -81,17 +81,17 @@ class RetrieveEmploymentsExpensesControllerSpec
     Link(href = s"/individuals/expenses/employments/$nino/$taxYear/ignore", method = POST, rel = "ignore-employment-expenses")
   )
 
-  def event(auditResponse: AuditResponse): AuditEvent[ExpensesAuditDetail] =
+  def event(auditResponse: AuditResponse): AuditEvent[GenericAuditDetail] =
     AuditEvent(
       auditType = "RetrieveEmploymentExpenses",
       transactionName = "retrieve-employment-expenses",
-      detail = ExpensesAuditDetail(
+      detail = GenericAuditDetail(
         userType = "Individual",
         agentReferenceNumber = None,
         params = Map("nino" -> nino, "taxYear" -> taxYear),
-        requestBody = None,
+        request = None,
         `X-CorrelationId` = correlationId,
-        auditResponse = auditResponse
+        response = auditResponse
       )
     )
 

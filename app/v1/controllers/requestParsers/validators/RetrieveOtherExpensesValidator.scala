@@ -16,12 +16,14 @@
 
 package v1.controllers.requestParsers.validators
 
+import api.controllers.requestParsers.validators.Validator
+import api.controllers.requestParsers.validators.validations._
+import api.models.errors.MtdError
 import config.AppConfig
-import javax.inject.Inject
 import utils.{CurrentDateTime, CurrentTaxYear}
-import v1.controllers.requestParsers.validators.validations.{MtdTaxYearValidation, NinoValidation, TaxYearValidation}
-import v1.models.errors.MtdError
 import v1.models.request.retrieveOtherExpenses.RetrieveOtherExpensesRawData
+
+import javax.inject.Inject
 
 class RetrieveOtherExpensesValidator @Inject() (implicit currentDateTime: CurrentDateTime, appConfig: AppConfig, currentTaxYear: CurrentTaxYear)
     extends Validator[RetrieveOtherExpensesRawData] {

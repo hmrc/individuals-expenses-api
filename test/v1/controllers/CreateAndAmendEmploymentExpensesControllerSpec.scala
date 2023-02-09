@@ -16,6 +16,10 @@
 
 package v1.controllers
 
+import api.models.audit.{AuditError, AuditEvent, AuditResponse, GenericAuditDetail}
+import api.models.domain.{Nino, TaxYear}
+import api.models.errors.{BadRequestError, ErrorWrapper, MtdError, NinoFormatError, NotFoundError, RuleIncorrectOrEmptyBodyError, RuleTaxYearNotEndedError, RuleTaxYearNotSupportedError, RuleTaxYearRangeInvalidError, StandardDownstreamError, TaxYearFormatError, ValueFormatError}
+import api.models.hateoas.{HateoasWrapper, Link}
 import play.api.Configuration
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Result
@@ -25,20 +29,12 @@ import v1.mocks.MockIdGenerator
 import v1.mocks.hateoas.MockHateoasFactory
 import v1.mocks.requestParsers.MockCreateAndAmendEmploymentExpensesRequestParser
 import v1.mocks.services.{MockAuditService, MockCreateAndAmendEmploymentExpensesService, MockEnrolmentsAuthService, MockMtdIdLookupService}
-import v1.models.audit.{AuditError, AuditEvent, AuditResponse, ExpensesAuditDetail}
-import v1.models.domain.Nino
 import v1.models.errors._
-import v1.models.hateoas.Method.{DELETE, GET, PUT}
-import v1.models.hateoas.{HateoasWrapper, Link}
-import v1.models.outcomes.ResponseWrapper
-import v1.models.request.TaxYear
-import v1.models.request.createAndAmendEmploymentExpenses.{
-  CreateAndAmendEmploymentExpensesBody,
-  CreateAndAmendEmploymentExpensesRawData,
-  CreateAndAmendEmploymentExpensesRequest,
-  Expenses
-}
+import api.models.hateoas.Method.{DELETE, GET, PUT}
+import api.models.outcomes.ResponseWrapper
+import v1.models.request.createAndAmendEmploymentExpenses.{CreateAndAmendEmploymentExpensesBody, CreateAndAmendEmploymentExpensesRawData, CreateAndAmendEmploymentExpensesRequest, Expenses}
 import v1.models.response.createAndAmendEmploymentExpenses.CreateAndAmendEmploymentExpensesHateoasData
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -113,17 +109,17 @@ class CreateAndAmendEmploymentExpensesControllerSpec
      |}
      |""".stripMargin)
 
-  def event(auditResponse: AuditResponse, requestBody: Option[JsValue]): AuditEvent[ExpensesAuditDetail] =
+  def event(auditResponse: AuditResponse, requestBody: Option[JsValue]): AuditEvent[GenericAuditDetail] =
     AuditEvent(
       auditType = "AmendEmploymentExpenses",
       transactionName = "amend-employment-expenses",
-      detail = ExpensesAuditDetail(
+      detail = GenericAuditDetail(
         userType = "Individual",
         agentReferenceNumber = None,
         params = Map("nino" -> nino, "taxYear" -> taxYear),
-        requestBody = requestBody,
+        request = requestBody,
         `X-CorrelationId` = correlationId,
-        auditResponse = auditResponse
+        response = auditResponse
       )
     )
 

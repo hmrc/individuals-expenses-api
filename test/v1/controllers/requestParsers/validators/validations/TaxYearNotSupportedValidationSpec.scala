@@ -16,8 +16,8 @@
 
 package v1.controllers.requestParsers.validators.validations
 
+import api.models.errors.RuleTaxYearNotSupportedError
 import support.UnitSpec
-import v1.models.errors.RuleTaxYearNotSupportedError
 import v1.models.utils.JsonErrorValidators
 
 class TaxYearNotSupportedValidationSpec extends UnitSpec with JsonErrorValidators {

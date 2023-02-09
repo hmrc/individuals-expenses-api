@@ -16,13 +16,13 @@
 
 package v1.models.response.retrieveEmploymentExpenses
 
+import api.hateoas.{HateoasLinks, HateoasLinksFactory}
+import api.models.domain.MtdSource
+import api.models.downstream.DownstreamSource
+import api.models.hateoas.{HateoasData, Link}
 import config.AppConfig
 import play.api.libs.functional.syntax._
 import play.api.libs.json.{JsPath, Json, OWrites, Reads}
-import v1.hateoas.{HateoasLinks, HateoasLinksFactory}
-import v1.models.downstream.DownstreamSource
-import v1.models.domain.MtdSource
-import v1.models.hateoas.{HateoasData, Link}
 
 case class RetrieveEmploymentsExpensesResponse(submittedOn: Option[String],
                                                totalExpenses: Option[BigDecimal],

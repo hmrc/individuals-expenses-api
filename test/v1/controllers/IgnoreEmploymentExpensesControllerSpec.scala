@@ -16,6 +16,10 @@
 
 package v1.controllers
 
+import api.models.audit.{AuditError, AuditEvent, AuditResponse, GenericAuditDetail}
+import api.models.domain.{Nino, TaxYear}
+import api.models.errors.{BadRequestError, ErrorWrapper, MtdError, NinoFormatError, RuleTaxYearNotEndedError, RuleTaxYearNotSupportedError, RuleTaxYearRangeInvalidError, StandardDownstreamError, TaxYearFormatError}
+import api.models.hateoas.{HateoasWrapper, Link}
 import mocks.MockAppConfig
 import play.api.Configuration
 import play.api.libs.json.{JsValue, Json}
@@ -25,13 +29,9 @@ import v1.mocks.MockIdGenerator
 import v1.mocks.hateoas.MockHateoasFactory
 import v1.mocks.requestParsers.MockIgnoreEmploymentExpensesRequestParser
 import v1.mocks.services.{MockAuditService, MockEnrolmentsAuthService, MockIgnoreEmploymentExpensesService, MockMtdIdLookupService}
-import v1.models.audit.{AuditError, AuditEvent, AuditResponse, ExpensesAuditDetail}
-import v1.models.domain.Nino
 import v1.models.errors._
-import v1.models.hateoas.Method.{DELETE, GET}
-import v1.models.hateoas.{HateoasWrapper, Link}
-import v1.models.outcomes.ResponseWrapper
-import v1.models.request.TaxYear
+import api.models.hateoas.Method.{DELETE, GET}
+import api.models.outcomes.ResponseWrapper
 import v1.models.request.ignoreEmploymentExpenses._
 import v1.models.response.ignoreEmploymentExpenses.IgnoreEmploymentExpensesHateoasData
 
@@ -75,17 +75,17 @@ class IgnoreEmploymentExpensesControllerSpec
        |}
        |""".stripMargin)
 
-  def event(auditResponse: AuditResponse): AuditEvent[ExpensesAuditDetail] =
+  def event(auditResponse: AuditResponse): AuditEvent[GenericAuditDetail] =
     AuditEvent(
       auditType = "IgnoreEmploymentExpenses",
       transactionName = "ignore-employment-expenses",
-      detail = ExpensesAuditDetail(
+      detail = GenericAuditDetail(
         userType = "Individual",
         agentReferenceNumber = None,
         params = Map("nino" -> nino, "taxYear" -> taxYear),
-        requestBody = None,
+        request = None,
         `X-CorrelationId` = correlationId,
-        auditResponse = auditResponse
+        response = auditResponse
       )
     )
 

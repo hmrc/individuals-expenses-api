@@ -16,6 +16,7 @@
 
 package utils
 
+import api.models.errors.{BadRequestError, InvalidBodyTypeError, MtdError, NotFoundError, StandardDownstreamError, UnauthorisedError}
 import javax.inject._
 import play.api._
 import play.api.http.Status._
@@ -28,8 +29,6 @@ import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import uk.gov.hmrc.play.bootstrap.backend.http.JsonErrorHandler
 import uk.gov.hmrc.play.bootstrap.config.HttpAuditEvent
-import v1.models.errors._
-
 import scala.concurrent._
 
 @Singleton
@@ -57,7 +56,7 @@ class ErrorHandler @Inject() (config: Configuration, auditConnector: AuditConnec
         val errorCode = statusCode match {
           case UNAUTHORIZED           => UnauthorisedError
           case UNSUPPORTED_MEDIA_TYPE => InvalidBodyTypeError
-          case _                      => MtdError("INVALID_REQUEST", message)
+          case _                      => MtdError("INVALID_REQUEST", message, BAD_REQUEST)
         }
 
         auditConnector.sendEvent(

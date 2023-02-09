@@ -16,16 +16,16 @@
 
 package v1.services
 
-import javax.inject.{Inject, Singleton}
+import api.controllers.EndpointLogContext
+import api.models.errors._
+import api.support.DownstreamResponseMappingSupport
 import cats.implicits._
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Logging
 import v1.connectors.DeleteOtherExpensesConnector
-import v1.controllers.EndpointLogContext
-import v1.models.errors._
 import v1.models.request.deleteOtherExpenses.DeleteOtherExpensesRequest
-import v1.support.DownstreamResponseMappingSupport
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton

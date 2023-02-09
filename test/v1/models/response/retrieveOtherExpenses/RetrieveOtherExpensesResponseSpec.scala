@@ -16,11 +16,11 @@
 
 package v1.models.response.retrieveOtherExpenses
 
+import api.models.hateoas.Link
 import mocks.MockAppConfig
 import play.api.libs.json.Json
 import support.UnitSpec
-import v1.models.hateoas.Link
-import v1.models.hateoas.Method.{DELETE, GET, PUT}
+import api.models.hateoas.Method.{DELETE, GET, PUT}
 
 class RetrieveOtherExpensesResponseSpec extends UnitSpec with MockAppConfig {
 
