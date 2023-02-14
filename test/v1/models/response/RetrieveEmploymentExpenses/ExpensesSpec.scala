@@ -16,11 +16,11 @@
 
 package v1.models.response.RetrieveEmploymentExpenses
 
+import api.utils.JsonErrorValidators
 import play.api.libs.json.Json
 import support.UnitSpec
 import v1.fixtures.RetrieveEmploymentsExpensesFixtures._
 import v1.models.response.retrieveEmploymentExpenses.Expenses
-import v1.models.utils.JsonErrorValidators
 
 class ExpensesSpec extends UnitSpec with JsonErrorValidators {
 

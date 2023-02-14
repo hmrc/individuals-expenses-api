@@ -16,12 +16,10 @@
 
 package v1.services
 
-import api.controllers.EndpointLogContext
+import api.controllers.RequestContext
 import api.models.errors._
-import api.support.DownstreamResponseMappingSupport
+import api.services.BaseService
 import cats.implicits._
-import uk.gov.hmrc.http.HeaderCarrier
-import utils.Logging
 import v1.connectors.RetrieveEmploymentsExpensesConnector
 import v1.models.request.retrieveEmploymentExpenses.RetrieveEmploymentsExpensesRequest
 
@@ -29,15 +27,11 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class RetrieveEmploymentsExpensesService @Inject() (connector: RetrieveEmploymentsExpensesConnector)
-    extends DownstreamResponseMappingSupport
-    with Logging {
+class RetrieveEmploymentsExpensesService @Inject() (connector: RetrieveEmploymentsExpensesConnector) extends BaseService {
 
   def retrieveEmploymentsExpenses(request: RetrieveEmploymentsExpensesRequest)(implicit
-      hc: HeaderCarrier,
-      ec: ExecutionContext,
-      logContext: EndpointLogContext,
-      correlationId: String): Future[RetrieveEmploymentExpensesServiceOutcome] = {
+      ctx: RequestContext,
+      ec: ExecutionContext): Future[RetrieveEmploymentExpensesServiceOutcome] = {
 
     connector.retrieveEmploymentExpenses(request).map(_.leftMap(mapDownstreamErrors(downstreamErrorMap)))
   }

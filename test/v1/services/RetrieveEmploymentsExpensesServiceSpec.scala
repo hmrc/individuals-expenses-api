@@ -17,11 +17,11 @@
 package v1.services
 
 import api.models.domain.{MtdSource, Nino, TaxYear}
-import api.models.errors.{DownstreamErrorCode, DownstreamErrors, ErrorWrapper, MtdError, NinoFormatError, NotFoundError, RuleTaxYearNotSupportedError, SourceFormatError, StandardDownstreamError, TaxYearFormatError}
+import api.models.errors._
 import api.models.outcomes.ResponseWrapper
+import api.services.ServiceSpec
 import v1.fixtures.RetrieveEmploymentsExpensesFixtures._
 import v1.mocks.connectors.MockRetrieveEmploymentsExpensesConnector
-import v1.models.errors._
 import v1.models.request.retrieveEmploymentExpenses.RetrieveEmploymentsExpensesRequest
 
 import scala.concurrent.Future

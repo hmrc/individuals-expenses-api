@@ -17,9 +17,9 @@
 package v1.models.response.createAndAmendOtherExpenses
 
 import api.models.hateoas.Link
+import api.models.hateoas.Method.{DELETE, GET, PUT}
 import mocks.MockAppConfig
 import support.UnitSpec
-import api.models.hateoas.Method.{DELETE, GET, PUT}
 
 class CreateAndAmendOtherExpensesResponseSpec extends UnitSpec with MockAppConfig {
 

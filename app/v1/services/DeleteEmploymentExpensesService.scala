@@ -16,34 +16,28 @@
 
 package v1.services
 
-import api.controllers.EndpointLogContext
-import api.models.errors.{MtdError, NinoFormatError, NotFoundError, RuleTaxYearNotSupportedError, StandardDownstreamError, TaxYearFormatError}
-import api.support.DownstreamResponseMappingSupport
-import javax.inject.{Inject, Singleton}
+import api.controllers.RequestContext
+import api.models.errors._
+import api.services.BaseService
 import cats.implicits._
-import uk.gov.hmrc.http.HeaderCarrier
-import utils.Logging
 import v1.connectors.DeleteEmploymentExpensesConnector
 import v1.models.request.deleteEmploymentExpenses.DeleteEmploymentExpensesRequest
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class DeleteEmploymentExpensesService @Inject() (deleteEmploymentExpensesConnector: DeleteEmploymentExpensesConnector)
-    extends DownstreamResponseMappingSupport
-    with Logging {
+class DeleteEmploymentExpensesService @Inject() (deleteEmploymentExpensesConnector: DeleteEmploymentExpensesConnector) extends BaseService {
 
   def deleteEmploymentExpenses(request: DeleteEmploymentExpensesRequest)(implicit
-      hc: HeaderCarrier,
-      ec: ExecutionContext,
-      logContext: EndpointLogContext,
-      correlationId: String): Future[DeleteEmploymentExpensesServiceOutcome] = {
+      ctx: RequestContext,
+      ec: ExecutionContext): Future[DeleteEmploymentExpensesServiceOutcome] = {
 
-    deleteEmploymentExpensesConnector.deleteEmploymentExpenses(request).map(_.leftMap(mapDownstreamErrors(errorMap)))
+    deleteEmploymentExpensesConnector.deleteEmploymentExpenses(request).map(_.leftMap(mapDownstreamErrors(downstreamErrorMap)))
 
   }
 
-  private val errorMap: Map[String, MtdError] = {
+  private val downstreamErrorMap: Map[String, MtdError] = {
     val errorMap = Map(
       "INVALID_TAXABLE_ENTITY_ID" -> NinoFormatError,
       "INVALID_TAX_YEAR"          -> TaxYearFormatError,

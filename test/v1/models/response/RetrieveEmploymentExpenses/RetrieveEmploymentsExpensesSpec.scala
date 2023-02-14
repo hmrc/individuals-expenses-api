@@ -16,10 +16,10 @@
 
 package v1.models.response.RetrieveEmploymentExpenses
 
+import api.utils.JsonErrorValidators
 import support.UnitSpec
 import v1.fixtures.RetrieveEmploymentsExpensesFixtures._
 import v1.models.response.retrieveEmploymentExpenses._
-import v1.models.utils.JsonErrorValidators
 
 class RetrieveEmploymentsExpensesSpec extends UnitSpec with JsonErrorValidators {
 

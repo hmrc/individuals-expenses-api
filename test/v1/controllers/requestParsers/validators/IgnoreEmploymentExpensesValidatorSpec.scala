@@ -16,15 +16,14 @@
 
 package v1.controllers.requestParsers.validators
 
-import api.models.errors.{NinoFormatError, RuleTaxYearNotEndedError, RuleTaxYearNotSupportedError, RuleTaxYearRangeInvalidError, TaxYearFormatError}
+import api.mocks.{MockCurrentDateTime, MockCurrentTaxYear}
+import api.models.errors._
 import config.AppConfig
 import mocks.MockAppConfig
 import org.joda.time.DateTime
 import org.joda.time.format.{DateTimeFormat, DateTimeFormatter}
 import support.UnitSpec
 import utils.{CurrentDateTime, CurrentTaxYear}
-import v1.mocks.{MockCurrentDateTime, MockCurrentTaxYear}
-import v1.models.errors._
 import v1.models.request.ignoreEmploymentExpenses.IgnoreEmploymentExpensesRawData
 
 class IgnoreEmploymentExpensesValidatorSpec extends UnitSpec {

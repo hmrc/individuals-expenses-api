@@ -20,7 +20,6 @@ import api.models.domain.{Nino, TaxYear}
 import api.models.errors.{BadRequestError, ErrorWrapper, NinoFormatError, TaxYearFormatError}
 import support.UnitSpec
 import v1.mocks.validators.MockIgnoreEmploymentExpensesValidator
-import v1.models.errors._
 import v1.models.request.ignoreEmploymentExpenses._
 
 class IgnoreEmploymentExpensesRequestParserSpec extends UnitSpec {

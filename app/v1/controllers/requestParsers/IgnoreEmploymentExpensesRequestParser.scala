@@ -16,6 +16,7 @@
 
 package v1.controllers.requestParsers
 
+import api.controllers.requestParsers.RequestParser
 import api.models.domain.{Nino, TaxYear}
 import v1.controllers.requestParsers.validators.IgnoreEmploymentExpensesValidator
 import v1.models.request.ignoreEmploymentExpenses.{IgnoreEmploymentExpensesRawData, IgnoreEmploymentExpensesRequest}

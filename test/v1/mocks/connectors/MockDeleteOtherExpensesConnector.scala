@@ -16,10 +16,11 @@
 
 package v1.mocks.connectors
 
+import api.connectors.DownstreamOutcome
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
 import uk.gov.hmrc.http.HeaderCarrier
-import v1.connectors.{DeleteOtherExpensesConnector, DownstreamOutcome}
+import v1.connectors.DeleteOtherExpensesConnector
 import v1.models.request.deleteOtherExpenses.DeleteOtherExpensesRequest
 
 import scala.concurrent.{ExecutionContext, Future}

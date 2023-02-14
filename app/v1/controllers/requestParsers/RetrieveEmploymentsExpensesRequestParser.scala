@@ -16,6 +16,7 @@
 
 package v1.controllers.requestParsers
 
+import api.controllers.requestParsers.RequestParser
 import api.models.domain.{MtdSource, Nino, TaxYear}
 import v1.controllers.requestParsers.validators.RetrieveEmploymentExpensesValidator
 import v1.models.request.retrieveEmploymentExpenses.{RetrieveEmploymentsExpensesRawData, RetrieveEmploymentsExpensesRequest}

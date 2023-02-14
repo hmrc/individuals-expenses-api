@@ -16,12 +16,11 @@
 
 package v1.mocks.services
 
-import api.controllers.EndpointLogContext
+import api.controllers.RequestContext
 import api.models.errors.ErrorWrapper
 import api.models.outcomes.ResponseWrapper
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
-import uk.gov.hmrc.http.HeaderCarrier
 import v1.models.request.retrieveEmploymentExpenses.RetrieveEmploymentsExpensesRequest
 import v1.models.response.retrieveEmploymentExpenses.RetrieveEmploymentsExpensesResponse
 import v1.services.RetrieveEmploymentsExpensesService
@@ -36,16 +35,9 @@ trait MockRetrieveEmploymentsExpensesService extends MockFactory {
 
     def retrieveEmploymentsExpenses(requestData: RetrieveEmploymentsExpensesRequest)
         : CallHandler[Future[Either[ErrorWrapper, ResponseWrapper[RetrieveEmploymentsExpensesResponse]]]] = {
-      (
-        mockRetrieveEmploymentsExpensesService
-          .retrieveEmploymentsExpenses(_: RetrieveEmploymentsExpensesRequest)(
-            _: HeaderCarrier,
-            _: ExecutionContext,
-            _: EndpointLogContext,
-            _: String
-          )
-        )
-        .expects(requestData, *, *, *, *)
+      (mockRetrieveEmploymentsExpensesService
+        .retrieveEmploymentsExpenses(_: RetrieveEmploymentsExpensesRequest)(_: RequestContext, _: ExecutionContext))
+        .expects(requestData, *, *)
     }
 
   }

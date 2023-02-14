@@ -16,7 +16,7 @@
 
 package utils
 
-import api.models.errors.{BadRequestError, InvalidBodyTypeError, MtdError, NotFoundError, StandardDownstreamError, UnauthorisedError}
+import api.models.errors.{BadRequestError, InvalidBodyTypeError, MtdError, NotFoundError, StandardDownstreamError, ClientNotAuthenticatedError}
 import javax.inject._
 import play.api._
 import play.api.http.Status._
@@ -54,7 +54,7 @@ class ErrorHandler @Inject() (config: Configuration, auditConnector: AuditConnec
         Future.successful(NotFound(Json.toJson(NotFoundError)))
       case _ =>
         val errorCode = statusCode match {
-          case UNAUTHORIZED           => UnauthorisedError
+          case UNAUTHORIZED           => ClientNotAuthenticatedError
           case UNSUPPORTED_MEDIA_TYPE => InvalidBodyTypeError
           case _                      => MtdError("INVALID_REQUEST", message, BAD_REQUEST)
         }
@@ -79,7 +79,7 @@ class ErrorHandler @Inject() (config: Configuration, auditConnector: AuditConnec
 
     val (status, errorCode, eventType) = ex match {
       case _: NotFoundException      => (NOT_FOUND, NotFoundError, "ResourceNotFound")
-      case _: AuthorisationException => (UNAUTHORIZED, UnauthorisedError, "ClientError")
+      case _: AuthorisationException => (UNAUTHORIZED, ClientNotAuthenticatedError, "ClientError")
       case _: JsValidationException  => (BAD_REQUEST, BadRequestError, "ServerValidationError")
       case e: HttpException          => (e.responseCode, BadRequestError, "ServerValidationError")
       case e: UpstreamErrorResponse if UpstreamErrorResponse.Upstream4xxResponse.unapply(e).isDefined =>

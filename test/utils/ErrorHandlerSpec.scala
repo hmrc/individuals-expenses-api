@@ -16,7 +16,7 @@
 
 package utils
 
-import api.models.errors.{BadRequestError, InvalidBodyTypeError, MtdError, NotFoundError, StandardDownstreamError, UnauthorisedError}
+import api.models.errors._
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Configuration
 import play.api.http.Status
@@ -32,7 +32,6 @@ import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import uk.gov.hmrc.play.audit.http.connector.AuditResult.Success
 import uk.gov.hmrc.play.audit.model.DataEvent
 import uk.gov.hmrc.play.bootstrap.config.HttpAuditEvent
-import v1.models.errors._
 
 import java.time.Instant
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -107,7 +106,7 @@ class ErrorHandlerSpec extends UnitSpec with GuiceOneAppPerSuite {
         private val result = handler.onClientError(requestHeader, UNAUTHORIZED, "test")
         status(result) shouldBe UNAUTHORIZED
 
-        contentAsJson(result) shouldBe Json.toJson(UnauthorisedError)
+        contentAsJson(result) shouldBe Json.toJson(ClientNotAuthenticatedError)
       }
     }
 
@@ -125,7 +124,7 @@ class ErrorHandlerSpec extends UnitSpec with GuiceOneAppPerSuite {
         private val result = handler.onClientError(requestHeader, METHOD_NOT_ALLOWED, "test")
         status(result) shouldBe METHOD_NOT_ALLOWED
 
-        contentAsJson(result) shouldBe Json.toJson(MtdError("INVALID_REQUEST", "test"))
+        contentAsJson(result) shouldBe Json.toJson(MtdError("INVALID_REQUEST", "test", METHOD_NOT_ALLOWED))
       }
     }
   }
@@ -146,7 +145,7 @@ class ErrorHandlerSpec extends UnitSpec with GuiceOneAppPerSuite {
         private val result = handler.onServerError(requestHeader, new InsufficientEnrolments("test") with NoStackTrace)
         status(result) shouldBe UNAUTHORIZED
 
-        contentAsJson(result) shouldBe Json.toJson(UnauthorisedError)
+        contentAsJson(result) shouldBe Json.toJson(ClientNotAuthenticatedError)
       }
     }
 

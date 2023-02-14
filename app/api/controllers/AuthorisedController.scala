@@ -16,7 +16,7 @@
 
 package api.controllers
 
-import api.models.errors.{InvalidBearerTokenError, NinoFormatError, StandardDownstreamError, UnauthorisedError}
+import api.models.errors.{InvalidBearerTokenError, NinoFormatError, StandardDownstreamError, ClientNotAuthenticatedError}
 import play.api.libs.json.Json
 import play.api.mvc._
 import uk.gov.hmrc.auth.core.Enrolment
@@ -50,7 +50,7 @@ abstract class AuthorisedController(cc: ControllerComponents)(implicit ec: Execu
         headerCarrier: HeaderCarrier): Future[Result] = {
       authService.authorised(predicate(mtdId)).flatMap[Result] {
         case Right(userDetails)      => block(UserRequest(userDetails.copy(mtdId = mtdId), request))
-        case Left(UnauthorisedError) => Future.successful(Forbidden(Json.toJson(UnauthorisedError)))
+        case Left(ClientNotAuthenticatedError) => Future.successful(Forbidden(Json.toJson(ClientNotAuthenticatedError)))
         case Left(_)                 => Future.successful(InternalServerError(Json.toJson(StandardDownstreamError)))
       }
     }
@@ -61,7 +61,7 @@ abstract class AuthorisedController(cc: ControllerComponents)(implicit ec: Execu
       lookupService.lookup(nino).flatMap[Result] {
         case Right(mtdId)                  => invokeBlockWithAuthCheck(mtdId, request, block)
         case Left(NinoFormatError)         => Future.successful(BadRequest(Json.toJson(NinoFormatError)))
-        case Left(UnauthorisedError)       => Future.successful(Forbidden(Json.toJson(UnauthorisedError)))
+        case Left(ClientNotAuthenticatedError)       => Future.successful(Forbidden(Json.toJson(ClientNotAuthenticatedError)))
         case Left(InvalidBearerTokenError) => Future.successful(Unauthorized(Json.toJson(InvalidBearerTokenError)))
         case Left(_)                       => Future.successful(InternalServerError(Json.toJson(StandardDownstreamError)))
       }

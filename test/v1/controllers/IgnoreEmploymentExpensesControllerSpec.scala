@@ -16,22 +16,23 @@
 
 package v1.controllers
 
+import api.controllers.ControllerBaseSpec
+import api.mocks.MockIdGenerator
+import api.mocks.hateoas.MockHateoasFactory
+import api.mocks.services.{MockAuditService, MockEnrolmentsAuthService, MockMtdIdLookupService}
 import api.models.audit.{AuditError, AuditEvent, AuditResponse, GenericAuditDetail}
 import api.models.domain.{Nino, TaxYear}
-import api.models.errors.{BadRequestError, ErrorWrapper, MtdError, NinoFormatError, RuleTaxYearNotEndedError, RuleTaxYearNotSupportedError, RuleTaxYearRangeInvalidError, StandardDownstreamError, TaxYearFormatError}
+import api.models.errors._
+import api.models.hateoas.Method.{DELETE, GET}
 import api.models.hateoas.{HateoasWrapper, Link}
+import api.models.outcomes.ResponseWrapper
 import mocks.MockAppConfig
 import play.api.Configuration
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Result
 import uk.gov.hmrc.http.HeaderCarrier
-import v1.mocks.MockIdGenerator
-import v1.mocks.hateoas.MockHateoasFactory
 import v1.mocks.requestParsers.MockIgnoreEmploymentExpensesRequestParser
-import v1.mocks.services.{MockAuditService, MockEnrolmentsAuthService, MockIgnoreEmploymentExpensesService, MockMtdIdLookupService}
-import v1.models.errors._
-import api.models.hateoas.Method.{DELETE, GET}
-import api.models.outcomes.ResponseWrapper
+import v1.mocks.services.MockIgnoreEmploymentExpensesService
 import v1.models.request.ignoreEmploymentExpenses._
 import v1.models.response.ignoreEmploymentExpenses.IgnoreEmploymentExpensesHateoasData
 

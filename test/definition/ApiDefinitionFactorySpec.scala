@@ -19,10 +19,9 @@ package definition
 import config.ConfidenceLevelConfig
 import definition.APIStatus.{ALPHA, BETA}
 import definition.Versions.VERSION_1
-import mocks.MockAppConfig
+import mocks.{MockAppConfig, MockHttpClient}
 import support.UnitSpec
 import uk.gov.hmrc.auth.core.ConfidenceLevel
-import v1.mocks.MockHttpClient
 
 class ApiDefinitionFactorySpec extends UnitSpec {
 
@@ -92,7 +91,9 @@ class ApiDefinitionFactorySpec extends UnitSpec {
     ).foreach { case (definitionEnabled, cl) =>
       s"confidence-level-check.definition.enabled is $definitionEnabled in config" should {
         s"return $cl" in new Test {
-          MockedAppConfig.confidenceLevelCheckEnabled returns ConfidenceLevelConfig(definitionEnabled = definitionEnabled, authValidationEnabled = true)
+          MockedAppConfig.confidenceLevelCheckEnabled returns ConfidenceLevelConfig(
+            definitionEnabled = definitionEnabled,
+            authValidationEnabled = true)
           apiDefinitionFactory.confidenceLevel shouldBe cl
         }
       }

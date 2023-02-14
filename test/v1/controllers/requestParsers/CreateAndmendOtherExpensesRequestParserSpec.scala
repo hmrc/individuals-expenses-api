@@ -21,7 +21,6 @@ import api.models.errors.{BadRequestError, ErrorWrapper, NinoFormatError, TaxYea
 import play.api.libs.json.Json
 import support.UnitSpec
 import v1.mocks.validators.MockCreateAndAmendOtherExpensesValidator
-import v1.models.errors._
 import v1.models.request.createAndAmendOtherExpenses._
 
 class CreateAndAmendOtherExpensesRequestParserSpec extends UnitSpec {

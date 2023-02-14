@@ -16,13 +16,10 @@
 
 package v1.services
 
-import api.controllers.EndpointLogContext
+import api.controllers.RequestContext
 import api.models.errors._
-import api.support.DownstreamResponseMappingSupport
-import cats.data.EitherT
+import api.services.BaseService
 import cats.implicits._
-import uk.gov.hmrc.http.HeaderCarrier
-import utils.Logging
 import v1.connectors.RetrieveOtherExpensesConnector
 import v1.models.request.retrieveOtherExpenses.RetrieveOtherExpensesRequest
 
@@ -30,21 +27,15 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class RetrieveOtherExpensesService @Inject() (connector: RetrieveOtherExpensesConnector) extends DownstreamResponseMappingSupport with Logging {
+class RetrieveOtherExpensesService @Inject() (connector: RetrieveOtherExpensesConnector) extends BaseService {
 
-  def retrieveOtherExpenses(request: RetrieveOtherExpensesRequest)(implicit
-      hc: HeaderCarrier,
-      ec: ExecutionContext,
-      logContext: EndpointLogContext,
-      correlationId: String): Future[RetrieveOtherExpensesServiceOutcome] = {
+  def retrieveOtherExpenses(
+      request: RetrieveOtherExpensesRequest)(implicit ctx: RequestContext, ec: ExecutionContext): Future[RetrieveOtherExpensesServiceOutcome] = {
 
-    val result = for {
-      downstreamResponseWrapper <- EitherT(connector.retrieveOtherExpenses(request)).leftMap(mapDownstreamErrors(errorMap))
-    } yield downstreamResponseWrapper
-    result.value
+    connector.retrieveOtherExpenses(request).map(_.leftMap(mapDownstreamErrors(downstreamErrorMap)))
   }
 
-  private def errorMap: Map[String, MtdError] = {
+  private def downstreamErrorMap: Map[String, MtdError] = {
     val errors = Map(
       "INVALID_TAXABLE_ENTITY_ID" -> NinoFormatError,
       "FORMAT_TAX_YEAR"           -> TaxYearFormatError,

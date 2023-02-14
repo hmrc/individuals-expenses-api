@@ -16,6 +16,7 @@
 
 package v1.controllers.requestParsers.validators
 
+import api.mocks.{MockCurrentDateTime, MockCurrentTaxYear}
 import api.models.errors.{NinoFormatError, RuleTaxYearNotSupportedError, RuleTaxYearRangeInvalidError, TaxYearFormatError}
 import config.AppConfig
 import mocks.MockAppConfig
@@ -23,7 +24,6 @@ import org.joda.time.DateTime
 import org.joda.time.format.{DateTimeFormat, DateTimeFormatter}
 import support.UnitSpec
 import utils.{CurrentDateTime, CurrentTaxYear}
-import v1.mocks.{MockCurrentDateTime, MockCurrentTaxYear}
 import v1.models.request.deleteEmploymentExpenses.DeleteEmploymentExpensesRawData
 
 class DeleteEmploymentExpensesValidatorSpec extends UnitSpec {

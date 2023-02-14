@@ -16,6 +16,7 @@
 
 package v1.connectors
 
+import api.connectors.ConnectorSpec
 import api.models.domain.{MtdSource, Nino, TaxYear}
 import api.models.outcomes.ResponseWrapper
 import v1.fixtures.RetrieveEmploymentsExpensesFixtures._

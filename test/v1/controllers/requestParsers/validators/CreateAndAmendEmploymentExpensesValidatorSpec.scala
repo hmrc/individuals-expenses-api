@@ -16,7 +16,8 @@
 
 package v1.controllers.requestParsers.validators
 
-import api.models.errors.{NinoFormatError, RuleIncorrectOrEmptyBodyError, RuleTaxYearNotEndedError, RuleTaxYearNotSupportedError, RuleTaxYearRangeInvalidError, TaxYearFormatError, ValueFormatError}
+import api.mocks.{MockCurrentDateTime, MockCurrentTaxYear}
+import api.models.errors._
 import config.AppConfig
 import mocks.MockAppConfig
 import org.joda.time.DateTime
@@ -24,8 +25,6 @@ import org.joda.time.format.{DateTimeFormat, DateTimeFormatter}
 import play.api.libs.json.{JsValue, Json}
 import support.UnitSpec
 import utils.{CurrentDateTime, CurrentTaxYear}
-import v1.mocks.{MockCurrentDateTime, MockCurrentTaxYear}
-import v1.models.errors._
 import v1.models.request.createAndAmendEmploymentExpenses.CreateAndAmendEmploymentExpensesRawData
 
 class CreateAndAmendEmploymentExpensesValidatorSpec extends UnitSpec {

@@ -17,10 +17,10 @@
 package v1.services
 
 import api.models.domain.{Nino, TaxYear}
-import api.models.errors.{DownstreamErrorCode, DownstreamErrors, ErrorWrapper, MtdError, NinoFormatError, NotFoundError, RuleTaxYearNotSupportedError, StandardDownstreamError, TaxYearFormatError}
+import api.models.errors._
 import api.models.outcomes.ResponseWrapper
+import api.services.ServiceSpec
 import v1.mocks.connectors.MockDeleteEmploymentExpensesConnector
-import v1.models.errors._
 import v1.models.request.deleteEmploymentExpenses.DeleteEmploymentExpensesRequest
 
 import scala.concurrent.Future
@@ -65,24 +65,24 @@ class DeleteEmploymentExpensesServiceSpec extends ServiceSpec {
           await(service.deleteEmploymentExpenses(requestData)) shouldBe Left(ErrorWrapper(correlationId, error))
         }
 
-        def input: Map[String, MtdError] = {
-          val errorMap = Map(
-            "INVALID_TAXABLE_ENTITY_ID" -> NinoFormatError,
-            "INVALID_TAX_YEAR"          -> TaxYearFormatError,
-            "INVALID_CORRELATIONID"     -> StandardDownstreamError,
-            "NO_DATA_FOUND"             -> NotFoundError,
-            "SERVER_ERROR"              -> StandardDownstreamError,
-            "SERVICE_UNAVAILABLE"       -> StandardDownstreamError
-          )
+      def input: Map[String, MtdError] = {
+        val errorMap = Map(
+          "INVALID_TAXABLE_ENTITY_ID" -> NinoFormatError,
+          "INVALID_TAX_YEAR"          -> TaxYearFormatError,
+          "INVALID_CORRELATIONID"     -> StandardDownstreamError,
+          "NO_DATA_FOUND"             -> NotFoundError,
+          "SERVER_ERROR"              -> StandardDownstreamError,
+          "SERVICE_UNAVAILABLE"       -> StandardDownstreamError
+        )
 
-          val extraTysErrors = Map(
-            "INVALID_CORRELATION_ID" -> StandardDownstreamError,
-            "NOT_FOUND"              -> NotFoundError,
-            "TAX_YEAR_NOT_SUPPORTED" -> RuleTaxYearNotSupportedError
-          )
+        val extraTysErrors = Map(
+          "INVALID_CORRELATION_ID" -> StandardDownstreamError,
+          "NOT_FOUND"              -> NotFoundError,
+          "TAX_YEAR_NOT_SUPPORTED" -> RuleTaxYearNotSupportedError
+        )
 
-          errorMap ++ extraTysErrors
-        }
+        errorMap ++ extraTysErrors
+      }
 
       input.foreach(args => (serviceError _).tupled(args))
     }
