@@ -21,6 +21,7 @@ import api.models.hateoas.{HateoasData, HateoasWrapper}
 import cats.Functor
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
+import scala.language.higherKinds
 
 trait MockHateoasFactory extends MockFactory {
 

@@ -46,9 +46,9 @@ class RetrieveOtherExpensesControllerSpec
   private val requestData = RetrieveOtherExpensesRequest(Nino(nino), TaxYear.fromMtd(taxYear))
 
   private val testHateoasLink = Seq(
-    Link(href = s"individuals/expenses/other/$nino/$taxYear", method = GET, rel = "self"),
-    Link(href = s"individuals/expenses/other/$nino/$taxYear", method = PUT, rel = "amend-expenses-other"),
-    Link(href = s"individuals/expenses/other/$nino/$taxYear", method = DELETE, rel = "delete-expenses-other")
+    Link(href = s"/individuals/expenses/other/$nino/$taxYear", method = PUT, rel = "amend-expenses-other"),
+    Link(href = s"/individuals/expenses/other/$nino/$taxYear", method = GET, rel = "self"),
+    Link(href = s"/individuals/expenses/other/$nino/$taxYear", method = DELETE, rel = "delete-expenses-other")
   )
 
   private val responseBodyJson = mtdResponseWithHateoasLinks(taxYear)

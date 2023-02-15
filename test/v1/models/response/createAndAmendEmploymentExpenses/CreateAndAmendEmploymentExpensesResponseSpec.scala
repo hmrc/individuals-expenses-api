@@ -14,19 +14,18 @@
  * limitations under the License.
  */
 
-package v1.models.response.CreateAndAmendEmploymentExpenses
+package v1.models.response.createAndAmendEmploymentExpenses
 
 import api.models.hateoas.Link
 import api.models.hateoas.Method.{DELETE, GET, PUT}
 import mocks.MockAppConfig
 import support.UnitSpec
-import v1.models.response.createAndAmendEmploymentExpenses.{CreateAndAmendEmploymentExpensesHateoasData, CreateAndAmendEmploymentExpensesResponse}
 
 class CreateAndAmendEmploymentExpensesResponseSpec extends UnitSpec with MockAppConfig {
 
   "LinksFactory" should {
     "return the correct links" in {
-      val nino    = "mynino"
+      val nino = "mynino"
       val taxYear = "mytaxyear"
 
       MockedAppConfig.apiGatewayContext.returns("my/context").anyNumberOfTimes

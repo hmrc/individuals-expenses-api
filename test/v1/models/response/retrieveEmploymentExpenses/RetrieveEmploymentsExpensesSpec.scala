@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package v1.models.response.RetrieveEmploymentExpenses
+package v1.models.response.retrieveEmploymentExpenses
 
 import api.utils.JsonErrorValidators
 import support.UnitSpec
 import v1.fixtures.RetrieveEmploymentsExpensesFixtures._
-import v1.models.response.retrieveEmploymentExpenses._
 
 class RetrieveEmploymentsExpensesSpec extends UnitSpec with JsonErrorValidators {
 

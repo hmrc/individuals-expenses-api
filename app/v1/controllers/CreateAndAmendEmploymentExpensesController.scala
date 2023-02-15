@@ -19,7 +19,6 @@ package v1.controllers
 import api.controllers._
 import api.hateoas.HateoasFactory
 import api.services.{AuditService, EnrolmentsAuthService, MtdIdLookupService}
-import config.{AppConfig, FeatureSwitches}
 import play.api.libs.json.JsValue
 import play.api.mvc.{Action, ControllerComponents}
 import utils.{IdGenerator, Logging}
@@ -33,20 +32,19 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class CreateAndAmendEmploymentExpensesController @Inject() (val authService: EnrolmentsAuthService,
-                                                            val lookupService: MtdIdLookupService,
-                                                            parser: CreateAndAmendEmploymentExpensesRequestParser,
-                                                            appConfig: AppConfig,
-                                                            service: CreateAndAmendEmploymentExpensesService,
-                                                            hateoasFactory: HateoasFactory,
-                                                            auditService: AuditService,
-                                                            cc: ControllerComponents,
-                                                            idGenerator: IdGenerator)(implicit ec: ExecutionContext)
-    extends AuthorisedController(cc)
+class CreateAndAmendEmploymentExpensesController @Inject()(val authService: EnrolmentsAuthService,
+                                                           val lookupService: MtdIdLookupService,
+                                                           parser: CreateAndAmendEmploymentExpensesRequestParser,
+                                                           service: CreateAndAmendEmploymentExpensesService,
+                                                           auditService: AuditService,
+                                                           hateoasFactory: HateoasFactory,
+                                                           cc: ControllerComponents,
+                                                           idGenerator: IdGenerator)(implicit ec: ExecutionContext)
+  extends AuthorisedController(cc)
     with Logging {
 
   implicit val endpointLogContext: EndpointLogContext =
-    EndpointLogContext(controllerName = "AmendEmploymentExpensesController", endpointName = "amendEmploymentExpenses")
+    EndpointLogContext(controllerName = "CreateAmendEmploymentExpensesController", endpointName = "createAmendEmploymentExpenses")
 
   def handleRequest(nino: String, taxYear: String): Action[JsValue] =
     authorisedAction(nino).async(parse.json) { implicit request =>
@@ -55,16 +53,14 @@ class CreateAndAmendEmploymentExpensesController @Inject() (val authService: Enr
       val rawData = CreateAndAmendEmploymentExpensesRawData(
         nino = nino,
         taxYear = taxYear,
-        body = request.body,
-        temporalValidationEnabled = FeatureSwitches()(appConfig).isTemporalValidationEnabled
+        body = request.body
       )
-
       val requestHandler = RequestHandler
         .withParser(parser)
         .withService(service.createAndAmendEmploymentExpenses)
         .withAuditing(AuditHandler(
           auditService = auditService,
-          auditType = "CreateAndAmendEmploymentExpenses",
+          auditType = "CreateAmendEmploymentExpenses",
           transactionName = "create-amend-employment-expenses",
           params = Map("nino" -> nino, "taxYear" -> taxYear),
           requestBody = Some(request.body),

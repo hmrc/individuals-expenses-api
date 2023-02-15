@@ -17,14 +17,13 @@
 package v1.controllers
 
 import api.controllers.{ControllerBaseSpec, ControllerTestRunner}
-import api.mocks.MockIdGenerator
 import api.mocks.hateoas.MockHateoasFactory
-import api.mocks.services.{MockAuditService, MockEnrolmentsAuthService, MockMtdIdLookupService}
+import api.mocks.services.MockAuditService
 import api.models.audit.{AuditEvent, AuditResponse, GenericAuditDetail}
 import api.models.domain.{Nino, TaxYear}
 import api.models.errors._
-import api.models.hateoas.{HateoasWrapper, Link}
 import api.models.hateoas.Method.{DELETE, GET}
+import api.models.hateoas.{HateoasWrapper, Link}
 import api.models.outcomes.ResponseWrapper
 import mocks.MockAppConfig
 import play.api.libs.json.{JsValue, Json}
@@ -38,16 +37,13 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class IgnoreEmploymentExpensesControllerSpec
-    extends ControllerBaseSpec
+  extends ControllerBaseSpec
     with ControllerTestRunner
-    with MockEnrolmentsAuthService
-    with MockMtdIdLookupService
     with MockIgnoreEmploymentExpensesService
     with MockIgnoreEmploymentExpensesRequestParser
     with MockHateoasFactory
     with MockAuditService
-    with MockAppConfig
-    with MockIdGenerator {
+    with MockAppConfig {
 
   private val taxYear = "2019-20"
 
@@ -56,7 +52,8 @@ class IgnoreEmploymentExpensesControllerSpec
     Link(href = s"/individuals/expenses/employments/$nino/$taxYear", method = DELETE, rel = "delete-employment-expenses")
   )
 
-  val responseBody: JsValue = Json.parse(s"""
+  val responseBodyJson: JsValue = Json.parse(
+    s"""
        |{
        |  "links": [
        |    {
@@ -73,7 +70,7 @@ class IgnoreEmploymentExpensesControllerSpec
        |}
        |""".stripMargin)
 
-  private val rawData     = IgnoreEmploymentExpensesRawData(nino, taxYear)
+  private val rawData = IgnoreEmploymentExpensesRawData(nino, taxYear)
   private val requestData = IgnoreEmploymentExpensesRequest(Nino(nino), TaxYear.fromMtd(taxYear))
 
   "handleRequest" should {
@@ -92,7 +89,11 @@ class IgnoreEmploymentExpensesControllerSpec
           .wrap((), IgnoreEmploymentExpensesHateoasData(nino, taxYear))
           .returns(HateoasWrapper((), testHateoasLinks))
 
-        runOkTestWithAudit(expectedStatus = OK)
+        runOkTestWithAudit(
+          expectedStatus = OK,
+          maybeExpectedResponseBody = Some(responseBodyJson),
+          maybeAuditResponseBody = Some(responseBodyJson)
+        )
       }
     }
 
@@ -126,7 +127,6 @@ class IgnoreEmploymentExpensesControllerSpec
     val controller = new IgnoreEmploymentExpensesController(
       authService = mockEnrolmentsAuthService,
       lookupService = mockMtdIdLookupService,
-      appConfig = mockAppConfig,
       parser = mockRequestParser,
       service = mockService,
       auditService = mockAuditService,

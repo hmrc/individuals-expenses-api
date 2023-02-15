@@ -170,7 +170,6 @@ class CreateAndAmendEmploymentExpensesControllerSpec
       authService = mockEnrolmentsAuthService,
       lookupService = mockMtdIdLookupService,
       parser = mockRequestParser,
-      appConfig = mockAppConfig,
       service = mockService,
       auditService = mockAuditService,
       hateoasFactory = mockHateoasFactory,
@@ -182,8 +181,8 @@ class CreateAndAmendEmploymentExpensesControllerSpec
 
     def event(auditResponse: AuditResponse, requestBody: Option[JsValue]): AuditEvent[GenericAuditDetail] =
       AuditEvent(
-        auditType = "AmendEmploymentExpenses",
-        transactionName = "amend-employment-expenses",
+        auditType = "CreateAmendEmploymentExpenses",
+        transactionName = "create-amend-employment-expenses",
         detail = GenericAuditDetail(
           userType = "Individual",
           agentReferenceNumber = None,

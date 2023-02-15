@@ -16,14 +16,13 @@
 
 package v1.endpoints
 
-import api.models.errors.{CustomerReferenceFormatError, MtdError, NinoFormatError, RuleIncorrectOrEmptyBodyError, RuleTaxYearNotSupportedError, RuleTaxYearRangeInvalidError, StandardDownstreamError, TaxYearFormatError, ValueFormatError}
+import api.models.errors._
 import play.api.http.HeaderNames.ACCEPT
 import play.api.http.Status._
 import play.api.libs.json.{JsObject, JsValue, Json}
 import play.api.libs.ws.{WSRequest, WSResponse}
 import play.api.test.Helpers.AUTHORIZATION
 import support.IntegrationBaseSpec
-import v1.models.errors._
 import v1.stubs.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 
 class CreateAndAmendOtherExpensesControllerISpec extends IntegrationBaseSpec {
@@ -147,7 +146,8 @@ class CreateAndAmendOtherExpensesControllerISpec extends IntegrationBaseSpec {
           response.json shouldBe Json.toJson(RuleIncorrectOrEmptyBodyError)
         }
         s"a body missing mandatory fields is provided" in new NonTysTest {
-          override val requestBodyJson: JsValue = Json.parse("""{
+          override val requestBodyJson: JsValue = Json.parse(
+            """{
               | "paymentsToTradeUnionsForDeathBenefits": {},
               | "patentRoyaltiesPayments": {}
               |}""".stripMargin)
@@ -213,31 +213,33 @@ class CreateAndAmendOtherExpensesControllerISpec extends IntegrationBaseSpec {
          |""".stripMargin
     )
 
-    val responseBody = Json.parse(s"""
-                                     |{
-                                     |  "links": [
-                                     |    {
-                                     |      "href": "/individuals/expenses/other/$nino/$taxYear",
-                                     |      "method": "GET",
-                                     |      "rel": "self"
-                                     |    },
-                                     |    {
-                                     |      "href": "/individuals/expenses/other/$nino/$taxYear",
-                                     |      "method": "PUT",
-                                     |      "rel": "amend-expenses-other"
-                                     |    },
-                                     |    {
-                                     |      "href": "/individuals/expenses/other/$nino/$taxYear",
-                                     |      "method": "DELETE",
-                                     |      "rel": "delete-expenses-other"
-                                     |    }
-                                     |  ]
-                                     |}
-                                     |""".stripMargin)
+    val responseBody = Json.parse(
+      s"""
+         |{
+         |  "links": [
+         |    {
+         |      "href": "/individuals/expenses/other/$nino/$taxYear",
+         |      "method": "GET",
+         |      "rel": "self"
+         |    },
+         |    {
+         |      "href": "/individuals/expenses/other/$nino/$taxYear",
+         |      "method": "PUT",
+         |      "rel": "amend-expenses-other"
+         |    },
+         |    {
+         |      "href": "/individuals/expenses/other/$nino/$taxYear",
+         |      "method": "DELETE",
+         |      "rel": "delete-expenses-other"
+         |    }
+         |  ]
+         |}
+         |""".stripMargin)
 
     def uri: String = s"/other/$nino/$taxYear"
 
     def taxYear: String
+
     def downstreamUri: String
 
     def setupStubs(): Unit
@@ -265,12 +267,14 @@ class CreateAndAmendOtherExpensesControllerISpec extends IntegrationBaseSpec {
   }
 
   private trait NonTysTest extends Test {
-    def taxYear: String       = "2021-22"
+    def taxYear: String = "2021-22"
+
     def downstreamUri: String = s"/income-tax/expenses/other/$nino/2021-22"
   }
 
   private trait TysIfsTest extends Test {
-    def taxYear: String       = "2023-24"
+    def taxYear: String = "2023-24"
+
     def downstreamUri: String = s"/income-tax/expenses/other/23-24/$nino"
   }
 

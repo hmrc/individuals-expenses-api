@@ -30,7 +30,7 @@ object RetrieveOtherExpensesFixtures {
   private val responseJson = Json.parse(
     s"""
        |{
-       |  "submittedOn": "2020-06-17T10:53:38Z",
+       |  "submittedOn": "2019-04-04T01:01:01Z",
        |  "paymentsToTradeUnionsForDeathBenefits": {
        |    "customerReference": "TRADE UNION PAYMENTS",
        |    "expenseAmount": 4528.99
@@ -48,17 +48,17 @@ object RetrieveOtherExpensesFixtures {
        |{
        |    "links":[
        |      {
-       |         "href":"/individuals/expenses/other/{nino}/$taxYear",
+       |         "href":"/individuals/expenses/other/AA123456A/$taxYear",
        |         "method":"PUT",
        |         "rel":"amend-expenses-other"
        |      },
        |      {
-       |         "href":"/individuals/expenses/other/{nino}/$taxYear",
+       |         "href":"/individuals/expenses/other/AA123456A/$taxYear",
        |         "method":"GET",
        |         "rel":"self"
        |      },
        |      {
-       |         "href":"/individuals/expenses/other/{nino}/$taxYear",
+       |         "href":"/individuals/expenses/other/AA123456A/$taxYear",
        |         "method":"DELETE",
        |         "rel":"delete-expenses-other"
        |      }
