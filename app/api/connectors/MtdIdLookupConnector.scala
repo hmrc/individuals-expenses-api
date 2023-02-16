@@ -23,7 +23,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class MtdIdLookupConnector @Inject() (http: HttpClient, appConfig: AppConfig) {
+class MtdIdLookupConnector @Inject()(http: HttpClient, appConfig: AppConfig) {
 
   def getMtdId(nino: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[MtdIdLookupOutcome] = {
     import api.connectors.httpParsers.MtdIdLookupHttpParser.mtdIdLookupHttpReads

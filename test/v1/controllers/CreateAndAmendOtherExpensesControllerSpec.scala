@@ -17,9 +17,7 @@
 package v1.controllers
 
 import api.controllers.{ControllerBaseSpec, ControllerTestRunner}
-import api.mocks.MockIdGenerator
 import api.mocks.hateoas.MockHateoasFactory
-import api.mocks.services.MockAuditService
 import api.models.audit.{AuditEvent, AuditResponse, GenericAuditDetail}
 import api.models.domain.{Nino, TaxYear}
 import api.models.errors._
@@ -37,13 +35,11 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class CreateAndAmendOtherExpensesControllerSpec
-    extends ControllerBaseSpec
+  extends ControllerBaseSpec
     with ControllerTestRunner
     with MockCreateAndAmendOtherExpensesService
     with MockCreateAndAmendOtherExpensesRequestParser
-    with MockHateoasFactory
-    with MockAuditService
-    with MockIdGenerator {
+    with MockHateoasFactory {
 
   private val taxYear = "2021-22"
 
@@ -58,7 +54,8 @@ class CreateAndAmendOtherExpensesControllerSpec
     Some(PatentRoyaltiesPayments(Some("ROYALTIES PAYMENTS"), 1223.22))
   )
 
-  private val requestBodyJson = Json.parse("""
+  private val requestBodyJson = Json.parse(
+    """
       |{
       |  "paymentsToTradeUnionsForDeathBenefits": {
       |    "customerReference": "TRADE UNION PAYMENTS",
@@ -71,7 +68,8 @@ class CreateAndAmendOtherExpensesControllerSpec
       |}
       |""".stripMargin)
 
-  private val responseBodyJson = Json.parse(s"""
+  private val responseBodyJson = Json.parse(
+    s"""
        |{
        |  "links": [
        |    {
@@ -93,7 +91,7 @@ class CreateAndAmendOtherExpensesControllerSpec
        |}
        |""".stripMargin)
 
-  private val rawData     = CreateAndAmendOtherExpensesRawData(nino, taxYear, requestBodyJson)
+  private val rawData = CreateAndAmendOtherExpensesRawData(nino, taxYear, requestBodyJson)
   private val requestData = CreateAndAmendOtherExpensesRequest(Nino(nino), TaxYear.fromMtd(taxYear), requestBody)
 
   "handleRequest" should {

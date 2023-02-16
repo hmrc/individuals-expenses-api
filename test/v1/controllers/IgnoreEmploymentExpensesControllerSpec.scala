@@ -18,7 +18,6 @@ package v1.controllers
 
 import api.controllers.{ControllerBaseSpec, ControllerTestRunner}
 import api.mocks.hateoas.MockHateoasFactory
-import api.mocks.services.MockAuditService
 import api.models.audit.{AuditEvent, AuditResponse, GenericAuditDetail}
 import api.models.domain.{Nino, TaxYear}
 import api.models.errors._
@@ -43,7 +42,6 @@ class IgnoreEmploymentExpensesControllerSpec
     with MockIgnoreEmploymentExpensesService
     with MockIgnoreEmploymentExpensesRequestParser
     with MockHateoasFactory
-    with MockAuditService
     with MockAppConfig {
 
   private val taxYear = "2019-20"
@@ -137,7 +135,7 @@ class IgnoreEmploymentExpensesControllerSpec
       idGenerator = mockIdGenerator
     )
 
-    MockedAppConfig.featureSwitches.returns(Configuration("allowTemporalValidationSuspension.enabled" -> true)).anyNumberOfTimes()
+    MockAppConfig.featureSwitches.returns(Configuration("allowTemporalValidationSuspension.enabled" -> true)).anyNumberOfTimes()
 
     protected def callController(): Future[Result] = controller.handleRequest(nino, taxYear)(fakeRequest)
 

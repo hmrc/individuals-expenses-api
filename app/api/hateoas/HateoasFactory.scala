@@ -21,10 +21,11 @@ import api.models.hateoas.{HateoasData, HateoasWrapper, Link}
 import cats.Functor
 import cats.implicits._
 import config.AppConfig
+
 import javax.inject.Inject
 import scala.language.higherKinds
 
-class HateoasFactory @Inject() (appConfig: AppConfig) {
+class HateoasFactory @Inject()(appConfig: AppConfig) {
 
   def wrap[A, D <: HateoasData](payload: A, data: D)(implicit lf: HateoasLinksFactory[A, D]): HateoasWrapper[A] = {
     val links = lf.links(appConfig, data)
@@ -32,7 +33,7 @@ class HateoasFactory @Inject() (appConfig: AppConfig) {
     hateoas.HateoasWrapper(payload, links)
   }
 
-  def wrapList[A[_]: Functor, I, D](payload: A[I], data: D)(implicit lf: HateoasListLinksFactory[A, I, D]): HateoasWrapper[A[HateoasWrapper[I]]] = {
+  def wrapList[A[_] : Functor, I, D](payload: A[I], data: D)(implicit lf: HateoasListLinksFactory[A, I, D]): HateoasWrapper[A[HateoasWrapper[I]]] = {
     val hateoasList = payload.map(i => hateoas.HateoasWrapper(i, lf.itemLinks(appConfig, data, i)))
 
     hateoas.HateoasWrapper(hateoasList, lf.links(appConfig, data))
@@ -46,5 +47,6 @@ trait HateoasLinksFactory[A, D] {
 
 trait HateoasListLinksFactory[A[_], I, D] {
   def itemLinks(appConfig: AppConfig, data: D, item: I): Seq[Link]
+
   def links(appConfig: AppConfig, data: D): Seq[Link]
 }

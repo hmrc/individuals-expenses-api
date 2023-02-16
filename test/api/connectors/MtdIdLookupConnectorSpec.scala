@@ -33,7 +33,7 @@ class MtdIdLookupConnectorSpec extends ConnectorSpec {
       appConfig = mockAppConfig
     )
 
-    MockedAppConfig.mtdIdBaseUrl returns baseUrl
+    MockAppConfig.mtdIdBaseUrl returns baseUrl
   }
 
   "getMtdId" should {

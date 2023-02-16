@@ -17,11 +17,11 @@
 package api.models.hateoas
 
 object RelType {
-  val AMEND_EXPENSES_OTHER  = "amend-expenses-other"
+  val AMEND_EXPENSES_OTHER = "amend-expenses-other"
   val DELETE_EXPENSES_OTHER = "delete-expenses-other"
 
   val IGNORE_EMPLOYMENT_EXPENSES = "ignore-employment-expenses"
-  val AMEND_EMPLOYMENT_EXPENSES  = "amend-employment-expenses"
+  val AMEND_EMPLOYMENT_EXPENSES = "amend-employment-expenses"
   val DELETE_EMPLOYMENT_EXPENSES = "delete-employment-expenses"
 
   val SELF = "self"

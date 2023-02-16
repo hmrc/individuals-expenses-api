@@ -42,6 +42,6 @@ object DownstreamSource {
     override def toMtd: MtdSource = MtdSource.`hmrcHeld`
   }
 
-  implicit val format: Format[DownstreamSource]         = Enums.format[DownstreamSource]
+  implicit val format: Format[DownstreamSource] = Enums.format[DownstreamSource]
   val parser: PartialFunction[String, DownstreamSource] = Enums.parser[DownstreamSource]
 }

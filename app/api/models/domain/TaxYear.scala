@@ -21,9 +21,9 @@ import config.FeatureSwitches
 /** Opaque representation of a tax year.
   *
   * @param value
-  *   A single-year representation, e.g. "2024" represents the tax year 2023-24.
+  * A single-year representation, e.g. "2024" represents the tax year 2023-24.
   */
-final case class TaxYear private (private val value: String) {
+final case class TaxYear private(private val value: String) {
 
   /** The tax year as a number, e.g. for "2023-24" this will be 2024.
     */
@@ -32,7 +32,7 @@ final case class TaxYear private (private val value: String) {
   /** The tax year in MTD (vendor-facing) format, e.g. "2023-24".
     */
   val asMtd: String = {
-    val prefix  = value.take(2)
+    val prefix = value.take(2)
     val yearTwo = value.drop(2)
     val yearOne = (yearTwo.toInt - 1).toString
     prefix + yearOne + "-" + yearTwo
@@ -60,7 +60,7 @@ final case class TaxYear private (private val value: String) {
 object TaxYear {
 
   /** @param taxYear
-    *   tax year in MTD format (e.g. 2017-18)
+    * tax year in MTD format (e.g. 2017-18)
     */
   def fromMtd(taxYear: String): TaxYear =
     new TaxYear(taxYear.take(2) + taxYear.drop(5))

@@ -16,7 +16,7 @@
 
 package api.connectors.httpParsers
 
-import api.models.errors.{BVRError, DownstreamError, DownstreamErrorCode, DownstreamErrors, OutboundError, StandardDownstreamError}
+import api.models.errors._
 import play.api.Logger
 import play.api.libs.json._
 import uk.gov.hmrc.http.HttpResponse
@@ -58,9 +58,9 @@ trait HttpParser {
   }
 
   def parseErrors(response: HttpResponse): DownstreamError = {
-    val singleError         = response.validateJson[DownstreamErrorCode].map(err => DownstreamErrors(List(err)))
+    val singleError = response.validateJson[DownstreamErrorCode].map(err => DownstreamErrors(List(err)))
     lazy val multipleErrors = response.validateJson(multipleErrorReads).map(errs => DownstreamErrors(errs))
-    lazy val bvrErrors      = response.validateJson(bvrErrorReads).map(errs => OutboundError(BVRError, Some(errs.map(_.toMtd(BVRError.httpStatus)))))
+    lazy val bvrErrors = response.validateJson(bvrErrorReads).map(errs => OutboundError(BVRError, Some(errs.map(_.toMtd(BVRError.httpStatus)))))
     lazy val unableToParseJsonError = {
       logger.warn(s"unable to parse errors from response: ${response.body}")
       OutboundError(StandardDownstreamError)

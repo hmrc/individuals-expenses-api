@@ -68,7 +68,7 @@ class DocumentationControllerSpec extends ControllerBaseSpec with MockAppConfig 
 
     protected def featureEnabled: Boolean = true
 
-    MockedAppConfig.featureSwitches returns Configuration("openApiFeatureTest.enabled" -> featureEnabled)
+    MockAppConfig.featureSwitches returns Configuration("openApiFeatureTest.enabled" -> featureEnabled)
 
     private val apiFactory = new ApiDefinitionFactory(mockAppConfig)
 

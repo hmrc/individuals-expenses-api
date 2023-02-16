@@ -22,7 +22,7 @@ import api.models.errors.{MtdError, RuleTaxYearNotSupportedError}
 object TaxYearNotSupportedValidation {
 
   /** @param taxYear
-    *   taxYear in MTD format YYYY-YY
+    * taxYear in MTD format YYYY-YY
     */
   def validate(taxYear: String, minYear: Int): List[MtdError] = {
     val year = TaxYear.fromMtd(taxYear).year

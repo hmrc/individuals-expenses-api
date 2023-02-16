@@ -17,9 +17,7 @@
 package v1.controllers
 
 import api.controllers.{ControllerBaseSpec, ControllerTestRunner}
-import api.mocks.MockIdGenerator
 import api.mocks.hateoas.MockHateoasFactory
-import api.mocks.services.MockAuditService
 import api.models.audit.{AuditEvent, AuditResponse, GenericAuditDetail}
 import api.models.domain.{Nino, TaxYear}
 import api.models.errors
@@ -40,14 +38,12 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class CreateAndAmendEmploymentExpensesControllerSpec
-    extends ControllerBaseSpec
+  extends ControllerBaseSpec
     with ControllerTestRunner
     with MockAppConfig
     with MockCreateAndAmendEmploymentExpensesService
     with MockCreateAndAmendEmploymentExpensesRequestParser
-    with MockHateoasFactory
-    with MockAuditService
-    with MockIdGenerator {
+    with MockHateoasFactory {
 
   private val taxYear = "2021-22"
 
@@ -70,44 +66,46 @@ class CreateAndAmendEmploymentExpensesControllerSpec
     )
   )
 
-  private val requestBodyJson = Json.parse("""
-     |{
-     |    "expenses": {
-     |        "businessTravelCosts": 123.12,
-     |        "jobExpenses": 123.12,
-     |        "flatRateJobExpenses": 123.12,
-     |        "professionalSubscriptions": 123.12,
-     |        "hotelAndMealExpenses": 123.12,
-     |        "otherAndCapitalAllowances": 123.12,
-     |        "vehicleExpenses": 123.12,
-     |        "mileageAllowanceRelief": 123.12
-     |    }
-     |}
-     |""".stripMargin)
+  private val requestBodyJson = Json.parse(
+    """
+      |{
+      |    "expenses": {
+      |        "businessTravelCosts": 123.12,
+      |        "jobExpenses": 123.12,
+      |        "flatRateJobExpenses": 123.12,
+      |        "professionalSubscriptions": 123.12,
+      |        "hotelAndMealExpenses": 123.12,
+      |        "otherAndCapitalAllowances": 123.12,
+      |        "vehicleExpenses": 123.12,
+      |        "mileageAllowanceRelief": 123.12
+      |    }
+      |}
+      |""".stripMargin)
 
-  private val responseBodyJson = Json.parse(s"""
-     |{
-     |  "links": [
-     |    {
-     |      "href": "/individuals/expenses/employments/$nino/$taxYear",
-     |      "method": "GET",
-     |      "rel": "self"
-     |    },
-     |    {
-     |      "href": "/individuals/expenses/employments/$nino/$taxYear",
-     |      "method": "PUT",
-     |      "rel": "amend-employment-expenses"
-     |    },
-     |    {
-     |      "href": "/individuals/expenses/employments/$nino/$taxYear",
-     |      "method": "DELETE",
-     |      "rel": "delete-employment-expenses"
-     |    }
-     |  ]
-     |}
-     |""".stripMargin)
+  private val responseBodyJson = Json.parse(
+    s"""
+       |{
+       |  "links": [
+       |    {
+       |      "href": "/individuals/expenses/employments/$nino/$taxYear",
+       |      "method": "GET",
+       |      "rel": "self"
+       |    },
+       |    {
+       |      "href": "/individuals/expenses/employments/$nino/$taxYear",
+       |      "method": "PUT",
+       |      "rel": "amend-employment-expenses"
+       |    },
+       |    {
+       |      "href": "/individuals/expenses/employments/$nino/$taxYear",
+       |      "method": "DELETE",
+       |      "rel": "delete-employment-expenses"
+       |    }
+       |  ]
+       |}
+       |""".stripMargin)
 
-  private val rawData     = CreateAndAmendEmploymentExpensesRawData(nino, taxYear, requestBodyJson)
+  private val rawData = CreateAndAmendEmploymentExpensesRawData(nino, taxYear, requestBodyJson)
   private val requestData = CreateAndAmendEmploymentExpensesRequest(Nino(nino), TaxYear.fromMtd(taxYear), requestBody)
 
   "handleRequest" should {
@@ -174,7 +172,8 @@ class CreateAndAmendEmploymentExpensesControllerSpec
       idGenerator = mockIdGenerator
     )
 
-    MockedAppConfig.featureSwitches.returns(Configuration("allowTemporalValidationSuspension.enabled" -> true)).anyNumberOfTimes()
+    MockAppConfig.featureSwitches.returns(Configuration("allowTemporalValidationSuspension.enabled" -> true)).anyNumberOfTimes()
+
     protected def callController(): Future[Result] = controller.handleRequest(nino, taxYear)(fakePostRequest(requestBodyJson))
 
     def event(auditResponse: AuditResponse, requestBody: Option[JsValue]): AuditEvent[GenericAuditDetail] =

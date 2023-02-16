@@ -22,7 +22,7 @@ object CustomerReferenceValidation {
 
   def validateOptional(field: Option[String], path: String): List[MtdError] = {
     field match {
-      case None        => NoValidationErrors
+      case None => NoValidationErrors
       case Some(value) => validate(value, path)
     }
   }

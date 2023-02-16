@@ -17,9 +17,6 @@
 package v1.controllers
 
 import api.controllers.{ControllerBaseSpec, ControllerTestRunner}
-import api.mocks.MockIdGenerator
-import api.mocks.hateoas.MockHateoasFactory
-import api.mocks.services.{MockAuditService, MockEnrolmentsAuthService, MockMtdIdLookupService}
 import api.models.audit.{AuditEvent, AuditResponse, GenericAuditDetail}
 import api.models.domain.{Nino, TaxYear}
 import api.models.errors._
@@ -34,19 +31,14 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class DeleteOtherExpensesControllerSpec
-    extends ControllerBaseSpec
+  extends ControllerBaseSpec
     with ControllerTestRunner
-    with MockEnrolmentsAuthService
-    with MockMtdIdLookupService
     with MockDeleteOtherExpensesService
-    with MockDeleteOtherExpensesRequestDataParser
-    with MockHateoasFactory
-    with MockAuditService
-    with MockIdGenerator {
+    with MockDeleteOtherExpensesRequestDataParser {
 
   private val taxYear = "2019-20"
 
-  private val rawData     = DeleteOtherExpensesRawData(nino, taxYear)
+  private val rawData = DeleteOtherExpensesRawData(nino, taxYear)
   private val requestData = DeleteOtherExpensesRequest(Nino(nino), TaxYear.fromMtd(taxYear))
 
   "handleRequest" should {
