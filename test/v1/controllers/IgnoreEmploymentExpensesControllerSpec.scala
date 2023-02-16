@@ -26,6 +26,7 @@ import api.models.hateoas.Method.{DELETE, GET}
 import api.models.hateoas.{HateoasWrapper, Link}
 import api.models.outcomes.ResponseWrapper
 import mocks.MockAppConfig
+import play.api.Configuration
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Result
 import v1.mocks.requestParsers.MockIgnoreEmploymentExpensesRequestParser
@@ -125,6 +126,7 @@ class IgnoreEmploymentExpensesControllerSpec
   trait Test extends ControllerTest with AuditEventChecking {
 
     val controller = new IgnoreEmploymentExpensesController(
+      appConfig = mockAppConfig,
       authService = mockEnrolmentsAuthService,
       lookupService = mockMtdIdLookupService,
       parser = mockRequestParser,
@@ -134,6 +136,8 @@ class IgnoreEmploymentExpensesControllerSpec
       cc = cc,
       idGenerator = mockIdGenerator
     )
+
+    MockedAppConfig.featureSwitches.returns(Configuration("allowTemporalValidationSuspension.enabled" -> true)).anyNumberOfTimes()
 
     protected def callController(): Future[Result] = controller.handleRequest(nino, taxYear)(fakeRequest)
 

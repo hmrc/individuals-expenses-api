@@ -52,6 +52,7 @@ class IgnoreEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
         val response: WSResponse = await(request().post(requestBody))
         response.status shouldBe OK
         response.json shouldBe responseBody
+
         response.header("X-CorrelationId").nonEmpty shouldBe true
       }
     }

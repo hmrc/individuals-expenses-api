@@ -28,16 +28,12 @@ import api.models.hateoas.Method.{DELETE, GET, PUT}
 import api.models.hateoas.{HateoasWrapper, Link}
 import api.models.outcomes.ResponseWrapper
 import mocks.MockAppConfig
+import play.api.Configuration
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Result
 import v1.mocks.requestParsers.MockCreateAndAmendEmploymentExpensesRequestParser
 import v1.mocks.services.MockCreateAndAmendEmploymentExpensesService
-import v1.models.request.createAndAmendEmploymentExpenses.{
-  CreateAndAmendEmploymentExpensesBody,
-  CreateAndAmendEmploymentExpensesRawData,
-  CreateAndAmendEmploymentExpensesRequest,
-  Expenses
-}
+import v1.models.request.createAndAmendEmploymentExpenses.{CreateAndAmendEmploymentExpensesBody, CreateAndAmendEmploymentExpensesRawData, CreateAndAmendEmploymentExpensesRequest, Expenses}
 import v1.models.response.createAndAmendEmploymentExpenses.CreateAndAmendEmploymentExpensesHateoasData
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -167,6 +163,7 @@ class CreateAndAmendEmploymentExpensesControllerSpec
   trait Test extends ControllerTest with AuditEventChecking {
 
     val controller = new CreateAndAmendEmploymentExpensesController(
+      appConfig = mockAppConfig,
       authService = mockEnrolmentsAuthService,
       lookupService = mockMtdIdLookupService,
       parser = mockRequestParser,
@@ -177,6 +174,7 @@ class CreateAndAmendEmploymentExpensesControllerSpec
       idGenerator = mockIdGenerator
     )
 
+    MockedAppConfig.featureSwitches.returns(Configuration("allowTemporalValidationSuspension.enabled" -> true)).anyNumberOfTimes()
     protected def callController(): Future[Result] = controller.handleRequest(nino, taxYear)(fakePostRequest(requestBodyJson))
 
     def event(auditResponse: AuditResponse, requestBody: Option[JsValue]): AuditEvent[GenericAuditDetail] =

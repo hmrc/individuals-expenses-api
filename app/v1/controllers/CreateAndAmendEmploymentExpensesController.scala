@@ -19,6 +19,7 @@ package v1.controllers
 import api.controllers._
 import api.hateoas.HateoasFactory
 import api.services.{AuditService, EnrolmentsAuthService, MtdIdLookupService}
+import config.{AppConfig, FeatureSwitches}
 import play.api.libs.json.JsValue
 import play.api.mvc.{Action, ControllerComponents}
 import utils.{IdGenerator, Logging}
@@ -34,6 +35,7 @@ import scala.concurrent.ExecutionContext
 @Singleton
 class CreateAndAmendEmploymentExpensesController @Inject()(val authService: EnrolmentsAuthService,
                                                            val lookupService: MtdIdLookupService,
+                                                           appConfig: AppConfig,
                                                            parser: CreateAndAmendEmploymentExpensesRequestParser,
                                                            service: CreateAndAmendEmploymentExpensesService,
                                                            auditService: AuditService,
@@ -53,7 +55,8 @@ class CreateAndAmendEmploymentExpensesController @Inject()(val authService: Enro
       val rawData = CreateAndAmendEmploymentExpensesRawData(
         nino = nino,
         taxYear = taxYear,
-        body = request.body
+        body = request.body,
+        temporalValidationEnabled = FeatureSwitches()(appConfig).isTemporalValidationEnabled
       )
       val requestHandler = RequestHandler
         .withParser(parser)
