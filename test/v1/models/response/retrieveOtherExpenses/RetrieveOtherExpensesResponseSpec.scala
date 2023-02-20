@@ -16,11 +16,11 @@
 
 package v1.models.response.retrieveOtherExpenses
 
+import api.models.hateoas.Link
+import api.models.hateoas.Method.{DELETE, GET, PUT}
 import mocks.MockAppConfig
 import play.api.libs.json.Json
 import support.UnitSpec
-import v1.models.hateoas.Link
-import v1.models.hateoas.Method.{DELETE, GET, PUT}
 
 class RetrieveOtherExpensesResponseSpec extends UnitSpec with MockAppConfig {
 
@@ -117,7 +117,7 @@ class RetrieveOtherExpensesResponseSpec extends UnitSpec with MockAppConfig {
       val nino    = "mynino"
       val taxYear = "mytaxyear"
 
-      MockedAppConfig.apiGatewayContext.returns("my/context").anyNumberOfTimes
+      MockAppConfig.apiGatewayContext.returns("my/context").anyNumberOfTimes
       RetrieveOtherExpensesResponse.RetrieveOtherExpensesLinksFactory.links(mockAppConfig, RetrieveOtherExpensesHateoasData(nino, taxYear)) shouldBe
         Seq(
           Link(s"/my/context/other/$nino/$taxYear", PUT, "amend-expenses-other"),

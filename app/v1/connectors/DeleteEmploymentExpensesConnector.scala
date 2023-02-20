@@ -16,13 +16,13 @@
 
 package v1.connectors
 
+import api.connectors.{BaseDownstreamConnector, DownstreamOutcome}
 import config.AppConfig
 import play.api.http.Status.NO_CONTENT
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
-import v1.connectors.DownstreamUri.{DesUri, TaxYearSpecificIfsUri}
-import v1.connectors.httpparsers.StandardDownstreamHttpParser._
+import api.connectors.DownstreamUri.{DesUri, TaxYearSpecificIfsUri}
+import api.connectors.httpParsers.StandardDownstreamHttpParser._
 import v1.models.request.deleteEmploymentExpenses.DeleteEmploymentExpensesRequest
-
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 

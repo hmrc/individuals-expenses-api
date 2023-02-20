@@ -16,10 +16,10 @@
 
 package v1.models.response.ignoreEmploymentExpenses
 
+import api.models.hateoas.Link
+import api.models.hateoas.Method.{DELETE, GET}
 import mocks.MockAppConfig
 import support.UnitSpec
-import v1.models.hateoas.Link
-import v1.models.hateoas.Method.{DELETE, GET}
 
 class IgnoreEmploymentExpensesResponseSpec extends UnitSpec with MockAppConfig {
 
@@ -28,7 +28,7 @@ class IgnoreEmploymentExpensesResponseSpec extends UnitSpec with MockAppConfig {
       val nino    = "mynino"
       val taxYear = "mytaxyear"
 
-      MockedAppConfig.apiGatewayContext.returns("my/context").anyNumberOfTimes
+      MockAppConfig.apiGatewayContext.returns("my/context").anyNumberOfTimes
       IgnoreEmploymentExpensesResponse.IgnoreEmploymentExpensesLinksFactory.links(
         mockAppConfig,
         IgnoreEmploymentExpensesHateoasData(nino, taxYear)) shouldBe

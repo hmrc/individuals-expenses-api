@@ -16,6 +16,8 @@
 
 package v1.controllers.requestParsers.validators
 
+import api.mocks.{MockCurrentDateTime, MockCurrentTaxYear}
+import api.models.errors._
 import config.AppConfig
 import mocks.MockAppConfig
 import org.joda.time.DateTime
@@ -23,8 +25,6 @@ import org.joda.time.format.{DateTimeFormat, DateTimeFormatter}
 import play.api.libs.json.Json
 import support.UnitSpec
 import utils.{CurrentDateTime, CurrentTaxYear}
-import v1.mocks.{MockCurrentDateTime, MockCurrentTaxYear}
-import v1.models.errors._
 import v1.models.request.createAndAmendOtherExpenses.CreateAndAmendOtherExpensesRawData
 
 class CreateAndAmendOtherExpensesValidatorSpec extends UnitSpec {
@@ -89,7 +89,7 @@ class CreateAndAmendOtherExpensesValidatorSpec extends UnitSpec {
 
     val validator = new CreateAndAmendOtherExpensesValidator()
 
-    MockedAppConfig.otherExpensesMinimumTaxYear.returns(2022)
+    MockAppConfig.otherExpensesMinimumTaxYear.returns(2022)
 
     MockCurrentDateTime.getCurrentDate
       .returns(DateTime.parse("2020-07-11", dateTimeFormatter))

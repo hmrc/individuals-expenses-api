@@ -16,8 +16,8 @@
 
 package v1.fixtures
 
+import api.models.domain.MtdSource
 import play.api.libs.json.{JsObject, JsValue, Json}
-import v1.models.domain.MtdSource
 import v1.models.response.retrieveEmploymentExpenses.{Expenses, RetrieveEmploymentsExpensesResponse}
 
 object RetrieveEmploymentsExpensesFixtures {

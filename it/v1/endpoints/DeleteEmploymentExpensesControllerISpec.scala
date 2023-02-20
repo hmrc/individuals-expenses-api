@@ -16,6 +16,7 @@
 
 package v1.endpoints
 
+import api.models.errors._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import play.api.http.HeaderNames.ACCEPT
 import play.api.http.Status._
@@ -23,13 +24,13 @@ import play.api.libs.json.{JsObject, Json}
 import play.api.libs.ws.{WSRequest, WSResponse}
 import play.api.test.Helpers.AUTHORIZATION
 import support.IntegrationBaseSpec
-import v1.models.errors._
 import v1.stubs.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 
 class DeleteEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
 
   private trait Test {
     def taxYear: String
+
     def setupStubs(): StubMapping
 
     def nino: String = "AA123456A"
@@ -49,11 +50,13 @@ class DeleteEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
 
   private trait NonTysTest extends Test {
     override def taxYear: String = "2021-22"
+
     def downstreamUri: String = s"/income-tax/expenses/employments/$nino/2021-22"
   }
 
   private trait TysIfsTest extends Test {
     override def taxYear: String = "2023-24"
+
     def downstreamUri: String = s"/income-tax/expenses/employments/23-24/$nino"
   }
 
@@ -100,7 +103,8 @@ class DeleteEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
 
           s"validation fails with ${expectedBody.code} error" in new NonTysTest {
 
-            override def nino: String    = requestNino
+            override def nino: String = requestNino
+
             override def taxYear: String = requestTaxYear
 
             override def setupStubs(): StubMapping = {
@@ -165,7 +169,6 @@ class DeleteEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
           (NOT_FOUND, "NOT_FOUND", NOT_FOUND, NotFoundError),
           (UNPROCESSABLE_ENTITY, "TAX_YEAR_NOT_SUPPORTED", BAD_REQUEST, RuleTaxYearNotSupportedError)
         )
-
 
 
         (errors ++ extraTysErrors).foreach(args => (serviceErrorTest _).tupled(args))

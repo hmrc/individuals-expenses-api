@@ -16,13 +16,13 @@
 
 package v1.endpoints
 
+import api.models.errors._
 import play.api.http.HeaderNames.ACCEPT
 import play.api.http.Status._
 import play.api.libs.json.{JsObject, JsValue, Json}
 import play.api.libs.ws.{WSRequest, WSResponse}
 import play.api.test.Helpers.AUTHORIZATION
 import support.IntegrationBaseSpec
-import v1.models.errors._
 import v1.stubs.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 
 class IgnoreEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
@@ -52,6 +52,7 @@ class IgnoreEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
         val response: WSResponse = await(request().post(requestBody))
         response.status shouldBe OK
         response.json shouldBe responseBody
+
         response.header("X-CorrelationId").nonEmpty shouldBe true
       }
     }
@@ -63,7 +64,7 @@ class IgnoreEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
         def parserErrorTest(newNino: String, newTaxYear: String, expectedStatus: Int, expectedBody: MtdError): Unit = {
           s"parser returns ${expectedBody.code}" in new NonTysTest {
 
-            override val nino: String    = newNino
+            override val nino: String = newNino
             override val taxYear: String = newTaxYear
 
             val response: WSResponse = await(request().post(requestBody))
@@ -128,7 +129,8 @@ class IgnoreEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
 
     val requestBody: JsValue = Json.parse("{}")
 
-    lazy val responseBody: JsValue = Json.parse(s"""
+    lazy val responseBody: JsValue = Json.parse(
+      s"""
          |{
          |  "links": [
          |    {

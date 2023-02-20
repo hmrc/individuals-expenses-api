@@ -16,13 +16,14 @@
 
 package v1.controllers.requestParsers.validators
 
+import api.controllers.requestParsers.validators.Validator
+import api.controllers.requestParsers.validators.validations._
+import api.models.errors.{MtdError, RuleIncorrectOrEmptyBodyError}
 import config.AppConfig
+import utils.{CurrentDateTime, CurrentTaxYear}
+import v1.models.request.createAndAmendEmploymentExpenses.{CreateAndAmendEmploymentExpensesBody, CreateAndAmendEmploymentExpensesRawData, Expenses}
 
 import javax.inject.Inject
-import utils.{CurrentDateTime, CurrentTaxYear}
-import v1.controllers.requestParsers.validators.validations._
-import v1.models.errors.{MtdError, RuleIncorrectOrEmptyBodyError}
-import v1.models.request.createAndAmendEmploymentExpenses.{CreateAndAmendEmploymentExpensesBody, CreateAndAmendEmploymentExpensesRawData, Expenses}
 
 class CreateAndAmendEmploymentExpensesValidator @Inject() (implicit
     currentDateTime: CurrentDateTime,
@@ -62,7 +63,7 @@ class CreateAndAmendEmploymentExpensesValidator @Inject() (implicit
     val body = data.body.as[CreateAndAmendEmploymentExpensesBody]
 
     List(
-      flattenErrors(
+      Validator.flattenErrors(
         List(
           validateExpenses(body.expenses)
         )

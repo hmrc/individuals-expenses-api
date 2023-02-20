@@ -16,6 +16,7 @@
 
 package config
 
+import api.controllers.ControllerBaseSpec
 import com.typesafe.config.ConfigFactory
 import config.DocumentationController.filenameWithFeatureName
 import controllers.{Assets, AssetsConfiguration, DefaultAssetsMetadata}
@@ -25,7 +26,6 @@ import play.api.Configuration
 import play.api.http.{DefaultFileMimeTypes, DefaultHttpErrorHandler, FileMimeTypesConfiguration, HttpConfiguration}
 import play.api.mvc.Result
 import uk.gov.hmrc.http.HeaderCarrier
-import v1.controllers.ControllerBaseSpec
 
 import scala.concurrent.Future
 import scala.util.matching.Regex
@@ -68,7 +68,7 @@ class DocumentationControllerSpec extends ControllerBaseSpec with MockAppConfig 
 
     protected def featureEnabled: Boolean = true
 
-    MockedAppConfig.featureSwitches returns Configuration("openApiFeatureTest.enabled" -> featureEnabled)
+    MockAppConfig.featureSwitches returns Configuration("openApiFeatureTest.enabled" -> featureEnabled)
 
     private val apiFactory = new ApiDefinitionFactory(mockAppConfig)
 

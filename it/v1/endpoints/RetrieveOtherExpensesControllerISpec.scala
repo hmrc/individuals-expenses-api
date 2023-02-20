@@ -16,13 +16,13 @@
 
 package v1.endpoints
 
+import api.models.errors._
 import play.api.http.HeaderNames.ACCEPT
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.libs.ws.{WSRequest, WSResponse}
 import play.api.test.Helpers.AUTHORIZATION
 import support.IntegrationBaseSpec
-import v1.models.errors._
 import v1.stubs.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 
 class RetrieveOtherExpensesControllerISpec extends IntegrationBaseSpec {
@@ -66,7 +66,8 @@ class RetrieveOtherExpensesControllerISpec extends IntegrationBaseSpec {
          |""".stripMargin
     )
 
-    val downstreamResponseBody = Json.parse(s"""
+    val downstreamResponseBody = Json.parse(
+      s"""
          |{
          |  "submittedOn": "2019-04-04T01:01:01Z",
          |  "paymentsToTradeUnionsForDeathBenefits": {
@@ -158,7 +159,7 @@ class RetrieveOtherExpensesControllerISpec extends IntegrationBaseSpec {
           def validationErrorTest(requestNino: String, requestTaxYear: String, expectedStatus: Int, expectedBody: MtdError): Unit = {
             s"validation fails with ${expectedBody.code} error" in new NonTysTest {
 
-              override val nino: String    = requestNino
+              override val nino: String = requestNino
               override val taxYear: String = requestTaxYear
 
               override def setupStubs(): Unit = {

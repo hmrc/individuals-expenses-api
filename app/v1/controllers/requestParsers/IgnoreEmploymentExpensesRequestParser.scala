@@ -16,11 +16,12 @@
 
 package v1.controllers.requestParsers
 
-import javax.inject.Inject
-import v1.models.domain.Nino
+import api.controllers.requestParsers.RequestParser
+import api.models.domain.{Nino, TaxYear}
 import v1.controllers.requestParsers.validators.IgnoreEmploymentExpensesValidator
-import v1.models.request.TaxYear
 import v1.models.request.ignoreEmploymentExpenses.{IgnoreEmploymentExpensesRawData, IgnoreEmploymentExpensesRequest}
+
+import javax.inject.Inject
 
 class IgnoreEmploymentExpensesRequestParser @Inject() (val validator: IgnoreEmploymentExpensesValidator)
     extends RequestParser[IgnoreEmploymentExpensesRawData, IgnoreEmploymentExpensesRequest] {

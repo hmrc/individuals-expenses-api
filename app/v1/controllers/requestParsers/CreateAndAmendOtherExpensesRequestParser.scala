@@ -16,15 +16,16 @@
 
 package v1.controllers.requestParsers
 
-import javax.inject.Inject
-import v1.models.domain.Nino
-import v1.models.request.TaxYear
+import api.controllers.requestParsers.RequestParser
+import api.models.domain.{Nino, TaxYear}
 import v1.controllers.requestParsers.validators.CreateAndAmendOtherExpensesValidator
 import v1.models.request.createAndAmendOtherExpenses.{
   CreateAndAmendOtherExpensesBody,
   CreateAndAmendOtherExpensesRawData,
   CreateAndAmendOtherExpensesRequest
 }
+
+import javax.inject.Inject
 
 class CreateAndAmendOtherExpensesRequestParser @Inject() (val validator: CreateAndAmendOtherExpensesValidator)
     extends RequestParser[CreateAndAmendOtherExpensesRawData, CreateAndAmendOtherExpensesRequest] {

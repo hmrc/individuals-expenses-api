@@ -16,14 +16,14 @@
 
 package v1
 
-import v1.models.errors.ErrorWrapper
-import v1.models.outcomes.ResponseWrapper
+import api.models.errors.ErrorWrapper
+import api.models.outcomes.ResponseWrapper
 import v1.models.response.retrieveEmploymentExpenses.RetrieveEmploymentsExpensesResponse
 import v1.models.response.retrieveOtherExpenses.RetrieveOtherExpensesResponse
 
 package object services {
 
-  private type ServiceOutcome[A] = Either[ErrorWrapper, ResponseWrapper[A]]
+  type ServiceOutcome[A] = Either[ErrorWrapper, ResponseWrapper[A]]
 
   type CreateAndAmendOtherExpensesServiceOutcome = ServiceOutcome[Unit]
 

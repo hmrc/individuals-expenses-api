@@ -16,14 +16,14 @@
 
 package v1.controllers.requestParsers.validators
 
+import api.mocks.{MockCurrentDateTime, MockCurrentTaxYear}
+import api.models.errors._
 import config.AppConfig
 import mocks.MockAppConfig
 import org.joda.time.DateTime
 import org.joda.time.format.{DateTimeFormat, DateTimeFormatter}
 import support.UnitSpec
 import utils.{CurrentDateTime, CurrentTaxYear}
-import v1.mocks.{MockCurrentDateTime, MockCurrentTaxYear}
-import v1.models.errors._
 import v1.models.request.ignoreEmploymentExpenses.IgnoreEmploymentExpensesRawData
 
 class IgnoreEmploymentExpensesValidatorSpec extends UnitSpec {
@@ -42,7 +42,7 @@ class IgnoreEmploymentExpensesValidatorSpec extends UnitSpec {
 
     val validator = new IgnoreEmploymentExpensesValidator()
 
-    MockedAppConfig.employmentExpensesMinimumTaxYear.returns(2020)
+    MockAppConfig.employmentExpensesMinimumTaxYear.returns(2020)
 
     MockCurrentDateTime.getCurrentDate
       .returns(DateTime.parse("2020-08-05", dateTimeFormatter))

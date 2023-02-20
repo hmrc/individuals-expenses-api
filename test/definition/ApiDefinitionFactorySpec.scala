@@ -19,16 +19,15 @@ package definition
 import config.ConfidenceLevelConfig
 import definition.APIStatus.{ALPHA, BETA}
 import definition.Versions.VERSION_1
-import mocks.MockAppConfig
+import mocks.{MockAppConfig, MockHttpClient}
 import support.UnitSpec
 import uk.gov.hmrc.auth.core.ConfidenceLevel
-import v1.mocks.MockHttpClient
 
 class ApiDefinitionFactorySpec extends UnitSpec {
 
   class Test extends MockHttpClient with MockAppConfig {
     val apiDefinitionFactory = new ApiDefinitionFactory(mockAppConfig)
-    MockedAppConfig.apiGatewayContext returns "individuals/expenses"
+    MockAppConfig.apiGatewayContext returns "individuals/expenses"
   }
 
   "definition" when {
@@ -42,9 +41,9 @@ class ApiDefinitionFactorySpec extends UnitSpec {
       }
 
       def testDefinitionWithConfidence(confidenceLevelConfig: ConfidenceLevelConfig): Unit = new Test {
-        MockedAppConfig.apiStatus returns "1.0"
-        MockedAppConfig.endpointsEnabled returns true
-        MockedAppConfig.confidenceLevelCheckEnabled returns confidenceLevelConfig anyNumberOfTimes ()
+        MockAppConfig.apiStatus returns "1.0"
+        MockAppConfig.endpointsEnabled returns true
+        MockAppConfig.confidenceLevelCheckEnabled returns confidenceLevelConfig anyNumberOfTimes ()
 
         val readScope: String                = "read:self-assessment"
         val writeScope: String               = "write:self-assessment"
@@ -92,7 +91,9 @@ class ApiDefinitionFactorySpec extends UnitSpec {
     ).foreach { case (definitionEnabled, cl) =>
       s"confidence-level-check.definition.enabled is $definitionEnabled in config" should {
         s"return $cl" in new Test {
-          MockedAppConfig.confidenceLevelCheckEnabled returns ConfidenceLevelConfig(definitionEnabled = definitionEnabled, authValidationEnabled = true)
+          MockAppConfig.confidenceLevelCheckEnabled returns ConfidenceLevelConfig(
+            definitionEnabled = definitionEnabled,
+            authValidationEnabled = true)
           apiDefinitionFactory.confidenceLevel shouldBe cl
         }
       }
@@ -102,14 +103,14 @@ class ApiDefinitionFactorySpec extends UnitSpec {
   "buildAPIStatus" when {
     "the 'apiStatus' parameter is present and valid" should {
       "return the correct status" in new Test {
-        MockedAppConfig.apiStatus returns "BETA"
+        MockAppConfig.apiStatus returns "BETA"
         apiDefinitionFactory.buildAPIStatus(version = "1.0") shouldBe BETA
       }
     }
 
     "the 'apiStatus' parameter is present and invalid" should {
       "default to alpha" in new Test {
-        MockedAppConfig.apiStatus returns "ALPHA"
+        MockAppConfig.apiStatus returns "ALPHA"
         apiDefinitionFactory.buildAPIStatus(version = "1.0") shouldBe ALPHA
       }
     }

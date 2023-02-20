@@ -16,6 +16,6 @@
 
 package v1.models.request.ignoreEmploymentExpenses
 
-import v1.models.request.RawData
+import api.models.request.RawData
 
 case class IgnoreEmploymentExpensesRawData(nino: String, taxYear: String, temporalValidationEnabled: Boolean = true) extends RawData
