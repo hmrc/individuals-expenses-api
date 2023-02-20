@@ -48,7 +48,14 @@ class ControllerBaseSpec
     HeaderNames.AUTHORIZATION -> "Bearer Token"
   )
 
+  lazy val fakeDeleteRequest: FakeRequest[AnyContentAsEmpty.type] = fakeRequest.withHeaders(
+    HeaderNames.AUTHORIZATION -> "Bearer Token"
+  )
+
   def fakePostRequest[T](body: T): FakeRequest[T] = fakeRequest.withBody(body)
+
+  def fakePutRequest[T](body: T): FakeRequest[T] = fakeRequest.withBody(body)
+
 }
 
 trait ControllerTestRunner extends MockEnrolmentsAuthService with MockMtdIdLookupService with MockIdGenerator { _: ControllerBaseSpec =>

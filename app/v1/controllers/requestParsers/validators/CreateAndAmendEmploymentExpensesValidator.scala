@@ -63,7 +63,7 @@ class CreateAndAmendEmploymentExpensesValidator @Inject() (implicit
     val body = data.body.as[CreateAndAmendEmploymentExpensesBody]
 
     List(
-      flattenErrors(
+      Validator.flattenErrors(
         List(
           validateExpenses(body.expenses)
         )

@@ -31,29 +31,45 @@ trait Validator[A <: RawData] {
       case Nil => List()
       case thisLevel :: remainingLevels =>
         thisLevel(data).flatten match {
-          case x if x.isEmpty => run(remainingLevels, data)
           case x if x.nonEmpty => x
+          case _               => run(remainingLevels, data)
         }
     }
   }
 
-  def flattenErrors(errors: List[List[MtdError]]): List[MtdError] = {
-    errors.flatten
-      .groupBy(_.message)
-      .map { case (_, errors) =>
-        val baseError = errors.head.copy(paths = Some(Seq.empty[String]))
+  object Validator {
 
-        errors.fold(baseError)((error1, error2) => {
-          val paths: Option[Seq[String]] = for {
-            error1Paths <- error1.paths
-            error2Paths <- error2.paths
-          } yield {
-            error1Paths ++ error2Paths
-          }
-          error1.copy(paths = paths)
-        })
-      }
-      .toList
+    def flattenErrors(errors: List[List[MtdError]]): List[MtdError] = {
+      errors.flatten
+        .groupBy(_.message)
+        .map { case (_, errors) =>
+          val baseError = errors.head.copy(paths = Some(Seq.empty[String]))
+
+          errors.fold(baseError)((error1, error2) => {
+            val paths: Option[Seq[String]] = for {
+              error1Paths <- error1.paths
+              error2Paths <- error2.paths
+            } yield {
+              error1Paths ++ error2Paths
+            }
+            error1.copy(paths = paths)
+          })
+        }
+        .toList
+    }
+
+    /** Utility to validate a optional request body field or parameter value.
+      *
+      * @param optionalValue
+      *   the optional value
+      * @param validation
+      *   the validation to be performed if the value is set
+      * @return
+      *   the errors if the value with validation errors is set; an empty list otherwise
+      */
+    def validateOptional[B](optionalValue: Option[B])(validation: B => List[MtdError]): List[MtdError] =
+      optionalValue.map(a => validation(a)).getOrElse(Nil)
+
   }
 
 }

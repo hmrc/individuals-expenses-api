@@ -126,8 +126,8 @@ class EnrolmentsAuthServiceSpec extends ServiceSpec with MockAppConfig {
       "return user details" in new Test {
         MockAppConfig.confidenceLevelCheckEnabled.returns(ConfidenceLevelConfig(definitionEnabled = true, authValidationEnabled = true))
 
-        val retrievalsResult = new ~(Some(AffinityGroup.Individual), Enrolments(Set.empty))
-        val expected = Right(UserDetails("", "Individual", None))
+        val retrievalsResult                      = new ~(Some(AffinityGroup.Individual), Enrolments(Set.empty))
+        val expected: Right[Nothing, UserDetails] = Right(UserDetails("", "Individual", None))
 
         MockedAuthConnector
           .authorised(extraPredicatesAnd(EmptyPredicate), authRetrievals)
@@ -144,8 +144,8 @@ class EnrolmentsAuthServiceSpec extends ServiceSpec with MockAppConfig {
 
         MockAppConfig.confidenceLevelCheckEnabled.returns(ConfidenceLevelConfig(definitionEnabled = true, authValidationEnabled = false))
 
-        val retrievalsResult = new ~(Some(Individual), Enrolments(Set.empty))
-        val expected = Right(UserDetails("", "Individual", None))
+        val retrievalsResult                      = new ~(Some(Individual), Enrolments(Set.empty))
+        val expected: Right[Nothing, UserDetails] = Right(UserDetails("", "Individual", None))
 
         MockedAuthConnector
           .authorised(EmptyPredicate, authRetrievals)
@@ -162,8 +162,8 @@ class EnrolmentsAuthServiceSpec extends ServiceSpec with MockAppConfig {
 
         MockAppConfig.confidenceLevelCheckEnabled.returns(ConfidenceLevelConfig(definitionEnabled = true, authValidationEnabled = false))
 
-        val retrievalsResult = new ~(Some(Organisation), Enrolments(Set.empty))
-        val expected = Right(UserDetails("", "Organisation", None))
+        val retrievalsResult                      = new ~(Some(Organisation), Enrolments(Set.empty))
+        val expected: Right[Nothing, UserDetails] = Right(UserDetails("", "Organisation", None))
 
         MockedAuthConnector
           .authorised(EmptyPredicate, authRetrievals)
@@ -193,7 +193,7 @@ class EnrolmentsAuthServiceSpec extends ServiceSpec with MockAppConfig {
 
         MockAppConfig.confidenceLevelCheckEnabled.returns(ConfidenceLevelConfig(definitionEnabled = true, authValidationEnabled = false))
 
-        val expected = Left(StandardDownstreamError)
+        val expected: Left[StandardDownstreamError.type, Nothing] = Left(StandardDownstreamError)
 
         MockedAuthConnector
           .authorised(EmptyPredicate, authRetrievals)
@@ -210,7 +210,7 @@ class EnrolmentsAuthServiceSpec extends ServiceSpec with MockAppConfig {
 
         MockAppConfig.confidenceLevelCheckEnabled.returns(ConfidenceLevelConfig(definitionEnabled = true, authValidationEnabled = false))
 
-        val expected = Left(ClientNotAuthorisedError)
+        val expected: Left[ClientNotAuthorisedError.type, Nothing] = Left(ClientNotAuthorisedError)
 
         MockedAuthConnector
           .authorised(EmptyPredicate, authRetrievals)
@@ -227,7 +227,7 @@ class EnrolmentsAuthServiceSpec extends ServiceSpec with MockAppConfig {
 
         MockAppConfig.confidenceLevelCheckEnabled.returns(ConfidenceLevelConfig(definitionEnabled = true, authValidationEnabled = false))
 
-        val expected = Left(ClientNotAuthorisedError)
+        val expected: Left[ClientNotAuthorisedError.type, Nothing] = Left(ClientNotAuthorisedError)
 
         MockedAuthConnector
           .authorised(EmptyPredicate, authRetrievals)

@@ -52,7 +52,7 @@ class CreateAndAmendOtherExpensesValidator @Inject() (implicit currentDateTime: 
     val body = data.body.as[CreateAndAmendOtherExpensesBody]
 
     List(
-      flattenErrors(
+      Validator.flattenErrors(
         List(
           body.paymentsToTradeUnionsForDeathBenefits.map(validatePaymentsToTradeUnionsForDeathBenefits).getOrElse(NoValidationErrors),
           body.patentRoyaltiesPayments.map(validatePatentRoyaltiesPayments).getOrElse(NoValidationErrors)

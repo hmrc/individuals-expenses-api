@@ -94,7 +94,7 @@ class DeleteEmploymentExpensesControllerSpec
       idGenerator = mockIdGenerator
     )
 
-    protected def callController(): Future[Result] = controller.handleRequest(nino, taxYear)(fakeRequest)
+    protected def callController(): Future[Result] = controller.handleRequest(nino, taxYear)(fakeDeleteRequest)
 
     def event(auditResponse: AuditResponse, requestBody: Option[JsValue]): AuditEvent[GenericAuditDetail] =
       AuditEvent(

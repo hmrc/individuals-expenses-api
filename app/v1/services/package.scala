@@ -23,7 +23,7 @@ import v1.models.response.retrieveOtherExpenses.RetrieveOtherExpensesResponse
 
 package object services {
 
-  private type ServiceOutcome[A] = Either[ErrorWrapper, ResponseWrapper[A]]
+  type ServiceOutcome[A] = Either[ErrorWrapper, ResponseWrapper[A]]
 
   type CreateAndAmendOtherExpensesServiceOutcome = ServiceOutcome[Unit]
 
