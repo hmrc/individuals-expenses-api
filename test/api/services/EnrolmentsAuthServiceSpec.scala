@@ -17,7 +17,7 @@
 package api.services
 
 import api.models.auth.UserDetails
-import api.models.errors.{ClientNotAuthorisedError, StandardDownstreamError}
+import api.models.errors.{ClientNotAuthorisedError, MtdError, StandardDownstreamError}
 import config.ConfidenceLevelConfig
 import mocks.MockAppConfig
 import org.scalamock.handlers.CallHandler
@@ -193,7 +193,7 @@ class EnrolmentsAuthServiceSpec extends ServiceSpec with MockAppConfig {
 
         MockAppConfig.confidenceLevelCheckEnabled.returns(ConfidenceLevelConfig(definitionEnabled = true, authValidationEnabled = false))
 
-        val expected: Left[StandardDownstreamError.type, Nothing] = Left(StandardDownstreamError)
+        val expected: Left[MtdError, Nothing] = Left(StandardDownstreamError)
 
         MockedAuthConnector
           .authorised(EmptyPredicate, authRetrievals)
@@ -210,7 +210,7 @@ class EnrolmentsAuthServiceSpec extends ServiceSpec with MockAppConfig {
 
         MockAppConfig.confidenceLevelCheckEnabled.returns(ConfidenceLevelConfig(definitionEnabled = true, authValidationEnabled = false))
 
-        val expected: Left[ClientNotAuthorisedError.type, Nothing] = Left(ClientNotAuthorisedError)
+        val expected: Left[MtdError, Nothing] = Left(ClientNotAuthorisedError)
 
         MockedAuthConnector
           .authorised(EmptyPredicate, authRetrievals)
@@ -227,7 +227,7 @@ class EnrolmentsAuthServiceSpec extends ServiceSpec with MockAppConfig {
 
         MockAppConfig.confidenceLevelCheckEnabled.returns(ConfidenceLevelConfig(definitionEnabled = true, authValidationEnabled = false))
 
-        val expected: Left[ClientNotAuthorisedError.type, Nothing] = Left(ClientNotAuthorisedError)
+        val expected: Left[MtdError, Nothing] = Left(ClientNotAuthorisedError)
 
         MockedAuthConnector
           .authorised(EmptyPredicate, authRetrievals)

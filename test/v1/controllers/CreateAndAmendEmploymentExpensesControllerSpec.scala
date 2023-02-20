@@ -31,12 +31,7 @@ import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Result
 import v1.mocks.requestParsers.MockCreateAndAmendEmploymentExpensesRequestParser
 import v1.mocks.services.MockCreateAndAmendEmploymentExpensesService
-import v1.models.request.createAndAmendEmploymentExpenses.{
-  CreateAndAmendEmploymentExpensesBody,
-  CreateAndAmendEmploymentExpensesRawData,
-  CreateAndAmendEmploymentExpensesRequest,
-  Expenses
-}
+import v1.models.request.createAndAmendEmploymentExpenses._
 import v1.models.response.createAndAmendEmploymentExpenses.CreateAndAmendEmploymentExpensesHateoasData
 
 import scala.concurrent.ExecutionContext.Implicits.global
