@@ -69,13 +69,6 @@ class DocumentationControllerISpec extends IntegrationBaseSpec {
     }
   }
 
-  "a RAML documentation request" must {
-    "return the documentation" in {
-      val response = get("/api/conf/1.0/application.raml")
-      response.body[String] should startWith("#%RAML 1.0")
-    }
-  }
-
   "an OAS documentation request" must {
     "return the documentation that passes OAS V3 parser" in {
       val response = get("/api/conf/1.0/application.yaml")

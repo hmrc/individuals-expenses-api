@@ -40,7 +40,7 @@ class DocumentationControllerSpec extends ControllerBaseSpec with MockAppConfig 
 
   "/file endpoint" should {
     "return a file" in new Test {
-      val response: Future[Result] = controller.file("1.0", "application.yaml")(fakeGetRequest.withHeaders(ACCEPT -> "text/yaml"))
+      val response: Future[Result] = controller.asset("1.0", "application.yaml")(fakeGetRequest.withHeaders(ACCEPT -> "text/yaml"))
       status(response) shouldBe OK
       await(response).body.contentLength.getOrElse(-99L) should be > 0L
     }

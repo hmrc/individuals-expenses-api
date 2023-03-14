@@ -25,12 +25,12 @@ sbt test
 sbt it:test
 ```
 
-## Viewing RAML
+## Viewing OAS
 To view documentation locally ensure the Expenses API is running, and run api-documentation-frontend: 
 `./run_local_with_dependencies.sh` 
 
-Then go to http://localhost:9680/api-documentation/docs/api/preview and use this port and version:
-`http://localhost:7795/api/conf/1.0/application.raml`
+Then go to http://localhost:9680/api-documentation/docs/openapi/preview and use this port and version:
+`http://localhost:7795/api/conf/1.0/application.yaml`
 
 ## Changelog
 
