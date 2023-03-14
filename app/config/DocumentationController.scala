@@ -38,7 +38,7 @@ class DocumentationController @Inject() (selfAssessmentApiDefinition: ApiDefinit
     Ok(Json.toJson(selfAssessmentApiDefinition.definition))
   }
 
-  def file(version: String, filename: String): Action[AnyContent] = {
+  def asset(version: String, filename: String): Action[AnyContent] = {
     assets.at(s"/public/api/conf/$version", fileToReturn(version, filename))
   }
 
