@@ -16,7 +16,6 @@
 
 package v1.endpoints
 
-import api.models.domain.TaxYear
 import api.models.errors._
 import play.api.http.HeaderNames.ACCEPT
 import play.api.http.Status._
@@ -25,8 +24,6 @@ import play.api.libs.ws.{WSRequest, WSResponse}
 import play.api.test.Helpers.AUTHORIZATION
 import support.IntegrationBaseSpec
 import v1.stubs.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
-
-import java.time.LocalDate
 
 class CreateAndAmendEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
 
@@ -93,7 +90,7 @@ class CreateAndAmendEmploymentExpensesControllerISpec extends IntegrationBaseSpe
         }
 
         s"a taxYear that hasn't ended is provided" in new NonTysTest {
-          override val taxYear: String = TaxYear.fromIso(LocalDate.now.toString).asMtd
+          override val taxYear: String = getCurrentTaxYear
 
           val response: WSResponse = await(request().put(requestBodyJson))
           response.status shouldBe BAD_REQUEST
