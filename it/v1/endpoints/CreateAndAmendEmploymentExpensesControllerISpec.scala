@@ -90,7 +90,7 @@ class CreateAndAmendEmploymentExpensesControllerISpec extends IntegrationBaseSpe
         }
 
         s"a taxYear that hasn't ended is provided" in new NonTysTest {
-          override val taxYear: String = "2022-23"
+          override val taxYear: String = getCurrentTaxYear
 
           val response: WSResponse = await(request().put(requestBodyJson))
           response.status shouldBe BAD_REQUEST
@@ -141,8 +141,7 @@ class CreateAndAmendEmploymentExpensesControllerISpec extends IntegrationBaseSpe
 
         s"an empty expenses body is provided" in new NonTysTest {
 
-          override val requestBodyJson: JsValue = Json.parse(
-            """
+          override val requestBodyJson: JsValue = Json.parse("""
               |{
               |    "expenses": {}
               |}
@@ -197,8 +196,7 @@ class CreateAndAmendEmploymentExpensesControllerISpec extends IntegrationBaseSpe
 
     val amount: BigDecimal = 123.12
 
-    def requestBodyJson: JsValue = Json.parse(
-      s"""
+    def requestBodyJson: JsValue = Json.parse(s"""
          |{
          |    "expenses": {
          |        "businessTravelCosts": $amount,
@@ -213,8 +211,7 @@ class CreateAndAmendEmploymentExpensesControllerISpec extends IntegrationBaseSpe
          |}
          |""".stripMargin)
 
-    lazy val hateoasResponse: JsValue = Json.parse(
-      s"""
+    lazy val hateoasResponse: JsValue = Json.parse(s"""
          |{
          |  "links": [
          |    {
