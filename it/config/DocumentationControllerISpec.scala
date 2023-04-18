@@ -21,26 +21,30 @@ import play.api.http.Status
 import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
 import support.IntegrationBaseSpec
+import uk.gov.hmrc.auth.core.ConfidenceLevel
 
 import scala.util.Try
 
 class DocumentationControllerISpec extends IntegrationBaseSpec {
 
+  val config: AppConfig = app.injector.instanceOf[AppConfig]
+  val confidenceLevel: ConfidenceLevel = config.confidenceLevelConfig.confidenceLevel
+
   private val apiDefinitionJson = Json.parse(
-    """
+    s"""
       |{
       |   "scopes":[
       |      {
       |        "key":"read:self-assessment",
       |        "name":"View your Self Assessment information",
       |        "description":"Allow read access to self assessment data",
-      |        "confidenceLevel": 200
+      |        "confidenceLevel": $confidenceLevel
       |      },
       |      {
       |        "key":"write:self-assessment",
       |        "name":"Change your Self Assessment information",
       |        "description":"Allow write access to self assessment data",
-      |        "confidenceLevel": 200
+      |        "confidenceLevel": $confidenceLevel
       |      }
       |   ],
       |   "api":{
