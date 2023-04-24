@@ -18,7 +18,7 @@ package v1.services
 
 import api.controllers.RequestContext
 import api.models.errors._
-import api.services.BaseService
+import api.services.{BaseService, ServiceOutcome}
 import cats.implicits.toBifunctorOps
 import v1.connectors.CreateAndAmendEmploymentExpensesConnector
 import v1.models.request.createAndAmendEmploymentExpenses.CreateAndAmendEmploymentExpensesRequest
@@ -31,7 +31,7 @@ class CreateAndAmendEmploymentExpensesService @Inject() (connector: CreateAndAme
 
   def createAndAmendEmploymentExpenses(request: CreateAndAmendEmploymentExpensesRequest)(implicit
       ctx: RequestContext,
-      ec: ExecutionContext): Future[CreateAndAmendEmploymentExpensesServiceOutcome] = {
+      ec: ExecutionContext): Future[ServiceOutcome[Unit]] = {
 
     connector.createAmendEmploymentExpenses(request).map(_.leftMap(mapDownstreamErrors(downstreamErrorMap)))
 

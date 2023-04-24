@@ -17,7 +17,7 @@
 package v1.connectors
 
 import api.connectors.DownstreamUri.{IfsR5Uri, TaxYearSpecificIfsUri}
-import api.connectors.httpParsers.StandardDownstreamHttpParser._
+import api.connectors.httpparsers.StandardDownstreamHttpParser._
 import api.connectors.{BaseDownstreamConnector, DownstreamOutcome}
 import config.AppConfig
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
