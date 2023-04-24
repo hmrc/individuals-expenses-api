@@ -21,7 +21,7 @@ import config.AppConfig
 import play.api.http.Status.NO_CONTENT
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import api.connectors.DownstreamUri.{DesUri, TaxYearSpecificIfsUri}
-import api.connectors.httpParsers.StandardDownstreamHttpParser._
+import api.connectors.httpparsers.StandardDownstreamHttpParser._
 import v1.models.request.deleteEmploymentExpenses.DeleteEmploymentExpensesRequest
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}

@@ -22,7 +22,7 @@ import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.HttpClient
 import api.connectors.DownstreamUri.{IfsR5Uri, TaxYearSpecificIfsUri}
-import api.connectors.httpParsers.StandardDownstreamHttpParser._
+import api.connectors.httpparsers.StandardDownstreamHttpParser._
 import v1.models.request.createAndAmendOtherExpenses.CreateAndAmendOtherExpensesRequest
 import scala.concurrent.{ExecutionContext, Future}
 

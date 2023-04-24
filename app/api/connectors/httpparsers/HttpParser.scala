@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package api.connectors.httpParsers
+package api.connectors.httpparsers
 
 import api.models.errors._
 import play.api.Logger
