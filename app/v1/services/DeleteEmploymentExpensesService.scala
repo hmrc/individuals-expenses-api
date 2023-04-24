@@ -18,7 +18,7 @@ package v1.services
 
 import api.controllers.RequestContext
 import api.models.errors._
-import api.services.BaseService
+import api.services.{BaseService, ServiceOutcome}
 import cats.implicits._
 import v1.connectors.DeleteEmploymentExpensesConnector
 import v1.models.request.deleteEmploymentExpenses.DeleteEmploymentExpensesRequest
@@ -31,7 +31,7 @@ class DeleteEmploymentExpensesService @Inject() (deleteEmploymentExpensesConnect
 
   def deleteEmploymentExpenses(request: DeleteEmploymentExpensesRequest)(implicit
       ctx: RequestContext,
-      ec: ExecutionContext): Future[DeleteEmploymentExpensesServiceOutcome] = {
+      ec: ExecutionContext): Future[ServiceOutcome[Unit]] = {
 
     deleteEmploymentExpensesConnector.deleteEmploymentExpenses(request).map(_.leftMap(mapDownstreamErrors(downstreamErrorMap)))
 

@@ -18,10 +18,11 @@ package v1.services
 
 import api.controllers.RequestContext
 import api.models.errors._
-import api.services.BaseService
+import api.services.{BaseService, ServiceOutcome}
 import cats.implicits._
 import v1.connectors.RetrieveOtherExpensesConnector
 import v1.models.request.retrieveOtherExpenses.RetrieveOtherExpensesRequest
+import v1.models.response.retrieveOtherExpenses.RetrieveOtherExpensesResponse
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -30,7 +31,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class RetrieveOtherExpensesService @Inject() (connector: RetrieveOtherExpensesConnector) extends BaseService {
 
   def retrieveOtherExpenses(
-      request: RetrieveOtherExpensesRequest)(implicit ctx: RequestContext, ec: ExecutionContext): Future[RetrieveOtherExpensesServiceOutcome] = {
+      request: RetrieveOtherExpensesRequest)(implicit ctx: RequestContext, ec: ExecutionContext): Future[ServiceOutcome[RetrieveOtherExpensesResponse]] = {
 
     connector.retrieveOtherExpenses(request).map(_.leftMap(mapDownstreamErrors(downstreamErrorMap)))
   }

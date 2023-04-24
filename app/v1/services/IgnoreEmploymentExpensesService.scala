@@ -18,7 +18,7 @@ package v1.services
 
 import api.controllers.RequestContext
 import api.models.errors._
-import api.services.BaseService
+import api.services.{BaseService, ServiceOutcome}
 import cats.implicits._
 import v1.connectors.IgnoreEmploymentExpensesConnector
 import v1.models.request.ignoreEmploymentExpenses.IgnoreEmploymentExpensesRequest
@@ -31,7 +31,7 @@ class IgnoreEmploymentExpensesService @Inject() (connector: IgnoreEmploymentExpe
 
   def ignore(request: IgnoreEmploymentExpensesRequest)(implicit
       ctx: RequestContext,
-      ec: ExecutionContext): Future[IgnoreEmploymentExpensesServiceOutcome] = {
+      ec: ExecutionContext): Future[ServiceOutcome[Unit]] = {
 
     connector.ignore(request).map(_.leftMap(mapDownstreamErrors(downstreamErrorMap)))
   }
