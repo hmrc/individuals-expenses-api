@@ -16,12 +16,14 @@
 
 package v1.controllers.requestParsers.validators
 
-import v1.controllers.requestParsers.validators.validations._
+import api.controllers.requestParsers.validators.Validator
+import api.controllers.requestParsers.validators.validations._
+import api.models.errors.{MtdError, RuleIncorrectOrEmptyBodyError}
 import config.AppConfig
-import javax.inject.Inject
 import utils.{CurrentDateTime, CurrentTaxYear}
-import v1.models.errors._
 import v1.models.request.createAndAmendOtherExpenses._
+
+import javax.inject.Inject
 
 class CreateAndAmendOtherExpensesValidator @Inject() (implicit currentDateTime: CurrentDateTime, appConfig: AppConfig, currentTaxYear: CurrentTaxYear)
     extends Validator[CreateAndAmendOtherExpensesRawData] {
@@ -50,7 +52,7 @@ class CreateAndAmendOtherExpensesValidator @Inject() (implicit currentDateTime: 
     val body = data.body.as[CreateAndAmendOtherExpensesBody]
 
     List(
-      flattenErrors(
+      Validator.flattenErrors(
         List(
           body.paymentsToTradeUnionsForDeathBenefits.map(validatePaymentsToTradeUnionsForDeathBenefits).getOrElse(NoValidationErrors),
           body.patentRoyaltiesPayments.map(validatePatentRoyaltiesPayments).getOrElse(NoValidationErrors)

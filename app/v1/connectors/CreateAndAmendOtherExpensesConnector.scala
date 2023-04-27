@@ -16,15 +16,14 @@
 
 package v1.connectors
 
+import api.connectors.{BaseDownstreamConnector, DownstreamOutcome}
 import config.AppConfig
-
 import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.HttpClient
-import v1.connectors.DownstreamUri.{IfsR5Uri, TaxYearSpecificIfsUri}
-import v1.connectors.httpparsers.StandardDownstreamHttpParser._
+import api.connectors.DownstreamUri.{IfsR5Uri, TaxYearSpecificIfsUri}
+import api.connectors.httpparsers.StandardDownstreamHttpParser._
 import v1.models.request.createAndAmendOtherExpenses.CreateAndAmendOtherExpensesRequest
-
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton

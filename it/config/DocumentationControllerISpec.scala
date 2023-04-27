@@ -21,44 +21,48 @@ import play.api.http.Status
 import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
 import support.IntegrationBaseSpec
+import uk.gov.hmrc.auth.core.ConfidenceLevel
 
 import scala.util.Try
 
 class DocumentationControllerISpec extends IntegrationBaseSpec {
 
+  val config: AppConfig = app.injector.instanceOf[AppConfig]
+  val confidenceLevel: ConfidenceLevel = config.confidenceLevelConfig.confidenceLevel
+
   private val apiDefinitionJson = Json.parse(
-    """
-    |{
-    |   "scopes":[
-    |      {
-    |        "key":"read:self-assessment",
-    |        "name":"View your Self Assessment information",
-    |        "description":"Allow read access to self assessment data",
-    |        "confidenceLevel": 200
-    |      },
-    |      {
-    |        "key":"write:self-assessment",
-    |        "name":"Change your Self Assessment information",
-    |        "description":"Allow write access to self assessment data",
-    |        "confidenceLevel": 200
-    |      }
-    |   ],
-    |   "api":{
-    |      "name":"Individuals Expenses (MTD)",
-    |      "description":"An API for retrieving individual expenses data for Self Assessment",
-    |      "context":"individuals/expenses",
-    |      "categories":[
-    |         "INCOME_TAX_MTD"
-    |      ],
-    |      "versions":[
-    |         {
-    |            "version":"1.0",
-    |            "status":"ALPHA",
-    |            "endpointsEnabled":false
-    |         }
-    |      ]
-    |   }
-    |}
+    s"""
+      |{
+      |   "scopes":[
+      |      {
+      |        "key":"read:self-assessment",
+      |        "name":"View your Self Assessment information",
+      |        "description":"Allow read access to self assessment data",
+      |        "confidenceLevel": $confidenceLevel
+      |      },
+      |      {
+      |        "key":"write:self-assessment",
+      |        "name":"Change your Self Assessment information",
+      |        "description":"Allow write access to self assessment data",
+      |        "confidenceLevel": $confidenceLevel
+      |      }
+      |   ],
+      |   "api":{
+      |      "name":"Individuals Expenses (MTD)",
+      |      "description":"An API for retrieving individual expenses data for Self Assessment",
+      |      "context":"individuals/expenses",
+      |      "categories":[
+      |         "INCOME_TAX_MTD"
+      |      ],
+      |      "versions":[
+      |         {
+      |            "version":"1.0",
+      |            "status":"ALPHA",
+      |            "endpointsEnabled":false
+      |         }
+      |      ]
+      |   }
+      |}
     """.stripMargin
   )
 
@@ -69,18 +73,11 @@ class DocumentationControllerISpec extends IntegrationBaseSpec {
     }
   }
 
-  "a RAML documentation request" must {
-    "return the documentation" in {
-      val response = get("/api/conf/1.0/application.raml")
-      response.body[String] should startWith("#%RAML 1.0")
-    }
-  }
-
   "an OAS documentation request" must {
     "return the documentation that passes OAS V3 parser" in {
       val response = get("/api/conf/1.0/application.yaml")
 
-      val body         = response.body[String]
+      val body = response.body[String]
       val parserResult = Try(new OpenAPIV3Parser().readContents(body))
       parserResult.isSuccess shouldBe true
 
@@ -93,7 +90,7 @@ class DocumentationControllerISpec extends IntegrationBaseSpec {
     "return the expected endpoint description" when {
       "the relevant feature switch is enabled" in {
         val response = get("/api/conf/1.0/employment_expenses_retrieve.yaml")
-        val body     = response.body[String]
+        val body = response.body[String]
         withClue("From other_expenses_retrieve.yaml") {
           body should not include ("Gov-Test-Scenario headers is only available in")
         }

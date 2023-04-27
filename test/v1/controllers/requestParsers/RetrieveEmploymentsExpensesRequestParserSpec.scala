@@ -16,11 +16,10 @@
 
 package v1.controllers.requestParsers
 
+import api.models.domain.{MtdSource, Nino, TaxYear}
+import api.models.errors.{BadRequestError, ErrorWrapper, NinoFormatError, TaxYearFormatError}
 import support.UnitSpec
 import v1.mocks.validators.MockRetrieveEmploymentExpensesValidator
-import v1.models.domain.{MtdSource, Nino}
-import v1.models.errors.{BadRequestError, ErrorWrapper, NinoFormatError, TaxYearFormatError}
-import v1.models.request.TaxYear
 import v1.models.request.retrieveEmploymentExpenses.{RetrieveEmploymentsExpensesRawData, RetrieveEmploymentsExpensesRequest}
 
 class RetrieveEmploymentsExpensesRequestParserSpec extends UnitSpec {

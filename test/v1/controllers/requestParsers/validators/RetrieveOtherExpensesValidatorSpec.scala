@@ -16,14 +16,14 @@
 
 package v1.controllers.requestParsers.validators
 
+import api.mocks.{MockCurrentDateTime, MockCurrentTaxYear}
+import api.models.errors.{NinoFormatError, RuleTaxYearNotSupportedError, RuleTaxYearRangeInvalidError, TaxYearFormatError}
 import config.AppConfig
 import mocks.MockAppConfig
 import org.joda.time.DateTime
 import org.joda.time.format.{DateTimeFormat, DateTimeFormatter}
 import support.UnitSpec
 import utils.{CurrentDateTime, CurrentTaxYear}
-import v1.mocks.{MockCurrentDateTime, MockCurrentTaxYear}
-import v1.models.errors.{NinoFormatError, RuleTaxYearNotSupportedError, RuleTaxYearRangeInvalidError, TaxYearFormatError}
 import v1.models.request.retrieveOtherExpenses.RetrieveOtherExpensesRawData
 
 class RetrieveOtherExpensesValidatorSpec extends UnitSpec {
@@ -42,7 +42,7 @@ class RetrieveOtherExpensesValidatorSpec extends UnitSpec {
 
     val validator = new RetrieveOtherExpensesValidator()
 
-    MockedAppConfig.otherExpensesMinimumTaxYear.returns(2022)
+    MockAppConfig.otherExpensesMinimumTaxYear.returns(2022)
 
     MockCurrentDateTime.getCurrentDate
       .returns(DateTime.parse("2020-07-11", dateTimeFormatter))

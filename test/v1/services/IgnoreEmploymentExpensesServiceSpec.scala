@@ -16,11 +16,11 @@
 
 package v1.services
 
+import api.models.domain.{Nino, TaxYear}
+import api.models.errors._
+import api.models.outcomes.ResponseWrapper
+import api.services.ServiceSpec
 import v1.mocks.connectors.MockIgnoreEmploymentExpensesConnector
-import v1.models.domain.Nino
-import v1.models.errors._
-import v1.models.outcomes.ResponseWrapper
-import v1.models.request.TaxYear
 import v1.models.request.ignoreEmploymentExpenses.IgnoreEmploymentExpensesRequest
 
 import scala.concurrent.Future

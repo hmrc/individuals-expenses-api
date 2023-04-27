@@ -16,9 +16,9 @@
 
 package v1.models.request.createAndAmendEmploymentExpenses
 
+import api.utils.JsonErrorValidators
 import play.api.libs.json.{JsValue, Json}
 import support.UnitSpec
-import v1.models.utils.JsonErrorValidators
 
 class CreateAndAmendEmploymentExpensesBodySpec extends UnitSpec with JsonErrorValidators {
 

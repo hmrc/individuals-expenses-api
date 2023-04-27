@@ -16,33 +16,25 @@
 
 package v1.services
 
-import cats.data.EitherT
+import api.controllers.RequestContext
+import api.models.errors._
+import api.services.{BaseService, ServiceOutcome}
 import cats.implicits._
-import javax.inject.{Inject, Singleton}
-import uk.gov.hmrc.http.HeaderCarrier
-import utils.Logging
 import v1.connectors.CreateAndAmendOtherExpensesConnector
-import v1.controllers.EndpointLogContext
-import v1.models.errors._
 import v1.models.request.createAndAmendOtherExpenses.CreateAndAmendOtherExpensesRequest
-import v1.support.DownstreamResponseMappingSupport
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class CreateAndAmendOtherExpensesService @Inject() (connector: CreateAndAmendOtherExpensesConnector)
-    extends DownstreamResponseMappingSupport
-    with Logging {
+class CreateAndAmendOtherExpensesService @Inject() (connector: CreateAndAmendOtherExpensesConnector) extends BaseService {
 
   def createAndAmend(request: CreateAndAmendOtherExpensesRequest)(implicit
-      hc: HeaderCarrier,
-      ec: ExecutionContext,
-      logContext: EndpointLogContext,
-      correlationId: String): Future[CreateAndAmendOtherExpensesServiceOutcome] = {
+      ctx: RequestContext,
+      ec: ExecutionContext): Future[ServiceOutcome[Unit]] = {
 
-    val result = EitherT(connector.createAndAmend(request)).leftMap(mapDownstreamErrors(downstreamErrorMap))
+    connector.createAndAmend(request).map(_.leftMap(mapDownstreamErrors(downstreamErrorMap)))
 
-    result.value
   }
 
   private def downstreamErrorMap: Map[String, MtdError] = {
