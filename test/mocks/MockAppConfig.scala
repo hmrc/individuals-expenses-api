@@ -55,8 +55,18 @@ trait MockAppConfig extends MockFactory {
     // API Config
     def featureSwitches: CallHandler[Configuration] = (mockAppConfig.featureSwitches _: () => Configuration).expects()
     def apiGatewayContext: CallHandler[String]      = (mockAppConfig.apiGatewayContext _: () => String).expects()
-    def apiStatus: CallHandler[String]              = (mockAppConfig.apiStatus: String => String).expects("1.0")
-    def endpointsEnabled: CallHandler[Boolean]      = (mockAppConfig.endpointsEnabled: String => Boolean).expects("1.0")
+
+    def apiStatus(version: String): CallHandler[String] =
+      (mockAppConfig.apiStatus: String => String).expects(version)
+
+    def endpointsEnabled(version: String): CallHandler[Boolean] =
+      (mockAppConfig.endpointsEnabled: String => Boolean).expects(version)
+
+    def endpointEnabled(version: String, key: String): CallHandler[Boolean] =
+      (mockAppConfig.endpointEnabled: (String, String) => Boolean).expects(version, key)
+
+    def endpointSwitches(version: String): CallHandler[Map[String, Boolean]] =
+      (mockAppConfig.endpointSwitches: String => Map[String, Boolean]).expects(version)
 
     def confidenceLevelCheckEnabled: CallHandler[ConfidenceLevelConfig] =
       (mockAppConfig.confidenceLevelConfig _: () => ConfidenceLevelConfig).expects()
