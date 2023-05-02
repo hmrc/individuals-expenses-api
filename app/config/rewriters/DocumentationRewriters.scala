@@ -23,7 +23,7 @@ import config.rewriters.EndpointSummaryRewriter.rewriteEndpointSummary
 
 object DocumentationRewriters {
 
-  val rewriters =
+  val rewriteables =
     List(
       rewriteApiVersionTitle,
       rewriteEndpointSummary,

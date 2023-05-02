@@ -35,10 +35,10 @@ object EndpointSummaryGroupRewriter {
         // with the key name starting with this filename.
 
         filename.endsWith(".yaml") && filename != "application.yaml" && {
-          val key = keyFrom(filename)
+          val key = keyFrom(filename) + "-"
 
           // e.g:
-          //   key:         "employment-expenses"
+          //   key:         "employment-expenses-"
           //   endpointKey: "employment-expenses-create-and-amend"
           val result = appConfig
             .endpointSwitches(version)

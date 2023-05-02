@@ -17,7 +17,7 @@
 package config
 
 import config.DocumentationController.filenameWithFeatureName
-import config.rewriters.DocumentationRewriters.rewriters
+import config.rewriters.DocumentationRewriters.rewriteables
 import controllers.RewriteableAssets
 import definition.ApiDefinitionFactory
 import play.api.libs.json.Json
@@ -43,9 +43,9 @@ class DocumentationController @Inject() (
   }
 
   def asset(version: String, filename: String): Action[AnyContent] = {
-    val path     = s"/public/api/conf/$version"
-    val rewrites = rewriters.collect { case (check, rewrite) if check(version, filename, appConfig) => rewrite }
-    assets.rewriteableAt(path, fileToReturn(version, filename), rewrites)
+    val path      = s"/public/api/conf/$version"
+    val rewriters = rewriteables.collect { case (check, rewrite) if check(version, filename, appConfig) => rewrite }
+    assets.rewriteableAt(path, fileToReturn(version, filename), rewriters)
   }
 
   private[config] def fileToReturn(version: String, filename: String): String =
