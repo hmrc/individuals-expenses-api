@@ -18,9 +18,10 @@ package definition
 
 import config.AppConfig
 import definition.Versions._
-import javax.inject.{Inject, Singleton}
 import play.api.Logger
 import uk.gov.hmrc.auth.core.ConfidenceLevel
+
+import javax.inject.{Inject, Singleton}
 
 @Singleton
 class ApiDefinitionFactory @Inject() (appConfig: AppConfig) {
@@ -35,10 +36,9 @@ class ApiDefinitionFactory @Inject() (appConfig: AppConfig) {
     if (clConfig.definitionEnabled) clConfig.confidenceLevel else ConfidenceLevel.L50
   }
 
-
   lazy val definition: Definition =
     Definition(
-      scopes = Seq(
+      scopes = List(
         Scope(
           key = readScope,
           name = "View your Self Assessment information",
@@ -56,8 +56,8 @@ class ApiDefinitionFactory @Inject() (appConfig: AppConfig) {
         name = "Individuals Expenses (MTD)",
         description = "An API for retrieving individual expenses data for Self Assessment",
         context = appConfig.apiGatewayContext,
-        categories = Seq("INCOME_TAX_MTD"),
-        versions = Seq(
+        categories = List("INCOME_TAX_MTD"),
+        versions = List(
           APIVersion(
             version = VERSION_1,
             status = buildAPIStatus(VERSION_1),
