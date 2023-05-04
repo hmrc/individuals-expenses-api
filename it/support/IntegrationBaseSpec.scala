@@ -76,12 +76,13 @@ trait IntegrationBaseSpec extends UnitSpec with WireMockHelper with GuiceOneServ
     val currentDate = DateTime.now(DateTimeZone.UTC)
 
     val taxYearStartDate: DateTime = DateTime.parse(
-      currentDate.getYear + "-04-06",
+      s"${currentDate.getYear}-04-06",
       DateTimeFormat.forPattern("yyyy-MM-dd")
     )
 
-    def fromDesIntToString(taxYear: Int): String =
-      (taxYear - 1) + "-" + taxYear.toString.drop(2)
+    def fromDesIntToString(taxYear: Int): String = {
+      s"${taxYear - 1}-${taxYear.toString.drop(2)}"
+    }
 
     if (currentDate.isBefore(taxYearStartDate)) {
       fromDesIntToString(currentDate.getYear)
