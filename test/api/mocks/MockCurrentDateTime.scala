@@ -26,7 +26,7 @@ trait MockCurrentDateTime extends MockFactory {
   val mockCurrentDateTime: CurrentDateTime = mock[CurrentDateTime]
 
   object MockCurrentDateTime {
-    def getCurrentDate: CallHandler[DateTime] = (mockCurrentDateTime.getDateTime _).expects()
+    def getCurrentDate: CallHandler[DateTime] = (() => mockCurrentDateTime.getDateTime).expects()
   }
 
 }

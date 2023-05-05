@@ -22,7 +22,7 @@ import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import javax.inject.{Inject, Singleton}
-import scala.collection.JavaConverters.asScalaSetConverter
+import scala.jdk.CollectionConverters._
 
 trait AppConfig {
 

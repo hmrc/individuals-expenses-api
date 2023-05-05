@@ -28,7 +28,7 @@ class CreateAndAmendOtherExpensesResponseSpec extends UnitSpec with MockAppConfi
       val nino    = "mynino"
       val taxYear = "mytaxyear"
 
-      MockAppConfig.apiGatewayContext.returns("my/context").anyNumberOfTimes
+      MockAppConfig.apiGatewayContext.returns("my/context").anyNumberOfTimes()
       CreateAndAmendOtherExpensesResponse.CreateAndAmendOtherExpensesLinksFactory.links(
         mockAppConfig,
         CreateAndAmendOtherExpensesHateoasData(nino, taxYear)) shouldBe
