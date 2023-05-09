@@ -47,8 +47,8 @@ class DeleteEmploymentExpensesControllerSpec
     "return a successful response with status 204 (No Content)" when {
       "a valid request is supplied" in new Test {
 
-        MockDeleteEmploymentExpensesRequestParser
-          .parse(rawData)
+        MockDeleteEmploymentExpensesRequestValidator
+          .parseRequest(rawData)
           .returns(Right(requestData))
 
         MockDeleteEmploymentExpensesService
@@ -62,8 +62,8 @@ class DeleteEmploymentExpensesControllerSpec
     "return the error as per spec" when {
       "the parser validation fails" in new Test {
 
-        MockDeleteEmploymentExpensesRequestParser
-          .parse(rawData)
+        MockDeleteEmploymentExpensesRequestValidator
+          .parseRequest(rawData)
           .returns(Left(ErrorWrapper(correlationId, NinoFormatError)))
 
         runErrorTestWithAudit(NinoFormatError)
@@ -71,8 +71,8 @@ class DeleteEmploymentExpensesControllerSpec
 
       "service returns an error" in new Test {
 
-        MockDeleteEmploymentExpensesRequestParser
-          .parse(rawData)
+        MockDeleteEmploymentExpensesRequestValidator
+          .parseRequest(rawData)
           .returns(Right(requestData))
 
         MockDeleteEmploymentExpensesService

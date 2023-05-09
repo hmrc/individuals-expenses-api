@@ -62,7 +62,7 @@ class DeleteEmploymentExpensesController @Inject() (val authService: EnrolmentsA
               transactionName = "delete-employment-expenses",
               params = Map("nino" -> nino, "taxYear" -> taxYear)))
 
-      requestHandler.handleRequest(rawData)
+      requestHandler.handleRequestWithValidator(rawData)
 
     }
 
