@@ -21,6 +21,7 @@ import api.services.{AuditService, EnrolmentsAuthService, MtdIdLookupService}
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import utils.{IdGenerator, Logging}
 import v1.controllers.requestParsers.DeleteEmploymentExpensesRequestParser
+import v1.controllers.requestValidator.DeleteEmploymentExpensesRequestValidator
 import v1.models.request.deleteEmploymentExpenses.DeleteEmploymentExpensesRawData
 import v1.services.DeleteEmploymentExpensesService
 
@@ -30,6 +31,7 @@ import scala.concurrent.ExecutionContext
 @Singleton
 class DeleteEmploymentExpensesController @Inject() (val authService: EnrolmentsAuthService,
                                                     val lookupService: MtdIdLookupService,
+                                                    validator: DeleteEmploymentExpensesRequestValidator,
                                                     parser: DeleteEmploymentExpensesRequestParser,
                                                     service: DeleteEmploymentExpensesService,
                                                     auditService: AuditService,
@@ -50,7 +52,7 @@ class DeleteEmploymentExpensesController @Inject() (val authService: EnrolmentsA
 
       val requestHandler =
         RequestHandler
-          .withParser(parser)
+          .withValidator(parser, validator)
           .withService(service.deleteEmploymentExpenses)
           .withNoContentResult()
           .withAuditing(
