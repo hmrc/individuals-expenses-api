@@ -29,7 +29,7 @@ import uk.gov.hmrc.auth.core.InsufficientEnrolments
 import uk.gov.hmrc.http.{HeaderCarrier, JsValidationException, NotFoundException}
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import uk.gov.hmrc.play.audit.http.connector.AuditResult.Success
-import uk.gov.hmrc.play.audit.model.DataEvent
+import uk.gov.hmrc.play.audit.model.{DataEvent, TruncationLog}
 import uk.gov.hmrc.play.bootstrap.config.HttpAuditEvent
 
 import java.time.Instant
@@ -61,8 +61,8 @@ class ErrorHandlerSpec extends UnitSpec with GuiceOneAppPerSuite {
     )
 
     (httpAuditEvent
-      .dataEvent(_: String, _: String, _: RequestHeader, _: Map[String, String])(_: HeaderCarrier))
-      .expects(*, *, *, *, *)
+      .dataEvent(_: String, _: String, _: RequestHeader, _: Map[String, String], _: TruncationLog)(_: HeaderCarrier))
+      .expects(*, *, *, *, *, *)
       .returns(dataEvent)
 
     (auditConnector
@@ -71,8 +71,8 @@ class ErrorHandlerSpec extends UnitSpec with GuiceOneAppPerSuite {
       .returns(Future.successful(Success))
 
     val configuration: Configuration = Configuration(
-      "appName" -> "myApp",
-      "bootstrap.errorHandler.warnOnly.statusCodes" -> List.empty,
+      "appName"                                         -> "myApp",
+      "bootstrap.errorHandler.warnOnly.statusCodes"     -> List.empty,
       "bootstrap.errorHandler.suppress4xxErrorMessages" -> false,
       "bootstrap.errorHandler.suppress5xxErrorMessages" -> false
     )
