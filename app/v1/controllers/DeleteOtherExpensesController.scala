@@ -19,8 +19,8 @@ package v1.controllers
 import api.controllers._
 import api.services.{AuditService, EnrolmentsAuthService, MtdIdLookupService}
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
-import utils.{IdGenerator, Logging}
-import v1.controllers.requestParsers.DeleteOtherExpensesRequestParser
+import utils.IdGenerator
+import v1.controllers.requestValidators.DeleteOtherExpensesRequestValidator
 import v1.models.request.deleteOtherExpenses.DeleteOtherExpensesRawData
 import v1.services.DeleteOtherExpensesService
 
@@ -30,13 +30,12 @@ import scala.concurrent.ExecutionContext
 @Singleton
 class DeleteOtherExpensesController @Inject() (val authService: EnrolmentsAuthService,
                                                val lookupService: MtdIdLookupService,
-                                               parser: DeleteOtherExpensesRequestParser,
+                                               validator: DeleteOtherExpensesRequestValidator,
                                                service: DeleteOtherExpensesService,
                                                auditService: AuditService,
                                                cc: ControllerComponents,
                                                val idGenerator: IdGenerator)(implicit ec: ExecutionContext)
-    extends AuthorisedController(cc)
-    with Logging {
+    extends AuthorisedController(cc) {
 
   implicit val endpointLogContext: EndpointLogContext =
     EndpointLogContext(controllerName = "DeleteOtherExpensesController", endpointName = "delete-expenses-other")
@@ -49,7 +48,7 @@ class DeleteOtherExpensesController @Inject() (val authService: EnrolmentsAuthSe
 
       val requestHandler =
         RequestHandler
-          .withParser(parser)
+          .withValidator(validator)
           .withService(service.deleteOtherExpenses)
           .withNoContentResult()
           .withAuditing(

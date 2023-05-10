@@ -16,7 +16,6 @@
 
 package api.controllers
 
-import api.controllers.requestParsers.RequestParser
 import api.controllers.requestValidators.RequestValidator
 import api.hateoas.{HateoasFactory, HateoasLinksFactory}
 import api.models.errors.{ErrorWrapper, StandardDownstreamError}
@@ -41,46 +40,28 @@ trait RequestHandler[InputRaw <: RawData] {
 
 object RequestHandler {
 
-  def withParser[InputRaw <: RawData, Input](parser: RequestParser[InputRaw, Input]): ParserOnlyBuilder[InputRaw, Input] =
-    new ParserOnlyBuilder[InputRaw, Input](parser)
-
-  def withValidator[InputRaw <: RawData, Input](parser: RequestParser[InputRaw, Input],
-                                                validator: RequestValidator[InputRaw, Input]): ValidatorOnlyBuilder[InputRaw, Input] =
-    new ValidatorOnlyBuilder[InputRaw, Input](parser, validator)
+  def withValidator[InputRaw <: RawData, Input](validator: RequestValidator[InputRaw, Input]): ValidatorOnlyBuilder[InputRaw, Input] =
+    new ValidatorOnlyBuilder[InputRaw, Input](validator)
 
   // Intermediate class so that the compiler can separately capture the InputRaw and Input types here, and the Output type later
-  class ParserOnlyBuilder[InputRaw <: RawData, Input] private[RequestHandler] (parser: RequestParser[InputRaw, Input]) {
+  class ValidatorOnlyBuilder[InputRaw <: RawData, Input] private[RequestHandler] (validator: RequestValidator[InputRaw, Input]) {
 
     def withService[Output](
         serviceFunction: Input => Future[Either[ErrorWrapper, ResponseWrapper[Output]]]): RequestHandlerBuilder[InputRaw, Input, Output] =
-      RequestHandlerBuilder(parser, serviceFunction)
-
-  }
-
-  // Intermediate class so that the compiler can separately capture the InputRaw and Input types here, and the Output type later
-  class ValidatorOnlyBuilder[InputRaw <: RawData, Input] private[RequestHandler] (parser: RequestParser[InputRaw, Input],
-                                                                                  validator: RequestValidator[InputRaw, Input]) {
-
-    def withService[Output](
-        serviceFunction: Input => Future[Either[ErrorWrapper, ResponseWrapper[Output]]]): RequestHandlerBuilder[InputRaw, Input, Output] =
-      RequestHandlerBuilder(parser, serviceFunction, validator = Some(validator))
+      RequestHandlerBuilder(validator, serviceFunction)
 
   }
 
   case class RequestHandlerBuilder[InputRaw <: RawData, Input, Output] private[RequestHandler] (
-      parser: RequestParser[InputRaw, Input],
+      validator: RequestValidator[InputRaw, Input],
       service: Input => Future[Either[ErrorWrapper, ResponseWrapper[Output]]],
       errorHandling: ErrorHandling = ErrorHandling.Default,
       resultCreator: ResultCreator[InputRaw, Input, Output] = ResultCreator.noContent[InputRaw, Input, Output](),
-      auditHandler: Option[AuditHandler] = None,
-      validator: Option[RequestValidator[InputRaw, Input]] = None
+      auditHandler: Option[AuditHandler] = None
   ) extends RequestHandler[InputRaw] {
 
     def handleRequest(rawData: InputRaw)(implicit ctx: RequestContext, request: UserRequest[_], ec: ExecutionContext): Future[Result] =
       Delegate.handleRequest(rawData)
-
-    def handleRequestWithValidator(rawData: InputRaw)(implicit ctx: RequestContext, request: UserRequest[_], ec: ExecutionContext): Future[Result] =
-      Delegate.handleRequestWithValidator(rawData)
 
     def withResultCreator(resultCreator: ResultCreator[InputRaw, Input, Output]): RequestHandlerBuilder[InputRaw, Input, Output] =
       copy(resultCreator = resultCreator)
@@ -153,29 +134,7 @@ object RequestHandler {
 
         val result =
           for {
-            parsedRequest   <- EitherT.fromEither[Future](parser.parseRequest(rawData))
-            serviceResponse <- EitherT(service(parsedRequest))
-          } yield doWithContext(ctx.withCorrelationId(serviceResponse.correlationId)) { implicit ctx: RequestContext =>
-            handleSuccess(rawData, parsedRequest, serviceResponse)
-          }
-
-        result.leftMap { errorWrapper =>
-          doWithContext(ctx.withCorrelationId(errorWrapper.correlationId)) { implicit ctx: RequestContext =>
-            handleFailure(errorWrapper)
-          }
-        }.merge
-      }
-
-      def handleRequestWithValidator(
-          rawData: InputRaw)(implicit ctx: RequestContext, request: UserRequest[_], ec: ExecutionContext): Future[Result] = {
-
-        logger.info(
-          message = s"[${ctx.endpointLogContext.controllerName}][${ctx.endpointLogContext.endpointName}] " +
-            s"with correlationId : ${ctx.correlationId}")
-
-        val result =
-          for {
-            parsedRequest   <- EitherT.fromEither[Future](validator.get.parseRequest(rawData))
+            parsedRequest   <- EitherT.fromEither[Future](validator.parseRequest(rawData))
             serviceResponse <- EitherT(service(parsedRequest))
           } yield doWithContext(ctx.withCorrelationId(serviceResponse.correlationId)) { implicit ctx: RequestContext =>
             handleSuccess(rawData, parsedRequest, serviceResponse)

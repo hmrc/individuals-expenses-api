@@ -19,9 +19,8 @@ package v1.controllers
 import api.controllers._
 import api.services.{AuditService, EnrolmentsAuthService, MtdIdLookupService}
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
-import utils.{IdGenerator, Logging}
-import v1.controllers.requestParsers.DeleteEmploymentExpensesRequestParser
-import v1.controllers.requestValidator.DeleteEmploymentExpensesRequestValidator
+import utils.IdGenerator
+import v1.controllers.requestValidators.DeleteEmploymentExpensesRequestValidator
 import v1.models.request.deleteEmploymentExpenses.DeleteEmploymentExpensesRawData
 import v1.services.DeleteEmploymentExpensesService
 
@@ -32,13 +31,11 @@ import scala.concurrent.ExecutionContext
 class DeleteEmploymentExpensesController @Inject() (val authService: EnrolmentsAuthService,
                                                     val lookupService: MtdIdLookupService,
                                                     validator: DeleteEmploymentExpensesRequestValidator,
-                                                    parser: DeleteEmploymentExpensesRequestParser,
                                                     service: DeleteEmploymentExpensesService,
                                                     auditService: AuditService,
                                                     cc: ControllerComponents,
                                                     val idGenerator: IdGenerator)(implicit ec: ExecutionContext)
-    extends AuthorisedController(cc)
-    with Logging {
+    extends AuthorisedController(cc) {
 
   implicit val endpointLogContext: EndpointLogContext =
     EndpointLogContext(controllerName = "DeleteEmploymentExpensesController", endpointName = "delete-employment-expenses")
@@ -52,7 +49,7 @@ class DeleteEmploymentExpensesController @Inject() (val authService: EnrolmentsA
 
       val requestHandler =
         RequestHandler
-          .withValidator(parser, validator)
+          .withValidator(validator)
           .withService(service.deleteEmploymentExpenses)
           .withNoContentResult()
           .withAuditing(
@@ -62,7 +59,7 @@ class DeleteEmploymentExpensesController @Inject() (val authService: EnrolmentsA
               transactionName = "delete-employment-expenses",
               params = Map("nino" -> nino, "taxYear" -> taxYear)))
 
-      requestHandler.handleRequestWithValidator(rawData)
+      requestHandler.handleRequest(rawData)
 
     }
 

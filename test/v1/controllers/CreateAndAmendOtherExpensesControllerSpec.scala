@@ -26,7 +26,7 @@ import api.models.hateoas.{HateoasWrapper, Link}
 import api.models.outcomes.ResponseWrapper
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Result
-import v1.mocks.requestParsers.MockCreateAndAmendOtherExpensesRequestParser
+import v1.mocks.requestValidators.MockCreateAmendOtherExpensesRequestValidator
 import v1.mocks.services._
 import v1.models.request.createAndAmendOtherExpenses._
 import v1.models.response.createAndAmendOtherExpenses.CreateAndAmendOtherExpensesHateoasData
@@ -35,10 +35,10 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class CreateAndAmendOtherExpensesControllerSpec
-  extends ControllerBaseSpec
+    extends ControllerBaseSpec
     with ControllerTestRunner
     with MockCreateAndAmendOtherExpensesService
-    with MockCreateAndAmendOtherExpensesRequestParser
+    with MockCreateAmendOtherExpensesRequestValidator
     with MockHateoasFactory {
 
   private val taxYear = "2021-22"
@@ -54,8 +54,7 @@ class CreateAndAmendOtherExpensesControllerSpec
     Some(PatentRoyaltiesPayments(Some("ROYALTIES PAYMENTS"), 1223.22))
   )
 
-  private val requestBodyJson = Json.parse(
-    """
+  private val requestBodyJson = Json.parse("""
       |{
       |  "paymentsToTradeUnionsForDeathBenefits": {
       |    "customerReference": "TRADE UNION PAYMENTS",
@@ -68,8 +67,7 @@ class CreateAndAmendOtherExpensesControllerSpec
       |}
       |""".stripMargin)
 
-  private val responseBodyJson = Json.parse(
-    s"""
+  private val responseBodyJson = Json.parse(s"""
        |{
        |  "links": [
        |    {
@@ -91,14 +89,14 @@ class CreateAndAmendOtherExpensesControllerSpec
        |}
        |""".stripMargin)
 
-  private val rawData = CreateAndAmendOtherExpensesRawData(nino, taxYear, requestBodyJson)
+  private val rawData     = CreateAndAmendOtherExpensesRawData(nino, taxYear, requestBodyJson)
   private val requestData = CreateAndAmendOtherExpensesRequest(Nino(nino), TaxYear.fromMtd(taxYear), requestBody)
 
   "handleRequest" should {
     "return Ok" when {
       "the request received is valid" in new Test {
 
-        MockCreateAndAmendOtherExpensesRequestParser
+        MockCreateAmendOtherExpensesRequestValidator
           .parseRequest(rawData)
           .returns(Right(requestData))
 
@@ -122,7 +120,7 @@ class CreateAndAmendOtherExpensesControllerSpec
     "return the error as per spec" when {
       "the parser validation fails" in new Test {
 
-        MockCreateAndAmendOtherExpensesRequestParser
+        MockCreateAmendOtherExpensesRequestValidator
           .parseRequest(rawData)
           .returns(Left(ErrorWrapper(correlationId, NinoFormatError)))
 
@@ -131,7 +129,7 @@ class CreateAndAmendOtherExpensesControllerSpec
 
       "the service returns an error" in new Test {
 
-        MockCreateAndAmendOtherExpensesRequestParser
+        MockCreateAmendOtherExpensesRequestValidator
           .parseRequest(rawData)
           .returns(Right(requestData))
 
@@ -149,7 +147,7 @@ class CreateAndAmendOtherExpensesControllerSpec
     val controller = new CreateAndAmendOtherExpensesController(
       authService = mockEnrolmentsAuthService,
       lookupService = mockMtdIdLookupService,
-      parser = mockRequestParser,
+      validator = mockRequestValidator,
       service = mockService,
       hateoasFactory = mockHateoasFactory,
       auditService = mockAuditService,

@@ -19,17 +19,17 @@ package v1.mocks.requestValidators
 import api.models.errors.ErrorWrapper
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
-import v1.controllers.requestValidators.DeleteEmploymentExpensesRequestValidator
-import v1.models.request.deleteEmploymentExpenses.{DeleteEmploymentExpensesRawData, DeleteEmploymentExpensesRequest}
+import v1.controllers.requestValidators.RetrieveOtherExpensesRequestValidator
+import v1.models.request.retrieveOtherExpenses.{RetrieveOtherExpensesRawData, RetrieveOtherExpensesRequest}
 
-trait MockDeleteEmploymentExpensesRequestValidator extends MockFactory {
+trait MockRetrieveOtherExpensesRequestValidator extends MockFactory {
 
-  val mockRequestValidator: DeleteEmploymentExpensesRequestValidator = mock[DeleteEmploymentExpensesRequestValidator]
+  val mockRequestValidator: RetrieveOtherExpensesRequestValidator = mock[RetrieveOtherExpensesRequestValidator]
 
-  object MockDeleteEmploymentExpensesRequestValidator {
+  object MockRetrieveOtherExpensesRequestValidator {
 
-    def parseRequest(data: DeleteEmploymentExpensesRawData): CallHandler[Either[ErrorWrapper, DeleteEmploymentExpensesRequest]] = {
-      (mockRequestValidator.parseRequest(_: DeleteEmploymentExpensesRawData)(_: String)).expects(data, *)
+    def parseRequest(data: RetrieveOtherExpensesRawData): CallHandler[Either[ErrorWrapper, RetrieveOtherExpensesRequest]] = {
+      (mockRequestValidator.parseRequest(_: RetrieveOtherExpensesRawData)(_: String)).expects(data, *)
     }
 
   }

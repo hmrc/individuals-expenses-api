@@ -23,7 +23,6 @@ import api.models.errors._
 import api.models.outcomes.ResponseWrapper
 import play.api.libs.json.JsValue
 import play.api.mvc.Result
-import v1.mocks.requestParsers.MockDeleteEmploymentExpensesRequestParser
 import v1.mocks.requestValidators.MockDeleteEmploymentExpensesRequestValidator
 import v1.mocks.services.MockDeleteEmploymentExpensesService
 import v1.models.request.deleteEmploymentExpenses.{DeleteEmploymentExpensesRawData, DeleteEmploymentExpensesRequest}
@@ -35,7 +34,6 @@ class DeleteEmploymentExpensesControllerSpec
     extends ControllerBaseSpec
     with ControllerTestRunner
     with MockDeleteEmploymentExpensesService
-    with MockDeleteEmploymentExpensesRequestParser
     with MockDeleteEmploymentExpensesRequestValidator {
 
   private val taxYear = "2019-20"
@@ -90,7 +88,6 @@ class DeleteEmploymentExpensesControllerSpec
       authService = mockEnrolmentsAuthService,
       lookupService = mockMtdIdLookupService,
       validator = mockRequestValidator,
-      parser = mockRequestDataParser,
       service = mockDeleteEmploymentExpensesService,
       auditService = mockAuditService,
       cc = cc,

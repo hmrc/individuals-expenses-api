@@ -29,7 +29,7 @@ import mocks.MockAppConfig
 import play.api.Configuration
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Result
-import v1.mocks.requestParsers.MockCreateAndAmendEmploymentExpensesRequestParser
+import v1.mocks.requestValidators.MockCreateAmendEmploymentExpensesRequestValidator
 import v1.mocks.services.MockCreateAndAmendEmploymentExpensesService
 import v1.models.request.createAndAmendEmploymentExpenses._
 import v1.models.response.createAndAmendEmploymentExpenses.CreateAndAmendEmploymentExpensesHateoasData
@@ -42,7 +42,7 @@ class CreateAndAmendEmploymentExpensesControllerSpec
     with ControllerTestRunner
     with MockAppConfig
     with MockCreateAndAmendEmploymentExpensesService
-    with MockCreateAndAmendEmploymentExpensesRequestParser
+    with MockCreateAmendEmploymentExpensesRequestValidator
     with MockHateoasFactory {
 
   private val taxYear = "2021-22"
@@ -110,7 +110,7 @@ class CreateAndAmendEmploymentExpensesControllerSpec
     "return OK" when {
       "the request received is valid" in new Test {
 
-        MockCreateAndAmendEmploymentExpensesRequestParser
+        MockCreateAmendEmploymentExpensesRequestValidator
           .parseRequest(rawData)
           .returns(Right(requestData))
 
@@ -133,8 +133,7 @@ class CreateAndAmendEmploymentExpensesControllerSpec
 
     "return the error as per spec" when {
       "the parser validation fails" in new Test {
-
-        MockCreateAndAmendEmploymentExpensesRequestParser
+        MockCreateAmendEmploymentExpensesRequestValidator
           .parseRequest(rawData)
           .returns(Left(errors.ErrorWrapper(correlationId, NinoFormatError)))
 
@@ -142,8 +141,7 @@ class CreateAndAmendEmploymentExpensesControllerSpec
       }
 
       "the service returns an error" in new Test {
-
-        MockCreateAndAmendEmploymentExpensesRequestParser
+        MockCreateAmendEmploymentExpensesRequestValidator
           .parseRequest(rawData)
           .returns(Right(requestData))
 
@@ -162,7 +160,7 @@ class CreateAndAmendEmploymentExpensesControllerSpec
       appConfig = mockAppConfig,
       authService = mockEnrolmentsAuthService,
       lookupService = mockMtdIdLookupService,
-      parser = mockRequestParser,
+      validator = mockRequestValidator,
       service = mockService,
       auditService = mockAuditService,
       hateoasFactory = mockHateoasFactory,

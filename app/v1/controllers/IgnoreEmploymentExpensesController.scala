@@ -21,8 +21,8 @@ import api.hateoas.HateoasFactory
 import api.services.{AuditService, EnrolmentsAuthService, MtdIdLookupService}
 import config.{AppConfig, FeatureSwitches}
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
-import utils.{IdGenerator, Logging}
-import v1.controllers.requestParsers.IgnoreEmploymentExpensesRequestParser
+import utils.IdGenerator
+import v1.controllers.requestValidators.IgnoreEmploymentExpensesRequestValidator
 import v1.models.request.ignoreEmploymentExpenses.IgnoreEmploymentExpensesRawData
 import v1.models.response.ignoreEmploymentExpenses.IgnoreEmploymentExpensesHateoasData
 import v1.models.response.ignoreEmploymentExpenses.IgnoreEmploymentExpensesResponse.IgnoreEmploymentExpensesLinksFactory
@@ -32,17 +32,16 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class IgnoreEmploymentExpensesController @Inject()(val authService: EnrolmentsAuthService,
-                                                   val lookupService: MtdIdLookupService,
-                                                   appConfig: AppConfig,
-                                                   parser: IgnoreEmploymentExpensesRequestParser,
-                                                   service: IgnoreEmploymentExpensesService,
-                                                   auditService: AuditService,
-                                                   hateoasFactory: HateoasFactory,
-                                                   cc: ControllerComponents,
-                                                   val idGenerator: IdGenerator)(implicit ec: ExecutionContext)
-  extends AuthorisedController(cc)
-    with Logging {
+class IgnoreEmploymentExpensesController @Inject() (val authService: EnrolmentsAuthService,
+                                                    val lookupService: MtdIdLookupService,
+                                                    appConfig: AppConfig,
+                                                    validator: IgnoreEmploymentExpensesRequestValidator,
+                                                    service: IgnoreEmploymentExpensesService,
+                                                    auditService: AuditService,
+                                                    hateoasFactory: HateoasFactory,
+                                                    cc: ControllerComponents,
+                                                    val idGenerator: IdGenerator)(implicit ec: ExecutionContext)
+    extends AuthorisedController(cc) {
 
   implicit val endpointLogContext: EndpointLogContext =
     EndpointLogContext(controllerName = "IgnoreEmploymentExpensesController", endpointName = "ignoreEmploymentExpenses")
@@ -57,7 +56,7 @@ class IgnoreEmploymentExpensesController @Inject()(val authService: EnrolmentsAu
         temporalValidationEnabled = FeatureSwitches()(appConfig).isTemporalValidationEnabled
       )
       val requestHandler = RequestHandler
-        .withParser(parser)
+        .withValidator(validator)
         .withService(service.ignore)
         .withAuditing(AuditHandler(
           auditService = auditService,

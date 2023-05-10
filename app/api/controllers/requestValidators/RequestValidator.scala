@@ -23,7 +23,6 @@ import api.models.errors.MtdError
 
 trait RequestValidator[Raw <: RawData, Request] extends Logging {
 
-  // to be called by the RequestHandler
   def parseRequest(data: Raw)(implicit correlationId: String): Either[ErrorWrapper, Request] = {
     validate(data) match {
       case Nil =>
@@ -44,23 +43,16 @@ trait RequestValidator[Raw <: RawData, Request] extends Logging {
     }
   }
 
-  // called by parseRequest
-  //  protected def validate(data: Raw): Option[List[MtdError]] = run(validationSet, data).distinct
   protected def validate(data: Raw): List[MtdError] =
     run(validationSet, data) match {
       case Some(errors) => errors
       case None         => Nil
     }
 
-  // called by validate
-  // defined in endpoint implementation of RequestValidator
   protected def validationSet: List[Raw => List[List[MtdError]]]
 
-  // called by parseRequest
-  // defined in endpoint implementation of RequestValidator
   protected def requestFor(data: Raw): Request
 
-  // called by validate method
   private def run(validationSet: List[Raw => List[List[MtdError]]], data: Raw): Option[List[MtdError]] = {
     validationSet.foldLeft(Option.empty[List[MtdError]]) { (result, validation) =>
       result match {
