@@ -14,23 +14,24 @@
  * limitations under the License.
  */
 
-package utils
+package config.rewriters
 
-import javax.inject.Singleton
-import org.joda.time.DateTime
-import org.joda.time.format.DateTimeFormat
+import config.AppConfig
+import config.rewriters.ApiVersionTitleRewriter.rewriteApiVersionTitle
+import config.rewriters.EndpointSummaryGroupRewriter.rewriteGroupedEndpointSummaries
+import config.rewriters.EndpointSummaryRewriter.rewriteEndpointSummary
 
-@Singleton
-class CurrentTaxYear {
+object DocumentationRewriters {
 
-  def getCurrentTaxYear(date: DateTime): Int = {
-
-    lazy val taxYearStartDate: DateTime = DateTime.parse(
-      s"${date.getYear}-04-06",
-      DateTimeFormat.forPattern("yyyy-MM-dd")
+  val rewriteables =
+    List(
+      rewriteApiVersionTitle,
+      rewriteEndpointSummary,
+      rewriteGroupedEndpointSummaries
     )
 
-    if (date.isBefore(taxYearStartDate)) date.getYear else date.getYear + 1
+  trait CheckRewrite {
+    def apply(version: String, filename: String, appConfig: AppConfig): Boolean
   }
 
 }

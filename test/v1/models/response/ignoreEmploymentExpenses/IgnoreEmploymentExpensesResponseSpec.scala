@@ -28,7 +28,7 @@ class IgnoreEmploymentExpensesResponseSpec extends UnitSpec with MockAppConfig {
       val nino    = "mynino"
       val taxYear = "mytaxyear"
 
-      MockAppConfig.apiGatewayContext.returns("my/context").anyNumberOfTimes
+      MockAppConfig.apiGatewayContext.returns("my/context").anyNumberOfTimes()
       IgnoreEmploymentExpensesResponse.IgnoreEmploymentExpensesLinksFactory.links(
         mockAppConfig,
         IgnoreEmploymentExpensesHateoasData(nino, taxYear)) shouldBe

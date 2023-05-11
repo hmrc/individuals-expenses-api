@@ -25,11 +25,18 @@ trait DownstreamResponseMappingSupport {
   self: Logging =>
 
   final def mapDownstreamErrors[D](errorCodeMap: PartialFunction[String, MtdError])(downstreamResponseWrapper: ResponseWrapper[DownstreamError])(
-    implicit logContext: EndpointLogContext): ErrorWrapper = {
+      implicit logContext: EndpointLogContext): ErrorWrapper = {
 
-    lazy val defaultErrorCodeMapping: String => MtdError = { code =>
-      logger.warn(s"[${logContext.controllerName}] [${logContext.endpointName}] - No mapping found for error code $code")
-      StandardDownstreamError
+    lazy val defaultErrorCodeMapping: String => MtdError = {
+
+      case "UNMATCHED_STUB_ERROR" => {
+        logger.warn(s"[${logContext.controllerName}] [${logContext.endpointName}] - No matching stub was found")
+        RuleIncorrectGovTestScenarioError
+      }
+
+      case code =>
+        logger.warn(s"[${logContext.controllerName}] [${logContext.endpointName}] - No mapping found for error code $code")
+        StandardDownstreamError
     }
 
     downstreamResponseWrapper match {

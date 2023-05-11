@@ -17,11 +17,12 @@
 package config
 
 import com.typesafe.config.Config
-
-import javax.inject.{Inject, Singleton}
 import play.api.{ConfigLoader, Configuration}
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+
+import javax.inject.{Inject, Singleton}
+import scala.jdk.CollectionConverters._
 
 trait AppConfig {
 
@@ -74,6 +75,13 @@ trait AppConfig {
   def featureSwitches: Configuration
   def endpointsEnabled(version: String): Boolean
 
+  /** Currently only for OAS documentation.
+    */
+  def endpointEnabled(version: String, name: String): Boolean
+
+  /** Currently only for OAS documentation.
+    */
+  def endpointSwitches(version: String): Map[String, Boolean]
 }
 
 @Singleton
@@ -115,6 +123,24 @@ class AppConfigImpl @Inject() (config: ServicesConfig, configuration: Configurat
   val employmentExpensesMinimumTaxYear: Int = config.getInt("employmentExpensesMinimumTaxYear")
 
   def endpointsEnabled(version: String): Boolean = config.getBoolean(s"api.$version.endpoints.enabled")
+
+  def endpointEnabled(version: String, name: String): Boolean = {
+    val switches = endpointSwitches(version)
+    switches.getOrElse(name, true)
+  }
+
+  def endpointSwitches(version: String): Map[String, Boolean] = {
+    val path = s"api.$version.endpoints.switches"
+
+    val conf = configuration.underlying
+    if (conf.hasPath(path)) {
+      val endpointConfig = conf.getConfig(path)
+      endpointConfig.entrySet.asScala.map { mapEntry =>
+        val key = mapEntry.getKey
+        key -> endpointConfig.getBoolean(key)
+      }.toMap
+    } else Map.empty
+  }
 
 }
 

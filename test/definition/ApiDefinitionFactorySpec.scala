@@ -39,13 +39,15 @@ class ApiDefinitionFactorySpec extends UnitSpec {
       }
 
       "return a valid Definition case class when confidence level checking 50 is enforced" in {
-        testDefinitionWithConfidence(ConfidenceLevelConfig(confidenceLevel = confidenceLevel, definitionEnabled = false, authValidationEnabled = false))
+        testDefinitionWithConfidence(
+          ConfidenceLevelConfig(confidenceLevel = confidenceLevel, definitionEnabled = false, authValidationEnabled = false))
       }
 
       def testDefinitionWithConfidence(confidenceLevelConfig: ConfidenceLevelConfig): Unit = new Test {
-        MockAppConfig.apiStatus returns "1.0"
-        MockAppConfig.endpointsEnabled returns true
-        MockAppConfig.confidenceLevelCheckEnabled returns confidenceLevelConfig anyNumberOfTimes ()
+        MockAppConfig.apiStatus("1.0") returns "1.0"
+        MockAppConfig.endpointsEnabled("1.0") returns true
+        MockAppConfig.confidenceLevelCheckEnabled.returns(confidenceLevelConfig).anyNumberOfTimes()
+
 
         val readScope: String                = "read:self-assessment"
         val writeScope: String               = "write:self-assessment"
@@ -53,7 +55,7 @@ class ApiDefinitionFactorySpec extends UnitSpec {
 
         apiDefinitionFactory.definition shouldBe
           Definition(
-            scopes = Seq(
+            scopes = List(
               Scope(
                 key = readScope,
                 name = "View your Self Assessment information",
@@ -71,8 +73,8 @@ class ApiDefinitionFactorySpec extends UnitSpec {
               name = "Individuals Expenses (MTD)",
               description = "An API for retrieving individual expenses data for Self Assessment",
               context = "individuals/expenses",
-              categories = Seq("INCOME_TAX_MTD"),
-              versions = Seq(
+              categories = List("INCOME_TAX_MTD"),
+              versions = List(
                 APIVersion(
                   version = VERSION_1,
                   status = ALPHA,
@@ -87,7 +89,7 @@ class ApiDefinitionFactorySpec extends UnitSpec {
   }
 
   "confidenceLevel" when {
-    Seq(
+    List(
       (true, ConfidenceLevel.L250, ConfidenceLevel.L250),
       (true, ConfidenceLevel.L200, ConfidenceLevel.L200),
       (false, ConfidenceLevel.L200, ConfidenceLevel.L50)
@@ -107,14 +109,14 @@ class ApiDefinitionFactorySpec extends UnitSpec {
   "buildAPIStatus" when {
     "the 'apiStatus' parameter is present and valid" should {
       "return the correct status" in new Test {
-        MockAppConfig.apiStatus returns "BETA"
+        MockAppConfig.apiStatus("1.0") returns "BETA"
         apiDefinitionFactory.buildAPIStatus(version = "1.0") shouldBe BETA
       }
     }
 
     "the 'apiStatus' parameter is present and invalid" should {
       "default to alpha" in new Test {
-        MockAppConfig.apiStatus returns "ALPHA"
+        MockAppConfig.apiStatus("1.0") returns "ALPHA"
         apiDefinitionFactory.buildAPIStatus(version = "1.0") shouldBe ALPHA
       }
     }

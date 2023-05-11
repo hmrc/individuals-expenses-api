@@ -16,10 +16,12 @@
 
 package config
 
+import akka.actor.ActorSystem
+import akka.stream.Materializer
 import api.controllers.ControllerBaseSpec
 import com.typesafe.config.ConfigFactory
 import config.DocumentationController.filenameWithFeatureName
-import controllers.{Assets, AssetsConfiguration, DefaultAssetsMetadata}
+import controllers.{AssetsConfiguration, DefaultAssetsMetadata, RewriteableAssets}
 import definition.ApiDefinitionFactory
 import mocks.MockAppConfig
 import play.api.Configuration
@@ -27,6 +29,7 @@ import play.api.http.{DefaultFileMimeTypes, DefaultHttpErrorHandler, FileMimeTyp
 import play.api.mvc.Result
 import uk.gov.hmrc.http.HeaderCarrier
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.matching.Regex
 
@@ -40,9 +43,54 @@ class DocumentationControllerSpec extends ControllerBaseSpec with MockAppConfig 
 
   "/file endpoint" should {
     "return a file" in new Test {
-      val response: Future[Result] = controller.asset("1.0", "application.yaml")(fakeGetRequest.withHeaders(ACCEPT -> "text/yaml"))
+      MockAppConfig.endpointsEnabled("1.0") returns true
+      val response: Future[Result] = requestAsset("application.yaml")
       status(response) shouldBe OK
       await(response).body.contentLength.getOrElse(-99L) should be > 0L
+    }
+  }
+
+  "rewrite()" when {
+    "the API version is disabled" should {
+      "return the yaml with [test only] in the API title" in new Test {
+        MockAppConfig.endpointsEnabled("1.0") returns false
+
+        val response: Future[Result] = requestAsset("application.yaml")
+        status(response) shouldBe OK
+
+        private val result = contentAsString(response)
+        result should include("""  title: "Individuals Expenses (MTD) [test only]"""")
+
+        withClue("Only the title should have [test only] appended:") {
+          numberOfTestOnlyOccurrences(result) shouldBe 1
+        }
+
+        result should startWith("""openapi: "3.0.3"
+                                  |
+                                  |info:
+                                  |  version: "1.0"""".stripMargin)
+      }
+    }
+    "the API version is enabled" should {
+      "return the yaml with the API title unchanged" in new Test {
+        MockAppConfig.endpointsEnabled("1.0") returns true
+
+        val response: Future[Result] = requestAsset("application.yaml", accept = "text/plain")
+        status(response) shouldBe OK
+
+        val as                    = ActorSystem()
+        implicit val materializer = Materializer(as) // needed for contentAsString(), which defaults to NoMaterializer
+
+        private val result = contentAsString(response)
+
+        result should include("""  title: "Individuals Expenses (MTD)"""")
+        numberOfTestOnlyOccurrences(result) shouldBe 0
+
+        result should startWith("""openapi: "3.0.3"
+                                  |
+                                  |info:
+                                  |  version: "1.0"""".stripMargin)
+      }
     }
   }
 
@@ -68,6 +116,11 @@ class DocumentationControllerSpec extends ControllerBaseSpec with MockAppConfig 
 
     protected def featureEnabled: Boolean = true
 
+    protected def requestAsset(filename: String, accept: String = "text/yaml"): Future[Result] =
+      controller.asset("1.0", filename)(fakeGetRequest.withHeaders(ACCEPT -> accept))
+
+    protected def numberOfTestOnlyOccurrences(str: String): Int = "\\[test only]".r.findAllIn(str).size
+
     MockAppConfig.featureSwitches returns Configuration("openApiFeatureTest.enabled" -> featureEnabled)
 
     private val apiFactory = new ApiDefinitionFactory(mockAppConfig)
@@ -85,7 +138,7 @@ class DocumentationControllerSpec extends ControllerBaseSpec with MockAppConfig 
       )
 
     private val errorHandler = new DefaultHttpErrorHandler()
-    private val assets       = new Assets(errorHandler, assetsMetadata)
+    private val assets       = new RewriteableAssets(errorHandler, assetsMetadata, mockAppConfig)
     protected val controller = new DocumentationController(apiFactory, cc, assets)(mockAppConfig)
   }
 

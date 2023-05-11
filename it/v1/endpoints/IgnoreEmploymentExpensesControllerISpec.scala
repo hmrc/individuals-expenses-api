@@ -187,8 +187,8 @@ class IgnoreEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
 
     val downstreamUri: String = s"/income-tax/23-24/expenses/employments/$nino"
 
-    override def request: WSRequest =
-      super.request.addHttpHeaders("suspend-temporal-validations" -> "true")
+    override def request(): WSRequest =
+      super.request().addHttpHeaders("suspend-temporal-validations" -> "true")
 
   }
 

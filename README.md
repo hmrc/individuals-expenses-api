@@ -9,7 +9,7 @@ An endpoint also exists that allows software packages to ignore HMRC provided em
 
 ## Requirements
 
-- Scala 2.12.x
+- Scala 2.13.x
 - Java 11
 - sbt 1.7.x
 - [Service Manager V2](https://github.com/hmrc/sm2)
