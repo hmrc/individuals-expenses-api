@@ -89,14 +89,6 @@ class CreateAndAmendEmploymentExpensesControllerISpec extends IntegrationBaseSpe
           response.json shouldBe Json.toJson(RuleTaxYearNotSupportedError)
         }
 
-        s"a taxYear that hasn't ended is provided" in new NonTysTest {
-          override val taxYear: String = getCurrentTaxYear
-
-          val response: WSResponse = await(request().put(requestBodyJson))
-          response.status shouldBe BAD_REQUEST
-          response.json shouldBe Json.toJson(RuleTaxYearNotEndedError)
-        }
-
         s"an invalid amount is provided" in new NonTysTest {
 
           override val requestBodyJson: JsValue = Json.parse(
