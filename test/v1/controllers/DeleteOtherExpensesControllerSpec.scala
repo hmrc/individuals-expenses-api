@@ -23,7 +23,7 @@ import api.models.errors._
 import api.models.outcomes.ResponseWrapper
 import play.api.libs.json.JsValue
 import play.api.mvc.Result
-import v1.mocks.requestParsers.MockDeleteOtherExpensesRequestDataParser
+import v1.mocks.requestValidators.MockDeleteOtherExpensesRequestValidator
 import v1.mocks.services._
 import v1.models.request.deleteOtherExpenses.{DeleteOtherExpensesRawData, DeleteOtherExpensesRequest}
 
@@ -31,22 +31,22 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class DeleteOtherExpensesControllerSpec
-  extends ControllerBaseSpec
+    extends ControllerBaseSpec
     with ControllerTestRunner
     with MockDeleteOtherExpensesService
-    with MockDeleteOtherExpensesRequestDataParser {
+    with MockDeleteOtherExpensesRequestValidator {
 
   private val taxYear = "2019-20"
 
-  private val rawData = DeleteOtherExpensesRawData(nino, taxYear)
+  private val rawData     = DeleteOtherExpensesRawData(nino, taxYear)
   private val requestData = DeleteOtherExpensesRequest(Nino(nino), TaxYear.fromMtd(taxYear))
 
   "handleRequest" should {
     "return a successful response with status 204 (No Content)" when {
       "a valid request is supplied" in new Test {
 
-        MockDeleteOtherExpensesRequestDataParser
-          .parse(rawData)
+        MockDeleteOtherExpensesRequestValidator
+          .parseRequest(rawData)
           .returns(Right(requestData))
 
         MockDeleteOtherExpensesService
@@ -60,8 +60,8 @@ class DeleteOtherExpensesControllerSpec
     "return the error as per spec" when {
       "the parser validation fails" in new Test {
 
-        MockDeleteOtherExpensesRequestDataParser
-          .parse(rawData)
+        MockDeleteOtherExpensesRequestValidator
+          .parseRequest(rawData)
           .returns(Left(ErrorWrapper(correlationId, NinoFormatError)))
 
         runErrorTestWithAudit(NinoFormatError)
@@ -69,8 +69,8 @@ class DeleteOtherExpensesControllerSpec
 
       "service returns an error" in new Test {
 
-        MockDeleteOtherExpensesRequestDataParser
-          .parse(rawData)
+        MockDeleteOtherExpensesRequestValidator
+          .parseRequest(rawData)
           .returns(Right(requestData))
 
         MockDeleteOtherExpensesService
@@ -87,7 +87,7 @@ class DeleteOtherExpensesControllerSpec
     val controller = new DeleteOtherExpensesController(
       authService = mockEnrolmentsAuthService,
       lookupService = mockMtdIdLookupService,
-      parser = mockRequestDataParser,
+      validator = mockRequestValidator,
       service = mockDeleteOtherExpensesService,
       auditService = mockAuditService,
       cc = cc,

@@ -28,7 +28,7 @@ import mocks.MockAppConfig
 import play.api.Configuration
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Result
-import v1.mocks.requestParsers.MockIgnoreEmploymentExpensesRequestParser
+import v1.mocks.requestValidators.MockIgnoreEmploymentExpensesRequestValidator
 import v1.mocks.services.MockIgnoreEmploymentExpensesService
 import v1.models.request.ignoreEmploymentExpenses._
 import v1.models.response.ignoreEmploymentExpenses.IgnoreEmploymentExpensesHateoasData
@@ -37,10 +37,10 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class IgnoreEmploymentExpensesControllerSpec
-  extends ControllerBaseSpec
+    extends ControllerBaseSpec
     with ControllerTestRunner
     with MockIgnoreEmploymentExpensesService
-    with MockIgnoreEmploymentExpensesRequestParser
+    with MockIgnoreEmploymentExpensesRequestValidator
     with MockHateoasFactory
     with MockAppConfig {
 
@@ -51,8 +51,7 @@ class IgnoreEmploymentExpensesControllerSpec
     Link(href = s"/individuals/expenses/employments/$nino/$taxYear", method = DELETE, rel = "delete-employment-expenses")
   )
 
-  val responseBodyJson: JsValue = Json.parse(
-    s"""
+  val responseBodyJson: JsValue = Json.parse(s"""
        |{
        |  "links": [
        |    {
@@ -69,14 +68,13 @@ class IgnoreEmploymentExpensesControllerSpec
        |}
        |""".stripMargin)
 
-  private val rawData = IgnoreEmploymentExpensesRawData(nino, taxYear)
+  private val rawData     = IgnoreEmploymentExpensesRawData(nino, taxYear)
   private val requestData = IgnoreEmploymentExpensesRequest(Nino(nino), TaxYear.fromMtd(taxYear))
 
   "handleRequest" should {
     "return Ok" when {
       "the request received is valid" in new Test {
-
-        MockIgnoreEmploymentExpensesRequestParser
+        MockIgnoreEmploymentExpensesRequestValidator
           .parseRequest(rawData)
           .returns(Right(requestData))
 
@@ -98,8 +96,7 @@ class IgnoreEmploymentExpensesControllerSpec
 
     "return the error as per spec" when {
       "the parser validation fails" in new Test {
-
-        MockIgnoreEmploymentExpensesRequestParser
+        MockIgnoreEmploymentExpensesRequestValidator
           .parseRequest(rawData)
           .returns(Left(ErrorWrapper(correlationId, NinoFormatError)))
 
@@ -107,8 +104,7 @@ class IgnoreEmploymentExpensesControllerSpec
       }
 
       "service errors occur" in new Test {
-
-        MockIgnoreEmploymentExpensesRequestParser
+        MockIgnoreEmploymentExpensesRequestValidator
           .parseRequest(rawData)
           .returns(Right(requestData))
 
@@ -127,7 +123,7 @@ class IgnoreEmploymentExpensesControllerSpec
       appConfig = mockAppConfig,
       authService = mockEnrolmentsAuthService,
       lookupService = mockMtdIdLookupService,
-      parser = mockRequestParser,
+      validator = mockRequestValidator,
       service = mockService,
       auditService = mockAuditService,
       hateoasFactory = mockHateoasFactory,

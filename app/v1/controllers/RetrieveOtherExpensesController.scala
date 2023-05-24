@@ -20,8 +20,8 @@ import api.controllers.{AuthorisedController, EndpointLogContext, RequestContext
 import api.hateoas.HateoasFactory
 import api.services.{EnrolmentsAuthService, MtdIdLookupService}
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
-import utils.{IdGenerator, Logging}
-import v1.controllers.requestParsers.RetrieveOtherExpensesRequestParser
+import utils.IdGenerator
+import v1.controllers.requestValidators.RetrieveOtherExpensesRequestValidator
 import v1.models.request.retrieveOtherExpenses.RetrieveOtherExpensesRawData
 import v1.models.response.retrieveOtherExpenses.RetrieveOtherExpensesHateoasData
 import v1.services.RetrieveOtherExpensesService
@@ -32,13 +32,12 @@ import scala.concurrent.ExecutionContext
 @Singleton
 class RetrieveOtherExpensesController @Inject() (val authService: EnrolmentsAuthService,
                                                  val lookupService: MtdIdLookupService,
-                                                 parser: RetrieveOtherExpensesRequestParser,
+                                                 validator: RetrieveOtherExpensesRequestValidator,
                                                  service: RetrieveOtherExpensesService,
                                                  hateoasFactory: HateoasFactory,
                                                  cc: ControllerComponents,
                                                  val idGenerator: IdGenerator)(implicit ec: ExecutionContext)
-    extends AuthorisedController(cc)
-    with Logging {
+    extends AuthorisedController(cc) {
 
   implicit val endpointLogContext: EndpointLogContext =
     EndpointLogContext(controllerName = "RetrieveOtherExpensesController", endpointName = "retrieveOtherExpenses")
@@ -50,7 +49,7 @@ class RetrieveOtherExpensesController @Inject() (val authService: EnrolmentsAuth
       val rawData = RetrieveOtherExpensesRawData(nino, taxYear)
 
       val requestHandler = RequestHandler
-        .withParser(parser)
+        .withValidator(validator)
         .withService(service.retrieveOtherExpenses)
         .withHateoasResult(hateoasFactory)(RetrieveOtherExpensesHateoasData(nino, taxYear))
 

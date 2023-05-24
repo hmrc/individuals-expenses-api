@@ -25,7 +25,7 @@ import api.models.hateoas.{HateoasWrapper, Link}
 import api.models.outcomes.ResponseWrapper
 import play.api.mvc.Result
 import v1.fixtures.RetrieveEmploymentsExpensesFixtures._
-import v1.mocks.requestParsers.MockRetrieveEmploymentsExpensesRequestParser
+import v1.mocks.requestValidators.MockRetrieveEmploymentsExpensesRequestValidator
 import v1.mocks.services.MockRetrieveEmploymentsExpensesService
 import v1.models.request.retrieveEmploymentExpenses.{RetrieveEmploymentsExpensesRawData, RetrieveEmploymentsExpensesRequest}
 import v1.models.response.retrieveEmploymentExpenses.RetrieveEmploymentsExpensesHateoasData
@@ -37,7 +37,7 @@ class RetrieveEmploymentsExpensesControllerSpec
     extends ControllerBaseSpec
     with ControllerTestRunner
     with MockRetrieveEmploymentsExpensesService
-    with MockRetrieveEmploymentsExpensesRequestParser
+    with MockRetrieveEmploymentsExpensesRequestValidator
     with MockHateoasFactory {
 
   private val taxYear = "2019-20"
@@ -58,9 +58,8 @@ class RetrieveEmploymentsExpensesControllerSpec
   "handleRequest" should {
     "return a successful response with status 200 (OK)" when {
       "given a valid request" in new Test {
-
-        MockRetrieveEmploymentsExpensesRequestParser
-          .parse(rawData)
+        MockRetrieveEmploymentsExpensesRequestValidator
+          .parseRequest(rawData)
           .returns(Right(requestData))
 
         MockRetrieveEmploymentsExpensesService
@@ -80,9 +79,8 @@ class RetrieveEmploymentsExpensesControllerSpec
 
     "return the error as per spec" when {
       "the parser validation fails" in new Test {
-
-        MockRetrieveEmploymentsExpensesRequestParser
-          .parse(rawData)
+        MockRetrieveEmploymentsExpensesRequestValidator
+          .parseRequest(rawData)
           .returns(Left(ErrorWrapper(correlationId, NinoFormatError)))
 
         runErrorTest(NinoFormatError)
@@ -90,9 +88,8 @@ class RetrieveEmploymentsExpensesControllerSpec
       }
 
       "the service returns an error" in new Test {
-
-        MockRetrieveEmploymentsExpensesRequestParser
-          .parse(rawData)
+        MockRetrieveEmploymentsExpensesRequestValidator
+          .parseRequest(rawData)
           .returns(Right(requestData))
 
         MockRetrieveEmploymentsExpensesService
@@ -109,7 +106,7 @@ class RetrieveEmploymentsExpensesControllerSpec
     val controller = new RetrieveEmploymentsExpensesController(
       authService = mockEnrolmentsAuthService,
       lookupService = mockMtdIdLookupService,
-      parser = mockRetrieveEmploymentsExpensesRequestParser,
+      validator = mockRequestValidator,
       service = mockRetrieveEmploymentsExpensesService,
       hateoasFactory = mockHateoasFactory,
       auditService = mockAuditService,

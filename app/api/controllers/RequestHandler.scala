@@ -16,7 +16,7 @@
 
 package api.controllers
 
-import api.controllers.requestParsers.RequestParser
+import api.controllers.requestValidators.RequestValidator
 import api.hateoas.{HateoasFactory, HateoasLinksFactory}
 import api.models.errors.{ErrorWrapper, StandardDownstreamError}
 import api.models.hateoas.{HateoasData, HateoasWrapper}
@@ -40,20 +40,20 @@ trait RequestHandler[InputRaw <: RawData] {
 
 object RequestHandler {
 
-  def withParser[InputRaw <: RawData, Input](parser: RequestParser[InputRaw, Input]): ParserOnlyBuilder[InputRaw, Input] =
-    new ParserOnlyBuilder[InputRaw, Input](parser)
+  def withValidator[InputRaw <: RawData, Input](validator: RequestValidator[InputRaw, Input]): ValidatorOnlyBuilder[InputRaw, Input] =
+    new ValidatorOnlyBuilder[InputRaw, Input](validator)
 
   // Intermediate class so that the compiler can separately capture the InputRaw and Input types here, and the Output type later
-  class ParserOnlyBuilder[InputRaw <: RawData, Input] private[RequestHandler] (parser: RequestParser[InputRaw, Input]) {
+  class ValidatorOnlyBuilder[InputRaw <: RawData, Input] private[RequestHandler] (validator: RequestValidator[InputRaw, Input]) {
 
     def withService[Output](
         serviceFunction: Input => Future[Either[ErrorWrapper, ResponseWrapper[Output]]]): RequestHandlerBuilder[InputRaw, Input, Output] =
-      RequestHandlerBuilder(parser, serviceFunction)
+      RequestHandlerBuilder(validator, serviceFunction)
 
   }
 
   case class RequestHandlerBuilder[InputRaw <: RawData, Input, Output] private[RequestHandler] (
-      parser: RequestParser[InputRaw, Input],
+      validator: RequestValidator[InputRaw, Input],
       service: Input => Future[Either[ErrorWrapper, ResponseWrapper[Output]]],
       errorHandling: ErrorHandling = ErrorHandling.Default,
       resultCreator: ResultCreator[InputRaw, Input, Output] = ResultCreator.noContent[InputRaw, Input, Output](),
@@ -134,7 +134,7 @@ object RequestHandler {
 
         val result =
           for {
-            parsedRequest   <- EitherT.fromEither[Future](parser.parseRequest(rawData))
+            parsedRequest   <- EitherT.fromEither[Future](validator.parseRequest(rawData))
             serviceResponse <- EitherT(service(parsedRequest))
           } yield doWithContext(ctx.withCorrelationId(serviceResponse.correlationId)) { implicit ctx: RequestContext =>
             handleSuccess(rawData, parsedRequest, serviceResponse)

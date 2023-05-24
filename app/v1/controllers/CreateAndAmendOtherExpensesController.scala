@@ -21,8 +21,8 @@ import api.hateoas.HateoasFactory
 import api.services.{AuditService, EnrolmentsAuthService, MtdIdLookupService}
 import play.api.libs.json.JsValue
 import play.api.mvc.{Action, ControllerComponents}
-import utils.{IdGenerator, Logging}
-import v1.controllers.requestParsers.CreateAndAmendOtherExpensesRequestParser
+import utils.IdGenerator
+import v1.controllers.requestValidators.CreateAmendOtherExpensesRequestValidator
 import v1.models.request.createAndAmendOtherExpenses.CreateAndAmendOtherExpensesRawData
 import v1.models.response.createAndAmendOtherExpenses.CreateAndAmendOtherExpensesHateoasData
 import v1.models.response.createAndAmendOtherExpenses.CreateAndAmendOtherExpensesResponse.CreateAndAmendOtherExpensesLinksFactory
@@ -34,14 +34,13 @@ import scala.concurrent.ExecutionContext
 @Singleton
 class CreateAndAmendOtherExpensesController @Inject() (val authService: EnrolmentsAuthService,
                                                        val lookupService: MtdIdLookupService,
-                                                       parser: CreateAndAmendOtherExpensesRequestParser,
+                                                       validator: CreateAmendOtherExpensesRequestValidator,
                                                        service: CreateAndAmendOtherExpensesService,
                                                        auditService: AuditService,
                                                        hateoasFactory: HateoasFactory,
                                                        cc: ControllerComponents,
                                                        val idGenerator: IdGenerator)(implicit ec: ExecutionContext)
-    extends AuthorisedController(cc)
-    with Logging {
+    extends AuthorisedController(cc) {
 
   implicit val endpointLogContext: EndpointLogContext =
     EndpointLogContext(controllerName = "CreateAndAmendOtherExpensesController", endpointName = "createAndAmendOtherExpenses")
@@ -52,7 +51,7 @@ class CreateAndAmendOtherExpensesController @Inject() (val authService: Enrolmen
 
       val rawData = CreateAndAmendOtherExpensesRawData(nino, taxYear, request.body)
       val requestHandler = RequestHandler
-        .withParser(parser)
+        .withValidator(validator)
         .withService(service.createAndAmend)
         .withAuditing(AuditHandler(
           auditService = auditService,

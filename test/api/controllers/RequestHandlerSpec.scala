@@ -16,7 +16,7 @@
 
 package api.controllers
 
-import api.controllers.requestParsers.RequestParser
+import api.controllers.requestValidators.RequestValidator
 import api.hateoas.HateoasLinksFactory
 import api.mocks.MockIdGenerator
 import api.mocks.hateoas.MockHateoasFactory
@@ -85,16 +85,16 @@ class RequestHandlerSpec
   private def service =
     (mockService.service(_: Input.type)(_: RequestContext, _: ExecutionContext)).expects(Input, *, *)
 
-  private val mockParser = mock[RequestParser[InputRaw.type, Input.type]]
+  private val mockRequestValidator = mock[RequestValidator[InputRaw.type, Input.type]]
 
   private def parseRequest =
-    (mockParser.parseRequest(_: InputRaw.type)(_: String)).expects(InputRaw, *)
+    (mockRequestValidator.parseRequest(_: InputRaw.type)(_: String)).expects(InputRaw, *)
 
   "RequestHandler" when {
     "a request is successful" must {
       "return the correct response" in {
         val requestHandler = RequestHandler
-          .withParser(mockParser)
+          .withValidator(mockRequestValidator)
           .withService(mockService.service)
           .withPlainJsonResult(successCode)
 
@@ -110,7 +110,7 @@ class RequestHandlerSpec
 
       "return no content if required" in {
         val requestHandler = RequestHandler
-          .withParser(mockParser)
+          .withValidator(mockRequestValidator)
           .withService(mockService.service)
           .withNoContentResult()
 
@@ -124,9 +124,9 @@ class RequestHandlerSpec
         status(result) shouldBe NO_CONTENT
       }
 
-      "wrap the response with hateoas links if required§" in {
+      "wrap the response with hateoas links if required" in {
         val requestHandler = RequestHandler
-          .withParser(mockParser)
+          .withValidator(mockRequestValidator)
           .withService(mockService.service)
           .withHateoasResult(mockHateoasFactory)(HData, successCode)
 
@@ -146,7 +146,7 @@ class RequestHandlerSpec
     "a request fails with validation errors" must {
       "return the errors" in {
         val requestHandler = RequestHandler
-          .withParser(mockParser)
+          .withValidator(mockRequestValidator)
           .withService(mockService.service)
           .withPlainJsonResult(successCode)
 
@@ -163,7 +163,7 @@ class RequestHandlerSpec
     "a request fails with service errors" must {
       "return the errors" in {
         val requestHandler = RequestHandler
-          .withParser(mockParser)
+          .withValidator(mockRequestValidator)
           .withService(mockService.service)
           .withPlainJsonResult(successCode)
 
@@ -196,7 +196,7 @@ class RequestHandlerSpec
       )
 
       val basicRequestHandler = RequestHandler
-        .withParser(mockParser)
+        .withValidator(mockRequestValidator)
         .withService(mockService.service)
         .withPlainJsonResult(successCode)
 
