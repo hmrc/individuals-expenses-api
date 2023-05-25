@@ -38,7 +38,7 @@ class IgnoreEmploymentExpensesValidator @Inject() (implicit currentDateTime: Cur
 
   private def parameterRuleValidation: IgnoreEmploymentExpensesRawData => List[List[MtdError]] = { data =>
     List(
-      MtdTaxYearValidation.validate(data.taxYear, appConfig.employmentExpensesMinimumTaxYear, checkCurrentTaxYear = data.temporalValidationEnabled)
+      MtdTaxYearValidation.validate(data.taxYear, appConfig.employmentExpensesMinimumTaxYear)
     )
   }
 
