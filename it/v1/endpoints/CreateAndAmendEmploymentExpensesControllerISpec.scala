@@ -58,14 +58,14 @@ class CreateAndAmendEmploymentExpensesControllerISpec extends IntegrationBaseSpe
 
       "validation error" when {
 
-        s"an invalid NINO is provided" in new NonTysTest {
+        "an invalid NINO is provided" in new NonTysTest {
           override val nino: String = "INVALID_NINO"
 
           val response: WSResponse = await(request().put(requestBodyJson))
           response.status shouldBe BAD_REQUEST
           response.json shouldBe Json.toJson(NinoFormatError)
         }
-        s"an invalid taxYear is provided" in new NonTysTest {
+        "an invalid taxYear is provided" in new NonTysTest {
           override val taxYear: String = "INVALID_TAXYEAR"
 
           val response: WSResponse = await(request().put(requestBodyJson))
@@ -73,7 +73,7 @@ class CreateAndAmendEmploymentExpensesControllerISpec extends IntegrationBaseSpe
           response.json shouldBe Json.toJson(TaxYearFormatError)
         }
 
-        s"a taxYear with range of greater than a year is provided" in new NonTysTest {
+        "a taxYear with range of greater than a year is provided" in new NonTysTest {
           override val taxYear: String = "2019-21"
 
           val response: WSResponse = await(request().put(requestBodyJson))
@@ -81,7 +81,7 @@ class CreateAndAmendEmploymentExpensesControllerISpec extends IntegrationBaseSpe
           response.json shouldBe Json.toJson(RuleTaxYearRangeInvalidError)
         }
 
-        s"a taxYear below minimum is provided" in new NonTysTest {
+        "a taxYear below minimum is provided" in new NonTysTest {
           override val taxYear: String = "2018-19"
 
           val response: WSResponse = await(request().put(requestBodyJson))
@@ -89,10 +89,10 @@ class CreateAndAmendEmploymentExpensesControllerISpec extends IntegrationBaseSpe
           response.json shouldBe Json.toJson(RuleTaxYearNotSupportedError)
         }
 
-        s"an invalid amount is provided" in new NonTysTest {
+        "an invalid amount is provided" in new NonTysTest {
 
           override val requestBodyJson: JsValue = Json.parse(
-            s"""
+            """
                |{
                |    "expenses": {
                |        "businessTravelCosts": -1,
@@ -122,7 +122,7 @@ class CreateAndAmendEmploymentExpensesControllerISpec extends IntegrationBaseSpe
           ))))
         }
 
-        s"an empty body is provided" in new NonTysTest {
+        "an empty body is provided" in new NonTysTest {
 
           override val requestBodyJson: JsValue = Json.parse("""{}""")
 
@@ -131,7 +131,7 @@ class CreateAndAmendEmploymentExpensesControllerISpec extends IntegrationBaseSpe
           response.json shouldBe Json.toJson(RuleIncorrectOrEmptyBodyError)
         }
 
-        s"an empty expenses body is provided" in new NonTysTest {
+        "an empty expenses body is provided" in new NonTysTest {
 
           override val requestBodyJson: JsValue = Json.parse("""
               |{
