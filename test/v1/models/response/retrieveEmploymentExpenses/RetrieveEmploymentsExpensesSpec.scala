@@ -37,7 +37,7 @@ class RetrieveEmploymentsExpensesSpec extends UnitSpec with JsonErrorValidators 
   }
 
   "writes" when {
-    "passed valid model" should {
+    "passed a response object" should {
       "return valid JSON for latest" in {
         responseModelLatest.toJson shouldBe mtdResponseJsonLatest
       }

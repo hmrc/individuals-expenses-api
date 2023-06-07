@@ -17,7 +17,7 @@
 package v1.connectors
 
 import api.connectors.ConnectorSpec
-import api.models.domain.{Nino, TaxYear}
+import api.models.domain.{Nino, TaxYear, Timestamp}
 import api.models.outcomes.ResponseWrapper
 import v1.models.request.retrieveOtherExpenses.RetrieveOtherExpensesRequest
 import v1.models.response.retrieveOtherExpenses.{PatentRoyaltiesPayments, PaymentsToTradeUnionsForDeathBenefits, RetrieveOtherExpensesResponse}
@@ -30,7 +30,7 @@ class RetrieveOtherExpensesConnectorSpec extends ConnectorSpec {
 
   val retrieveOtherExpensesResponse: RetrieveOtherExpensesResponse =
     RetrieveOtherExpensesResponse(
-      "2019-04-04T01:01:01Z",
+      Timestamp("2019-04-04T01:01:01Z"),
       Some(PaymentsToTradeUnionsForDeathBenefits(Some("TRADE UNION PAYMENTS"), 5433.54)),
       Some(PatentRoyaltiesPayments(Some("ROYALTIES PAYMENTS"), 98765.12))
     )

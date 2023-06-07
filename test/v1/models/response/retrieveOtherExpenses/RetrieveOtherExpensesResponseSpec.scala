@@ -16,6 +16,7 @@
 
 package v1.models.response.retrieveOtherExpenses
 
+import api.models.domain.Timestamp
 import api.models.hateoas.Link
 import api.models.hateoas.Method.{DELETE, GET, PUT}
 import mocks.MockAppConfig
@@ -25,26 +26,26 @@ import support.UnitSpec
 class RetrieveOtherExpensesResponseSpec extends UnitSpec with MockAppConfig {
 
   val retrieveOtherExpensesBody = RetrieveOtherExpensesResponse(
-    "2019-04-04T01:01:01Z",
+    Timestamp("2019-04-04T01:01:01Z"),
     Some(PaymentsToTradeUnionsForDeathBenefits(Some("TRADE UNION PAYMENTS"), 2314.32)),
     Some(PatentRoyaltiesPayments(Some("ROYALTIES PAYMENTS"), 2314.32))
   )
 
   val retrieveOtherExpensesBodyWithoutPatents = RetrieveOtherExpensesResponse(
-    "2019-04-04T01:01:01Z",
+    Timestamp("2019-04-04T01:01:01Z"),
     Some(PaymentsToTradeUnionsForDeathBenefits(Some("TRADE UNION PAYMENTS"), 2314.32)),
     None
   )
 
   val retrieveOtherExpensesBodyWithoutPayments = RetrieveOtherExpensesResponse(
-    "2019-04-04T01:01:01Z",
+    Timestamp("2019-04-04T01:01:01Z"),
     None,
     Some(PatentRoyaltiesPayments(Some("ROYALTIES PAYMENTS"), 2314.32))
   )
 
   val json = Json.parse(
     """{
-      |  "submittedOn": "2019-04-04T01:01:01Z",
+      |  "submittedOn": "2019-04-04T01:01:01.000Z",
       |  "paymentsToTradeUnionsForDeathBenefits": {
       |    "customerReference": "TRADE UNION PAYMENTS",
       |    "expenseAmount": 2314.32
@@ -58,7 +59,7 @@ class RetrieveOtherExpensesResponseSpec extends UnitSpec with MockAppConfig {
 
   val patentsMissingJson = Json.parse(
     """{
-      |  "submittedOn": "2019-04-04T01:01:01Z",
+      |  "submittedOn": "2019-04-04T01:01:01.000Z",
       |  "paymentsToTradeUnionsForDeathBenefits": {
       |    "customerReference": "TRADE UNION PAYMENTS",
       |    "expenseAmount": 2314.32
@@ -68,7 +69,7 @@ class RetrieveOtherExpensesResponseSpec extends UnitSpec with MockAppConfig {
 
   val paymentsMissingJson = Json.parse(
     """{
-      |  "submittedOn": "2019-04-04T01:01:01Z",
+      |  "submittedOn": "2019-04-04T01:01:01.000Z",
       |  "patentRoyaltiesPayments":{
       |    "customerReference": "ROYALTIES PAYMENTS",
       |    "expenseAmount": 2314.32
@@ -95,17 +96,17 @@ class RetrieveOtherExpensesResponseSpec extends UnitSpec with MockAppConfig {
   }
 
   "writes" when {
-    "passed valid model" should {
+    "passed a response object" should {
       "return valid JSON" in {
         Json.toJson(retrieveOtherExpensesBody) shouldBe json
       }
     }
-    "passed a model missing patents" should {
+    "passed a response object missing patents" should {
       "return an empty JSON" in {
         Json.toJson(retrieveOtherExpensesBodyWithoutPatents) shouldBe patentsMissingJson
       }
     }
-    "passed a model missing payments" should {
+    "passed a response object missing payments" should {
       "return an empty JSON" in {
         Json.toJson(retrieveOtherExpensesBodyWithoutPayments) shouldBe paymentsMissingJson
       }

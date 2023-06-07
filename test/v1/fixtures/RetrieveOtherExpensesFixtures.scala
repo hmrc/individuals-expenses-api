@@ -16,13 +16,14 @@
 
 package v1.fixtures
 
+import api.models.domain.Timestamp
 import play.api.libs.json.{JsObject, JsValue, Json}
 import v1.models.response.retrieveOtherExpenses.{PatentRoyaltiesPayments, PaymentsToTradeUnionsForDeathBenefits, RetrieveOtherExpensesResponse}
 
 object RetrieveOtherExpensesFixtures {
 
   val responseModel = RetrieveOtherExpensesResponse(
-    submittedOn = "2019-04-04T01:01:01Z",
+    submittedOn = Timestamp("2019-04-04T01:01:01Z"),
     paymentsToTradeUnionsForDeathBenefits = Some(PaymentsToTradeUnionsForDeathBenefits(Some("TRADE UNION PAYMENTS"), 4528.99)),
     patentRoyaltiesPayments = Some(PatentRoyaltiesPayments(Some("ROYALTIES PAYMENTS"), 2000.10))
   )
@@ -30,7 +31,7 @@ object RetrieveOtherExpensesFixtures {
   private val responseJson = Json.parse(
     s"""
        |{
-       |  "submittedOn": "2019-04-04T01:01:01Z",
+       |  "submittedOn": "2019-04-04T01:01:01.000Z",
        |  "paymentsToTradeUnionsForDeathBenefits": {
        |    "customerReference": "TRADE UNION PAYMENTS",
        |    "expenseAmount": 4528.99
