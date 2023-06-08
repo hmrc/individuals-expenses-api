@@ -36,7 +36,7 @@ class RetrieveOtherExpensesControllerISpec extends IntegrationBaseSpec {
     val mtdResponseBody = Json.parse(
       s"""
          |{
-         |  "submittedOn": "2019-04-04T01:01:01Z",
+         |  "submittedOn": "2019-04-04T01:01:01.000Z",
          |  "paymentsToTradeUnionsForDeathBenefits": {
          |    "customerReference": "TRADE UNION PAYMENTS",
          |    "expenseAmount": 4528.99
@@ -66,8 +66,7 @@ class RetrieveOtherExpensesControllerISpec extends IntegrationBaseSpec {
          |""".stripMargin
     )
 
-    val downstreamResponseBody = Json.parse(
-      s"""
+    val downstreamResponseBody = Json.parse(s"""
          |{
          |  "submittedOn": "2019-04-04T01:01:01Z",
          |  "paymentsToTradeUnionsForDeathBenefits": {
@@ -159,7 +158,7 @@ class RetrieveOtherExpensesControllerISpec extends IntegrationBaseSpec {
           def validationErrorTest(requestNino: String, requestTaxYear: String, expectedStatus: Int, expectedBody: MtdError): Unit = {
             s"validation fails with ${expectedBody.code} error" in new NonTysTest {
 
-              override val nino: String = requestNino
+              override val nino: String    = requestNino
               override val taxYear: String = requestTaxYear
 
               override def setupStubs(): Unit = {

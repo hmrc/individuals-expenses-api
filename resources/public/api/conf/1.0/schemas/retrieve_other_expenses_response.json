@@ -5,9 +5,9 @@
   "type": "object",
   "properties": {
     "submittedOn": {
-      "description": "The date the expenses were added. It must be provided in the format YYYY-MM-DDThh:mm:ssZ",
+      "description": "The date the expenses were added. It must be provided in the format YYYY-MM-DDThh:mm:ss.SSS'Z'",
       "type": "string",
-      "example": "2019-04-04T01:01:01Z"
+      "example": "2019-04-04T01:01:01.000Z"
     },
     "paymentsToTradeUnionsForDeathBenefits": {
       "description": "Payments made to a Trade union or friendly society for death benefits.",

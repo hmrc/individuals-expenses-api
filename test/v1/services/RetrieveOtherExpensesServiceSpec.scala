@@ -16,7 +16,7 @@
 
 package v1.services
 
-import api.models.domain.{Nino, TaxYear}
+import api.models.domain.{Nino, TaxYear, Timestamp}
 import api.models.errors._
 import api.models.outcomes.ResponseWrapper
 import api.services.ServiceSpec
@@ -32,7 +32,7 @@ class RetrieveOtherExpensesServiceSpec extends ServiceSpec {
   val nino    = Nino("AA123456A")
 
   val body: RetrieveOtherExpensesResponse = RetrieveOtherExpensesResponse(
-    "2019-04-04T01:01:01Z",
+    Timestamp("2019-04-04T01:01:01Z"),
     Some(PaymentsToTradeUnionsForDeathBenefits(Some("TRADE UNION PAYMENTS"), 76543.32)),
     Some(PatentRoyaltiesPayments(Some("ROYALTIES PAYMENTS"), 5423.65))
   )
