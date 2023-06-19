@@ -26,7 +26,11 @@ description: |
           <tr>
               <td><p>NOT_FOUND</p></td>
               <td><p>Scenario to simulate not found error.</p></td>
-           </tr>
+          </tr>
+          <tr>
+              <td><p>STATEFUL</p></td>
+              <td><p>Performs a stateful create or update.</p></td>
+          </tr>
       </tbody>
   </table>
 
