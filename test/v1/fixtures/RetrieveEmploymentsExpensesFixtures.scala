@@ -16,7 +16,7 @@
 
 package v1.fixtures
 
-import api.models.domain.MtdSource
+import api.models.domain.{MtdSource, Timestamp}
 import play.api.libs.json.{JsObject, JsValue, Json}
 import v1.models.response.retrieveEmploymentExpenses.{Expenses, RetrieveEmploymentsExpensesResponse}
 
@@ -34,10 +34,10 @@ object RetrieveEmploymentsExpensesFixtures {
   )
 
   private def responseModel(source: Option[MtdSource]) = RetrieveEmploymentsExpensesResponse(
-    submittedOn = Some("2020-12-12T12:12:12Z"),
+    submittedOn = Some(Timestamp("2020-12-12T12:12:12Z")),
     totalExpenses = Some(1000.99),
     source = source,
-    dateIgnored = Some("2020-07-13T20:37:27Z"),
+    dateIgnored = Some(Timestamp("2020-07-13T20:37:27Z")),
     expenses = Some(expensesModel)
   )
 
@@ -63,10 +63,10 @@ object RetrieveEmploymentsExpensesFixtures {
   private def responseJson(source: String) = Json.parse(
     s"""
        |{
-       |	"submittedOn": "2020-12-12T12:12:12Z",
+       |	"submittedOn": "2020-12-12T12:12:12.000Z",
        |	"totalExpenses": 1000.99,
        |  	"source": "$source",
-       |    "dateIgnored": "2020-07-13T20:37:27Z",
+       |    "dateIgnored": "2020-07-13T20:37:27.000Z",
        |	"expenses": $expensesJson
        |}
        |""".stripMargin

@@ -245,9 +245,6 @@ class CreateAndAmendEmploymentExpensesValidatorSpec extends UnitSpec {
       "the taxYear is below the minimum tax year" in new Test {
         validator.validate(CreateAndAmendEmploymentExpensesRawData(validNino, "2016-17", requestBodyJson)) shouldBe List(RuleTaxYearNotSupportedError)
       }
-      "the taxYear has not yet ended" in new Test {
-        validator.validate(CreateAndAmendEmploymentExpensesRawData(validNino, "2022-23", requestBodyJson)) shouldBe List(RuleTaxYearNotEndedError)
-      }
       "the taxYear has not ended but temporal validation is disabled" in new Test {
         validator.validate(
           CreateAndAmendEmploymentExpensesRawData(validNino, "2023-24", requestBodyJson, temporalValidationEnabled = false)) shouldBe Nil

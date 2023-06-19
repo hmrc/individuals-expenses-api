@@ -17,26 +17,26 @@
 package v1.models.response.retrieveEmploymentExpenses
 
 import api.hateoas.{HateoasLinks, HateoasLinksFactory}
-import api.models.domain.MtdSource
+import api.models.domain.{MtdSource, Timestamp}
 import api.models.downstream.DownstreamSource
 import api.models.hateoas.{HateoasData, Link}
 import config.AppConfig
 import play.api.libs.functional.syntax._
 import play.api.libs.json.{JsPath, Json, OWrites, Reads}
 
-case class RetrieveEmploymentsExpensesResponse(submittedOn: Option[String],
+case class RetrieveEmploymentsExpensesResponse(submittedOn: Option[Timestamp],
                                                totalExpenses: Option[BigDecimal],
                                                source: Option[MtdSource],
-                                               dateIgnored: Option[String],
+                                               dateIgnored: Option[Timestamp],
                                                expenses: Option[Expenses])
 
 object RetrieveEmploymentsExpensesResponse extends HateoasLinks {
 
   implicit val reads: Reads[RetrieveEmploymentsExpensesResponse] = (
-    (JsPath \ "submittedOn").readNullable[String] and
+    (JsPath \ "submittedOn").readNullable[Timestamp] and
       (JsPath \ "totalExpenses").readNullable[BigDecimal] and
       (JsPath \ "source").readNullable[DownstreamSource].map(_.map(_.toMtd)) and
-      (JsPath \ "dateIgnored").readNullable[String] and
+      (JsPath \ "dateIgnored").readNullable[Timestamp] and
       (JsPath \ "expenses").readNullable[Expenses]
   )(RetrieveEmploymentsExpensesResponse.apply _)
 

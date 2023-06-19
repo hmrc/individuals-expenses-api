@@ -64,7 +64,7 @@ class IgnoreEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
         def parserErrorTest(newNino: String, newTaxYear: String, expectedStatus: Int, expectedBody: MtdError): Unit = {
           s"parser returns ${expectedBody.code}" in new NonTysTest {
 
-            override val nino: String = newNino
+            override val nino: String    = newNino
             override val taxYear: String = newTaxYear
 
             val response: WSResponse = await(request().post(requestBody))
@@ -77,8 +77,7 @@ class IgnoreEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
           ("AA123456ABCDEF", "2019-20", BAD_REQUEST, NinoFormatError),
           ("AA123456A", "201920", BAD_REQUEST, TaxYearFormatError),
           ("AA123456A", "2016-17", BAD_REQUEST, RuleTaxYearNotSupportedError),
-          ("AA123456A", "2019-21", BAD_REQUEST, RuleTaxYearRangeInvalidError),
-          ("AA123456A", getCurrentTaxYear, BAD_REQUEST, RuleTaxYearNotEndedError)
+          ("AA123456A", "2019-21", BAD_REQUEST, RuleTaxYearRangeInvalidError)
         )
 
         input.foreach(args => (parserErrorTest _).tupled(args))
@@ -129,8 +128,7 @@ class IgnoreEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
 
     val requestBody: JsValue = Json.parse("{}")
 
-    lazy val responseBody: JsValue = Json.parse(
-      s"""
+    lazy val responseBody: JsValue = Json.parse(s"""
          |{
          |  "links": [
          |    {

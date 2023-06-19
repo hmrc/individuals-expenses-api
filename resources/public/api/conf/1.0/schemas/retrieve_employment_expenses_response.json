@@ -5,9 +5,9 @@
   "type": "object",
   "properties": {
     "submittedOn": {
-      "description": "The date the expenses were submitted.\n\nMust conform to the format YYYY-MM-DDThh:mm:ssZ",
+      "description": "The date the expenses were submitted.\n\nMust conform to the format YYYY-MM-DDThh:mm:ss.SSS'Z'",
       "type": "string",
-      "example" : "2020-07-13T20:37:27Z"
+      "example" : "2020-07-13T20:37:27.000Z"
     },
     "totalExpenses": {
       "description": "The sum of the expenses provided.\n\nThe value must be between  0 and 99999999999.99 up to 2 decimal places.",
@@ -24,9 +24,9 @@
       ]
     },
     "dateIgnored": {
-      "description": "The date the expenses were flagged not to be used in the tax calculation.\n\nMust conform to the format YYYY-MM-DDThh:mm:ssZ",
+      "description": "The date the expenses were flagged not to be used in the tax calculation.\n\nMust conform to the format YYYY-MM-DDThh:mm:ss.SSS'Z'",
       "type": "string",
-      "example" : "2020-07-13T20:37:27Z"
+      "example" : "2020-07-13T20:37:27.000Z"
     },
     "expenses": {
       "description": "Object containing the employment expenses.",
