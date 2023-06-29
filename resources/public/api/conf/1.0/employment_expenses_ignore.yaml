@@ -9,11 +9,11 @@ post:
     ### Test data
     Scenario simulations using Gov-Test-Scenario headers is only available in the sandbox environment.
     
-    | Header Value (Gov-Test-Scenario)        | Scenario                                                                                         |
-    |-----------------------------------------|--------------------------------------------------------------------------------------------------|
-    | N/A - DEFAULT                           | Simulates success response.                                                                      |
-    | TAX_YEAR_NOT_ENDED                      | Simulates the scenario where the submission is for a tax year that has not ended.                |
-    | NOT_FOUND                               | Scenario to simulate not found error.                                                            |
+    | Header Value (Gov-Test-Scenario)        | Scenario                                                                          |
+    |-----------------------------------------|-----------------------------------------------------------------------------------|
+    | N/A - DEFAULT                           | Simulates success response.                                                       |
+    | TAX_YEAR_NOT_ENDED                      | Simulates the scenario where the submission is for a tax year that has not ended. |
+    | NOT_FOUND                               | Scenario to simulate not found error.                                             |
 
   tags:
     - Employment Expenses

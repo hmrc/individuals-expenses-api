@@ -22,7 +22,7 @@ import uk.gov.hmrc.versioning.SbtGitVersioning
 import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
 import uk.gov.hmrc.SbtAutoBuildPlugin
 
-val appName = "self-assessment-individual-details-api"
+val appName = "individuals-expenses-api"
 
 lazy val ItTest = config("it") extend Test
 
