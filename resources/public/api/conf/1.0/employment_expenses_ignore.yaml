@@ -7,29 +7,13 @@ post:
     Ignoring an expense will remove any amended expenses and add the "dateIgnored" flag to HMRC-provided expenses.
   
     ### Test data
-    <p>Scenario simulations using Gov-Test-Scenario headers is only available in the sandbox environment.</p>
-    <table>
-        <thead>
-            <tr>
-                <th>Header Value (Gov-Test-Scenario)</th>
-                <th>Scenario</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td><p>N/A - DEFAULT</p></td>
-                <td><p>Simulates a success response.</p></td>
-            </tr>
-            <tr>
-                <td><p>TAX_YEAR_NOT_ENDED</p></td>
-                <td><p>Simulates the scenario where the submission is for a tax year that has not ended.</p></td>
-            </tr>
-            <tr>
-                <td><p>NOT_FOUND</p></td>
-                <td><p>Scenario to simulate not found error.</p></td>
-            </tr>        
-        </tbody>
-    </table>
+    Scenario simulation using Gov-Test-Scenario headers is only available in the sandbox environment.
+    
+    | Header Value (Gov-Test-Scenario)        | Scenario                                                                          |
+    |-----------------------------------------|-----------------------------------------------------------------------------------|
+    | N/A - DEFAULT                           | Simulates success response.                                                       |
+    | TAX_YEAR_NOT_ENDED                      | Simulates the scenario where the submission is for a tax year that has not ended. |
+    | NOT_FOUND                               | Scenario to simulate not found error.                                             |
 
   tags:
     - Employment Expenses
