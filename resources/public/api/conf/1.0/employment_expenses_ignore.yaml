@@ -7,7 +7,7 @@ post:
     Ignoring an expense will remove any amended expenses and add the "dateIgnored" flag to HMRC-provided expenses.
   
     ### Test data
-    Scenario simulations using Gov-Test-Scenario headers is only available in the sandbox environment.
+    Scenario simulation using Gov-Test-Scenario headers is only available in the sandbox environment.
     
     | Header Value (Gov-Test-Scenario)        | Scenario                                                                          |
     |-----------------------------------------|-----------------------------------------------------------------------------------|
