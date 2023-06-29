@@ -24,23 +24,6 @@ import scala.util.matching.Regex
 
 case class FeatureSwitches(featureSwitchConfig: Configuration) {
 
-  private val versionRegex = """(\d)\.\d""".r
-
-  def isVersionEnabled(version: String): Boolean = {
-    val maybeVersion: Option[String] =
-      version match {
-        case versionRegex(v) => Some(v)
-        case _               => None
-      }
-
-    val enabled = for {
-      versionNo <- maybeVersion
-      enabled   <- featureSwitchConfig.getOptional[Boolean](s"version-$versionNo.enabled")
-    } yield enabled
-
-    enabled.getOrElse(false)
-  }
-
   val isTaxYearSpecificApiEnabled: Boolean = isEnabled("tys-api.enabled")
 
   val openApiFeatures: Seq[OpenApiFeature] = List(
