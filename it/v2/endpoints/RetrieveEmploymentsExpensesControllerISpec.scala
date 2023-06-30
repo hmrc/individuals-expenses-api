@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package v1.endpoints
+package v2.endpoints
 
 import api.models.errors._
 import play.api.http.HeaderNames.ACCEPT
@@ -178,7 +178,7 @@ class RetrieveEmploymentsExpensesControllerISpec extends IntegrationBaseSpec {
 
       buildRequest(uri)
         .withHttpHeaders(
-          (ACCEPT, "application/vnd.hmrc.1.0+json"),
+          (ACCEPT, "application/vnd.hmrc.2.0+json"),
           (AUTHORIZATION, "Bearer 123") // some bearer token
         )
     }
