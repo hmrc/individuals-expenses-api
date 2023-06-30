@@ -59,6 +59,11 @@ class DocumentationControllerISpec extends IntegrationBaseSpec {
       |            "version":"1.0",
       |            "status":"BETA",
       |            "endpointsEnabled":true
+      |         },
+      |         {
+      |            "version":"2.0",
+      |            "status":"BETA",
+      |            "endpointsEnabled":true
       |         }
       |      ]
       |   }
@@ -74,7 +79,7 @@ class DocumentationControllerISpec extends IntegrationBaseSpec {
   }
 
   "an OAS documentation request" must {
-    "return the documentation that passes OAS V3 parser" in {
+    "return the V1 documentation that passes OAS V3 parser" in {
       val response = get("/api/conf/1.0/application.yaml")
 
       val body         = response.body[String]
@@ -87,6 +92,21 @@ class DocumentationControllerISpec extends IntegrationBaseSpec {
         openAPI.getInfo.getTitle shouldBe "Individuals Expenses (MTD)"
       }
       openAPI.getInfo.getVersion shouldBe "1.0"
+    }
+
+    "return the V2 documentation that passes OAS V3 parser" in {
+      val response = get("/api/conf/2.0/application.yaml")
+
+      val body         = response.body[String]
+      val parserResult = Try(new OpenAPIV3Parser().readContents(body))
+      parserResult.isSuccess shouldBe true
+
+      val openAPI = Option(parserResult.get.getOpenAPI).getOrElse(fail("openAPI wasn't defined"))
+      openAPI.getOpenapi shouldBe "3.0.3"
+      withClue("If v2.0 endpoints are enabled in application.conf, remove the [test only] from this test: ") {
+        openAPI.getInfo.getTitle shouldBe "Individuals Expenses (MTD)"
+      }
+      openAPI.getInfo.getVersion shouldBe "2.0"
     }
 
     "return the expected endpoint description" when {
