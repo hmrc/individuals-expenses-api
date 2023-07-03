@@ -4,7 +4,12 @@ description: |
   A National Insurance number and tax year must be provided.
   
   ### Test data
+  {{#if fs("oas-feature-example")}}
   <p>Scenario simulations using Gov-Test-Scenario headers are only available in the sandbox environment.</p>
+  {{else}}
+  <p>Scenario simulations using Gov-Test-Scenario headers are only available in the sandbox environment.</p>
+  {{/if}}
+  
   <table>
       <thead>
           <tr>

@@ -41,27 +41,41 @@ case class FeatureSwitches(featureSwitchConfig: Configuration) {
     enabled.getOrElse(false)
   }
 
-  val isTaxYearSpecificApiEnabled: Boolean = isEnabled("tys-api.enabled")
+  val isTaxYearSpecificApiEnabled: Boolean = isEnabled("tys-api")
+
+  /** Is this feature enabled in the current environment?
+    */
+  val isOasFeatureExampleEnabled: Boolean = isEnabled("oas-feature-example")
+
+  /** Is this feature released (available) in production?
+    */
+  val isOasFeatureExampleReleased: Boolean = isReleasedInProduction("oas-feature-example")
 
   val openApiFeatures: Seq[OpenApiFeature] = List(
     OpenApiFeatureTest
-  ).filter { feature: OpenApiFeature => isEnabled(feature.key + ".enabled") }
+  ).filter(feature => isEnabled(feature.key))
 
   def isTemporalValidationEnabled(implicit request: Request[_]): Boolean = {
-    if (isEnabled("allowTemporalValidationSuspension.enabled")) {
+    if (isEnabled("allowTemporalValidationSuspension")) {
       request.headers.get("suspend-temporal-validations").forall(!BooleanUtils.toBoolean(_))
     } else {
       true
     }
   }
 
-  private def isEnabled(key: String): Boolean = featureSwitchConfig.getOptional[Boolean](key).getOrElse(true)
+  def isEnabled(key: String): Boolean              = {
+    isConfigTrue(key + ".enabled")
+  }
+  def isReleasedInProduction(key: String): Boolean = isConfigTrue(key + ".released")
+
+  private def isConfigTrue(key: String): Boolean = featureSwitchConfig.getOptional[Boolean](key).getOrElse(true)
 }
 
 object FeatureSwitches {
   def apply()(implicit appConfig: AppConfig): FeatureSwitches = FeatureSwitches(appConfig.featureSwitches)
 }
 
+// TODO remove:
 trait OpenApiFeature {
   val key: String
   val version: String

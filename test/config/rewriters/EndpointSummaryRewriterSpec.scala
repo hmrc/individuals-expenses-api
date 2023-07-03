@@ -16,19 +16,20 @@
 
 package config.rewriters
 
-import config.rewriters.EndpointSummaryRewriter.rewriteEndpointSummary
 import mocks.MockAppConfig
 import support.UnitSpec
 
 class EndpointSummaryRewriterSpec extends UnitSpec with MockAppConfig {
 
+  val rewriter = new EndpointSummaryRewriter(mockAppConfig)
+
   "check and rewrite for the endpoint yaml file" when {
-    val (check, rewrite) = rewriteEndpointSummary
+    val (check, rewrite) = rewriter.rewriteEndpointSummary
 
     "check() is given employment_expenses_create_and_amend.yaml with the endpoint API docs disabled (assuming in production)" should {
       "indicate rewrite needed" in {
         MockAppConfig.endpointEnabled("1.0", "employment-expenses-create-and-amend") returns false
-        val result = check("1.0", "employment_expenses_create_and_amend.yaml", mockAppConfig)
+        val result = check("1.0", "employment_expenses_create_and_amend.yaml")
         result shouldBe true
       }
     }
@@ -36,7 +37,7 @@ class EndpointSummaryRewriterSpec extends UnitSpec with MockAppConfig {
     "check() is given any other combination" should {
       "indicate rewrite not needed" in {
         MockAppConfig.endpointEnabled("1.0", "employment-expenses-create-and-amend") returns true
-        val result = check("1.0", "employment_expenses_create_and_amend.yaml", mockAppConfig)
+        val result = check("1.0", "employment_expenses_create_and_amend.yaml")
         result shouldBe false
       }
     }
@@ -44,21 +45,21 @@ class EndpointSummaryRewriterSpec extends UnitSpec with MockAppConfig {
     "the summary already contains [test only]" should {
       "return the summary unchanged" in {
         val summary = """summary: "[tesT oNLy] Create and Amend employment expenses""""
-        val result  = rewrite("", "", mockAppConfig, summary)
+        val result  = rewrite("", "", summary)
         result shouldBe summary
       }
     }
 
     "the yaml summary is ready to be rewritten" should {
       "return the rewritten summary, in quotes due to the '[' special character" in {
-        val result = rewrite("", "", mockAppConfig, "summary: Create and Amend employment expenses")
+        val result = rewrite("", "", "summary: Create and Amend employment expenses")
         result shouldBe """summary: "Create and Amend employment expenses [test only]""""
       }
     }
 
     "the yaml summary is already in quotes" should {
       "return the rewritten summary" in {
-        val result = rewrite("", "", mockAppConfig, """summary: "Create and Amend employment expenses"""")
+        val result = rewrite("", "", """summary: "Create and Amend employment expenses"""")
         result shouldBe """summary: "Create and Amend employment expenses [test only]""""
       }
     }

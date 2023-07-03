@@ -16,16 +16,19 @@
 
 package config.rewriters
 
+import config.AppConfig
 import config.rewriters.DocumentationRewriters.CheckRewrite
 import controllers.Rewriter
 
-object EndpointSummaryRewriter {
+import javax.inject.{Inject, Singleton}
+
+@Singleton class EndpointSummaryRewriter @Inject() (appConfig: AppConfig) {
 
   private val rewriteSummaryRegex = ".*(summary: [\"]?)(.*)".r
 
   val rewriteEndpointSummary: (CheckRewrite, Rewriter) =
     (
-      (version, filename, appConfig) => {
+      (version, filename) => {
         // Checks if an endpoint switch exists with
         // the same name as the endpoint OAS file, and is disabled.
 
@@ -38,7 +41,7 @@ object EndpointSummaryRewriter {
           !appConfig.endpointEnabled(version, key)
         }
       },
-      (_, _, _, yaml) => {
+      (_, _, yaml) => {
         val maybeLine = rewriteSummaryRegex.findFirstIn(yaml)
         maybeLine
           .collect {

@@ -21,6 +21,7 @@ import akka.stream.Materializer
 import api.controllers.ControllerBaseSpec
 import com.typesafe.config.ConfigFactory
 import config.DocumentationController.filenameWithFeatureName
+import config.rewriters._
 import controllers.{AssetsConfiguration, DefaultAssetsMetadata, RewriteableAssets}
 import definition.ApiDefinitionFactory
 import mocks.MockAppConfig
@@ -138,8 +139,16 @@ class DocumentationControllerSpec extends ControllerBaseSpec with MockAppConfig 
       )
 
     private val errorHandler = new DefaultHttpErrorHandler()
+
+    private val docRewriters = new DocumentationRewriters(
+      new ApiVersionTitleRewriter(mockAppConfig),
+      new EndpointSummaryRewriter(mockAppConfig),
+      new EndpointSummaryGroupRewriter(mockAppConfig),
+      new OasFeatureRewriter()(mockAppConfig)
+    )
+
     private val assets       = new RewriteableAssets(errorHandler, assetsMetadata, mockAppConfig)
-    protected val controller = new DocumentationController(apiFactory, cc, assets)(mockAppConfig)
+    protected val controller = new DocumentationController(apiFactory, docRewriters, assets, cc)(mockAppConfig)
   }
 
   "filenameWithFeatureName" should {

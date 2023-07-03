@@ -16,11 +16,12 @@
 
 package config
 
-import com.typesafe.config.Config
+import com.typesafe.config.{Config, ConfigValue}
 import play.api.{ConfigLoader, Configuration}
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
+import java.util
 import javax.inject.{Inject, Singleton}
 import scala.jdk.CollectionConverters._
 
@@ -28,6 +29,8 @@ trait AppConfig {
 
   // MTD ID Lookup Config
   def mtdIdBaseUrl: String
+
+  def keyValuesJ: util.Map[String, ConfigValue]
 
   // Downstream Config
   def desBaseUrl: String
@@ -86,6 +89,9 @@ trait AppConfig {
 
 @Singleton
 class AppConfigImpl @Inject() (config: ServicesConfig, configuration: Configuration) extends AppConfig {
+
+
+  val keyValuesJ: util.Map[String, ConfigValue] = configuration.entrySet.toMap.asJava
 
   // MTD ID Lookup Config
   val mtdIdBaseUrl: String = config.baseUrl("mtd-id-lookup")

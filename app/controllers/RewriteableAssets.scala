@@ -27,7 +27,7 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.util.control.NonFatal
 
 trait Rewriter {
-  def apply(path: String, filename: String, appConfig: AppConfig, fileText: String): String
+  def apply(path: String, filename: String, contents: String): String
 }
 
 @Singleton
@@ -35,10 +35,11 @@ class RewriteableAssets @Inject() (errorHandler: HttpErrorHandler, meta: AssetsM
     extends Assets(errorHandler, meta) {
   import meta._
 
-  /**
-    * If no rewriters, Play's own static Assets.assetAt() will be called.
-    * @param path e.g. "/public/api/conf/1.0"
-    * @param filename e.g. "schemas/retrieve_other_expenses_response.json" or "employment_expenses_delete.yaml"
+  /** If no rewriters, Play's own static Assets.assetAt() will be called.
+    * @param path
+    *   e.g. "/public/api/conf/1.0"
+    * @param filename
+    *   e.g. "schemas/retrieve_other_expenses_response.json" or "employment_expenses_delete.yaml"
     */
   def rewriteableAt(path: String, filename: String, rewriters: Seq[Rewriter]): Action[AnyContent] = {
     if (rewriters.isEmpty)
@@ -51,7 +52,7 @@ class RewriteableAssets @Inject() (errorHandler: HttpErrorHandler, meta: AssetsM
 
   // Mostly copied from the private method in Assets:
   private def assetAt(path: String, filename: String, rewrites: Seq[Rewriter])(implicit
-                                                                               request: RequestHeader
+      request: RequestHeader
   ): Future[Result] = {
     val assetName: Option[String] = resourceNameAt(path, filename)
     val assetInfoFuture: Future[Option[(AssetInfo, AcceptEncoding)]] = assetName
@@ -74,7 +75,7 @@ class RewriteableAssets @Inject() (errorHandler: HttpErrorHandler, meta: AssetsM
           Future {
             val stream    = connection.getInputStream
             val text      = inputStreamToString(stream)
-            val rewritten = rewrites.foldLeft(text)((acc, op) => op(path, filename, appConfig, acc))
+            val rewritten = rewrites.foldLeft(text)((acc, op) => op(path, filename, acc))
             val result    = Ok(rewritten)
             asEncodedResult(result, acceptEncoding, assetInfo)
           }

@@ -16,19 +16,20 @@
 
 package config.rewriters
 
-import config.rewriters.ApiVersionTitleRewriter.rewriteApiVersionTitle
 import mocks.MockAppConfig
 import support.UnitSpec
 
 class ApiVersionTitleRewriterSpec extends UnitSpec with MockAppConfig {
 
+  val rewriter = new ApiVersionTitleRewriter(mockAppConfig)
+
   "check and rewrite" when {
-    val (check, rewrite) = rewriteApiVersionTitle
+    val (check, rewrite) = rewriter.rewriteApiVersionTitle
 
     "check() is given application.yaml with API endpoints disabled (assuming in production)" should {
       "indicate rewrite needed" in {
         MockAppConfig.endpointsEnabled("1.0") returns false
-        val result = check("1.0", "application.yaml", mockAppConfig)
+        val result = check("1.0", "application.yaml")
         result shouldBe true
       }
     }
@@ -36,11 +37,11 @@ class ApiVersionTitleRewriterSpec extends UnitSpec with MockAppConfig {
     "check() is given any other combination" should {
       "indicate rewrite not needed" in {
         MockAppConfig.endpointsEnabled("1.0") returns true
-        val result = check("1.0", "application.yaml", mockAppConfig)
+        val result = check("1.0", "application.yaml")
         result shouldBe false
       }
       "also indicate rewrite not needed" in {
-        val result = check("1.0", "any_other_file.yaml", mockAppConfig)
+        val result = check("1.0", "any_other_file.yaml")
         result shouldBe false
       }
     }
@@ -48,7 +49,7 @@ class ApiVersionTitleRewriterSpec extends UnitSpec with MockAppConfig {
     "the title already contains [test only]" should {
       "return the title unchanged" in {
         val title  = """  title: "[tesT oNLy] API title (MTD)""""
-        val result = rewrite("", "", mockAppConfig, title)
+        val result = rewrite("", "", title)
         result shouldBe title
       }
     }
@@ -85,14 +86,14 @@ class ApiVersionTitleRewriterSpec extends UnitSpec with MockAppConfig {
             |  - url: https://test-api.service.hmrc.gov.uk
             |""".stripMargin
 
-        val result = rewrite("", "", mockAppConfig, yaml)
+        val result = rewrite("", "", yaml)
         result shouldBe expected
       }
     }
 
     "the yaml title is in quotes" should {
       "return the rewritten title" in {
-        val result = rewrite("", "", mockAppConfig, """  title: "API title (MTD)"""")
+        val result = rewrite("", "", """  title: "API title (MTD)"""")
         result shouldBe """  title: "API title (MTD) [test only]""""
       }
     }

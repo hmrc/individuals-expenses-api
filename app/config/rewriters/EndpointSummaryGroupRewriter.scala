@@ -16,21 +16,24 @@
 
 package config.rewriters
 
+import config.AppConfig
 import config.rewriters.DocumentationRewriters.CheckRewrite
 import controllers.Rewriter
+
+import javax.inject.{Inject, Singleton}
 
 /** For the OAS workaround where the "grouped endpoints" yaml file (e.g. employment_expenses.yaml) must include the matching summary text for each
   * endpoint. This rewriter checks and rewrites each endpoint summary in the group file.
   */
-object EndpointSummaryGroupRewriter {
+@Singleton class EndpointSummaryGroupRewriter @Inject() (appConfig: AppConfig) {
 
   private val pathVersionRegex = "^/public/api/conf/([0-9]\\.0)$".r
 
-  private def keyFrom(filename: String) = filename.dropRight(5).replace("_", "-")
+  private def keyFrom(filename: String): String = filename.dropRight(5).replace("_", "-")
 
   val rewriteGroupedEndpointSummaries: (CheckRewrite, Rewriter) =
     (
-      (version, filename, appConfig) => {
+      (version, filename) => {
         // Checks if any endpoint switches exist (and are disabled)
         // with the key name starting with this filename.
 
@@ -47,7 +50,7 @@ object EndpointSummaryGroupRewriter {
           result
         }
       },
-      (path, filename, appConfig, yaml) =>
+      (path, filename, yaml) =>
         {
           pathVersionRegex.findFirstMatchIn(path).map(_.group(1)).map { version =>
             val key = keyFrom(filename)
