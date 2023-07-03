@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package v1.hateoas
+package api.hateoas
 
-import api.hateoas.{HateoasFactory, HateoasLinksFactory, HateoasListLinksFactory}
 import api.models.hateoas.Method.GET
 import api.models.hateoas.{HateoasData, HateoasWrapper, Link}
 import cats.Functor
