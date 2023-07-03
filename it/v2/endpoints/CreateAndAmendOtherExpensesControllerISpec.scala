@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package v1.endpoints
+package v2.endpoints
 
 import api.models.errors._
 import play.api.http.HeaderNames.ACCEPT
@@ -25,119 +25,134 @@ import play.api.test.Helpers.AUTHORIZATION
 import stubs.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 import support.IntegrationBaseSpec
 
-class CreateAndAmendEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
+class CreateAndAmendOtherExpensesControllerISpec extends IntegrationBaseSpec {
 
-  "Calling the amend endpoint" should {
-
+  "Calling the create and amend endpoint" should {
     "return a 200 status code" when {
-
       "any valid request is made" in new NonTysTest {
-
-        override def setupStubs(): Unit =
+        override def setupStubs(): Unit = {
           DownstreamStub.onSuccess(DownstreamStub.PUT, downstreamUri, NO_CONTENT, JsObject.empty)
+        }
 
         val response: WSResponse = await(request().put(requestBodyJson))
         response.status shouldBe OK
-        response.json shouldBe hateoasResponse
+        response.json shouldBe responseBody
         response.header("X-CorrelationId").nonEmpty shouldBe true
       }
 
-      "any valid TYS request is made" in new TysIfsTest {
-
-        override def setupStubs(): Unit =
+      "any valid request with a Tax Year Specific (TYS) tax year is made" in new TysIfsTest {
+        override def setupStubs(): Unit = {
           DownstreamStub.onSuccess(DownstreamStub.PUT, downstreamUri, NO_CONTENT, JsObject.empty)
+        }
 
         val response: WSResponse = await(request().put(requestBodyJson))
         response.status shouldBe OK
-        response.json shouldBe hateoasResponse
+        response.json shouldBe responseBody
         response.header("X-CorrelationId").nonEmpty shouldBe true
       }
     }
 
     "return error according to spec" when {
-
       "validation error" when {
-
-        "an invalid NINO is provided" in new NonTysTest {
+        s"an invalid NINO is provided" in new NonTysTest {
           override val nino: String = "INVALID_NINO"
+
+          override def setupStubs(): Unit = {}
 
           val response: WSResponse = await(request().put(requestBodyJson))
           response.status shouldBe BAD_REQUEST
           response.json shouldBe Json.toJson(NinoFormatError)
         }
-        "an invalid taxYear is provided" in new NonTysTest {
+        s"an invalid taxYear is provided" in new NonTysTest {
           override val taxYear: String = "INVALID_TAXYEAR"
+
+          override def setupStubs(): Unit = {}
 
           val response: WSResponse = await(request().put(requestBodyJson))
           response.status shouldBe BAD_REQUEST
           response.json shouldBe Json.toJson(TaxYearFormatError)
         }
-
-        "a taxYear with range of greater than a year is provided" in new NonTysTest {
-          override val taxYear: String = "2019-21"
-
-          val response: WSResponse = await(request().put(requestBodyJson))
-          response.status shouldBe BAD_REQUEST
-          response.json shouldBe Json.toJson(RuleTaxYearRangeInvalidError)
-        }
-
-        "a taxYear below minimum is provided" in new NonTysTest {
+        s"a taxYear before the minimum in sandbox of 2021-22 is provided" in new NonTysTest {
           override val taxYear: String = "2018-19"
+
+          override def setupStubs(): Unit = {}
 
           val response: WSResponse = await(request().put(requestBodyJson))
           response.status shouldBe BAD_REQUEST
           response.json shouldBe Json.toJson(RuleTaxYearNotSupportedError)
         }
-
-        "an invalid amount is provided" in new NonTysTest {
-
+        s"an invalid amount is provided" in new NonTysTest {
           override val requestBodyJson: JsValue = Json.parse(
-            """
+            s"""
                |{
-               |    "expenses": {
-               |        "businessTravelCosts": -1,
-               |        "jobExpenses": -1,
-               |        "flatRateJobExpenses": -1,
-               |        "professionalSubscriptions": -1,
-               |        "hotelAndMealExpenses": -1,
-               |        "otherAndCapitalAllowances": -1,
-               |        "vehicleExpenses": -1,
-               |        "mileageAllowanceRelief": -1
-               |    }
+               |  "paymentsToTradeUnionsForDeathBenefits": {
+               |    "customerReference": "TRADE UNION PAYMENTS",
+               |    "expenseAmount": -1
+               |  },
+               |  "patentRoyaltiesPayments":{
+               |    "customerReference": "ROYALTIES PAYMENTS",
+               |    "expenseAmount": -1
+               |  }
                |}
                |""".stripMargin
           )
 
+          override def setupStubs(): Unit = {}
+
           val response: WSResponse = await(request().put(requestBodyJson))
           response.status shouldBe BAD_REQUEST
-          response.json shouldBe Json.toJson(ValueFormatError.copy(paths = Some(Seq(
-            "/expenses/businessTravelCosts",
-            "/expenses/jobExpenses",
-            "/expenses/flatRateJobExpenses",
-            "/expenses/professionalSubscriptions",
-            "/expenses/hotelAndMealExpenses",
-            "/expenses/otherAndCapitalAllowances",
-            "/expenses/vehicleExpenses",
-            "/expenses/mileageAllowanceRelief"
-          ))))
+          response.json shouldBe Json.toJson(ValueFormatError.copy(paths =
+            Some(Seq("/paymentsToTradeUnionsForDeathBenefits/expenseAmount", "/patentRoyaltiesPayments/expenseAmount"))))
         }
+        s"an invalid customer reference is provided" in new NonTysTest {
+          override val requestBodyJson: JsValue = Json.parse(
+            s"""
+               |{
+               |  "paymentsToTradeUnionsForDeathBenefits": {
+               |    "customerReference": "TRADE UNION PAYMENTS AND OTHER THINGS THAT LEAD TO A REALLY LONG NAME THAT I'M HOPING IS OVER NINETY CHARACTERS",
+               |    "expenseAmount": 5000.99
+               |  },
+               |  "patentRoyaltiesPayments":{
+               |    "customerReference": "ROYALTIES PAYMENTS AND OTHER THINGS THAT LEAD TO A REALLY LONG NAME THAT I'M HOPING IS OVER NINETY CHARACTERS",
+               |    "expenseAmount": 5000.99
+               |  }
+               |}
+               |""".stripMargin
+          )
 
-        "an empty body is provided" in new NonTysTest {
+          override def setupStubs(): Unit = {}
 
+          val response: WSResponse = await(request().put(requestBodyJson))
+          response.status shouldBe BAD_REQUEST
+          response.json shouldBe Json.toJson(CustomerReferenceFormatError.copy(paths =
+            Some(Seq("/paymentsToTradeUnionsForDeathBenefits/customerReference", "/patentRoyaltiesPayments/customerReference"))))
+        }
+        s"a taxYear with range of greater than a year is provided" in new NonTysTest {
+          override val taxYear: String = "2019-21"
+
+          override def setupStubs(): Unit = {}
+
+          val response: WSResponse = await(request().put(requestBodyJson))
+          response.status shouldBe BAD_REQUEST
+          response.json shouldBe Json.toJson(RuleTaxYearRangeInvalidError)
+        }
+        s"an empty body is provided" in new NonTysTest {
           override val requestBodyJson: JsValue = Json.parse("""{}""")
+
+          override def setupStubs(): Unit = {}
 
           val response: WSResponse = await(request().put(requestBodyJson))
           response.status shouldBe BAD_REQUEST
           response.json shouldBe Json.toJson(RuleIncorrectOrEmptyBodyError)
         }
+        s"a body missing mandatory fields is provided" in new NonTysTest {
+          override val requestBodyJson: JsValue = Json.parse(
+            """{
+              | "paymentsToTradeUnionsForDeathBenefits": {},
+              | "patentRoyaltiesPayments": {}
+              |}""".stripMargin)
 
-        "an empty expenses body is provided" in new NonTysTest {
-
-          override val requestBodyJson: JsValue = Json.parse("""
-              |{
-              |    "expenses": {}
-              |}
-              |""".stripMargin)
+          override def setupStubs(): Unit = {}
 
           val response: WSResponse = await(request().put(requestBodyJson))
           response.status shouldBe BAD_REQUEST
@@ -146,12 +161,12 @@ class CreateAndAmendEmploymentExpensesControllerISpec extends IntegrationBaseSpe
       }
 
       "downstream service error" when {
-
         def serviceErrorTest(downstreamStatus: Int, downstreamCode: String, expectedStatus: Int, expectedBody: MtdError): Unit = {
           s"downstream returns an $downstreamCode error and status $downstreamStatus" in new NonTysTest {
 
-            override def setupStubs(): Unit =
+            override def setupStubs(): Unit = {
               DownstreamStub.onError(DownstreamStub.PUT, downstreamUri, downstreamStatus, errorBody(downstreamCode))
+            }
 
             val response: WSResponse = await(request().put(requestBodyJson))
             response.status shouldBe expectedStatus
@@ -159,18 +174,17 @@ class CreateAndAmendEmploymentExpensesControllerISpec extends IntegrationBaseSpe
           }
         }
 
-        val errors = List(
+        val errors = Seq(
           (BAD_REQUEST, "INVALID_TAXABLE_ENTITY_ID", BAD_REQUEST, NinoFormatError),
           (BAD_REQUEST, "INVALID_TAX_YEAR", BAD_REQUEST, TaxYearFormatError),
           (BAD_REQUEST, "INVALID_CORRELATIONID", INTERNAL_SERVER_ERROR, StandardDownstreamError),
           (BAD_REQUEST, "INVALID_PAYLOAD", INTERNAL_SERVER_ERROR, StandardDownstreamError),
-          (UNPROCESSABLE_ENTITY, "INVALID_REQUEST_BEFORE_TAX_YEAR", BAD_REQUEST, RuleTaxYearNotEndedError),
-          (NOT_FOUND, "INCOME_SOURCE_NOT_FOUND", NOT_FOUND, NotFoundError),
+          (UNPROCESSABLE_ENTITY, "UNPROCESSABLE_ENTITY", INTERNAL_SERVER_ERROR, StandardDownstreamError),
           (INTERNAL_SERVER_ERROR, "SERVER_ERROR", INTERNAL_SERVER_ERROR, StandardDownstreamError),
           (SERVICE_UNAVAILABLE, "SERVICE_UNAVAILABLE", INTERNAL_SERVER_ERROR, StandardDownstreamError)
         )
 
-        val extraTysErrors = List(
+        val extraTysErrors = Seq(
           (BAD_REQUEST, "INVALID_CORRELATION_ID", INTERNAL_SERVER_ERROR, StandardDownstreamError),
           (UNPROCESSABLE_ENTITY, "TAX_YEAR_NOT_SUPPORTED", BAD_REQUEST, RuleTaxYearNotSupportedError)
         )
@@ -184,93 +198,84 @@ class CreateAndAmendEmploymentExpensesControllerISpec extends IntegrationBaseSpe
 
     val nino: String = "AA123456A"
 
-    val taxYear: String
-
-    val amount: BigDecimal = 123.12
-
-    def requestBodyJson: JsValue = Json.parse(s"""
+    val requestBodyJson: JsValue = Json.parse(
+      s"""
          |{
-         |    "expenses": {
-         |        "businessTravelCosts": $amount,
-         |        "jobExpenses": $amount,
-         |        "flatRateJobExpenses": $amount,
-         |        "professionalSubscriptions": $amount,
-         |        "hotelAndMealExpenses": $amount,
-         |        "otherAndCapitalAllowances": $amount,
-         |        "vehicleExpenses": $amount,
-         |        "mileageAllowanceRelief": $amount
-         |    }
+         |  "paymentsToTradeUnionsForDeathBenefits": {
+         |    "customerReference": "TRADE UNION PAYMENTS",
+         |    "expenseAmount": 5000.99
+         |  },
+         |  "patentRoyaltiesPayments":{
+         |    "customerReference": "ROYALTIES PAYMENTS",
+         |    "expenseAmount": 5000.99
+         |  }
          |}
-         |""".stripMargin)
+         |""".stripMargin
+    )
 
-    lazy val hateoasResponse: JsValue = Json.parse(s"""
+    val responseBody = Json.parse(
+      s"""
          |{
          |  "links": [
          |    {
-         |      "href": "/individuals/expenses/employments/$nino/$taxYear",
+         |      "href": "/individuals/expenses/other/$nino/$taxYear",
          |      "method": "GET",
          |      "rel": "self"
          |    },
          |    {
-         |      "href": "/individuals/expenses/employments/$nino/$taxYear",
+         |      "href": "/individuals/expenses/other/$nino/$taxYear",
          |      "method": "PUT",
-         |      "rel": "amend-employment-expenses"
+         |      "rel": "amend-expenses-other"
          |    },
          |    {
-         |      "href": "/individuals/expenses/employments/$nino/$taxYear",
+         |      "href": "/individuals/expenses/other/$nino/$taxYear",
          |      "method": "DELETE",
-         |      "rel": "delete-employment-expenses"
+         |      "rel": "delete-expenses-other"
          |    }
          |  ]
          |}
          |""".stripMargin)
 
-    private lazy val mtdUri: String = s"/employments/$nino/$taxYear"
+    def uri: String = s"/other/$nino/$taxYear"
+
+    def taxYear: String
 
     def downstreamUri: String
 
-    def setupStubs(): Unit = ()
+    def setupStubs(): Unit
 
     def request(): WSRequest = {
       AuditStub.audit()
       AuthStub.authorised()
       MtdIdLookupStub.ninoFound(nino)
       setupStubs()
-      buildRequest(mtdUri)
+      buildRequest(uri)
         .withHttpHeaders(
-          (ACCEPT, "application/vnd.hmrc.1.0+json"),
+          (ACCEPT, "application/vnd.hmrc.2.0+json"),
           (AUTHORIZATION, "Bearer 123") // some bearer token
         )
     }
 
     def errorBody(code: String): String =
       s"""
-         |{
-         |  "failures": [
-         |    {
-         |      "code": "$code",
-         |      "reason": "downstream message"
-         |    }
-         |  ]
-         |}
+         |      {
+         |        "code": "$code",
+         |        "reason": "downstream message"
+         |      }
     """.stripMargin
 
   }
 
   private trait NonTysTest extends Test {
+    def taxYear: String = "2021-22"
 
-    val taxYear = "2021-22"
-
-    val downstreamUri = s"/income-tax/expenses/employments/$nino/$taxYear"
+    def downstreamUri: String = s"/income-tax/expenses/other/$nino/2021-22"
   }
 
   private trait TysIfsTest extends Test {
+    def taxYear: String = "2023-24"
 
-    val taxYear = "2023-24"
-
-    val downstreamUri = s"/income-tax/23-24/expenses/employments/$nino"
-
-    override def request(): WSRequest = super.request().addHttpHeaders("suspend-temporal-validations" -> "true")
+    def downstreamUri: String = s"/income-tax/expenses/other/23-24/$nino"
   }
 
 }
