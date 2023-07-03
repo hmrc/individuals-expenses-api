@@ -18,7 +18,7 @@ package definition
 
 import config.ConfidenceLevelConfig
 import definition.APIStatus.{ALPHA, BETA}
-import definition.Versions.VERSION_1
+import definition.Versions.{VERSION_1, VERSION_2}
 import mocks.{MockAppConfig, MockHttpClient}
 import support.UnitSpec
 import uk.gov.hmrc.auth.core.ConfidenceLevel
@@ -44,10 +44,11 @@ class ApiDefinitionFactorySpec extends UnitSpec {
       }
 
       def testDefinitionWithConfidence(confidenceLevelConfig: ConfidenceLevelConfig): Unit = new Test {
-        MockAppConfig.apiStatus("1.0") returns "1.0"
+        MockAppConfig.apiStatus("1.0") returns "BETA"
+        MockAppConfig.apiStatus("2.0") returns "ALPHA"
         MockAppConfig.endpointsEnabled("1.0") returns true
+        MockAppConfig.endpointsEnabled("2.0") returns false
         MockAppConfig.confidenceLevelCheckEnabled.returns(confidenceLevelConfig).anyNumberOfTimes()
-
 
         val readScope: String                = "read:self-assessment"
         val writeScope: String               = "write:self-assessment"
@@ -77,8 +78,13 @@ class ApiDefinitionFactorySpec extends UnitSpec {
               versions = List(
                 APIVersion(
                   version = VERSION_1,
-                  status = ALPHA,
+                  status = BETA,
                   endpointsEnabled = true
+                ),
+                APIVersion(
+                  version = VERSION_2,
+                  status = ALPHA,
+                  endpointsEnabled = false
                 )
               ),
               requiresTrust = None

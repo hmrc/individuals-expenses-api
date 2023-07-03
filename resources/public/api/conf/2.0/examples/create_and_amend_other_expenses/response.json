@@ -1,0 +1,19 @@
+{
+  "links":[
+    {
+      "href":"/individuals/expenses/other/TC663795B/2019-20",
+      "method":"PUT",
+      "rel":"amend-expenses-other"
+    },
+    {
+      "href":"/individuals/expenses/other/TC663795B/2019-20",
+      "method":"GET",
+      "rel":"self"
+    },
+    {
+      "href":"/individuals/expenses/other/TC663795B/2019-20",
+      "method":"DELETE",
+      "rel":"delete-expenses-other"
+    }
+  ]
+}

@@ -14,19 +14,14 @@
  * limitations under the License.
  */
 
-package v1.stubs
+package v2.models.request.createAndAmendEmploymentExpenses
 
-import com.github.tomakehurst.wiremock.stubbing.StubMapping
-import play.api.http.Status._
-import support.WireMockMethods
+import play.api.libs.json.{Json, OFormat}
 
-object AuditStub extends WireMockMethods {
+case class CreateAndAmendEmploymentExpensesBody(expenses: Expenses) {
+  def isIncorrectOrEmptyBody: Boolean = expenses.isEmpty
+}
 
-  private val auditUri: String = s"/write/audit.*"
-
-  def audit(): StubMapping = {
-    when(method = POST, uri = auditUri)
-      .thenReturn(status = NO_CONTENT)
-  }
-
+object CreateAndAmendEmploymentExpensesBody {
+  implicit val format: OFormat[CreateAndAmendEmploymentExpensesBody] = Json.format[CreateAndAmendEmploymentExpensesBody]
 }
