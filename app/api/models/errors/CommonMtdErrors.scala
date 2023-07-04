@@ -41,6 +41,12 @@ object RuleTaxYearRangeInvalidError
 
 object RuleTaxYearNotEndedError extends MtdError("RULE_TAX_YEAR_NOT_ENDED", "Tax year not ended", BAD_REQUEST)
 
+object RuleInvalidSubmissionPensionScheme
+    extends MtdError(
+      "RULE_INVALID_SUBMISSION_PENSION_SCHEME",
+      "Data item submitted is invalid for a customer with an occupational pension and no other employment source - for example, employment expenses or benefit in kind (apart from medical insurance) are not valid",
+      BAD_REQUEST)
+
 //Standard Errors
 object NotFoundError extends MtdError("MATCHING_RESOURCE_NOT_FOUND", "Matching resource not found", NOT_FOUND)
 

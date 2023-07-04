@@ -27,11 +27,10 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class CreateAndAmendEmploymentExpensesService @Inject()(connector: CreateAndAmendEmploymentExpensesConnector) extends BaseService {
+class CreateAndAmendEmploymentExpensesService @Inject() (connector: CreateAndAmendEmploymentExpensesConnector) extends BaseService {
 
-  def createAndAmendEmploymentExpenses(request: CreateAndAmendEmploymentExpensesRequest)(implicit
-      ctx: RequestContext,
-      ec: ExecutionContext): Future[ServiceOutcome[Unit]] = {
+  def createAndAmendEmploymentExpenses(
+      request: CreateAndAmendEmploymentExpensesRequest)(implicit ctx: RequestContext, ec: ExecutionContext): Future[ServiceOutcome[Unit]] = {
 
     connector.createAmendEmploymentExpenses(request).map(_.leftMap(mapDownstreamErrors(downstreamErrorMap)))
 
@@ -49,8 +48,9 @@ class CreateAndAmendEmploymentExpensesService @Inject()(connector: CreateAndAmen
       "SERVICE_UNAVAILABLE"             -> StandardDownstreamError
     )
     val extraTysErrors = Map(
-      "INVALID_CORRELATION_ID" -> StandardDownstreamError,
-      "TAX_YEAR_NOT_SUPPORTED" -> RuleTaxYearNotSupportedError
+      "INVALID_CORRELATION_ID"            -> StandardDownstreamError,
+      "TAX_YEAR_NOT_SUPPORTED"            -> RuleTaxYearNotSupportedError,
+      "INVALID_SUBMISSION_PENSION_SCHEME" -> RuleInvalidSubmissionPensionScheme
     )
 
     errors ++ extraTysErrors

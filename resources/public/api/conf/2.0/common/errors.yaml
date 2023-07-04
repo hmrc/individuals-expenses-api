@@ -60,6 +60,13 @@ components:
         code: RULE_TAX_YEAR_NOT_ENDED
         message: Tax year not ended
 
+    ruleInvalidSubmissionPensionScheme:
+      description: |
+        Customer with single employment source that has "occupational pension" indicator cannot submit employment expenses.
+      value:
+        code: RULE_INVALID_SUBMISSION_PENSION_SCHEME
+        message: Data item submitted is invalid for a customer with an occupational pension and no other employment source - for example, employment expenses or benefit in kind (apart from medical insurance) are not valid
+
     ruleIncorrectGovTestScenario:
       description: |
         The request did not match any available Sandbox data. Check that the supplied Gov-Test-Scenario is correct for 
