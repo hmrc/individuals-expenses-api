@@ -25,10 +25,10 @@ import v2.models.request.createAndAmendEmploymentExpenses.{CreateAndAmendEmploym
 
 import javax.inject.Inject
 
-class CreateAndAmendEmploymentExpensesValidator @Inject()(implicit
-                                                          currentDateTime: CurrentDateTime,
-                                                          appConfig: AppConfig,
-                                                          currentTaxYear: CurrentTaxYear)
+class CreateAndAmendEmploymentExpensesValidator @Inject() (implicit
+    currentDateTime: CurrentDateTime,
+    appConfig: AppConfig,
+    currentTaxYear: CurrentTaxYear)
     extends Validator[CreateAndAmendEmploymentExpensesRawData] {
 
   private val validationSet =

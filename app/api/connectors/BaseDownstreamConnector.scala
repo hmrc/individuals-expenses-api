@@ -36,10 +36,10 @@ trait BaseDownstreamConnector {
   private val jsonContentTypeHeader = HeaderNames.CONTENT_TYPE -> MimeTypes.JSON
 
   def post[Body: Writes, Resp](body: Body, request: DownstreamUri[Resp])(implicit
-                                                                         ec: ExecutionContext,
-                                                                         hc: HeaderCarrier,
-                                                                         httpReads: HttpReads[DownstreamOutcome[Resp]],
-                                                                         correlationId: String): Future[DownstreamOutcome[Resp]] = {
+      ec: ExecutionContext,
+      hc: HeaderCarrier,
+      httpReads: HttpReads[DownstreamOutcome[Resp]],
+      correlationId: String): Future[DownstreamOutcome[Resp]] = {
 
     def doPost(implicit hc: HeaderCarrier): Future[DownstreamOutcome[Resp]] = {
       http.POST(url = getBackendUri(request), body)
@@ -49,10 +49,10 @@ trait BaseDownstreamConnector {
   }
 
   def put[Body: Writes, Resp](body: Body, uri: DownstreamUri[Resp])(implicit
-                                                                    ec: ExecutionContext,
-                                                                    hc: HeaderCarrier,
-                                                                    httpReads: HttpReads[DownstreamOutcome[Resp]],
-                                                                    correlationId: String): Future[DownstreamOutcome[Resp]] = {
+      ec: ExecutionContext,
+      hc: HeaderCarrier,
+      httpReads: HttpReads[DownstreamOutcome[Resp]],
+      correlationId: String): Future[DownstreamOutcome[Resp]] = {
 
     def doPut(implicit hc: HeaderCarrier): Future[DownstreamOutcome[Resp]] = {
       http.PUT(url = getBackendUri(uri), body)
@@ -62,10 +62,10 @@ trait BaseDownstreamConnector {
   }
 
   def get[Resp](uri: DownstreamUri[Resp])(implicit
-                                          ec: ExecutionContext,
-                                          hc: HeaderCarrier,
-                                          httpReads: HttpReads[DownstreamOutcome[Resp]],
-                                          correlationId: String): Future[DownstreamOutcome[Resp]] = {
+      ec: ExecutionContext,
+      hc: HeaderCarrier,
+      httpReads: HttpReads[DownstreamOutcome[Resp]],
+      correlationId: String): Future[DownstreamOutcome[Resp]] = {
 
     def doGet(implicit hc: HeaderCarrier): Future[DownstreamOutcome[Resp]] =
       http.GET(url = getBackendUri(uri))
@@ -74,10 +74,10 @@ trait BaseDownstreamConnector {
   }
 
   def delete[Resp](uri: DownstreamUri[Resp])(implicit
-                                             ec: ExecutionContext,
-                                             hc: HeaderCarrier,
-                                             httpReads: HttpReads[DownstreamOutcome[Resp]],
-                                             correlationId: String): Future[DownstreamOutcome[Resp]] = {
+      ec: ExecutionContext,
+      hc: HeaderCarrier,
+      httpReads: HttpReads[DownstreamOutcome[Resp]],
+      correlationId: String): Future[DownstreamOutcome[Resp]] = {
 
     def doDelete(implicit hc: HeaderCarrier): Future[DownstreamOutcome[Resp]] =
       http.DELETE(url = getBackendUri(uri))
@@ -103,7 +103,7 @@ trait BaseDownstreamConnector {
         // Contract headers
         Seq(
           "Authorization" -> s"Bearer ${downstreamConfig.token}",
-          "Environment" -> downstreamConfig.env,
+          "Environment"   -> downstreamConfig.env,
           "CorrelationId" -> correlationId
         ) ++
         additionalHeaders ++
@@ -113,9 +113,9 @@ trait BaseDownstreamConnector {
 
   private def configFor[Resp](uri: DownstreamUri[Resp]) =
     uri match {
-      case DesUri(_) => appConfig.desDownstreamConfig
-      case IfsR5Uri(_) => appConfig.ifsR5DownstreamConfig
-      case IfsR6Uri(_) => appConfig.ifsR6DownstreamConfig
+      case DesUri(_)                => appConfig.desDownstreamConfig
+      case IfsR5Uri(_)              => appConfig.ifsR5DownstreamConfig
+      case IfsR6Uri(_)              => appConfig.ifsR6DownstreamConfig
       case TaxYearSpecificIfsUri(_) => appConfig.taxYearSpecificIfsDownstreamConfig
     }
 

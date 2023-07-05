@@ -31,14 +31,14 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class DeleteOtherExpensesControllerSpec
-  extends ControllerBaseSpec
+    extends ControllerBaseSpec
     with ControllerTestRunner
     with MockDeleteOtherExpensesService
     with MockDeleteOtherExpensesRequestDataParser {
 
   private val taxYear = "2019-20"
 
-  private val rawData = DeleteOtherExpensesRawData(nino, taxYear)
+  private val rawData     = DeleteOtherExpensesRawData(nino, taxYear)
   private val requestData = DeleteOtherExpensesRequest(Nino(nino), TaxYear.fromMtd(taxYear))
 
   "handleRequest" should {
