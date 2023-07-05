@@ -16,20 +16,23 @@
 
 package config.rewriters
 
+import config.AppConfig
 import config.rewriters.DocumentationRewriters.CheckRewrite
 import controllers.Rewriter
 
-object ApiVersionTitleRewriter {
+import javax.inject.{Inject, Singleton}
+
+@Singleton class ApiVersionTitleRewriter @Inject() (appConfig: AppConfig) {
 
   private val rewriteTitleRegex = ".*(title: [\"]?)(.*)".r
 
   val rewriteApiVersionTitle: (CheckRewrite, Rewriter) =
     (
-      (version, filename, appConfig) => {
+      (version, filename) => {
         // assumes that the Developer Hub OAS is being served from Production env:
         filename == "application.yaml" && !appConfig.endpointsEnabled(version)
       },
-      (_, _, _, yaml) => {
+      (_, _, yaml) => {
         val maybeLine = rewriteTitleRegex.findFirstIn(yaml)
         maybeLine
           .collect {

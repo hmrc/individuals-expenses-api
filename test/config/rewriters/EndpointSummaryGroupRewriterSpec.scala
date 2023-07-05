@@ -16,22 +16,23 @@
 
 package config.rewriters
 
-import config.rewriters.EndpointSummaryGroupRewriter.rewriteGroupedEndpointSummaries
 import mocks.MockAppConfig
 import support.UnitSpec
 
 class EndpointSummaryGroupRewriterSpec extends UnitSpec with MockAppConfig {
 
+  val rewriter = new EndpointSummaryGroupRewriter(mockAppConfig)
+
   "check and rewrite for the 'workaround' grouped endpoints yaml file" should {
     // e.g. employment_expenses.yaml which points to employment_expenses_create_and_amend.yaml etc,
     // but must include the endpoint summary as an OAS renderer workaround.
 
-    val (check, rewrite) = rewriteGroupedEndpointSummaries
+    val (check, rewrite) = rewriter.rewriteGroupedEndpointSummaries
 
     "indicate rewrite needed" in {
       MockAppConfig.endpointSwitches("1.0") returns Map("employment-expenses-create-and-amend.enabled" -> false)
 
-      val result = check("1.0", "employment_expenses.yaml", mockAppConfig)
+      val result = check("1.0", "employment_expenses.yaml")
       result shouldBe true
     }
 
@@ -39,13 +40,13 @@ class EndpointSummaryGroupRewriterSpec extends UnitSpec with MockAppConfig {
       MockAppConfig.endpointSwitches("1.0") returns Map(
         "employment-expenses-create-and-amend.enabled" -> true
       )
-      val result = check("1.0", "employment_expenses.yaml", mockAppConfig)
+      val result = check("1.0", "employment_expenses.yaml")
       result shouldBe false
     }
 
     "indicate rewrite not needed given no endpoint API config entries" in {
       MockAppConfig.endpointSwitches("1.0") returns Map.empty
-      val result = check("1.0", "employment_expenses.enabled.yaml", mockAppConfig)
+      val result = check("1.0", "employment_expenses.enabled.yaml")
       result shouldBe false
     }
 
@@ -112,9 +113,8 @@ class EndpointSummaryGroupRewriterSpec extends UnitSpec with MockAppConfig {
           |
           |""".stripMargin
 
-      val result = rewrite(path = "/public/api/conf/1.0", filename = "employment_expenses.yaml", mockAppConfig, yaml)
+      val result = rewrite(path = "/public/api/conf/1.0", filename = "employment_expenses.yaml", yaml)
       result shouldBe expected
-
     }
   }
 

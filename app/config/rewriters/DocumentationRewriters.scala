@@ -16,22 +16,30 @@
 
 package config.rewriters
 
-import config.AppConfig
-import config.rewriters.ApiVersionTitleRewriter.rewriteApiVersionTitle
-import config.rewriters.EndpointSummaryGroupRewriter.rewriteGroupedEndpointSummaries
-import config.rewriters.EndpointSummaryRewriter.rewriteEndpointSummary
+import config.rewriters.DocumentationRewriters.CheckRewrite
+import controllers.Rewriter
+
+import javax.inject.{Inject, Singleton}
+
+@Singleton class DocumentationRewriters @Inject() (apiVersionTitleRewriter: ApiVersionTitleRewriter,
+                                                   endpointSummaryRewriter: EndpointSummaryRewriter,
+                                                   endpointSummaryGroupRewriter: EndpointSummaryGroupRewriter,
+                                                   oasFeatureExampleRewriter: OasFeatureRewriter) {
+
+  val rewriteables: Seq[(CheckRewrite, Rewriter)] =
+    List(
+      apiVersionTitleRewriter.rewriteApiVersionTitle,
+      oasFeatureExampleRewriter.rewriteOasFeature,
+      endpointSummaryRewriter.rewriteEndpointSummary,
+      endpointSummaryGroupRewriter.rewriteGroupedEndpointSummaries
+    )
+
+}
 
 object DocumentationRewriters {
 
-  val rewriteables =
-    List(
-      rewriteApiVersionTitle,
-      rewriteEndpointSummary,
-      rewriteGroupedEndpointSummaries
-    )
-
   trait CheckRewrite {
-    def apply(version: String, filename: String, appConfig: AppConfig): Boolean
+    def apply(version: String, filename: String): Boolean
   }
 
 }

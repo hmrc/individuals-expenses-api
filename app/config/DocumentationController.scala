@@ -17,7 +17,7 @@
 package config
 
 import config.DocumentationController.filenameWithFeatureName
-import config.rewriters.DocumentationRewriters.rewriteables
+import config.rewriters.DocumentationRewriters
 import controllers.RewriteableAssets
 import definition.ApiDefinitionFactory
 import play.api.libs.json.Json
@@ -30,8 +30,9 @@ import javax.inject.{Inject, Singleton}
 @Singleton
 class DocumentationController @Inject() (
     selfAssessmentApiDefinition: ApiDefinitionFactory,
-    cc: ControllerComponents,
-    assets: RewriteableAssets
+    docRewriters: DocumentationRewriters,
+    assets: RewriteableAssets,
+    cc: ControllerComponents
 )(implicit appConfig: AppConfig)
     extends BackendController(cc)
     with Logging {
@@ -44,7 +45,7 @@ class DocumentationController @Inject() (
 
   def asset(version: String, filename: String): Action[AnyContent] = {
     val path      = s"/public/api/conf/$version"
-    val rewriters = rewriteables.collect { case (check, rewrite) if check(version, filename, appConfig) => rewrite }
+    val rewriters = docRewriters.rewriteables.collect { case (check, rewriter) if check(version, filename) => rewriter }
     assets.rewriteableAt(path, fileToReturn(version, filename), rewriters)
   }
 
