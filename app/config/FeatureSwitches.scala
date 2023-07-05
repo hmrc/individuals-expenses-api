@@ -20,8 +20,6 @@ import org.apache.commons.lang3.BooleanUtils
 import play.api.Configuration
 import play.api.mvc.Request
 
-import scala.util.matching.Regex
-
 case class FeatureSwitches(featureSwitchConfig: Configuration) {
 
   private val versionRegex = """(\d)\.\d""".r
@@ -51,10 +49,6 @@ case class FeatureSwitches(featureSwitchConfig: Configuration) {
     */
   val isOasFeatureExampleReleased: Boolean = isReleasedInProduction("oas-feature-example")
 
-  val openApiFeatures: Seq[OpenApiFeature] = List(
-    OpenApiFeatureTest
-  ).filter(feature => isEnabled(feature.key))
-
   def isTemporalValidationEnabled(implicit request: Request[_]): Boolean = {
     if (isEnabled("allowTemporalValidationSuspension")) {
       request.headers.get("suspend-temporal-validations").forall(!BooleanUtils.toBoolean(_))
@@ -63,10 +57,7 @@ case class FeatureSwitches(featureSwitchConfig: Configuration) {
     }
   }
 
-  def isEnabled(key: String): Boolean = {
-    isConfigTrue(key + ".enabled")
-  }
-
+  def isEnabled(key: String): Boolean              = isConfigTrue(key + ".enabled")
   def isReleasedInProduction(key: String): Boolean = isConfigTrue(key + ".released")
 
   private def isConfigTrue(key: String): Boolean = featureSwitchConfig.getOptional[Boolean](key).getOrElse(true)
@@ -74,26 +65,4 @@ case class FeatureSwitches(featureSwitchConfig: Configuration) {
 
 object FeatureSwitches {
   def apply()(implicit appConfig: AppConfig): FeatureSwitches = FeatureSwitches(appConfig.featureSwitches)
-}
-
-// TODO remove:
-trait OpenApiFeature {
-  val key: String
-  val version: String
-  val fileMatchers: Seq[Regex]
-
-  def matches(requestedVersion: String, filename: String): Boolean = requestedVersion == version && matches(filename)
-
-  private[config] def matches(filename: String): Boolean = fileMatchers.exists(_.findFirstIn(filename).isDefined)
-}
-
-case object OpenApiFeatureTest extends OpenApiFeature {
-  val key     = "openApiFeatureTest"
-  val version = "1.0"
-
-  val fileMatchers = List(
-    "^employment_expenses_retrieve\\.yaml$".r,
-    "^other_expenses_retrieve\\.yaml$".r
-  )
-
 }

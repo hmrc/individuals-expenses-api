@@ -80,16 +80,15 @@ trait AppConfig {
 
   /** Currently only for OAS documentation.
     */
-  def endpointEnabled(version: String, name: String): Boolean
+  def apiVersionReleasedInProduction(version: String): Boolean
 
   /** Currently only for OAS documentation.
     */
-  def endpointSwitches(version: String): Map[String, Boolean]
+  def endpointReleasedInProduction(version: String, name: String): Boolean
 }
 
 @Singleton
 class AppConfigImpl @Inject() (config: ServicesConfig, configuration: Configuration) extends AppConfig {
-
 
   val keyValuesJ: util.Map[String, ConfigValue] = configuration.entrySet.toMap.asJava
 
@@ -128,14 +127,15 @@ class AppConfigImpl @Inject() (config: ServicesConfig, configuration: Configurat
   val otherExpensesMinimumTaxYear: Int      = config.getInt("otherExpensesMinimumTaxYear")
   val employmentExpensesMinimumTaxYear: Int = config.getInt("employmentExpensesMinimumTaxYear")
 
-  def endpointsEnabled(version: String): Boolean = config.getBoolean(s"api.$version.endpoints.enabled")
+  def endpointsEnabled(version: String): Boolean               = config.getBoolean(s"api.$version.endpoints.enabled")
+  def apiVersionReleasedInProduction(version: String): Boolean = config.getBoolean(s"api.$version.endpoints.api-released-in-production")
 
-  def endpointEnabled(version: String, name: String): Boolean = {
+  def endpointReleasedInProduction(version: String, name: String): Boolean = {
     val switches = endpointSwitches(version)
-    switches.getOrElse(name, true)
+    switches.getOrElse(name, apiVersionReleasedInProduction(version))
   }
 
-  def endpointSwitches(version: String): Map[String, Boolean] = {
+  private def endpointSwitches(version: String): Map[String, Boolean] = {
     val path = s"api.$version.endpoints.switches"
 
     val conf = configuration.underlying

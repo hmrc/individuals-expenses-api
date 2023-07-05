@@ -16,7 +16,6 @@
 
 package config
 
-import config.DocumentationController.filenameWithFeatureName
 import config.rewriters.DocumentationRewriters
 import controllers.RewriteableAssets
 import definition.ApiDefinitionFactory
@@ -33,11 +32,8 @@ class DocumentationController @Inject() (
     docRewriters: DocumentationRewriters,
     assets: RewriteableAssets,
     cc: ControllerComponents
-)(implicit appConfig: AppConfig)
-    extends BackendController(cc)
+) extends BackendController(cc)
     with Logging {
-
-  private val openApiFeatures: Seq[OpenApiFeature] = FeatureSwitches().openApiFeatures
 
   def definition(): Action[AnyContent] = Action {
     Ok(Json.toJson(selfAssessmentApiDefinition.definition))
@@ -46,28 +42,7 @@ class DocumentationController @Inject() (
   def asset(version: String, filename: String): Action[AnyContent] = {
     val path      = s"/public/api/conf/$version"
     val rewriters = docRewriters.rewriteables.collect { case (check, rewriter) if check(version, filename) => rewriter }
-    assets.rewriteableAt(path, fileToReturn(version, filename), rewriters)
-  }
-
-  private[config] def fileToReturn(version: String, filename: String): String =
-    openApiFeatures.find(_.matches(version, filename)) match {
-      case Some(feature) => filenameWithFeatureName(filename, feature)
-      case None          => filename
-    }
-
-}
-
-object DocumentationController {
-
-  private[config] def filenameWithFeatureName(filename: String, feature: OpenApiFeature): String = {
-    val dotIdx = filename.lastIndexOf(".")
-    if (dotIdx == -1) {
-      s"${filename}_${feature.key}"
-    } else {
-      val ext  = filename.substring(dotIdx)
-      val main = filename.substring(0, dotIdx)
-      s"${main}_${feature.key}$ext"
-    }
+    assets.rewriteableAt(path, filename, rewriters)
   }
 
 }

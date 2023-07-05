@@ -1,52 +1,41 @@
+/*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package config.rewriters
 
-import com.github.jknack.handlebars.{Handlebars, Options, Template}
+import com.github.jknack.handlebars.Options
 import config.rewriters.DocumentationRewriters.CheckRewrite
 import config.{AppConfig, FeatureSwitches}
 import controllers.Rewriter
 
 import javax.inject.{Inject, Singleton}
-import scala.collection.mutable
 
 @Singleton class OasFeatureRewriter @Inject() (implicit val appConfig: AppConfig) extends HandlebarsRewriter {
 
-  private val fs = FeatureSwitches() // .featureSwitchConfig.entrySet.toMap.asJava
+  private val fs = FeatureSwitches()
 
-  hb.registerHelper("enabled", (featureName: String, _: Options) => {
-    println(featureName)
-
-    if (fs.isEnabled(featureName)) "true" else null
-
-  })
-
+  hb.registerHelper(
+    "enabled",
+    (featureName: String, _: Options) => {
+      if (fs.isEnabled(featureName)) "true" else null // javascript "truthy"
+    })
 
   val rewriteOasFeature: (CheckRewrite, Rewriter) = (
-    (version, _) => appConfig.endpointsEnabled(version),
-    (path, filename, contents) => rewrite(path, filename, contents, fs)
+    (version, _) => appConfig.endpointsEnabled(version) && appConfig.apiVersionReleasedInProduction(version),
+    (_, _, contents) => rewrite(contents, fs)
   )
-
-}
-
-trait HandlebarsRewriter {
-  implicit val appConfig: AppConfig
-
-  protected val hb            = new Handlebars
-  private val templateCache = mutable.Map[String, Template]()
-
-  protected def rewrite(path: String, filename: String, contents: String, context: AnyRef): String = {
-    val cacheKey = s"$path $filename"
-    val template = compiledTemplate(cacheKey, contents)
-    template.apply(context)
-  }
-
-  private def compiledTemplate(key: String, fileContents: String): Template = synchronized {
-    templateCache.get(key) match {
-      case Some(t) => t
-      case None =>
-        val t: Template = hb.compileInline(fileContents)
-        templateCache.addOne(key -> t)
-        t
-    }
-  }
 
 }

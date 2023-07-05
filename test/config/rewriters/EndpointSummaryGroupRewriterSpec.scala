@@ -30,38 +30,27 @@ class EndpointSummaryGroupRewriterSpec extends UnitSpec with MockAppConfig {
     val (check, rewrite) = rewriter.rewriteGroupedEndpointSummaries
 
     "indicate rewrite needed" in {
-      MockAppConfig.endpointSwitches("1.0") returns Map("employment-expenses-create-and-amend.enabled" -> false)
-
-      val result = check("1.0", "employment_expenses.yaml")
+      val result = check("any-version", "employment_expenses.yaml")
       result shouldBe true
     }
 
     "indicate rewrite not needed" in {
-      MockAppConfig.endpointSwitches("1.0") returns Map(
-        "employment-expenses-create-and-amend.enabled" -> true
-      )
-      val result = check("1.0", "employment_expenses.yaml")
-      result shouldBe false
-    }
-
-    "indicate rewrite not needed given no endpoint API config entries" in {
-      MockAppConfig.endpointSwitches("1.0") returns Map.empty
-      val result = check("1.0", "employment_expenses.enabled.yaml")
+      val result = check("1.0", "employment_expenses.json")
       result shouldBe false
     }
 
     "rewrite all summaries in the group yaml file" in {
-      MockAppConfig.endpointSwitches("1.0") returns Map(
-        "employment-expenses-create-and-amend" -> false,
-        "employment-expenses-retrieve"         -> true,
-        "employment-expenses-delete"           -> false
-      )
+      MockAppConfig.apiVersionReleasedInProduction("1.0") returns true
+
+      MockAppConfig.endpointReleasedInProduction("1.0", "employment-expenses-create-and-amend") returns false
+      MockAppConfig.endpointReleasedInProduction("1.0", "employment-expenses-retrieve") returns true
+      MockAppConfig.endpointReleasedInProduction("1.0", "employment-expenses-delete") returns false
 
       val yaml =
         """
           |put:
           |  $ref: "./employment_expenses_create_and_amend.yaml"
-          |  summary: Create and Amend Employment Expenses
+          |  summary: Create and Amend Employment Expenses{{#maybeTestOnly "2.0 employment-expenses-create-and-amend"}}
           |  security:
           |    - User-Restricted:
           |        - write:self-assessment
@@ -69,7 +58,7 @@ class EndpointSummaryGroupRewriterSpec extends UnitSpec with MockAppConfig {
           |
           |get:
           |  $ref: "./employment_expenses_retrieve.yaml"
-          |  summary: Retrieve Employment Expenses
+          |  summary: Retrieve Employment Expenses{{#maybeTestOnly "2.0 employment-expenses-retrieve"}}
           |  security:
           |    - User-Restricted:
           |        - read:self-assessment
@@ -78,7 +67,7 @@ class EndpointSummaryGroupRewriterSpec extends UnitSpec with MockAppConfig {
           |
           |delete:
           |  $ref: "./employment_expenses_delete.yaml"
-          |  summary: Delete Employment Expenses
+          |  summary: Delete Employment Expenses{{#maybeTestOnly "2.0 employment-expenses-delete"}}
           |  security:
           |    - User-Restricted:
           |        - write:self-assessment

@@ -24,14 +24,14 @@ import javax.inject.{Inject, Singleton}
 @Singleton class DocumentationRewriters @Inject() (apiVersionTitleRewriter: ApiVersionTitleRewriter,
                                                    endpointSummaryRewriter: EndpointSummaryRewriter,
                                                    endpointSummaryGroupRewriter: EndpointSummaryGroupRewriter,
-                                                   oasFeatureExampleRewriter: OasFeatureRewriter) {
+                                                   oasFeatureRewriter: OasFeatureRewriter) {
 
   val rewriteables: Seq[(CheckRewrite, Rewriter)] =
     List(
       apiVersionTitleRewriter.rewriteApiVersionTitle,
-      oasFeatureExampleRewriter.rewriteOasFeature,
       endpointSummaryRewriter.rewriteEndpointSummary,
-      endpointSummaryGroupRewriter.rewriteGroupedEndpointSummaries
+      endpointSummaryGroupRewriter.rewriteGroupedEndpointSummaries,
+      oasFeatureRewriter.rewriteOasFeature
     )
 
 }

@@ -20,7 +20,6 @@ import akka.actor.ActorSystem
 import akka.stream.Materializer
 import api.controllers.ControllerBaseSpec
 import com.typesafe.config.ConfigFactory
-import config.DocumentationController.filenameWithFeatureName
 import config.rewriters._
 import controllers.{AssetsConfiguration, DefaultAssetsMetadata, RewriteableAssets}
 import definition.ApiDefinitionFactory
@@ -32,15 +31,8 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import scala.util.matching.Regex
 
 class DocumentationControllerSpec extends ControllerBaseSpec with MockAppConfig {
-
-  private case object AFeature extends OpenApiFeature {
-    val key                      = "aFeature"
-    val version                  = "any"
-    val fileMatchers: Seq[Regex] = Nil
-  }
 
   "/file endpoint" should {
     "return a file" in new Test {
@@ -95,23 +87,6 @@ class DocumentationControllerSpec extends ControllerBaseSpec with MockAppConfig 
     }
   }
 
-  "fileToReturn()" should {
-    "return the expected filename" when {
-
-      "the feature is disabled" in new Test {
-        override protected def featureEnabled = false
-
-        private val result = controller.fileToReturn("1.0", "employment_expenses_retrieve.yaml")
-        result shouldBe "employment_expenses_retrieve.yaml"
-      }
-
-      "the feature is enabled" in new Test {
-        private val result = controller.fileToReturn("1.0", "employment_expenses_retrieve.yaml")
-        result shouldBe "employment_expenses_retrieve_openApiFeatureTest.yaml"
-      }
-    }
-  }
-
   trait Test {
     val hc: HeaderCarrier = HeaderCarrier()
 
@@ -148,33 +123,7 @@ class DocumentationControllerSpec extends ControllerBaseSpec with MockAppConfig 
     )
 
     private val assets       = new RewriteableAssets(errorHandler, assetsMetadata, mockAppConfig)
-    protected val controller = new DocumentationController(apiFactory, docRewriters, assets, cc)(mockAppConfig)
-  }
-
-  "filenameWithFeatureName" should {
-    "return a filename with the feature name inserted at the end" when {
-
-      "it's a YAML file" in {
-        val result = filenameWithFeatureName("subfolder/long.named.application.yaml", AFeature)
-        result shouldBe "subfolder/long.named.application_aFeature.yaml"
-      }
-
-      "it's a Markdown file" in {
-        val result = filenameWithFeatureName("application.md", AFeature)
-        result shouldBe "application_aFeature.md"
-      }
-
-      "there's no filename extension" in {
-        val result = filenameWithFeatureName("application", AFeature)
-        result shouldBe "application_aFeature"
-      }
-
-      "the name ends with ." in {
-        val result = filenameWithFeatureName("application.", AFeature)
-        result shouldBe "application_aFeature."
-      }
-
-    }
+    protected val controller = new DocumentationController(apiFactory, docRewriters, assets, cc)
   }
 
 }

@@ -29,8 +29,9 @@ import javax.inject.{Inject, Singleton}
   val rewriteApiVersionTitle: (CheckRewrite, Rewriter) =
     (
       (version, filename) => {
-        // assumes that the Developer Hub OAS is being served from Production env:
-        filename == "application.yaml" && !appConfig.endpointsEnabled(version)
+
+        filename == "application.yaml" &&
+        !appConfig.endpointsEnabled(version) // TODO instead check for "api.[version].endpoints.released-in-production"
       },
       (_, _, yaml) => {
         val maybeLine = rewriteTitleRegex.findFirstIn(yaml)

@@ -38,7 +38,7 @@ import javax.inject.{Inject, Singleton}
               .dropRight(5)
               .replace("_", "-")
 
-          !appConfig.endpointEnabled(version, key)
+          !appConfig.endpointReleasedInProduction(version, key)
         }
       },
       (_, _, yaml) => {
