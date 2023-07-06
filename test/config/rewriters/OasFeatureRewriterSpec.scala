@@ -32,7 +32,7 @@ class OasFeatureRewriterSpec extends UnitSpec with MockAppConfig {
     MockAppConfig.endpointsEnabled("1.0").anyNumberOfTimes() returns versionEnabled
 
     val rewriter = new OasFeatureRewriter()(mockAppConfig)
-    rewriter.rewriteOasFeature
+    rewriter.rewriteOasFeature.asTuple
   }
 
   "check and rewrite" should {

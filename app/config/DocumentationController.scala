@@ -40,8 +40,8 @@ class DocumentationController @Inject() (
   }
 
   def asset(version: String, filename: String): Action[AnyContent] = {
-    val path      = s"/public/api/conf/$version"
-    val rewriters = docRewriters.rewriteables.collect { case (check, rewriter) if check(version, filename) => rewriter }
+    val path = s"/public/api/conf/$version"
+    val rewriters = docRewriters.rewriteables.flatMap{_.maybeRewriter(version, filename)}
     assets.rewriteableAt(path, filename, rewriters)
   }
 
