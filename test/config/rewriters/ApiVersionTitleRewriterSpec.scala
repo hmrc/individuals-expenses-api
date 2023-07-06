@@ -21,21 +21,21 @@ import support.UnitSpec
 
 class ApiVersionTitleRewriterSpec extends UnitSpec with MockAppConfig {
 
-  val rewriter         = new ApiVersionTitleRewriter(mockAppConfig)
-  val (check, rewrite) = rewriter.rewriteApiVersionTitle
+  private val rewriter        = new ApiVersionTitleRewriter(mockAppConfig)
+  private val checkAndRewrite = rewriter.rewriteApiVersionTitle
 
   "ApiVersionTitleRewriter" when {
     "checking if rewrite is needed for a given version" should {
       "indicate rewrite needed when API endpoints are disabled in production" in {
         MockAppConfig.apiVersionReleasedInProduction("1.0") returns false
-        val result = check("1.0", "application.yaml")
+        val result = checkAndRewrite.check("1.0", "application.yaml")
         result shouldBe true
       }
 
       "indicate rewrite not needed for any other combination" in {
         MockAppConfig.apiVersionReleasedInProduction("1.0") returns true
-        val result1 = check("1.0", "application.yaml")
-        val result2 = check("1.0", "some_other_file.yaml")
+        val result1 = checkAndRewrite.check("1.0", "application.yaml")
+        val result2 = checkAndRewrite.check("1.0", "some_other_file.yaml")
         result1 shouldBe false
         result2 shouldBe false
       }
@@ -44,7 +44,7 @@ class ApiVersionTitleRewriterSpec extends UnitSpec with MockAppConfig {
     "rewriting the title" should {
       "return the title unchanged if it already contains '[test only]'" in {
         val title  = """  title: "[tesT oNLy] API title (MTD)""""
-        val result = rewrite("", "", title)
+        val result = checkAndRewrite.rewrite("", "", title)
         result shouldBe title
       }
 
@@ -79,14 +79,14 @@ class ApiVersionTitleRewriterSpec extends UnitSpec with MockAppConfig {
                     |  - url: https://test-api.service.hmrc.gov.uk
                     |""".stripMargin
 
-        val result = rewrite("", "", yaml)
+        val result = checkAndRewrite.rewrite("", "", yaml)
         result shouldBe expected
       }
 
       "return the rewritten title if the yaml title is in quotes" in {
         val title    = """  title: "API title (MTD)""""
         val expected = """  title: "API title (MTD) [test only]""""
-        val result   = rewrite("", "", title)
+        val result   = checkAndRewrite.rewrite("", "", title)
         result shouldBe expected
       }
     }

@@ -25,21 +25,21 @@ class EndpointSummaryGroupRewriterSpec extends UnitSpec with MockAppConfig {
   val rewriter = new EndpointSummaryGroupRewriter(mockAppConfig)
 
   "EndpointSummaryGroupRewriter" when {
-    val (check, rewrite) = rewriter.rewriteGroupedEndpointSummaries
+    val checkAndRewrite = rewriter.rewriteGroupedEndpointSummaries
 
     "checking if rewrite is needed" should {
       "indicate rewrite needed for grouped endpoints yaml file" in {
-        val result = check("any-version", "employment_expenses.yaml")
+        val result = checkAndRewrite.check("any-version", "employment_expenses.yaml")
         result shouldBe true
       }
 
       "indicate rewrite not needed for non-yaml file" in {
-        val result = check("any-version", "file.json")
+        val result = checkAndRewrite.check("any-version", "file.json")
         result shouldBe false
       }
 
       "indicate rewrite not needed for application.yaml file" in {
-        val result = check("any-version", "application.yaml")
+        val result = checkAndRewrite.check("any-version", "application.yaml")
         result shouldBe false
       }
     }
@@ -106,7 +106,7 @@ class EndpointSummaryGroupRewriterSpec extends UnitSpec with MockAppConfig {
                   |
                   |""".stripMargin
 
-        val result = rewrite(path = "/public/api/conf/1.0", filename = "employment_expenses.yaml", yaml)
+        val result = checkAndRewrite.rewrite(path = "/public/api/conf/1.0", filename = "employment_expenses.yaml", yaml)
         result shouldBe expected
       }
 
@@ -139,7 +139,7 @@ class EndpointSummaryGroupRewriterSpec extends UnitSpec with MockAppConfig {
             |
             |""".stripMargin
 
-        val result = rewrite("/public/api/conf/1.0", "employment_expenses.yaml", yaml)
+        val result = checkAndRewrite.rewrite("/public/api/conf/1.0", "employment_expenses.yaml", yaml)
         result shouldBe yaml
 
       }
@@ -158,7 +158,7 @@ class EndpointSummaryGroupRewriterSpec extends UnitSpec with MockAppConfig {
              |""".stripMargin
 
         val exception = intercept[HandlebarsException] {
-          rewrite("/public/api/conf/1.0", "employment_expenses.yaml", yaml)
+          checkAndRewrite.rewrite("/public/api/conf/1.0", "employment_expenses.yaml", yaml)
         }
 
         val cause = exception.getCause

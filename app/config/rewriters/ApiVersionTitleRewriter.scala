@@ -25,26 +25,26 @@ import javax.inject.{Inject, Singleton}
 
   private val rewriteTitleRegex = ".*(title: [\"]?)(.*)".r
 
-  val rewriteApiVersionTitle: (CheckRewrite, Rewriter) =
-    (
-      (version, filename) => {
-        // rewrite if the filename is application.yaml and the api version isn't released in production
-        filename == "application.yaml" &&
-        !appConfig.apiVersionReleasedInProduction(version)
-      },
-      (_, _, yaml) => {
-        val maybeLine = rewriteTitleRegex.findFirstIn(yaml)
-        maybeLine
-          .collect {
-            case line if !line.toLowerCase.contains("[test only]") =>
-              val title = line
-                .split("title: ")(1)
-                .replace("\"", "")
+  val rewriteApiVersionTitle: CheckAndRewrite = CheckAndRewrite(
+    check = (version, filename) => {
+      // rewrite if the filename is application.yaml and the api version isn't released in production
+      filename == "application.yaml" &&
+      !appConfig.apiVersionReleasedInProduction(version)
+    },
+    rewrite = (_, _, yaml) => {
+      val maybeLine = rewriteTitleRegex.findFirstIn(yaml)
+      maybeLine
+        .collect {
+          case line if !line.toLowerCase.contains("[test only]") =>
+            val title = line
+              .split("title: ")(1)
+              .replace("\"", "")
 
-              val replacement = s"""  title: "$title [test only]""""
-              rewriteTitleRegex.replaceFirstIn(yaml, replacement)
-          }
-          .getOrElse(yaml)
-      })
+            val replacement = s"""  title: "$title [test only]""""
+            rewriteTitleRegex.replaceFirstIn(yaml, replacement)
+        }
+        .getOrElse(yaml)
+    }
+  )
 
 }

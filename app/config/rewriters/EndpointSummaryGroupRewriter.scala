@@ -42,11 +42,11 @@ import javax.inject.{Inject, Singleton}
     }
   )
 
-  val rewriteGroupedEndpointSummaries: (CheckRewrite, Rewriter) = (
-    (_, filename) => {
+  val rewriteGroupedEndpointSummaries: CheckAndRewrite = CheckAndRewrite(
+    check = (_, filename) => {
       filename.endsWith(".yaml") && filename != "application.yaml"
     },
-    (_, _, yaml) => {
+    rewrite = (_, _, yaml) => {
       if (yaml.contains("#maybeTestOnly")) rewrite(yaml, Nil) else yaml
     }
   )
