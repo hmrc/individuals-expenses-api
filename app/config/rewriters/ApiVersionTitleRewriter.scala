@@ -29,15 +29,15 @@ import javax.inject.{Inject, Singleton}
   val rewriteApiVersionTitle: (CheckRewrite, Rewriter) =
     (
       (version, filename) => {
-
+        // rewrite if the filename is application.yaml and the api version isn't released in production
         filename == "application.yaml" &&
-        !appConfig.endpointsEnabled(version) // TODO instead check for "api.[version].endpoints.released-in-production"
+        !appConfig.apiVersionReleasedInProduction(version)
       },
       (_, _, yaml) => {
         val maybeLine = rewriteTitleRegex.findFirstIn(yaml)
         maybeLine
           .collect {
-            case line if !(line.toLowerCase.contains("[test only]")) =>
+            case line if !line.toLowerCase.contains("[test only]") =>
               val title = line
                 .split("title: ")(1)
                 .replace("\"", "")

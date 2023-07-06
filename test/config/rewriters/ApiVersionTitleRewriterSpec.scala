@@ -21,80 +21,73 @@ import support.UnitSpec
 
 class ApiVersionTitleRewriterSpec extends UnitSpec with MockAppConfig {
 
-  val rewriter = new ApiVersionTitleRewriter(mockAppConfig)
+  val rewriter         = new ApiVersionTitleRewriter(mockAppConfig)
+  val (check, rewrite) = rewriter.rewriteApiVersionTitle
 
-  "check and rewrite" when {
-    val (check, rewrite) = rewriter.rewriteApiVersionTitle
-
-    "check() is given application.yaml with API endpoints disabled (assuming in production)" should {
-      "indicate rewrite needed" in {
-        MockAppConfig.endpointsEnabled("1.0") returns false
+  "ApiVersionTitleRewriter" when {
+    "checking if rewrite is needed for a given version" should {
+      "indicate rewrite needed when API endpoints are disabled in production" in {
+        MockAppConfig.apiVersionReleasedInProduction("1.0") returns false
         val result = check("1.0", "application.yaml")
         result shouldBe true
       }
-    }
 
-    "check() is given any other combination" should {
-      "indicate rewrite not needed" in {
-        MockAppConfig.endpointsEnabled("1.0") returns true
-        val result = check("1.0", "application.yaml")
-        result shouldBe false
-      }
-      "also indicate rewrite not needed" in {
-        val result = check("1.0", "any_other_file.yaml")
-        result shouldBe false
+      "indicate rewrite not needed for any other combination" in {
+        MockAppConfig.apiVersionReleasedInProduction("1.0") returns true
+        val result1 = check("1.0", "application.yaml")
+        val result2 = check("1.0", "some_other_file.yaml")
+        result1 shouldBe false
+        result2 shouldBe false
       }
     }
 
-    "the title already contains [test only]" should {
-      "return the title unchanged" in {
+    "rewriting the title" should {
+      "return the title unchanged if it already contains '[test only]'" in {
         val title  = """  title: "[tesT oNLy] API title (MTD)""""
         val result = rewrite("", "", title)
         result shouldBe title
       }
-    }
 
-    "the yaml title is ready to be rewritten" should {
-      "return the rewritten title" in {
+      "return yaml with rewritten title if the yaml title is ready to be rewritten" in {
         val yaml =
           """
-            |openapi: "3.0.3"
-            |
-            |info:
-            |  version: "1.0"
-            |  title: Individuals Expenses (MTD)
-            |  description: |
-            |    # Send fraud prevention data
-            |    HMRC monitors transactions to help protect your customers' confidential data from criminals and fraudsters.
-            |
-            |servers:
-            |  - url: https://test-api.service.hmrc.gov.uk
-            |""".stripMargin
+                    |openapi: "3.0.3"
+                    |
+                    |info:
+                    |  version: "1.0"
+                    |  title: Individuals Expenses (MTD)
+                    |  description: |
+                    |    # Send fraud prevention data
+                    |    HMRC monitors transactions to help protect your customers' confidential data from criminals and fraudsters.
+                    |
+                    |servers:
+                    |  - url: https://test-api.service.hmrc.gov.uk
+                    |""".stripMargin
 
         val expected =
           """
-            |openapi: "3.0.3"
-            |
-            |info:
-            |  version: "1.0"
-            |  title: "Individuals Expenses (MTD) [test only]"
-            |  description: |
-            |    # Send fraud prevention data
-            |    HMRC monitors transactions to help protect your customers' confidential data from criminals and fraudsters.
-            |
-            |servers:
-            |  - url: https://test-api.service.hmrc.gov.uk
-            |""".stripMargin
+                    |openapi: "3.0.3"
+                    |
+                    |info:
+                    |  version: "1.0"
+                    |  title: "Individuals Expenses (MTD) [test only]"
+                    |  description: |
+                    |    # Send fraud prevention data
+                    |    HMRC monitors transactions to help protect your customers' confidential data from criminals and fraudsters.
+                    |
+                    |servers:
+                    |  - url: https://test-api.service.hmrc.gov.uk
+                    |""".stripMargin
 
         val result = rewrite("", "", yaml)
         result shouldBe expected
       }
-    }
 
-    "the yaml title is in quotes" should {
-      "return the rewritten title" in {
-        val result = rewrite("", "", """  title: "API title (MTD)"""")
-        result shouldBe """  title: "API title (MTD) [test only]""""
+      "return the rewritten title if the yaml title is in quotes" in {
+        val title    = """  title: "API title (MTD)""""
+        val expected = """  title: "API title (MTD) [test only]""""
+        val result   = rewrite("", "", title)
+        result shouldBe expected
       }
     }
   }
