@@ -35,7 +35,7 @@ class AuthorisedControllerSpec extends ControllerBaseSpec {
 
     class TestController extends AuthorisedController(cc) {
       override val authService: EnrolmentsAuthService = mockEnrolmentsAuthService
-      override val lookupService: MtdIdLookupService = mockMtdIdLookupService
+      override val lookupService: MtdIdLookupService  = mockMtdIdLookupService
 
       def action(nino: String): Action[AnyContent] = authorisedAction(nino).async {
         Future.successful(Ok(Json.obj()))
@@ -46,7 +46,7 @@ class AuthorisedControllerSpec extends ControllerBaseSpec {
     lazy val target = new TestController()
   }
 
-  val nino = "AA123456A"
+  val nino  = "AA123456A"
   val mtdId = "X123567890"
 
   val predicate: Predicate = Enrolment("HMRC-MTD-IT")

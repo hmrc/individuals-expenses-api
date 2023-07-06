@@ -16,9 +16,10 @@
 
 package utils
 
-import javax.inject.Singleton
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
+
+import javax.inject.Singleton
 
 @Singleton
 class CurrentTaxYear {
