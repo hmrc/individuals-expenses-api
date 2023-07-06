@@ -17,8 +17,7 @@
 package config.rewriters
 
 import config.AppConfig
-import config.rewriters.DocumentationRewriters.CheckRewrite
-import controllers.Rewriter
+import config.rewriters.DocumentationRewriters.CheckAndRewrite
 
 import javax.inject.{Inject, Singleton}
 
@@ -26,35 +25,34 @@ import javax.inject.{Inject, Singleton}
 
   private val rewriteSummaryRegex = ".*(summary: [\"]?)(.*)".r
 
-  val rewriteEndpointSummary: (CheckRewrite, Rewriter) =
-    (
-      (version, filename) => {
-        // Checks if an endpoint switch exists with
-        // the same name as the endpoint OAS file, and is disabled.
+  val rewriteEndpointSummary: CheckAndRewrite = CheckAndRewrite(
+    check = (version, filename) => {
+      // Checks if an endpoint switch exists with
+      // the same name as the endpoint OAS file, and is disabled.
 
-        filename.endsWith(".yaml") && filename != "application.yaml" && {
-          val key =
-            filename
-              .dropRight(5)
-              .replace("_", "-")
+      filename.endsWith(".yaml") && filename != "application.yaml" && {
+        val key =
+          filename
+            .dropRight(5)
+            .replace("_", "-")
 
-          !appConfig.endpointReleasedInProduction(version, key)
-        }
-      },
-      (_, _, yaml) => {
-        val maybeLine = rewriteSummaryRegex.findFirstIn(yaml)
-        maybeLine
-          .collect {
-            case line if !(line.toLowerCase.contains("[test only]")) =>
-              val summary = line
-                .split("summary: ")(1)
-                .replace("\"", "")
-
-              val replacement = s"""summary: "$summary [test only]""""
-              rewriteSummaryRegex.replaceFirstIn(yaml, replacement)
-          }
-          .getOrElse(yaml)
+        !appConfig.endpointReleasedInProduction(version, key)
       }
-    )
+    },
+    rewrite = (_, _, yaml) => {
+      val maybeLine = rewriteSummaryRegex.findFirstIn(yaml)
+      maybeLine
+        .collect {
+          case line if !(line.toLowerCase.contains("[test only]")) =>
+            val summary = line
+              .split("summary: ")(1)
+              .replace("\"", "")
+
+            val replacement = s"""summary: "$summary [test only]""""
+            rewriteSummaryRegex.replaceFirstIn(yaml, replacement)
+        }
+        .getOrElse(yaml)
+    }
+  )
 
 }

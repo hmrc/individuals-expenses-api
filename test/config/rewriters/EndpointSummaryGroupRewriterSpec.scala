@@ -27,7 +27,7 @@ class EndpointSummaryGroupRewriterSpec extends UnitSpec with MockAppConfig {
     // e.g. employment_expenses.yaml which points to employment_expenses_create_and_amend.yaml etc,
     // but must include the endpoint summary as an OAS renderer workaround.
 
-    val (check, rewrite) = rewriter.rewriteGroupedEndpointSummaries
+    val (check, rewrite) = rewriter.rewriteGroupedEndpointSummaries.asTuple
 
     "indicate rewrite needed" in {
       val result = check("any-version", "employment_expenses.yaml")

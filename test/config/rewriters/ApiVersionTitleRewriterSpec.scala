@@ -24,7 +24,7 @@ class ApiVersionTitleRewriterSpec extends UnitSpec with MockAppConfig {
   val rewriter = new ApiVersionTitleRewriter(mockAppConfig)
 
   "check and rewrite" when {
-    val (check, rewrite) = rewriter.rewriteApiVersionTitle
+    val (check, rewrite) = rewriter.rewriteApiVersionTitle.asTuple
 
     "check() is given application.yaml with API endpoints disabled (assuming in production)" should {
       "indicate rewrite needed" in {

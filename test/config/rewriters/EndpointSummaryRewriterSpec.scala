@@ -24,7 +24,7 @@ class EndpointSummaryRewriterSpec extends UnitSpec with MockAppConfig {
   val rewriter = new EndpointSummaryRewriter(mockAppConfig)
 
   "check and rewrite for the endpoint yaml file" when {
-    val (check, rewrite) = rewriter.rewriteEndpointSummary
+    val (check, rewrite) = rewriter.rewriteEndpointSummary.asTuple
 
     "check() is given employment_expenses_create_and_amend.yaml with the endpoint API docs disabled (assuming in production)" should {
       "indicate rewrite needed" in {

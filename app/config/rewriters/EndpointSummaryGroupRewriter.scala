@@ -18,8 +18,7 @@ package config.rewriters
 
 import com.github.jknack.handlebars.Options
 import config.AppConfig
-import config.rewriters.DocumentationRewriters.CheckRewrite
-import controllers.Rewriter
+import config.rewriters.DocumentationRewriters.CheckAndRewrite
 
 import javax.inject.{Inject, Singleton}
 
@@ -33,26 +32,24 @@ import javax.inject.{Inject, Singleton}
   hb.registerHelper(
     "maybeTestOnly",
     (endpointName: String, _: Options) => {
-      val parts = endpointName.split(' ')
+      val parts           = endpointName.split(' ')
       val (version, name) = (parts(0), parts(1)) // TODO better!
 
       if (appConfig.endpointReleasedInProduction(version, name)) "" else " [test only]"
-    })
+    }
+  )
 
-
-  val rewriteGroupedEndpointSummaries: (CheckRewrite, Rewriter) = (
-    (version, filename) => {
+  val rewriteGroupedEndpointSummaries: CheckAndRewrite = CheckAndRewrite(
+    check = (version, filename) => {
       filename.endsWith(".yaml") && filename != "application.yaml" // && ...  TODO maybe other checks?
     },
-    (_, _, yaml) => {
+    rewrite = (_, _, yaml) => {
       if (yaml.contains("#maybeTestOnly"))
         rewrite(yaml, Nil)
       else
         yaml
     }
-
   )
-
 
 //////////////////////////////////////
 
