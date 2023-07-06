@@ -21,12 +21,7 @@ import api.models.errors.{BadRequestError, ErrorWrapper, NinoFormatError, TaxYea
 import play.api.libs.json.Json
 import support.UnitSpec
 import v2.mocks.validators.MockCreateAndAmendEmploymentExpensesValidator
-import v2.models.request.createAndAmendEmploymentExpenses.{
-  CreateAndAmendEmploymentExpensesBody,
-  CreateAndAmendEmploymentExpensesRawData,
-  CreateAndAmendEmploymentExpensesRequest,
-  Expenses
-}
+import v2.models.request.createAndAmendEmploymentExpenses.{CreateAndAmendEmploymentExpensesBody, CreateAndAmendEmploymentExpensesRawData, CreateAndAmendEmploymentExpensesRequest, Expenses}
 
 class CreateAndAmendEmploymentExpensesRequestParserSpec extends UnitSpec {
 
