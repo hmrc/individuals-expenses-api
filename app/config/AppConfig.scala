@@ -131,23 +131,11 @@ class AppConfigImpl @Inject() (config: ServicesConfig, configuration: Configurat
   def apiVersionReleasedInProduction(version: String): Boolean = config.getBoolean(s"api.$version.endpoints.api-released-in-production")
 
   def endpointReleasedInProduction(version: String, name: String): Boolean = {
-    val endpointEnabledMap = getEndpointEnabledMap(version)
-    val releasedInProd     = apiVersionReleasedInProduction(version)
-
-    if (releasedInProd) endpointEnabledMap.getOrElse(name, releasedInProd) else releasedInProd
-  }
-
-  private def getEndpointEnabledMap(version: String): Map[String, Boolean] = {
-    val path = s"api.$version.endpoints.released-in-production"
+    val versionReleasedInProd = apiVersionReleasedInProduction(version)
+    val path                  = s"api.$version.endpoints.released-in-production.$name"
 
     val conf = configuration.underlying
-    if (conf.hasPath(path)) {
-      val endpointConfig = conf.getConfig(path)
-      endpointConfig.entrySet.asScala.map { mapEntry =>
-        val key = mapEntry.getKey
-        key -> endpointConfig.getBoolean(key)
-      }.toMap
-    } else { Map.empty }
+    if (versionReleasedInProd && conf.hasPath(path)) config.getBoolean(path) else versionReleasedInProd
   }
 
 }
