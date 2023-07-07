@@ -20,6 +20,7 @@ import com.typesafe.config.{Config, ConfigValue}
 import play.api.{ConfigLoader, Configuration}
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import utils.Logging
 
 import java.util
 import javax.inject.{Inject, Singleton}
@@ -88,7 +89,7 @@ trait AppConfig {
 }
 
 @Singleton
-class AppConfigImpl @Inject() (config: ServicesConfig, configuration: Configuration) extends AppConfig {
+class AppConfigImpl @Inject() (config: ServicesConfig, configuration: Configuration) extends AppConfig with Logging {
 
   val keyValuesJ: util.Map[String, ConfigValue] = configuration.entrySet.toMap.asJava
 
@@ -131,12 +132,16 @@ class AppConfigImpl @Inject() (config: ServicesConfig, configuration: Configurat
   def apiVersionReleasedInProduction(version: String): Boolean = config.getBoolean(s"api.$version.endpoints.api-released-in-production")
 
   def endpointReleasedInProduction(version: String, name: String): Boolean = {
-    val switches = endpointSwitches(version)
-    switches.getOrElse(name, apiVersionReleasedInProduction(version))
+    val endpointEnabledMap = getEndpointEnabledMap(version)
+    val releasedInProd     = apiVersionReleasedInProduction(version)
+
+    logger.debug("it happened")
+
+    if (releasedInProd) endpointEnabledMap.getOrElse(name, releasedInProd) else releasedInProd
   }
 
-  private def endpointSwitches(version: String): Map[String, Boolean] = {
-    val path = s"api.$version.endpoints.switches"
+  private def getEndpointEnabledMap(version: String): Map[String, Boolean] = {
+    val path = s"api.$version.endpoints.released-in-production"
 
     val conf = configuration.underlying
     if (conf.hasPath(path)) {
@@ -145,7 +150,7 @@ class AppConfigImpl @Inject() (config: ServicesConfig, configuration: Configurat
         val key = mapEntry.getKey
         key -> endpointConfig.getBoolean(key)
       }.toMap
-    } else Map.empty
+    } else { Map.empty }
   }
 
 }

@@ -29,9 +29,9 @@ import javax.inject.{Inject, Singleton}
   val rewriteables: Seq[CheckAndRewrite] =
     List(
       apiVersionTitleRewriter.rewriteApiVersionTitle,
-      endpointSummaryRewriter.rewriteEndpointSummary,
       endpointSummaryGroupRewriter.rewriteGroupedEndpointSummaries,
-      oasFeatureRewriter.rewriteOasFeature
+      endpointSummaryRewriter.rewriteEndpointSummary
+//      oasFeatureRewriter.rewriteOasFeature
     )
 
 }
@@ -43,6 +43,7 @@ object DocumentationRewriters {
   }
 
   case class CheckAndRewrite(check: CheckRewrite, rewrite: Rewriter) {
+
     def maybeRewriter(version: String, filename: String): Option[Rewriter] =
       if (check(version, filename)) Some(rewrite) else None
 

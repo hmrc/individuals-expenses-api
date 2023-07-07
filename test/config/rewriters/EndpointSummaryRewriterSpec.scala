@@ -55,6 +55,11 @@ class EndpointSummaryRewriterSpec extends UnitSpec with MockAppConfig {
         val result = rewrite("", "", "summary: Create and Amend employment expenses")
         result shouldBe """summary: "Create and Amend employment expenses [test only]""""
       }
+
+      "return the rewritten summary preserving indentation" in {
+        val result = rewrite("", "", "  summary: Create and Amend employment expenses")
+        result shouldBe """  summary: "Create and Amend employment expenses [test only]""""
+      }
     }
 
     "the yaml summary is already in quotes" should {
