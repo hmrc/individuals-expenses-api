@@ -68,6 +68,17 @@ class EndpointSummaryRewriterSpec extends UnitSpec with MockAppConfig {
         result shouldBe """summary: "Create and Amend employment expenses [test only]""""
       }
     }
+
+    "the yaml is not for a single endpoint" should {
+      "return the yaml unchanged" in {
+        val yaml = """
+                     |summary: "Create and Amend employment expenses"
+                     |summary: "Create and Amend employment expenses"""".stripMargin
+        val result = rewrite("", "", yaml)
+        result shouldBe yaml
+
+      }
+    }
   }
 
 }

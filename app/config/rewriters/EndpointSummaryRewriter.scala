@@ -30,10 +30,6 @@ import javax.inject.{Inject, Singleton}
     check = (version, filename) => {
       // Checks if an endpoint switch exists with
       // the same name as the endpoint OAS file, and is disabled.
-
-      // TODO ADD GUARD TO ENSURE ONLY ENDPOINT FILES (AND NOT ENDPOINT SUMMARY FILES) ARE REWRITTEN
-      // check if the text has multiple summaries - if so ignore - maybe be needed in the rewrite
-
       filename.endsWith(".yaml") && filename != "application.yaml" && {
         val endpointKey =
           filename
@@ -44,20 +40,24 @@ import javax.inject.{Inject, Singleton}
       }
     },
     rewrite = (_, _, yaml) => {
-      val maybeLine = rewriteSummaryRegex.findFirstIn(yaml)
-      val rewritten = maybeLine
-        .collect {
-          case line if !line.toLowerCase.contains("[test only]") =>
-            val components = line.split("summary: ")
-            val whitespace = components(0)
-            val summary    = components(1).replace("\"", "")
+      if (rewriteSummaryRegex.findAllIn(yaml).length == 1) {
+        val maybeLine = rewriteSummaryRegex.findFirstIn(yaml)
+        val rewritten = maybeLine
+          .collect {
+            case line if !line.toLowerCase.contains("[test only]") =>
+              val components = line.split("summary: ")
+              val whitespace = components(0)
+              val summary    = components(1).replace("\"", "")
 
-            val replacement = s"""${whitespace}summary: "$summary [test only]""""
+              val replacement = s"""${whitespace}summary: "$summary [test only]""""
 
-            yaml.replaceFirst(line, replacement)
-        }
+              yaml.replaceFirst(line, replacement)
+          }
 
-      rewritten.getOrElse(yaml)
+        rewritten.getOrElse(yaml)
+      } else {
+        yaml
+      }
     }
   )
 
