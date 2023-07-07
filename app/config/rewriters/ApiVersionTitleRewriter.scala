@@ -27,7 +27,6 @@ import javax.inject.{Inject, Singleton}
 
   val rewriteApiVersionTitle: CheckAndRewrite = CheckAndRewrite(
     check = (version, filename) => {
-      // rewrite if the filename is application.yaml and the api version isn't released in production
       filename == "application.yaml" &&
       !appConfig.apiVersionReleasedInProduction(version)
     },

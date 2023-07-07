@@ -20,7 +20,6 @@ import com.typesafe.config.{Config, ConfigValue}
 import play.api.{ConfigLoader, Configuration}
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-import utils.Logging
 
 import java.util
 import javax.inject.{Inject, Singleton}
@@ -89,7 +88,7 @@ trait AppConfig {
 }
 
 @Singleton
-class AppConfigImpl @Inject() (config: ServicesConfig, configuration: Configuration) extends AppConfig with Logging {
+class AppConfigImpl @Inject() (config: ServicesConfig, configuration: Configuration) extends AppConfig {
 
   val keyValuesJ: util.Map[String, ConfigValue] = configuration.entrySet.toMap.asJava
 
@@ -134,8 +133,6 @@ class AppConfigImpl @Inject() (config: ServicesConfig, configuration: Configurat
   def endpointReleasedInProduction(version: String, name: String): Boolean = {
     val endpointEnabledMap = getEndpointEnabledMap(version)
     val releasedInProd     = apiVersionReleasedInProduction(version)
-
-    logger.debug("it happened")
 
     if (releasedInProd) endpointEnabledMap.getOrElse(name, releasedInProd) else releasedInProd
   }
