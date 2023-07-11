@@ -96,10 +96,7 @@ class DeleteEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
     "return error according to spec" when {
 
       "validation error" when {
-        def validationErrorTest(requestNino: String,
-                                requestTaxYear: String,
-                                expectedStatus: Int,
-                                expectedBody: MtdError): Unit = {
+        def validationErrorTest(requestNino: String, requestTaxYear: String, expectedStatus: Int, expectedBody: MtdError): Unit = {
 
           s"validation fails with ${expectedBody.code} error" in new NonTysTest {
 
@@ -169,7 +166,6 @@ class DeleteEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
           (NOT_FOUND, "NOT_FOUND", NOT_FOUND, NotFoundError),
           (UNPROCESSABLE_ENTITY, "TAX_YEAR_NOT_SUPPORTED", BAD_REQUEST, RuleTaxYearNotSupportedError)
         )
-
 
         (errors ++ extraTysErrors).foreach(args => (serviceErrorTest _).tupled(args))
       }

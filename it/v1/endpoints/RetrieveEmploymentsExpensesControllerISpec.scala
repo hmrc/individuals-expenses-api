@@ -89,8 +89,8 @@ class RetrieveEmploymentsExpensesControllerISpec extends IntegrationBaseSpec {
                                 expectedBody: MtdError): Unit = {
           s"validation fails with ${expectedBody.code} error" in new NonTysTest {
 
-            override val nino: String = requestNino
-            override val mtdTaxYear: String = requestTaxYear
+            override val nino: String            = requestNino
+            override val mtdTaxYear: String      = requestTaxYear
             override val latestSourceMtd: String = requestSource
 
             val response: WSResponse = await(request(latestMtdUri).get())
@@ -149,13 +149,13 @@ class RetrieveEmploymentsExpensesControllerISpec extends IntegrationBaseSpec {
 
     val nino = "AA123456A"
 
-    val latestSourceMtd = "latest"
+    val latestSourceMtd        = "latest"
     val latestSourceDownstream = "LATEST"
 
-    val hmrcHeldSourceMtd = "hmrcHeld"
+    val hmrcHeldSourceMtd        = "hmrcHeld"
     val hmrcHeldSourceDownstream = "HMRC-HELD"
 
-    val userSourceMtd = "user"
+    val userSourceMtd        = "user"
     val userSourceDownstream = "CUSTOMER"
 
     def latestMtdUri: String = s"/employments/$nino/$mtdTaxYear?source=$latestSourceMtd"

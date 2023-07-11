@@ -27,7 +27,7 @@ object JsonFormatValidation {
     else
       data.validate[A] match {
         case JsSuccess(_, _) => NoValidationErrors
-        case _ => List(error)
+        case _               => List(error)
       }
 
   }

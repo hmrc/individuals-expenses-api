@@ -146,8 +146,7 @@ class CreateAndAmendOtherExpensesControllerISpec extends IntegrationBaseSpec {
           response.json shouldBe Json.toJson(RuleIncorrectOrEmptyBodyError)
         }
         s"a body missing mandatory fields is provided" in new NonTysTest {
-          override val requestBodyJson: JsValue = Json.parse(
-            """{
+          override val requestBodyJson: JsValue = Json.parse("""{
               | "paymentsToTradeUnionsForDeathBenefits": {},
               | "patentRoyaltiesPayments": {}
               |}""".stripMargin)
@@ -213,8 +212,7 @@ class CreateAndAmendOtherExpensesControllerISpec extends IntegrationBaseSpec {
          |""".stripMargin
     )
 
-    val responseBody = Json.parse(
-      s"""
+    val responseBody = Json.parse(s"""
          |{
          |  "links": [
          |    {

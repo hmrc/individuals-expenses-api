@@ -26,7 +26,7 @@ object TaxYearValidation {
     if (taxYear.matches(taxYearFormat)) {
 
       val start = taxYear.substring(2, 4).toInt
-      val end = taxYear.substring(5, 7).toInt
+      val end   = taxYear.substring(5, 7).toInt
 
       if (end - start == 1) {
         NoValidationErrors
