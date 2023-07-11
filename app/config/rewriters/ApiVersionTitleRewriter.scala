@@ -16,32 +16,34 @@
 
 package config.rewriters
 
-import config.rewriters.DocumentationRewriters.CheckRewrite
-import controllers.Rewriter
+import config.AppConfig
+import config.rewriters.DocumentationRewriters.CheckAndRewrite
 
-object ApiVersionTitleRewriter {
+import javax.inject.{Inject, Singleton}
+
+@Singleton class ApiVersionTitleRewriter @Inject() (appConfig: AppConfig) {
 
   private val rewriteTitleRegex = ".*(title: [\"]?)(.*)".r
 
-  val rewriteApiVersionTitle: (CheckRewrite, Rewriter) =
-    (
-      (version, filename, appConfig) => {
-        // assumes that the Developer Hub OAS is being served from Production env:
-        filename == "application.yaml" && !appConfig.endpointsEnabled(version)
-      },
-      (_, _, _, yaml) => {
-        val maybeLine = rewriteTitleRegex.findFirstIn(yaml)
-        maybeLine
-          .collect {
-            case line if !(line.toLowerCase.contains("[test only]")) =>
-              val title = line
-                .split("title: ")(1)
-                .replace("\"", "")
+  val rewriteApiVersionTitle: CheckAndRewrite = CheckAndRewrite(
+    check = (version, filename) => {
+      filename == "application.yaml" &&
+      !appConfig.apiVersionReleasedInProduction(version)
+    },
+    rewrite = (_, _, yaml) => {
+      val maybeLine = rewriteTitleRegex.findFirstIn(yaml)
+      maybeLine
+        .collect {
+          case line if !line.toLowerCase.contains("[test only]") =>
+            val title = line
+              .split("title: ")(1)
+              .replace("\"", "")
 
-              val replacement = s"""  title: "$title [test only]""""
-              rewriteTitleRegex.replaceFirstIn(yaml, replacement)
-          }
-          .getOrElse(yaml)
-      })
+            val replacement = s"""  title: "$title [test only]""""
+            rewriteTitleRegex.replaceFirstIn(yaml, replacement)
+        }
+        .getOrElse(yaml)
+    }
+  )
 
 }

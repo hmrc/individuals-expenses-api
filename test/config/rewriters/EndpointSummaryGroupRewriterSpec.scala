@@ -16,105 +16,156 @@
 
 package config.rewriters
 
-import config.rewriters.EndpointSummaryGroupRewriter.rewriteGroupedEndpointSummaries
+import com.github.jknack.handlebars.HandlebarsException
 import mocks.MockAppConfig
 import support.UnitSpec
 
 class EndpointSummaryGroupRewriterSpec extends UnitSpec with MockAppConfig {
 
-  "check and rewrite for the 'workaround' grouped endpoints yaml file" should {
-    // e.g. employment_expenses.yaml which points to employment_expenses_create_and_amend.yaml etc,
-    // but must include the endpoint summary as an OAS renderer workaround.
+  val rewriter = new EndpointSummaryGroupRewriter(mockAppConfig)
 
-    val (check, rewrite) = rewriteGroupedEndpointSummaries
+  "EndpointSummaryGroupRewriter" when {
+    val checkAndRewrite = rewriter.rewriteGroupedEndpointSummaries
 
-    "indicate rewrite needed" in {
-      MockAppConfig.endpointSwitches("1.0") returns Map("employment-expenses-create-and-amend.enabled" -> false)
+    "checking if rewrite is needed" should {
+      "indicate rewrite needed for grouped endpoints yaml file" in {
+        val result = checkAndRewrite.check("any-version", "employment_expenses.yaml")
+        result shouldBe true
+      }
 
-      val result = check("1.0", "employment_expenses.yaml", mockAppConfig)
-      result shouldBe true
+      "indicate rewrite not needed for non-yaml file" in {
+        val result = checkAndRewrite.check("any-version", "file.json")
+        result shouldBe false
+      }
+
+      "indicate rewrite not needed for application.yaml file" in {
+        val result = checkAndRewrite.check("any-version", "application.yaml")
+        result shouldBe false
+      }
     }
 
-    "indicate rewrite not needed" in {
-      MockAppConfig.endpointSwitches("1.0") returns Map(
-        "employment-expenses-create-and-amend.enabled" -> true
-      )
-      val result = check("1.0", "employment_expenses.yaml", mockAppConfig)
-      result shouldBe false
-    }
+    "rewrite" should {
+      "return the rewritten summaries when the 'maybeTestOnly' helper is present" in {
+        MockAppConfig.endpointReleasedInProduction("2.0", "employment-expenses-create-and-amend") returns false
+        MockAppConfig.endpointReleasedInProduction("2.0", "employment-expenses-retrieve") returns true
+        MockAppConfig.endpointReleasedInProduction("2.0", "employment-expenses-delete") returns false
 
-    "indicate rewrite not needed given no endpoint API config entries" in {
-      MockAppConfig.endpointSwitches("1.0") returns Map.empty
-      val result = check("1.0", "employment_expenses.enabled.yaml", mockAppConfig)
-      result shouldBe false
-    }
+        val yaml =
+          """
+                  |put:
+                  |  $ref: "./employment_expenses_create_and_amend.yaml"
+                  |  summary: Create and Amend Employment Expenses{{#maybeTestOnly "2.0 employment-expenses-create-and-amend"}}{{/maybeTestOnly}}
+                  |  security:
+                  |    - User-Restricted:
+                  |        - write:self-assessment
+                  |
+                  |
+                  |get:
+                  |  $ref: "./employment_expenses_retrieve.yaml"
+                  |  summary: Retrieve Employment Expenses{{#maybeTestOnly "2.0 employment-expenses-retrieve"}}{{/maybeTestOnly}}
+                  |  security:
+                  |    - User-Restricted:
+                  |        - read:self-assessment
+                  |  parameters:
+                  |    - $ref: './common/queryParameters.yaml#/components/parameters/source'
+                  |
+                  |delete:
+                  |  $ref: "./employment_expenses_delete.yaml"
+                  |  summary: Delete Employment Expenses{{#maybeTestOnly "2.0 employment-expenses-delete"}}{{/maybeTestOnly}}
+                  |  security:
+                  |    - User-Restricted:
+                  |        - write:self-assessment
+                  |
+                  |""".stripMargin
 
-    "rewrite all summaries in the group yaml file" in {
-      MockAppConfig.endpointSwitches("1.0") returns Map(
-        "employment-expenses-create-and-amend" -> false,
-        "employment-expenses-retrieve"         -> true,
-        "employment-expenses-delete"           -> false
-      )
+        val expected =
+          """
+                  |put:
+                  |  $ref: "./employment_expenses_create_and_amend.yaml"
+                  |  summary: Create and Amend Employment Expenses [test only]
+                  |  security:
+                  |    - User-Restricted:
+                  |        - write:self-assessment
+                  |
+                  |
+                  |get:
+                  |  $ref: "./employment_expenses_retrieve.yaml"
+                  |  summary: Retrieve Employment Expenses
+                  |  security:
+                  |    - User-Restricted:
+                  |        - read:self-assessment
+                  |  parameters:
+                  |    - $ref: './common/queryParameters.yaml#/components/parameters/source'
+                  |
+                  |delete:
+                  |  $ref: "./employment_expenses_delete.yaml"
+                  |  summary: Delete Employment Expenses [test only]
+                  |  security:
+                  |    - User-Restricted:
+                  |        - write:self-assessment
+                  |
+                  |""".stripMargin
 
-      val yaml =
-        """
-          |put:
-          |  $ref: "./employment_expenses_create_and_amend.yaml"
-          |  summary: Create and Amend Employment Expenses
-          |  security:
-          |    - User-Restricted:
-          |        - write:self-assessment
-          |
-          |
-          |get:
-          |  $ref: "./employment_expenses_retrieve.yaml"
-          |  summary: Retrieve Employment Expenses
-          |  security:
-          |    - User-Restricted:
-          |        - read:self-assessment
-          |  parameters:
-          |    - $ref: './common/queryParameters.yaml#/components/parameters/source'
-          |
-          |delete:
-          |  $ref: "./employment_expenses_delete.yaml"
-          |  summary: Delete Employment Expenses
-          |  security:
-          |    - User-Restricted:
-          |        - write:self-assessment
-          |
-          |""".stripMargin
+        val result = checkAndRewrite.rewrite(path = "/public/api/conf/1.0", filename = "employment_expenses.yaml", yaml)
+        result shouldBe expected
+      }
 
-      val expected =
-        """
-          |put:
-          |  $ref: "./employment_expenses_create_and_amend.yaml"
-          |  summary: "Create and Amend Employment Expenses [test only]"
-          |  security:
-          |    - User-Restricted:
-          |        - write:self-assessment
-          |
-          |
-          |get:
-          |  $ref: "./employment_expenses_retrieve.yaml"
-          |  summary: Retrieve Employment Expenses
-          |  security:
-          |    - User-Restricted:
-          |        - read:self-assessment
-          |  parameters:
-          |    - $ref: './common/queryParameters.yaml#/components/parameters/source'
-          |
-          |delete:
-          |  $ref: "./employment_expenses_delete.yaml"
-          |  summary: "Delete Employment Expenses [test only]"
-          |  security:
-          |    - User-Restricted:
-          |        - write:self-assessment
-          |
-          |""".stripMargin
+      "return the unchanged yaml when the 'maybeTestOnly' is not present" in {
+        val yaml =
+          """
+            |put:
+            |  $ref: "./employment_expenses_create_and_amend.yaml"
+            |  summary: Create and Amend Employment Expenses
+            |  security:
+            |    - User-Restricted:
+            |        - write:self-assessment
+            |
+            |
+            |get:
+            |  $ref: "./employment_expenses_retrieve.yaml"
+            |  summary: Retrieve Employment Expenses
+            |  security:
+            |    - User-Restricted:
+            |        - read:self-assessment
+            |  parameters:
+            |    - $ref: './common/queryParameters.yaml#/components/parameters/source'
+            |
+            |delete:
+            |  $ref: "./employment_expenses_delete.yaml"
+            |  summary: Delete Employment Expenses
+            |  security:
+            |    - User-Restricted:
+            |        - write:self-assessment
+            |
+            |""".stripMargin
 
-      val result = rewrite(path = "/public/api/conf/1.0", filename = "employment_expenses.yaml", mockAppConfig, yaml)
-      result shouldBe expected
+        val result = checkAndRewrite.rewrite("/public/api/conf/1.0", "employment_expenses.yaml", yaml)
+        result shouldBe yaml
 
+      }
+
+      "throw an exception when invalid endpoint details are provided" in {
+        val endpointDetails = "invalidEndpointDetails"
+        val yaml =
+          s"""
+             |put:
+             |  $$ref: "./employment_expenses_create_and_amend.yaml"
+             |  summary: Create and Amend Employment Expenses{{#maybeTestOnly "$endpointDetails"}}{{/maybeTestOnly}}
+             |  security:
+             |    - User-Restricted:
+             |        - write:self-assessment
+             |
+             |""".stripMargin
+
+        val exception = intercept[HandlebarsException] {
+          checkAndRewrite.rewrite("/public/api/conf/1.0", "employment_expenses.yaml", yaml)
+        }
+
+        val cause = exception.getCause
+        cause shouldBe a[IllegalArgumentException]
+        cause.getMessage shouldBe
+          s"Invalid endpoint details format: '$endpointDetails'. The endpoint details should consist of two space-separated parts: version and name."
+      }
     }
   }
 

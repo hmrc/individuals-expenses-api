@@ -95,28 +95,4 @@ class FeatureSwitchesSpec extends UnitSpec {
 
   }
 
-  "OpenApiFeature.matches" should {
-
-    case object AFeature extends OpenApiFeature {
-      val key     = "openApiFeatureTest"
-      val version = "any"
-      val fileMatchers = List(
-        "^employment_expenses_retrieve\\.yaml$".r,
-        "^other_expenses_retrieve\\.yaml$".r
-      )
-
-    }
-
-    "return true for a matching filename" in {
-      AFeature.matches("employment_expenses_retrieve.yaml") shouldBe true
-    }
-
-    "return false for non-matching filenames" in {
-      AFeature.matches("something_different.yaml") shouldBe false
-      AFeature.matches("employment_expenses_retrieve.YAML") shouldBe false
-      AFeature.matches("employment_expenses_retrieve.yaml_AND_MORE") shouldBe false
-      AFeature.matches("MORE_AND_employment_expenses_retrieve.yaml") shouldBe false
-    }
-  }
-
 }

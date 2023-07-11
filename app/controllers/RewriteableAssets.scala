@@ -27,7 +27,7 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.util.control.NonFatal
 
 trait Rewriter {
-  def apply(path: String, filename: String, appConfig: AppConfig, fileText: String): String
+  def apply(path: String, filename: String, contents: String): String
 }
 
 @Singleton
@@ -75,7 +75,7 @@ class RewriteableAssets @Inject() (errorHandler: HttpErrorHandler, meta: AssetsM
           Future {
             val stream    = connection.getInputStream
             val text      = inputStreamToString(stream)
-            val rewritten = rewrites.foldLeft(text)((acc, op) => op(path, filename, appConfig, acc))
+            val rewritten = rewrites.foldLeft(text)((acc, op) => op(path, filename, acc))
             val result    = Ok(rewritten)
             asEncodedResult(result, acceptEncoding, assetInfo)
           }

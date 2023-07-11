@@ -20,48 +20,49 @@ import org.apache.commons.lang3.BooleanUtils
 import play.api.Configuration
 import play.api.mvc.Request
 
-import scala.util.matching.Regex
-
 case class FeatureSwitches(featureSwitchConfig: Configuration) {
 
-  val isTaxYearSpecificApiEnabled: Boolean = isEnabled("tys-api.enabled")
+  private val versionRegex = """(\d)\.\d""".r
 
-  val openApiFeatures: Seq[OpenApiFeature] = List(
-    OpenApiFeatureTest
-  ).filter { feature: OpenApiFeature => isEnabled(feature.key + ".enabled") }
+  def isVersionEnabled(version: String): Boolean = {
+    val maybeVersion: Option[String] =
+      version match {
+        case versionRegex(v) => Some(v)
+        case _               => None
+      }
+
+    val enabled = for {
+      versionNo <- maybeVersion
+      enabled   <- featureSwitchConfig.getOptional[Boolean](s"version-$versionNo.enabled")
+    } yield enabled
+
+    enabled.getOrElse(false)
+  }
+
+  val isTaxYearSpecificApiEnabled: Boolean = isEnabled("tys-api")
+
+  /** Is this feature enabled in the current environment?
+    */
+  val isOasFeatureExampleEnabled: Boolean = isEnabled("oas-feature-example")
+
+  /** Is this feature released (available) in production?
+    */
+  val isOasFeatureExampleReleased: Boolean = isReleasedInProduction("oas-feature-example")
 
   def isTemporalValidationEnabled(implicit request: Request[_]): Boolean = {
-    if (isEnabled("allowTemporalValidationSuspension.enabled")) {
+    if (isEnabled("allowTemporalValidationSuspension")) {
       request.headers.get("suspend-temporal-validations").forall(!BooleanUtils.toBoolean(_))
     } else {
       true
     }
   }
 
-  private def isEnabled(key: String): Boolean = featureSwitchConfig.getOptional[Boolean](key).getOrElse(true)
+  def isEnabled(key: String): Boolean              = isConfigTrue(key + ".enabled")
+  def isReleasedInProduction(key: String): Boolean = isConfigTrue(key + ".released")
+
+  private def isConfigTrue(key: String): Boolean = featureSwitchConfig.getOptional[Boolean](key).getOrElse(true)
 }
 
 object FeatureSwitches {
   def apply()(implicit appConfig: AppConfig): FeatureSwitches = FeatureSwitches(appConfig.featureSwitches)
-}
-
-trait OpenApiFeature {
-  val key: String
-  val version: String
-  val fileMatchers: Seq[Regex]
-
-  def matches(requestedVersion: String, filename: String): Boolean = requestedVersion == version && matches(filename)
-
-  private[config] def matches(filename: String): Boolean = fileMatchers.exists(_.findFirstIn(filename).isDefined)
-}
-
-case object OpenApiFeatureTest extends OpenApiFeature {
-  val key     = "openApiFeatureTest"
-  val version = "1.0"
-
-  val fileMatchers = List(
-    "^employment_expenses_retrieve\\.yaml$".r,
-    "^other_expenses_retrieve\\.yaml$".r
-  )
-
 }

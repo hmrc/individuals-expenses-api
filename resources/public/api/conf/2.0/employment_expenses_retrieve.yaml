@@ -4,7 +4,11 @@ description: |
   A National Insurance number and tax year must be provided.
   
   ### Test data
+  {{#if (enabled "oas-feature-example")}}
   Scenario simulation using Gov-Test-Scenario headers is only available in the sandbox environment.
+  {{else}}
+  Scenario simulations using Gov-Test-Scenario headers are only available in the sandbox environment.
+  {{/if}}
   
   | Header Value (Gov-Test-Scenario)        | Scenario                                                                                         |
   |-----------------------------------------|--------------------------------------------------------------------------------------------------|
@@ -12,7 +16,7 @@ description: |
   | N/A - DEFAULT <br> **?source=hmrcHeld** | Requesting **hmrcHeld** source simulates success response with HMRC held financial details.      |
   | N/A - DEFAULT <br> **?source=latest**   | Requesting **latest** source simulates success response with Latest financial details submitted. |
   | NOT_FOUND                               | Simulates the scenario where no data is found.                                                   |
-  | STATEFUL                                | Performs a stateful retrieve.                                                                    |
+  {{#if (enabled "oas-feature-example")}}| STATEFUL | Performs a stateful retrieve.|{{/if}}
 
 tags:
   - Employment Expenses
@@ -92,3 +96,4 @@ responses:
         examples:
           MATCHING_RESOURCE_NOT_FOUND:
             $ref: './common/errors.yaml#/components/examples/notFound'
+
