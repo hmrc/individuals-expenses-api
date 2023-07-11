@@ -36,6 +36,7 @@ class DocumentationControllerSpec extends ControllerBaseSpec with MockAppConfig 
 
   "/file endpoint" should {
     "return a file" in new Test {
+      MockAppConfig.apiVersionReleasedInProduction("1.0").anyNumberOfTimes() returns true
       MockAppConfig.endpointsEnabled("1.0").anyNumberOfTimes() returns true
       val response: Future[Result] = requestAsset("application.yaml")
       status(response) shouldBe OK
@@ -46,6 +47,7 @@ class DocumentationControllerSpec extends ControllerBaseSpec with MockAppConfig 
   "rewrite()" when {
     "the API version is disabled" should {
       "return the yaml with [test only] in the API title" in new Test {
+        MockAppConfig.apiVersionReleasedInProduction("1.0").anyNumberOfTimes() returns false
         MockAppConfig.endpointsEnabled("1.0").anyNumberOfTimes() returns true
 
         val response: Future[Result] = requestAsset("application.yaml")
@@ -66,6 +68,7 @@ class DocumentationControllerSpec extends ControllerBaseSpec with MockAppConfig 
     }
     "the API version is enabled" should {
       "return the yaml with the API title unchanged" in new Test {
+        MockAppConfig.apiVersionReleasedInProduction("1.0").anyNumberOfTimes() returns true
         MockAppConfig.endpointsEnabled("1.0").anyNumberOfTimes() returns true
 
         val response: Future[Result] = requestAsset("application.yaml", accept = "text/plain")

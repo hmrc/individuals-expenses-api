@@ -43,6 +43,7 @@ object DocumentationRewriters {
   }
 
   case class CheckAndRewrite(check: CheckRewrite, rewrite: Rewriter) {
+
     def maybeRewriter(version: String, filename: String): Option[Rewriter] =
       if (check(version, filename)) Some(rewrite) else None
 
