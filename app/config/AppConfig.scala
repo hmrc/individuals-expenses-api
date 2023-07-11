@@ -17,6 +17,7 @@
 package config
 
 import com.typesafe.config.Config
+import routing.Version
 import play.api.{ConfigLoader, Configuration}
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
@@ -64,7 +65,7 @@ trait AppConfig {
     DownstreamConfig(baseUrl = tysIfsBaseUrl, env = tysIfsEnv, token = tysIfsToken, environmentHeaders = tysIfsEnvironmentHeaders)
 
   // API Config
-  def apiStatus(version: String): String
+  def apiStatus(version: Version): String
   def apiGatewayContext: String
   def confidenceLevelConfig: ConfidenceLevelConfig
 
@@ -74,6 +75,7 @@ trait AppConfig {
 
   def featureSwitches: Configuration
   def endpointsEnabled(version: String): Boolean
+  def endpointsEnabled(version: Version): Boolean
 
   /** Currently only for OAS documentation.
     */
@@ -114,7 +116,7 @@ class AppConfigImpl @Inject() (config: ServicesConfig, configuration: Configurat
 
   // API Config
   val apiGatewayContext: String                    = config.getString("api.gateway.context")
-  def apiStatus(version: String): String           = config.getString(s"api.$version.status")
+  def apiStatus(version: Version): String          = config.getString(s"api.${version.name}.status")
   def featureSwitches: Configuration               = configuration.getOptional[Configuration](s"feature-switch").getOrElse(Configuration.empty)
   val confidenceLevelConfig: ConfidenceLevelConfig = configuration.get[ConfidenceLevelConfig](s"api.confidence-level-check")
 
@@ -122,7 +124,8 @@ class AppConfigImpl @Inject() (config: ServicesConfig, configuration: Configurat
   val otherExpensesMinimumTaxYear: Int      = config.getInt("otherExpensesMinimumTaxYear")
   val employmentExpensesMinimumTaxYear: Int = config.getInt("employmentExpensesMinimumTaxYear")
 
-  def endpointsEnabled(version: String): Boolean = config.getBoolean(s"api.$version.endpoints.enabled")
+  def endpointsEnabled(version: String): Boolean  = config.getBoolean(s"api.$version.endpoints.enabled")
+  def endpointsEnabled(version: Version): Boolean = config.getBoolean(s"api.${version.name}.endpoints.enabled")
 
   def endpointEnabled(version: String, name: String): Boolean = {
     val switches = endpointSwitches(version)
