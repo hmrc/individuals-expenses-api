@@ -29,9 +29,8 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class CreateAndAmendEmploymentExpensesService @Inject() (connector: CreateAndAmendEmploymentExpensesConnector) extends BaseService {
 
-  def createAndAmendEmploymentExpenses(request: CreateAndAmendEmploymentExpensesRequest)(implicit
-      ctx: RequestContext,
-      ec: ExecutionContext): Future[ServiceOutcome[Unit]] = {
+  def createAndAmendEmploymentExpenses(
+      request: CreateAndAmendEmploymentExpensesRequest)(implicit ctx: RequestContext, ec: ExecutionContext): Future[ServiceOutcome[Unit]] = {
 
     connector.createAmendEmploymentExpenses(request).map(_.leftMap(mapDownstreamErrors(downstreamErrorMap)))
 

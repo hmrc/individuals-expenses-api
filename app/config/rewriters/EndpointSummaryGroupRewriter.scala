@@ -16,67 +16,39 @@
 
 package config.rewriters
 
-import config.rewriters.DocumentationRewriters.CheckRewrite
-import controllers.Rewriter
+import com.github.jknack.handlebars.Options
+import config.AppConfig
+import config.rewriters.DocumentationRewriters.CheckAndRewrite
+
+import javax.inject.{Inject, Singleton}
 
 /** For the OAS workaround where the "grouped endpoints" yaml file (e.g. employment_expenses.yaml) must include the matching summary text for each
-  * endpoint. This rewriter checks and rewrites each endpoint summary in the group file.
+  * endpoint. This rewriter uses handlebars and config to add [test only] if necessary.
   */
-object EndpointSummaryGroupRewriter {
+@Singleton class EndpointSummaryGroupRewriter @Inject() (val appConfig: AppConfig) extends HandlebarsRewriter {
 
-  private val pathVersionRegex = "^/public/api/conf/([0-9]\\.0)$".r
+  hb.registerHelper(
+    "maybeTestOnly",
+    (endpointDetails: String, _: Options) => {
+      val parts = endpointDetails.split(' ')
+      val (version, name) = parts match {
+        case Array(v, n) => (v, n)
+        case _ =>
+          throw new IllegalArgumentException(
+            s"Invalid endpoint details format: '$endpointDetails'. The endpoint details should consist of two space-separated parts: version and name.")
+      }
 
-  private def keyFrom(filename: String) = filename.dropRight(5).replace("_", "-")
+      if (appConfig.endpointReleasedInProduction(version, name)) "" else " [test only]"
+    }
+  )
 
-  val rewriteGroupedEndpointSummaries: (CheckRewrite, Rewriter) =
-    (
-      (version, filename, appConfig) => {
-        // Checks if any endpoint switches exist (and are disabled)
-        // with the key name starting with this filename.
-
-        filename.endsWith(".yaml") && filename != "application.yaml" && {
-          val key = keyFrom(filename) + "-"
-
-          // e.g:
-          //   key:         "employment-expenses-"
-          //   endpointKey: "employment-expenses-create-and-amend"
-          val result = appConfig
-            .endpointSwitches(version)
-            .exists { case (endpointKey, enabled) => !enabled && endpointKey.startsWith(key) }
-
-          result
-        }
-      },
-      (path, filename, appConfig, yaml) =>
-        {
-          pathVersionRegex.findFirstMatchIn(path).map(_.group(1)).map { version =>
-            val key = keyFrom(filename)
-
-            val disabledEndpointNames =
-              appConfig
-                .endpointSwitches(version)
-                .collect { case (endpointKey, enabled) if !enabled && endpointKey.startsWith(key) => endpointKey }
-
-            disabledEndpointNames.foldLeft(yaml)((acc, endpointName) => {
-              val endpointFilename = endpointName.replace("-", "_")
-              val regex            = (".*(\\$ref: \"\\./" + endpointFilename + "\\.yaml\"\\n  summary: [\"]?)(.*)").r
-
-              val maybeLine = regex.findFirstIn(acc)
-              maybeLine
-                .collect {
-                  case line if !(line.toLowerCase.contains("[test only]")) =>
-                    val summary = line
-                      .split("summary: ")(1)
-
-                    val summaryNoQuotes    = summary.replace("\"", "")
-                    val summaryReplacement = s"""summary: "$summaryNoQuotes [test only]""""
-
-                    acc.replaceFirst(s"summary: $summary", summaryReplacement)
-                }
-                .getOrElse(acc)
-            })
-          }
-        }.getOrElse(yaml)
-    )
+  val rewriteGroupedEndpointSummaries: CheckAndRewrite = CheckAndRewrite(
+    check = (_, filename) => {
+      filename.endsWith(".yaml") && filename != "application.yaml"
+    },
+    rewrite = (_, _, yaml) => {
+      if (yaml.contains("#maybeTestOnly")) rewrite(yaml, Nil) else yaml
+    }
+  )
 
 }

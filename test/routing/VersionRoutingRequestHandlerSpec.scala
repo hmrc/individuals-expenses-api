@@ -21,7 +21,6 @@ import api.models.errors.{InvalidAcceptHeaderError, UnsupportedVersionError}
 import mocks.MockAppConfig
 import org.scalatest.Inside
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.Configuration
 import play.api.http.HeaderNames.ACCEPT
 import play.api.http.{HttpConfiguration, HttpErrorHandler, HttpFilters}
 import play.api.libs.json.Json
@@ -57,13 +56,9 @@ class VersionRoutingRequestHandlerSpec extends UnitSpec with Inside with MockApp
     V2Handler
   }
 
-  private val v3Router = Router.from { case GET(p"/v3") =>
-    V3Handler
-  }
-
   private val routingMap = new VersionRoutingMap {
-    override val defaultRouter: Router    = test.defaultRouter
-    override val map: Map[String, Router] = Map("1.0" -> v1Router, "2.0" -> v2Router, "3.0" -> v3Router)
+    override val defaultRouter: Router     = test.defaultRouter
+    override val map: Map[Version, Router] = Map(Version1 -> v1Router, Version2 -> v2Router)
   }
 
   class Test(implicit acceptHeader: Option[String]) {
@@ -72,7 +67,8 @@ class VersionRoutingRequestHandlerSpec extends UnitSpec with Inside with MockApp
     private val filters                      = mock[HttpFilters]
     (() => filters.filters).stubs().returns(Seq.empty)
 
-    MockAppConfig.featureSwitches.returns(Configuration("version-1.enabled" -> true, "version-2.enabled" -> true))
+    MockAppConfig.endpointsEnabled(Version1).returns(true).anyNumberOfTimes()
+    MockAppConfig.endpointsEnabled(Version2).returns(true).anyNumberOfTimes()
 
     val requestHandler: VersionRoutingRequestHandler =
       new VersionRoutingRequestHandler(routingMap, errorHandler, httpConfiguration, mockAppConfig, filters, action)

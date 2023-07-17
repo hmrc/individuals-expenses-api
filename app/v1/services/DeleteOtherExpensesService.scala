@@ -29,8 +29,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class DeleteOtherExpensesService @Inject() (deleteOtherExpensesConnector: DeleteOtherExpensesConnector) extends BaseService {
 
-  def deleteOtherExpenses(
-      request: DeleteOtherExpensesRequest)(implicit ctx: RequestContext, ec: ExecutionContext): Future[ServiceOutcome[Unit]] = {
+  def deleteOtherExpenses(request: DeleteOtherExpensesRequest)(implicit ctx: RequestContext, ec: ExecutionContext): Future[ServiceOutcome[Unit]] = {
 
     deleteOtherExpensesConnector.deleteOtherExpenses(request).map(_.leftMap(mapDownstreamErrors(downstreamErrorMap)))
   }

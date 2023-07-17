@@ -16,15 +16,15 @@
 
 package routing
 
-import api.models.errors.{InvalidAcceptHeaderError, UnsupportedVersionError}
-import config.{AppConfig, FeatureSwitches}
-import definition.Versions
-import javax.inject.{Inject, Singleton}
+import api.models.errors.{InvalidAcceptHeaderError, NotFoundError, UnsupportedVersionError}
+import config.AppConfig
 import play.api.http.{DefaultHttpRequestHandler, HttpConfiguration, HttpErrorHandler, HttpFilters}
 import play.api.libs.json.Json
 import play.api.mvc.{DefaultActionBuilder, Handler, RequestHeader, Results}
 import play.api.routing.Router
 import play.core.DefaultWebCommands
+
+import javax.inject.{Inject, Singleton}
 
 @Singleton
 class VersionRoutingRequestHandler @Inject() (versionRoutingMap: VersionRoutingMap,
@@ -42,30 +42,45 @@ class VersionRoutingRequestHandler @Inject() (versionRoutingMap: VersionRoutingM
       filters = filters.filters
     ) {
 
-  private val featureSwitch = FeatureSwitches(config.featureSwitches)
-
   private val unsupportedVersionAction = action(Results.NotFound(Json.toJson(UnsupportedVersionError)))
+
+  private val resourceNotFoundAction = action(Results.NotFound(NotFoundError.asJson))
 
   private val invalidAcceptHeaderError = action(Results.NotAcceptable(Json.toJson(InvalidAcceptHeaderError)))
 
   override def routeRequest(request: RequestHeader): Option[Handler] = {
 
-    def documentHandler = routeWith(versionRoutingMap.defaultRouter)(request)
+    def documentHandler = routeWith(versionRoutingMap.defaultRouter, request)
 
-    def apiHandler = Versions.getFromRequest(request) match {
-      case Some(version) =>
-        versionRoutingMap.versionRouter(version) match {
-          case Some(versionRouter) if featureSwitch.isVersionEnabled(version) => routeWith(versionRouter)(request)
-          case Some(_)                                                        => Some(unsupportedVersionAction)
-          case None                                                           => Some(unsupportedVersionAction)
-        }
-      case None => Some(invalidAcceptHeaderError)
-    }
+    def apiHandler: Option[Handler] = Some(
+      Versions.getFromRequest(request) match {
+        case Left(InvalidHeader)   => invalidAcceptHeaderError
+        case Left(VersionNotFound) => unsupportedVersionAction
+
+        case Right(version) => findRoute(request, version) getOrElse resourceNotFoundAction
+      }
+    )
 
     documentHandler orElse apiHandler
   }
 
-  private def routeWith(router: Router)(request: RequestHeader) =
+  /** If a route isn't found for this version, fall back to previous available.
+    */
+  private def findRoute(request: RequestHeader, version: Version): Option[Handler] = {
+    val found =
+      if (config.endpointsEnabled(version)) {
+        versionRoutingMap
+          .versionRouter(version)
+          .flatMap(router => routeWith(router, request))
+      } else {
+        Some(unsupportedVersionAction)
+      }
+
+    found
+      .orElse(version.maybePrevious.flatMap(previousVersion => findRoute(request, previousVersion)))
+  }
+
+  private def routeWith(router: Router, request: RequestHeader) =
     router
       .handlerFor(request)
       .orElse {

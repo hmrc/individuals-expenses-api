@@ -4,43 +4,17 @@ description: |
   A National Insurance number and tax year must be provided.
   
   ### Test data
-  <p>Scenario simulations using Gov-Test-Scenario headers are available only in the sandbox environment.</p>
-  <table>
-      <thead>
-          <tr>
-              <th>Header Value (Gov-Test-Scenario)</th>
-              <th>Scenario</th>
-          </tr>
-      </thead>
-      <tbody>
-        <tr>
-            <td><p>N/A - DEFAULT<br><strong>?source=user</strong></p></td>
-            <td><p>Requesting <strong>user</strong> source simulates success response with User provided financial details.</p></td>
-        </tr>
-        <tr>
-            <td><p>N/A - DEFAULT<br><strong>?source=hmrcHeld</strong></p></td>
-            <td><p>Requesting <strong>hmrcHeld</strong> source simulates success response with HMRC held financial details.</p></td>
-        </tr>
-        <tr>
-            <td><p>N/A - DEFAULT<br><strong>?source=latest</strong></p></td>
-            <td><p>Requesting <strong>latest</strong> source simulates success response with Latest financial details submitted.</p></td>
-        </tr>
-        <tr>
-            <td><p>NOT_FOUND</p></td>
-            <td><p>Simulates the scenario where no data is found.</p></td>
-        </tr>
-        <tr>
-            <td><p>DYNAMIC</p></td>
-            <td><p>The following response values will change to correspond to the values submitted in the request:
-              <ul>
-                  <li>source</li>
-                  <li>submittedOn</li>
-                  <li>dateIgnored</li>
-              </ul>
-            </p></td>
-        </tr>
-      </tbody>
-  </table>
+  Scenario simulations using Gov-Test-Scenario headers are available only in the sandbox environment.
+  
+  | Header Value (Gov-Test-Scenario)        | Scenario                                                                                                                                                              |
+  | --------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+  | N/A - DEFAULT <br> **?source=user**     | Requesting **user** source simulates success response with User provided financial details.                                                                           |
+  | N/A - DEFAULT <br> **?source=hmrcHeld** | Requesting **hmrcHeld** source simulates success response with HMRC held financial details.                                                                           |
+  | N/A - DEFAULT <br> **?source=latest**   | Requesting **latest** source simulates success response with Latest financial details submitted.                                                                      |
+  | NOT_FOUND                               | Simulates the scenario where no data is found.                                                                                                                        |
+  | STATEFUL                                | Performs a stateful retrieve.                                                                                                                                         |
+  | DYNAMIC                                 | The following response values will change to correspond to the values submitted in the request: <br/> &bull; source <br/> &bull; submittedOn <br/> &bull; dateIgnored |
+
 
 tags:
   - Employment Expenses

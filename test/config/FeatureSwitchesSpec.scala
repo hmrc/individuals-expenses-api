@@ -51,40 +51,6 @@ class FeatureSwitchesSpec extends UnitSpec {
     }
   }
 
-  "isVersionEnabled" should {
-    val configuration = Configuration(
-      "version-1.enabled" -> true,
-      "version-2.enabled" -> false
-    )
-    val featureSwitches = FeatureSwitches(configuration)
-
-    "return false" when {
-      "the version is blank" in {
-        featureSwitches.isVersionEnabled("") shouldBe false
-      }
-
-      "the version is an invalid format" in {
-        featureSwitches.isVersionEnabled("ABCDE-1") shouldBe false
-        featureSwitches.isVersionEnabled("1.") shouldBe false
-        featureSwitches.isVersionEnabled("1.ABC") shouldBe false
-      }
-
-      "the version isn't in the config" in {
-        featureSwitches.isVersionEnabled("3.0") shouldBe false
-      }
-
-      "the version is disabled in the config" in {
-        featureSwitches.isVersionEnabled("2.0") shouldBe false
-      }
-    }
-
-    "return true" when {
-      "the version is enabled in the config" in {
-        featureSwitches.isVersionEnabled("1.0") shouldBe true
-      }
-    }
-  }
-
   "isTemporalValidationEnabled" when {
 
     def configuration(enable: Boolean) =
@@ -127,30 +93,6 @@ class FeatureSwitchesSpec extends UnitSpec {
       }
     }
 
-  }
-
-  "OpenApiFeature.matches" should {
-
-    case object AFeature extends OpenApiFeature {
-      val key     = "openApiFeatureTest"
-      val version = "any"
-      val fileMatchers = List(
-        "^employment_expenses_retrieve\\.yaml$".r,
-        "^other_expenses_retrieve\\.yaml$".r
-      )
-
-    }
-
-    "return true for a matching filename" in {
-      AFeature.matches("employment_expenses_retrieve.yaml") shouldBe true
-    }
-
-    "return false for non-matching filenames" in {
-      AFeature.matches("something_different.yaml") shouldBe false
-      AFeature.matches("employment_expenses_retrieve.YAML") shouldBe false
-      AFeature.matches("employment_expenses_retrieve.yaml_AND_MORE") shouldBe false
-      AFeature.matches("MORE_AND_employment_expenses_retrieve.yaml") shouldBe false
-    }
   }
 
 }
