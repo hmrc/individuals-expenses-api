@@ -12,3 +12,8 @@ Some endpoints support STATEFUL gov test scenarios. Stateful scenarios work with
 The following groups are stateful in the sandbox:
 - Other Expenses
 - Employment Expenses
+
+### Dynamic
+Some endpoints support DYNAMIC gov test scenarios. The response is dynamic based on the request parameters:
+
+- Retrieve Employment Expenses
