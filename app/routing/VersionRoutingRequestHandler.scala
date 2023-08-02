@@ -50,7 +50,7 @@ class VersionRoutingRequestHandler @Inject() (versionRoutingMap: VersionRoutingM
 
   override def routeRequest(request: RequestHeader): Option[Handler] = {
 
-    def documentHandler = routeWith(versionRoutingMap.defaultRouter, request)
+    def documentHandler: Option[Handler] = routeWith(versionRoutingMap.defaultRouter, request)
 
     def apiHandler: Option[Handler] = Some(
       Versions.getFromRequest(request) match {
@@ -64,23 +64,17 @@ class VersionRoutingRequestHandler @Inject() (versionRoutingMap: VersionRoutingM
     documentHandler orElse apiHandler
   }
 
-  /** If a route isn't found for this version, fall back to previous available.
-    */
   private def findRoute(request: RequestHeader, version: Version): Option[Handler] = {
-    val found =
-      if (config.endpointsEnabled(version)) {
-        versionRoutingMap
-          .versionRouter(version)
-          .flatMap(router => routeWith(router, request))
-      } else {
-        Some(unsupportedVersionAction)
-      }
-
-    found
-      .orElse(version.maybePrevious.flatMap(previousVersion => findRoute(request, previousVersion)))
+    if (config.endpointsEnabled(version)) {
+      versionRoutingMap
+        .versionRouter(version)
+        .flatMap(router => routeWith(router, request))
+    } else {
+      Some(unsupportedVersionAction)
+    }
   }
 
-  private def routeWith(router: Router, request: RequestHeader) =
+  private def routeWith(router: Router, request: RequestHeader): Option[Handler] =
     router
       .handlerFor(request)
       .orElse {
