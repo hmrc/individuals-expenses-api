@@ -10,7 +10,7 @@ description: |
   |-----------------------------------------|-------------------------------------------------|
   | N/A - DEFAULT                           | Simulates a success response.                   |
   | NOT_FOUND                               | Simulates the scenario where no data is found.  |
-  | STATEFUL                                | Performs a stateful create or update.<br><br>At least one custom employment with ‘occupationalPension = false’ must be created for the tax year before you can submit expenses. |                                                            |
+  | STATEFUL                                | Performs a stateful create or update.           |
 
 tags:
   - Other Expenses
