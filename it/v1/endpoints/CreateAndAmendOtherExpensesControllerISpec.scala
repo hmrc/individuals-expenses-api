@@ -22,8 +22,8 @@ import play.api.http.Status._
 import play.api.libs.json.{JsObject, JsValue, Json}
 import play.api.libs.ws.{WSRequest, WSResponse}
 import play.api.test.Helpers.AUTHORIZATION
+import stubs.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 import support.IntegrationBaseSpec
-import v1.stubs.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 
 class CreateAndAmendOtherExpensesControllerISpec extends IntegrationBaseSpec {
 
@@ -146,8 +146,7 @@ class CreateAndAmendOtherExpensesControllerISpec extends IntegrationBaseSpec {
           response.json shouldBe Json.toJson(RuleIncorrectOrEmptyBodyError)
         }
         s"a body missing mandatory fields is provided" in new NonTysTest {
-          override val requestBodyJson: JsValue = Json.parse(
-            """{
+          override val requestBodyJson: JsValue = Json.parse("""{
               | "paymentsToTradeUnionsForDeathBenefits": {},
               | "patentRoyaltiesPayments": {}
               |}""".stripMargin)
@@ -213,8 +212,7 @@ class CreateAndAmendOtherExpensesControllerISpec extends IntegrationBaseSpec {
          |""".stripMargin
     )
 
-    val responseBody = Json.parse(
-      s"""
+    val responseBody = Json.parse(s"""
          |{
          |  "links": [
          |    {

@@ -38,6 +38,6 @@ object MtdSource {
     override def toDownstream: DownstreamSource = DownstreamSource.`LATEST`
   }
 
-  implicit val format: Format[MtdSource] = Enums.format[MtdSource]
+  implicit val format: Format[MtdSource]         = Enums.format[MtdSource]
   val parser: PartialFunction[String, MtdSource] = Enums.parser[MtdSource]
 }

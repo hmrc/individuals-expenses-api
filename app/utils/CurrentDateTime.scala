@@ -16,8 +16,9 @@
 
 package utils
 
-import javax.inject.{Inject, Singleton}
 import org.joda.time.{DateTime, DateTimeZone}
+
+import javax.inject.{Inject, Singleton}
 
 @Singleton
 class CurrentDateTime @Inject() () {

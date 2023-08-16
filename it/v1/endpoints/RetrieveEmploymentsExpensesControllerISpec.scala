@@ -22,9 +22,9 @@ import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.libs.ws.{WSRequest, WSResponse}
 import play.api.test.Helpers.AUTHORIZATION
+import stubs.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 import support.IntegrationBaseSpec
 import v1.fixtures.RetrieveEmploymentsExpensesFixtures._
-import v1.stubs.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 
 class RetrieveEmploymentsExpensesControllerISpec extends IntegrationBaseSpec {
 
@@ -89,8 +89,8 @@ class RetrieveEmploymentsExpensesControllerISpec extends IntegrationBaseSpec {
                                 expectedBody: MtdError): Unit = {
           s"validation fails with ${expectedBody.code} error" in new NonTysTest {
 
-            override val nino: String = requestNino
-            override val mtdTaxYear: String = requestTaxYear
+            override val nino: String            = requestNino
+            override val mtdTaxYear: String      = requestTaxYear
             override val latestSourceMtd: String = requestSource
 
             val response: WSResponse = await(request(latestMtdUri).get())
@@ -149,13 +149,13 @@ class RetrieveEmploymentsExpensesControllerISpec extends IntegrationBaseSpec {
 
     val nino = "AA123456A"
 
-    val latestSourceMtd = "latest"
+    val latestSourceMtd        = "latest"
     val latestSourceDownstream = "LATEST"
 
-    val hmrcHeldSourceMtd = "hmrcHeld"
+    val hmrcHeldSourceMtd        = "hmrcHeld"
     val hmrcHeldSourceDownstream = "HMRC-HELD"
 
-    val userSourceMtd = "user"
+    val userSourceMtd        = "user"
     val userSourceDownstream = "CUSTOMER"
 
     def latestMtdUri: String = s"/employments/$nino/$mtdTaxYear?source=$latestSourceMtd"

@@ -29,9 +29,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class IgnoreEmploymentExpensesService @Inject() (connector: IgnoreEmploymentExpensesConnector) extends BaseService {
 
-  def ignore(request: IgnoreEmploymentExpensesRequest)(implicit
-      ctx: RequestContext,
-      ec: ExecutionContext): Future[ServiceOutcome[Unit]] = {
+  def ignore(request: IgnoreEmploymentExpensesRequest)(implicit ctx: RequestContext, ec: ExecutionContext): Future[ServiceOutcome[Unit]] = {
 
     connector.ignore(request).map(_.leftMap(mapDownstreamErrors(downstreamErrorMap)))
   }

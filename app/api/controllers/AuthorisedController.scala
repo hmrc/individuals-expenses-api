@@ -46,10 +46,10 @@ abstract class AuthorisedController(cc: ControllerComponents)(implicit ec: Execu
         .withDelegatedAuthRule("mtd-it-auth")
 
     def invokeBlockWithAuthCheck[A](mtdId: String, request: Request[A], block: UserRequest[A] => Future[Result])(implicit
-                                                                                                                 headerCarrier: HeaderCarrier): Future[Result] = {
+        headerCarrier: HeaderCarrier): Future[Result] = {
       authService.authorised(predicate(mtdId)).flatMap[Result] {
         case Right(userDetails) => block(UserRequest(userDetails.copy(mtdId = mtdId), request))
-        case Left(mtdError) => errorResponse(mtdError)
+        case Left(mtdError)     => errorResponse(mtdError)
       }
     }
 
@@ -57,7 +57,7 @@ abstract class AuthorisedController(cc: ControllerComponents)(implicit ec: Execu
       implicit val headerCarrier: HeaderCarrier = hc(request)
 
       lookupService.lookup(nino).flatMap[Result] {
-        case Right(mtdId) => invokeBlockWithAuthCheck(mtdId, request, block)
+        case Right(mtdId)   => invokeBlockWithAuthCheck(mtdId, request, block)
         case Left(mtdError) => errorResponse(mtdError)
       }
     }

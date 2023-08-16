@@ -1,0 +1,20 @@
+put:
+  $ref: "./other_expenses_create_and_amend.yaml"
+  summary: Create and Amend Other Expenses
+  security:
+    - User-Restricted:
+        - write:self-assessment
+
+get:
+  $ref: "./other_expenses_retrieve.yaml"
+  summary: Retrieve Other Expenses
+  security:
+    - User-Restricted:
+        - read:self-assessment
+
+delete:
+  $ref: "./other_expenses_delete.yaml"
+  summary: Delete Other Expenses
+  security:
+    - User-Restricted:
+        - write:self-assessment

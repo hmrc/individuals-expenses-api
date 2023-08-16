@@ -16,11 +16,13 @@
 
 package config
 
-import com.typesafe.config.Config
+import com.typesafe.config.{Config, ConfigValue}
 import play.api.{ConfigLoader, Configuration}
+import routing.Version
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
+import java.util
 import javax.inject.{Inject, Singleton}
 import scala.jdk.CollectionConverters._
 
@@ -28,6 +30,8 @@ trait AppConfig {
 
   // MTD ID Lookup Config
   def mtdIdBaseUrl: String
+
+  def keyValuesJ: util.Map[String, ConfigValue]
 
   // Downstream Config
   def desBaseUrl: String
@@ -64,7 +68,7 @@ trait AppConfig {
     DownstreamConfig(baseUrl = tysIfsBaseUrl, env = tysIfsEnv, token = tysIfsToken, environmentHeaders = tysIfsEnvironmentHeaders)
 
   // API Config
-  def apiStatus(version: String): String
+  def apiStatus(version: Version): String
   def apiGatewayContext: String
   def confidenceLevelConfig: ConfidenceLevelConfig
 
@@ -74,18 +78,21 @@ trait AppConfig {
 
   def featureSwitches: Configuration
   def endpointsEnabled(version: String): Boolean
+  def endpointsEnabled(version: Version): Boolean
 
   /** Currently only for OAS documentation.
     */
-  def endpointEnabled(version: String, name: String): Boolean
+  def apiVersionReleasedInProduction(version: String): Boolean
 
   /** Currently only for OAS documentation.
     */
-  def endpointSwitches(version: String): Map[String, Boolean]
+  def endpointReleasedInProduction(version: String, name: String): Boolean
 }
 
 @Singleton
 class AppConfigImpl @Inject() (config: ServicesConfig, configuration: Configuration) extends AppConfig {
+
+  val keyValuesJ: util.Map[String, ConfigValue] = configuration.entrySet.toMap.asJava
 
   // MTD ID Lookup Config
   val mtdIdBaseUrl: String = config.baseUrl("mtd-id-lookup")
@@ -114,7 +121,7 @@ class AppConfigImpl @Inject() (config: ServicesConfig, configuration: Configurat
 
   // API Config
   val apiGatewayContext: String                    = config.getString("api.gateway.context")
-  def apiStatus(version: String): String           = config.getString(s"api.$version.status")
+  def apiStatus(version: Version): String          = config.getString(s"api.$version.status")
   def featureSwitches: Configuration               = configuration.getOptional[Configuration](s"feature-switch").getOrElse(Configuration.empty)
   val confidenceLevelConfig: ConfidenceLevelConfig = configuration.get[ConfidenceLevelConfig](s"api.confidence-level-check")
 
@@ -122,24 +129,16 @@ class AppConfigImpl @Inject() (config: ServicesConfig, configuration: Configurat
   val otherExpensesMinimumTaxYear: Int      = config.getInt("otherExpensesMinimumTaxYear")
   val employmentExpensesMinimumTaxYear: Int = config.getInt("employmentExpensesMinimumTaxYear")
 
-  def endpointsEnabled(version: String): Boolean = config.getBoolean(s"api.$version.endpoints.enabled")
+  def endpointsEnabled(version: String): Boolean               = config.getBoolean(s"api.$version.endpoints.enabled")
+  def endpointsEnabled(version: Version): Boolean              = config.getBoolean(s"api.${version.name}.endpoints.enabled")
+  def apiVersionReleasedInProduction(version: String): Boolean = config.getBoolean(s"api.$version.endpoints.api-released-in-production")
 
-  def endpointEnabled(version: String, name: String): Boolean = {
-    val switches = endpointSwitches(version)
-    switches.getOrElse(name, true)
-  }
-
-  def endpointSwitches(version: String): Map[String, Boolean] = {
-    val path = s"api.$version.endpoints.switches"
+  def endpointReleasedInProduction(version: String, name: String): Boolean = {
+    val versionReleasedInProd = apiVersionReleasedInProduction(version)
+    val path                  = s"api.$version.endpoints.released-in-production.$name"
 
     val conf = configuration.underlying
-    if (conf.hasPath(path)) {
-      val endpointConfig = conf.getConfig(path)
-      endpointConfig.entrySet.asScala.map { mapEntry =>
-        val key = mapEntry.getKey
-        key -> endpointConfig.getBoolean(key)
-      }.toMap
-    } else Map.empty
+    if (versionReleasedInProd && conf.hasPath(path)) config.getBoolean(path) else versionReleasedInProd
   }
 
 }

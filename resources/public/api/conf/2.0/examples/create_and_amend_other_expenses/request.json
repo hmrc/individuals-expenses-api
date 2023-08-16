@@ -1,0 +1,10 @@
+{
+  "paymentsToTradeUnionsForDeathBenefits": {
+    "customerReference": "TRADE UNION PAYMENTS",
+    "expenseAmount": 1223.22
+  },
+  "patentRoyaltiesPayments":{
+    "customerReference": "ROYALTIES PAYMENTS",
+    "expenseAmount": 1223.22
+  }
+}

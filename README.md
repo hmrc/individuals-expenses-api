@@ -18,7 +18,7 @@ An endpoint also exists that allows software packages to ignore HMRC provided em
 
 Run from the console using: `sbt run` (starts on port 7795 by default)
 
-Start the service manager profile: `sm --start MTDFB_SA`
+Start the service manager profile: `sm --start MTDFB_INDIVIDUALS_EXPENSES`
 
 ## Running tests
 
@@ -33,7 +33,7 @@ To view documentation locally ensure the Expenses API is running, and run api-do
 `./run_local_with_dependencies.sh`
 
 Then go to http://localhost:9680/api-documentation/docs/openapi/preview and use this port and version:
-`http://localhost:7795/api/conf/1.0/application.yaml`
+`http://localhost:7795/api/conf/2.0/application.yaml`
 
 ## Changelog
 

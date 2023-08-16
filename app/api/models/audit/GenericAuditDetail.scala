@@ -37,7 +37,7 @@ object GenericAuditDetail {
       (JsPath \ "request").writeNullable[JsValue] and
       (JsPath \ "X-CorrelationId").write[String] and
       (JsPath \ "response").write[AuditResponse]
-    ) (unlift(GenericAuditDetail.unapply))
+  )(unlift(GenericAuditDetail.unapply))
 
   def apply(userDetails: UserDetails,
             params: Map[String, String],
@@ -59,7 +59,7 @@ object GenericAuditDetail {
     new AuditHandler.AuditDetailCreator[GenericAuditDetail] {
 
       def createAuditDetail(userDetails: UserDetails, requestBody: Option[JsValue], auditResponse: AuditResponse)(implicit
-                                                                                                                  ctx: RequestContext): GenericAuditDetail =
+          ctx: RequestContext): GenericAuditDetail =
         GenericAuditDetail(
           userDetails = userDetails,
           params = params,

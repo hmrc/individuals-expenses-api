@@ -37,7 +37,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class IgnoreEmploymentExpensesControllerSpec
-  extends ControllerBaseSpec
+    extends ControllerBaseSpec
     with ControllerTestRunner
     with MockIgnoreEmploymentExpensesService
     with MockIgnoreEmploymentExpensesRequestParser
@@ -51,8 +51,7 @@ class IgnoreEmploymentExpensesControllerSpec
     Link(href = s"/individuals/expenses/employments/$nino/$taxYear", method = DELETE, rel = "delete-employment-expenses")
   )
 
-  val responseBodyJson: JsValue = Json.parse(
-    s"""
+  val responseBodyJson: JsValue = Json.parse(s"""
        |{
        |  "links": [
        |    {
@@ -69,7 +68,7 @@ class IgnoreEmploymentExpensesControllerSpec
        |}
        |""".stripMargin)
 
-  private val rawData = IgnoreEmploymentExpensesRawData(nino, taxYear)
+  private val rawData     = IgnoreEmploymentExpensesRawData(nino, taxYear)
   private val requestData = IgnoreEmploymentExpensesRequest(Nino(nino), TaxYear.fromMtd(taxYear))
 
   "handleRequest" should {

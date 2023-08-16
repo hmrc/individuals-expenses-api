@@ -16,22 +16,38 @@
 
 package config.rewriters
 
-import config.AppConfig
-import config.rewriters.ApiVersionTitleRewriter.rewriteApiVersionTitle
-import config.rewriters.EndpointSummaryGroupRewriter.rewriteGroupedEndpointSummaries
-import config.rewriters.EndpointSummaryRewriter.rewriteEndpointSummary
+import config.rewriters.DocumentationRewriters.CheckAndRewrite
+import controllers.Rewriter
+
+import javax.inject.{Inject, Singleton}
+
+@Singleton class DocumentationRewriters @Inject() (apiVersionTitleRewriter: ApiVersionTitleRewriter,
+                                                   endpointSummaryRewriter: EndpointSummaryRewriter,
+                                                   endpointSummaryGroupRewriter: EndpointSummaryGroupRewriter,
+                                                   oasFeatureRewriter: OasFeatureRewriter) {
+
+  val rewriteables: Seq[CheckAndRewrite] =
+    List(
+      apiVersionTitleRewriter.rewriteApiVersionTitle,
+      endpointSummaryRewriter.rewriteEndpointSummary,
+      endpointSummaryGroupRewriter.rewriteGroupedEndpointSummaries,
+      oasFeatureRewriter.rewriteOasFeature
+    )
+
+}
 
 object DocumentationRewriters {
 
-  val rewriteables =
-    List(
-      rewriteApiVersionTitle,
-      rewriteEndpointSummary,
-      rewriteGroupedEndpointSummaries
-    )
-
   trait CheckRewrite {
-    def apply(version: String, filename: String, appConfig: AppConfig): Boolean
+    def apply(version: String, filename: String): Boolean
+  }
+
+  case class CheckAndRewrite(check: CheckRewrite, rewrite: Rewriter) {
+
+    def maybeRewriter(version: String, filename: String): Option[Rewriter] =
+      if (check(version, filename)) Some(rewrite) else None
+
+    val asTuple: (CheckRewrite, Rewriter) = (check, rewrite)
   }
 
 }

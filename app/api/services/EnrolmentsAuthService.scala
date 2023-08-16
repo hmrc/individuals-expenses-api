@@ -33,7 +33,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class EnrolmentsAuthService @Inject()(val connector: AuthConnector, val appConfig: AppConfig) extends Logging {
+class EnrolmentsAuthService @Inject() (val connector: AuthConnector, val appConfig: AppConfig) extends Logging {
 
   private val authFunction: AuthorisedFunctions = new AuthorisedFunctions {
     override def authConnector: AuthConnector = connector
@@ -62,7 +62,7 @@ class EnrolmentsAuthService @Inject()(val connector: AuthConnector, val appConfi
         Future.successful(Right(user))
       case Some(Agent) ~ _ =>
         retrieveAgentDetails() map {
-          case arn@Some(_) =>
+          case arn @ Some(_) =>
             val user: AuthOutcome = Right(UserDetails("", "Agent", arn))
             user
           case None =>
@@ -74,7 +74,7 @@ class EnrolmentsAuthService @Inject()(val connector: AuthConnector, val appConfi
         Future.successful(Left(ClientNotAuthorisedError))
 
     } recoverWith {
-      case _: MissingBearerToken => Future.successful(Left(ClientNotAuthorisedError))
+      case _: MissingBearerToken     => Future.successful(Left(ClientNotAuthorisedError))
       case _: AuthorisationException => Future.successful(Left(ClientNotAuthorisedError))
       case error =>
         logger.warn(s"[EnrolmentsAuthService][authorised] An unexpected error occurred: $error")
