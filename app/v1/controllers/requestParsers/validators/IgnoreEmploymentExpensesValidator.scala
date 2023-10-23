@@ -19,14 +19,9 @@ package v1.controllers.requestParsers.validators
 import api.controllers.requestParsers.validators.Validator
 import api.controllers.requestParsers.validators.validations._
 import api.models.errors.MtdError
-import config.AppConfig
-import utils.{CurrentDateTime, CurrentTaxYear}
 import v1.models.request.ignoreEmploymentExpenses._
 
-import javax.inject.Inject
-
-class IgnoreEmploymentExpensesValidator @Inject() (implicit currentDateTime: CurrentDateTime, appConfig: AppConfig, currentTaxYear: CurrentTaxYear)
-    extends Validator[IgnoreEmploymentExpensesRawData] {
+class IgnoreEmploymentExpensesValidator extends Validator[IgnoreEmploymentExpensesRawData] {
   private val validationSet = List(parameterFormatValidation, parameterRuleValidation)
 
   private def parameterFormatValidation: IgnoreEmploymentExpensesRawData => List[List[MtdError]] = (data: IgnoreEmploymentExpensesRawData) => {
@@ -36,9 +31,9 @@ class IgnoreEmploymentExpensesValidator @Inject() (implicit currentDateTime: Cur
     )
   }
 
-  private def parameterRuleValidation: IgnoreEmploymentExpensesRawData => List[List[MtdError]] = { data =>
+  private def parameterRuleValidation: IgnoreEmploymentExpensesRawData => List[List[MtdError]] = { _ =>
     List(
-      MtdTaxYearValidation.validate(data.taxYear, appConfig.employmentExpensesMinimumTaxYear)
+//      MtdTaxYearValidation.validate(data.taxYear, appConfig.employmentExpensesMinimumTaxYear)
     )
   }
 

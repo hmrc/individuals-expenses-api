@@ -19,14 +19,9 @@ package v1.controllers.requestParsers.validators
 import api.controllers.requestParsers.validators.Validator
 import api.controllers.requestParsers.validators.validations._
 import api.models.errors.MtdError
-import config.AppConfig
-import utils.{CurrentDateTime, CurrentTaxYear}
 import v1.models.request.retrieveEmploymentExpenses.RetrieveEmploymentsExpensesRawData
 
-import javax.inject.Inject
-
-class RetrieveEmploymentExpensesValidator @Inject() (implicit currentDateTime: CurrentDateTime, appConfig: AppConfig, currentTaxYear: CurrentTaxYear)
-    extends Validator[RetrieveEmploymentsExpensesRawData] {
+class RetrieveEmploymentExpensesValidator extends Validator[RetrieveEmploymentsExpensesRawData] {
 
   private val validationSet = List(parameterFormatValidation, parameterRuleValidation)
 
@@ -38,9 +33,9 @@ class RetrieveEmploymentExpensesValidator @Inject() (implicit currentDateTime: C
     )
   }
 
-  private def parameterRuleValidation: RetrieveEmploymentsExpensesRawData => List[List[MtdError]] = (data: RetrieveEmploymentsExpensesRawData) => {
+  private def parameterRuleValidation: RetrieveEmploymentsExpensesRawData => List[List[MtdError]] = _ => {
     List(
-      MtdTaxYearValidation.validate(data.taxYear, appConfig.employmentExpensesMinimumTaxYear)
+//      MtdTaxYearValidation.validate(data.taxYear, appConfig.employmentExpensesMinimumTaxYear)
     )
   }
 

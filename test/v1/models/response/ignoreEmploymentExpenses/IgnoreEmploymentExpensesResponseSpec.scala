@@ -16,8 +16,8 @@
 
 package v1.models.response.ignoreEmploymentExpenses
 
-import api.models.hateoas.Link
-import api.models.hateoas.Method.{DELETE, GET}
+import api.hateoas.Link
+import api.hateoas.Method.{DELETE, GET}
 import mocks.MockAppConfig
 import support.UnitSpec
 

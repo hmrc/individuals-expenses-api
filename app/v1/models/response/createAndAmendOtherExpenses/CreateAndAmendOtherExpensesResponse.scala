@@ -16,8 +16,7 @@
 
 package v1.models.response.createAndAmendOtherExpenses
 
-import api.hateoas.{HateoasLinks, HateoasLinksFactory}
-import api.models.hateoas.{HateoasData, Link}
+import api.hateoas.{HateoasData, HateoasLinks, HateoasLinksFactory, Link}
 import config.AppConfig
 
 object CreateAndAmendOtherExpensesResponse extends HateoasLinks {

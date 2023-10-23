@@ -17,9 +17,8 @@
 package api.controllers
 
 import api.controllers.requestParsers.RequestParser
-import api.hateoas.{HateoasFactory, HateoasLinksFactory}
-import api.models.errors.{ErrorWrapper, StandardDownstreamError}
-import api.models.hateoas.{HateoasData, HateoasWrapper}
+import api.hateoas.{HateoasData, HateoasFactory, HateoasLinksFactory, HateoasWrapper}
+import api.models.errors.{ErrorWrapper, InternalError}
 import api.models.outcomes.ResponseWrapper
 import api.models.request.RawData
 import cats.data.EitherT
@@ -185,7 +184,7 @@ object RequestHandler {
         logger.error(
           s"[${endpointLogContext.controllerName}][${endpointLogContext.endpointName}] - " +
             s"Unhandled error: $errorWrapper")
-        InternalServerError(Json.toJson(StandardDownstreamError))
+        InternalServerError(Json.toJson(InternalError))
       }
 
       def auditIfRequired(httpStatus: Int, response: Either[ErrorWrapper, Option[JsValue]])(implicit

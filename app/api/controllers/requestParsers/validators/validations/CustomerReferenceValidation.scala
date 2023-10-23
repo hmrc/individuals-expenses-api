@@ -20,21 +20,16 @@ import api.models.errors.{CustomerReferenceFormatError, MtdError}
 
 object CustomerReferenceValidation {
 
-  def validateOptional(field: Option[String], path: String): List[MtdError] = {
+  def validateOptional(field: Option[String], path: String): List[MtdError] =
     field match {
       case None        => NoValidationErrors
       case Some(value) => validate(value, path)
     }
-  }
 
-  private def validate(customerRef: String, path: String): List[MtdError] = {
-    if (customerRef.matches("^[0-9a-zA-Z{À-˿’}\\- _&`():.'^]{1,90}$")) {
+  private def validate(customerRef: String, path: String): List[MtdError] =
+    if (customerRef.matches("^[0-9a-zA-Z{À-˿’}\\- _&`():.'^]{1,90}$"))
       NoValidationErrors
-    } else {
-      List(
-        CustomerReferenceFormatError.copy(paths = Some(Seq(path)))
-      )
-    }
-  }
+    else
+      List(CustomerReferenceFormatError.withPath(path))
 
 }

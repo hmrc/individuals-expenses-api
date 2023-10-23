@@ -23,7 +23,8 @@ class TimestampSpec extends UnitSpec {
 
   private val response = AnyDownstreamResponse(3, "payments", Timestamp("2023-01-20T01:20:30.000Z"))
 
-  private val responseJs = Json.parse(""" {
+  private val responseJs = Json.parse("""
+                                        | {
                                         |   "amount": 3,
                                         |   "category": "payments",
                                         |   "lastUpdated": "2023-01-20T01:20:30.000Z"

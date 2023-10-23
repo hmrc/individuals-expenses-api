@@ -16,8 +16,8 @@
 
 package v1.models.response.createAndAmendEmploymentExpenses
 
-import api.models.hateoas.Link
-import api.models.hateoas.Method.{DELETE, GET, PUT}
+import api.hateoas.Link
+import api.hateoas.Method.{DELETE, GET, PUT}
 import mocks.MockAppConfig
 import support.UnitSpec
 

@@ -16,37 +16,31 @@
 
 package api.controllers.requestParsers.validators.validations
 
-import api.mocks.{MockCurrentDateTime, MockCurrentTaxYear}
 import api.models.errors.{RuleTaxYearNotEndedError, RuleTaxYearNotSupportedError}
-import api.utils.JsonErrorValidators
+import api.models.utils.JsonErrorValidators
 import config.AppConfig
 import mocks.MockAppConfig
-import org.joda.time.DateTime
 import org.joda.time.format.{DateTimeFormat, DateTimeFormatter}
-import org.scalamock.handlers.CallHandler
 import support.UnitSpec
-import utils.{CurrentDateTime, CurrentTaxYear}
 
 class MtdTaxYearValidationSpec extends UnitSpec with JsonErrorValidators {
 
-  class Test extends MockCurrentDateTime with MockCurrentTaxYear with MockAppConfig {
-    implicit val dateTimeProvider: CurrentDateTime = mockCurrentDateTime
-    val dateTimeFormatter: DateTimeFormatter       = DateTimeFormat.forPattern("yyyy-MM-dd")
-    private val date                               = DateTime.parse("2020-04-06")
+  class Test extends MockAppConfig {
+    val dateTimeFormatter: DateTimeFormatter = DateTimeFormat.forPattern("yyyy-MM-dd")
+//    private val date                         = DateTime.parse("2020-04-06")
 
-    implicit val appConfig: AppConfig           = mockAppConfig
-    implicit val currentTaxYear: CurrentTaxYear = mockCurrentTaxYear
+    implicit val appConfig: AppConfig = mockAppConfig
 
     MockAppConfig.otherExpensesMinimumTaxYear.returns(2022)
     MockAppConfig.employmentExpensesMinimumTaxYear.returns(2020)
 
-    def setupTimeProvider(date: String): CallHandler[DateTime] =
-      MockCurrentDateTime.getCurrentDate
-        .returns(DateTime.parse(date, dateTimeFormatter))
-
-    MockCurrentTaxYear
-      .getCurrentTaxYear(date)
-      .returns(2021)
+//    def setupTimeProvider(date: String = "2020-04-06"): CallHandler[DateTime] =
+//      MockCurrentDateTime.getCurrentDate
+//        .returns(DateTime.parse(date, dateTimeFormatter))
+//
+//    MockCurrentTaxYear
+//      .getCurrentTaxYear(date)
+//      .returns(2021)
 
   }
 
@@ -54,7 +48,7 @@ class MtdTaxYearValidationSpec extends UnitSpec with JsonErrorValidators {
     "return no errors" when {
       "the minimum allowed tax year for employment expenses is supplied" in new Test {
 
-        setupTimeProvider("2020-04-06")
+//        setupTimeProvider("2020-04-06")
 
         val validTaxYear     = "2019-20"
         val validationResult = MtdTaxYearValidation.validate(validTaxYear, appConfig.employmentExpensesMinimumTaxYear)
@@ -62,7 +56,7 @@ class MtdTaxYearValidationSpec extends UnitSpec with JsonErrorValidators {
       }
       "the minimum allowed tax year for other expenses is supplied" in new Test {
 
-        setupTimeProvider("2022-04-06")
+//        setupTimeProvider("2022-04-06")
 
         val validTaxYear     = "2021-22"
         val validationResult = MtdTaxYearValidation.validate(validTaxYear, appConfig.otherExpensesMinimumTaxYear)
@@ -70,18 +64,18 @@ class MtdTaxYearValidationSpec extends UnitSpec with JsonErrorValidators {
       }
       "the minimum allowed tax year is supplied with checkCurrentTaxYear to true" in new Test {
 
-        setupTimeProvider("2020-04-06")
+//        setupTimeProvider("2020-04-06")
 
         val validTaxYear     = "2019-20"
-        val validationResult = MtdTaxYearValidation.validate(validTaxYear, appConfig.employmentExpensesMinimumTaxYear, true)
+        val validationResult = MtdTaxYearValidation.validate(validTaxYear, appConfig.employmentExpensesMinimumTaxYear)
         validationResult.isEmpty shouldBe true
       }
       "the supplied tax year has not yet ended, with checkCurrentTaxYear set to false" in new Test {
 
-        setupTimeProvider("2020-04-06")
+//        setupTimeProvider("2020-04-06")
 
         private val invalidTaxYear   = "2019-20"
-        private val validationResult = MtdTaxYearValidation.validate(invalidTaxYear, appConfig.employmentExpensesMinimumTaxYear, false)
+        private val validationResult = MtdTaxYearValidation.validate(invalidTaxYear, appConfig.employmentExpensesMinimumTaxYear)
 
         validationResult.isEmpty shouldBe true
       }
@@ -90,7 +84,7 @@ class MtdTaxYearValidationSpec extends UnitSpec with JsonErrorValidators {
     "return the given error" when {
       "a tax year below 2021-22 is supplied" in new Test {
 
-        setupTimeProvider("2020-04-06")
+//        setupTimeProvider("2020-04-06")
 
         val invalidTaxYear   = "2015-16"
         val validationResult = MtdTaxYearValidation.validate(invalidTaxYear, appConfig.employmentExpensesMinimumTaxYear)
@@ -100,10 +94,11 @@ class MtdTaxYearValidationSpec extends UnitSpec with JsonErrorValidators {
       }
       "the supplied tax year has not yet ended, with checkCurrentTaxYear set to true" in new Test {
 
-        setupTimeProvider("2020-04-06")
+//        setupTimeProvider("2020-04-06")
 
         private val invalidTaxYear   = "2020-21"
-        private val validationResult = MtdTaxYearValidation.validate(invalidTaxYear, appConfig.employmentExpensesMinimumTaxYear, true)
+        private val validationResult = MtdTaxYearValidation.validate(invalidTaxYear, appConfig.employmentExpensesMinimumTaxYear)
+//        private val validationResult = MtdTaxYearValidation.validate(invalidTaxYear, appConfig.employmentExpensesMinimumTaxYear, true)
 
         validationResult.isEmpty shouldBe false
         validationResult.length shouldBe 1

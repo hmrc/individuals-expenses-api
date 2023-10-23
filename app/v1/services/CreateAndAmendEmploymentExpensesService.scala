@@ -40,15 +40,15 @@ class CreateAndAmendEmploymentExpensesService @Inject() (connector: CreateAndAme
     val errors = Map(
       "INVALID_TAXABLE_ENTITY_ID"       -> NinoFormatError,
       "INVALID_TAX_YEAR"                -> TaxYearFormatError,
-      "INVALID_CORRELATIONID"           -> StandardDownstreamError,
-      "INVALID_PAYLOAD"                 -> StandardDownstreamError,
+      "INVALID_CORRELATIONID"           -> InternalError,
+      "INVALID_PAYLOAD"                 -> InternalError,
       "INVALID_REQUEST_BEFORE_TAX_YEAR" -> RuleTaxYearNotEndedError,
       "INCOME_SOURCE_NOT_FOUND"         -> NotFoundError,
-      "SERVER_ERROR"                    -> StandardDownstreamError,
-      "SERVICE_UNAVAILABLE"             -> StandardDownstreamError
+      "SERVER_ERROR"                    -> InternalError,
+      "SERVICE_UNAVAILABLE"             -> InternalError
     )
     val extraTysErrors = Map(
-      "INVALID_CORRELATION_ID" -> StandardDownstreamError,
+      "INVALID_CORRELATION_ID" -> InternalError,
       "TAX_YEAR_NOT_SUPPORTED" -> RuleTaxYearNotSupportedError
     )
 

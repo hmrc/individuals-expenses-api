@@ -25,7 +25,7 @@ components:
       description: One or more values have been added with the incorrect format.
       value:
         code: FORMAT_VALUE
-        message: The field should be between 0 and 99999999999.99
+        message: The value must be between 0 and 99999999999.99
 
     formatCustomerRef:
       description: The format of customer reference is not valid.

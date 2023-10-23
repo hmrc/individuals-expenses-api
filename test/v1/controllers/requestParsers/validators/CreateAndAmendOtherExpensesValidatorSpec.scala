@@ -16,22 +16,19 @@
 
 package v1.controllers.requestParsers.validators
 
-import api.mocks.{MockCurrentDateTime, MockCurrentTaxYear}
 import api.models.errors._
 import config.AppConfig
 import mocks.MockAppConfig
-import org.joda.time.DateTime
 import org.joda.time.format.{DateTimeFormat, DateTimeFormatter}
 import play.api.libs.json.Json
 import support.UnitSpec
-import utils.{CurrentDateTime, CurrentTaxYear}
 import v1.models.request.createAndAmendOtherExpenses.CreateAndAmendOtherExpensesRawData
 
 class CreateAndAmendOtherExpensesValidatorSpec extends UnitSpec {
 
   private val validNino    = "AA123456A"
   private val validTaxYear = "2021-22"
-  private val date         = DateTime.parse("2020-08-05")
+//  private val date         = DateTime.parse("2020-08-05")
 
   private val requestBodyJson = Json.parse("""
       |{
@@ -79,25 +76,23 @@ class CreateAndAmendOtherExpensesValidatorSpec extends UnitSpec {
       |""".stripMargin
   )
 
-  class Test extends MockCurrentDateTime with MockCurrentTaxYear with MockAppConfig {
+  class Test extends MockAppConfig {
 
-    implicit val dateTimeProvider: CurrentDateTime = mockCurrentDateTime
-    val dateTimeFormatter: DateTimeFormatter       = DateTimeFormat.forPattern("yyyy-MM-dd")
+    val dateTimeFormatter: DateTimeFormatter = DateTimeFormat.forPattern("yyyy-MM-dd")
 
-    implicit val appConfig: AppConfig           = mockAppConfig
-    implicit val currentTaxYear: CurrentTaxYear = mockCurrentTaxYear
+    implicit val appConfig: AppConfig = mockAppConfig
 
     val validator = new CreateAndAmendOtherExpensesValidator()
 
     MockAppConfig.otherExpensesMinimumTaxYear.returns(2022)
 
-    MockCurrentDateTime.getCurrentDate
-      .returns(DateTime.parse("2020-07-11", dateTimeFormatter))
-      .anyNumberOfTimes()
-
-    MockCurrentTaxYear
-      .getCurrentTaxYear(date)
-      .returns(2021)
+//    MockCurrentDateTime.getCurrentDate
+//      .returns(DateTime.parse("2020-07-11", dateTimeFormatter))
+//      .anyNumberOfTimes()
+//
+//    MockCurrentTaxYear
+//      .getCurrentTaxYear(date)
+//      .returns(2021)
 
   }
 

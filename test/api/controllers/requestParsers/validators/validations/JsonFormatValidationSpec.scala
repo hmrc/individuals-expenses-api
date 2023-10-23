@@ -17,7 +17,7 @@
 package api.controllers.requestParsers.validators.validations
 
 import api.models.errors.MtdError
-import api.utils.JsonErrorValidators
+import api.models.utils.JsonErrorValidators
 import play.api.http.Status.BAD_REQUEST
 import play.api.libs.json.{Json, Reads}
 import support.UnitSpec

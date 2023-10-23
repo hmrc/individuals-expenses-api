@@ -16,22 +16,18 @@
 
 package v2.controllers.requestParsers.validators
 
-import api.mocks.{MockCurrentDateTime, MockCurrentTaxYear}
 import api.models.errors._
 import config.AppConfig
 import mocks.MockAppConfig
-import org.joda.time.DateTime
 import org.joda.time.format.{DateTimeFormat, DateTimeFormatter}
 import play.api.libs.json.{JsValue, Json}
 import support.UnitSpec
-import utils.{CurrentDateTime, CurrentTaxYear}
 import v2.models.request.createAndAmendEmploymentExpenses.CreateAndAmendEmploymentExpensesRawData
 
 class CreateAndAmendEmploymentExpensesValidatorSpec extends UnitSpec {
 
   private val validNino    = "AA123456A"
   private val validTaxYear = "2019-20"
-  private val date         = DateTime.parse("2020-08-05")
 
   private val requestBodyJson = Json.parse("""
                                              |{
@@ -176,25 +172,15 @@ class CreateAndAmendEmploymentExpensesValidatorSpec extends UnitSpec {
       |""".stripMargin
   )
 
-  class Test extends MockCurrentDateTime with MockCurrentTaxYear with MockAppConfig {
+  class Test extends MockAppConfig {
 
-    implicit val dateTimeProvider: CurrentDateTime = mockCurrentDateTime
-    val dateTimeFormatter: DateTimeFormatter       = DateTimeFormat.forPattern("yyyy-MM-dd")
+    val dateTimeFormatter: DateTimeFormatter = DateTimeFormat.forPattern("yyyy-MM-dd")
 
-    implicit val appConfig: AppConfig           = mockAppConfig
-    implicit val currentTaxYear: CurrentTaxYear = mockCurrentTaxYear
+    implicit val appConfig: AppConfig = mockAppConfig
 
     val validator = new CreateAndAmendEmploymentExpensesValidator()
 
     MockAppConfig.employmentExpensesMinimumTaxYear.returns(2020)
-
-    MockCurrentDateTime.getCurrentDate
-      .returns(DateTime.parse("2020-08-05", dateTimeFormatter))
-      .anyNumberOfTimes()
-
-    MockCurrentTaxYear
-      .getCurrentTaxYear(date)
-      .returns(2021)
 
   }
 

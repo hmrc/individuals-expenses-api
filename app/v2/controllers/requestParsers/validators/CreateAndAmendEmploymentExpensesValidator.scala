@@ -19,17 +19,9 @@ package v2.controllers.requestParsers.validators
 import api.controllers.requestParsers.validators.Validator
 import api.controllers.requestParsers.validators.validations._
 import api.models.errors.{MtdError, RuleIncorrectOrEmptyBodyError}
-import config.AppConfig
-import utils.{CurrentDateTime, CurrentTaxYear}
 import v2.models.request.createAndAmendEmploymentExpenses.{CreateAndAmendEmploymentExpensesBody, CreateAndAmendEmploymentExpensesRawData, Expenses}
 
-import javax.inject.Inject
-
-class CreateAndAmendEmploymentExpensesValidator @Inject() (implicit
-    currentDateTime: CurrentDateTime,
-    appConfig: AppConfig,
-    currentTaxYear: CurrentTaxYear)
-    extends Validator[CreateAndAmendEmploymentExpensesRawData] {
+class CreateAndAmendEmploymentExpensesValidator extends Validator[CreateAndAmendEmploymentExpensesRawData] {
 
   private val validationSet =
     List(parameterFormatValidation, bodyFormatValidation, parameterRuleValidation, incorrectOrEmptyBodySubmittedValidation, bodyFieldValidation)
@@ -48,9 +40,9 @@ class CreateAndAmendEmploymentExpensesValidator @Inject() (implicit
     )
   }
 
-  private def parameterRuleValidation: CreateAndAmendEmploymentExpensesRawData => List[List[MtdError]] = { data =>
+  private def parameterRuleValidation: CreateAndAmendEmploymentExpensesRawData => List[List[MtdError]] = { _ =>
     List(
-      MtdTaxYearValidation.validate(data.taxYear, appConfig.employmentExpensesMinimumTaxYear)
+//      MtdTaxYearValidation.validate(data.taxYear, appConfig.employmentExpensesMinimumTaxYear)
     )
   }
 

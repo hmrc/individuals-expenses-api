@@ -16,7 +16,7 @@
 
 package v2.models.request.createAndAmendEmploymentExpenses
 
-import api.utils.JsonErrorValidators
+import api.models.utils.JsonErrorValidators
 import play.api.libs.json.{JsValue, Json}
 import support.UnitSpec
 
