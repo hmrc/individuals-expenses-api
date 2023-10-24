@@ -21,7 +21,7 @@ import api.models.errors._
 import api.models.outcomes.ResponseWrapper
 import api.services.ServiceSpec
 import v1.mocks.connectors.MockIgnoreEmploymentExpensesConnector
-import v1.models.request.ignoreEmploymentExpenses.IgnoreEmploymentExpensesRequest
+import v1.models.request.ignoreEmploymentExpenses.IgnoreEmploymentExpensesRequestData
 
 import scala.concurrent.Future
 
@@ -30,7 +30,7 @@ class IgnoreEmploymentExpensesServiceSpec extends ServiceSpec {
   val taxYear    = "2021-22"
   val nino: Nino = Nino("AA123456A")
 
-  private val requestData = IgnoreEmploymentExpensesRequest(nino, TaxYear.fromMtd(taxYear))
+  private val requestData = IgnoreEmploymentExpensesRequestData(nino, TaxYear.fromMtd(taxYear))
 
   trait Test extends MockIgnoreEmploymentExpensesConnector {
 

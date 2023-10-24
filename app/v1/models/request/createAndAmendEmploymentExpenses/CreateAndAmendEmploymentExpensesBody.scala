@@ -19,6 +19,7 @@ package v1.models.request.createAndAmendEmploymentExpenses
 import play.api.libs.json.{Json, OFormat}
 
 case class CreateAndAmendEmploymentExpensesBody(expenses: Expenses) {
+  // TODO Delete
   def isIncorrectOrEmptyBody: Boolean = expenses.isEmpty
 }
 

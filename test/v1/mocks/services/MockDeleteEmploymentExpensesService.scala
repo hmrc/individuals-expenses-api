@@ -21,7 +21,7 @@ import api.models.errors.ErrorWrapper
 import api.models.outcomes.ResponseWrapper
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
-import v1.models.request.deleteEmploymentExpenses.DeleteEmploymentExpensesRequest
+import v1.models.request.deleteEmploymentExpenses.DeleteEmploymentExpensesRequestData
 import v1.services.DeleteEmploymentExpensesService
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -32,9 +32,9 @@ trait MockDeleteEmploymentExpensesService extends MockFactory {
 
   object MockDeleteEmploymentExpensesService {
 
-    def delete(requestData: DeleteEmploymentExpensesRequest): CallHandler[Future[Either[ErrorWrapper, ResponseWrapper[Unit]]]] = {
+    def delete(requestData: DeleteEmploymentExpensesRequestData): CallHandler[Future[Either[ErrorWrapper, ResponseWrapper[Unit]]]] = {
       (mockDeleteEmploymentExpensesService
-        .deleteEmploymentExpenses(_: DeleteEmploymentExpensesRequest)(_: RequestContext, _: ExecutionContext))
+        .deleteEmploymentExpenses(_: DeleteEmploymentExpensesRequestData)(_: RequestContext, _: ExecutionContext))
         .expects(requestData, *, *)
     }
 

@@ -19,14 +19,14 @@ package v1.controllers.requestParsers
 import api.controllers.requestParsers.RequestParser
 import api.models.domain.{Nino, TaxYear}
 import v1.controllers.requestParsers.validators.CreateAndAmendOtherExpensesValidator
-import v1.models.request.createAndAmendOtherExpenses.{CreateAndAmendOtherExpensesBody, CreateAndAmendOtherExpensesRawData, CreateAndAmendOtherExpensesRequest}
+import v1.models.request.createAndAmendOtherExpenses.{CreateAndAmendOtherExpensesBody, CreateAndAmendOtherExpensesRawData, CreateAndAmendOtherExpensesRequestData}
 
 import javax.inject.Inject
 
 class CreateAndAmendOtherExpensesRequestParser @Inject() (val validator: CreateAndAmendOtherExpensesValidator)
-    extends RequestParser[CreateAndAmendOtherExpensesRawData, CreateAndAmendOtherExpensesRequest] {
+    extends RequestParser[CreateAndAmendOtherExpensesRawData, CreateAndAmendOtherExpensesRequestData] {
 
-  override protected def requestFor(data: CreateAndAmendOtherExpensesRawData): CreateAndAmendOtherExpensesRequest =
-    CreateAndAmendOtherExpensesRequest(Nino(data.nino), TaxYear.fromMtd(data.taxYear), data.body.as[CreateAndAmendOtherExpensesBody])
+  override protected def requestFor(data: CreateAndAmendOtherExpensesRawData): CreateAndAmendOtherExpensesRequestData =
+    CreateAndAmendOtherExpensesRequestData(Nino(data.nino), TaxYear.fromMtd(data.taxYear), data.body.as[CreateAndAmendOtherExpensesBody])
 
 }

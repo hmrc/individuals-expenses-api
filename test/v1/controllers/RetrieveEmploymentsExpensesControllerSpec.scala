@@ -26,7 +26,7 @@ import play.api.mvc.Result
 import v1.fixtures.RetrieveEmploymentsExpensesFixtures._
 import v1.mocks.requestParsers.MockRetrieveEmploymentsExpensesRequestParser
 import v1.mocks.services.MockRetrieveEmploymentsExpensesService
-import v1.models.request.retrieveEmploymentExpenses.{RetrieveEmploymentsExpensesRawData, RetrieveEmploymentsExpensesRequest}
+import v1.models.request.retrieveEmploymentExpenses.{RetrieveEmploymentsExpensesRawData, RetrieveEmploymentsExpensesRequestData}
 import v1.models.response.retrieveEmploymentExpenses.RetrieveEmploymentsExpensesHateoasData
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -43,7 +43,7 @@ class RetrieveEmploymentsExpensesControllerSpec
   private val source  = MtdSource.`latest`
 
   private val rawData     = RetrieveEmploymentsExpensesRawData(nino, taxYear, source.toString)
-  private val requestData = RetrieveEmploymentsExpensesRequest(Nino(nino), TaxYear.fromMtd(taxYear), source)
+  private val requestData = RetrieveEmploymentsExpensesRequestData(Nino(nino), TaxYear.fromMtd(taxYear), source)
 
   private val testHateoasLinks = Seq(
     Link(href = s"/individuals/expenses/employments/$nino/$taxYear", method = PUT, rel = "amend-employment-expenses"),

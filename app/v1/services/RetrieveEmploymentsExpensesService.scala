@@ -21,7 +21,7 @@ import api.models.errors._
 import api.services.{BaseService, ServiceOutcome}
 import cats.implicits._
 import v1.connectors.RetrieveEmploymentsExpensesConnector
-import v1.models.request.retrieveEmploymentExpenses.RetrieveEmploymentsExpensesRequest
+import v1.models.request.retrieveEmploymentExpenses.RetrieveEmploymentsExpensesRequestData
 import v1.models.response.retrieveEmploymentExpenses.RetrieveEmploymentsExpensesResponse
 
 import javax.inject.{Inject, Singleton}
@@ -30,9 +30,9 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class RetrieveEmploymentsExpensesService @Inject() (connector: RetrieveEmploymentsExpensesConnector) extends BaseService {
 
-  def retrieveEmploymentsExpenses(request: RetrieveEmploymentsExpensesRequest)(implicit
-      ctx: RequestContext,
-      ec: ExecutionContext): Future[ServiceOutcome[RetrieveEmploymentsExpensesResponse]] = {
+  def retrieveEmploymentsExpenses(request: RetrieveEmploymentsExpensesRequestData)(implicit
+                                                                                   ctx: RequestContext,
+                                                                                   ec: ExecutionContext): Future[ServiceOutcome[RetrieveEmploymentsExpensesResponse]] = {
 
     connector.retrieveEmploymentExpenses(request).map(_.leftMap(mapDownstreamErrors(downstreamErrorMap)))
   }

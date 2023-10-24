@@ -20,7 +20,7 @@ import api.models.errors.ErrorWrapper
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
 import v1.controllers.requestParsers.DeleteEmploymentExpensesRequestParser
-import v1.models.request.deleteEmploymentExpenses.{DeleteEmploymentExpensesRawData, DeleteEmploymentExpensesRequest}
+import v1.models.request.deleteEmploymentExpenses.{DeleteEmploymentExpensesRawData, DeleteEmploymentExpensesRequestData}
 
 trait MockDeleteEmploymentExpensesRequestParser extends MockFactory {
 
@@ -28,7 +28,7 @@ trait MockDeleteEmploymentExpensesRequestParser extends MockFactory {
 
   object MockDeleteEmploymentExpensesRequestParser {
 
-    def parse(data: DeleteEmploymentExpensesRawData): CallHandler[Either[ErrorWrapper, DeleteEmploymentExpensesRequest]] = {
+    def parse(data: DeleteEmploymentExpensesRawData): CallHandler[Either[ErrorWrapper, DeleteEmploymentExpensesRequestData]] = {
       (mockRequestDataParser.parseRequest(_: DeleteEmploymentExpensesRawData)(_: String)).expects(data, *)
     }
 

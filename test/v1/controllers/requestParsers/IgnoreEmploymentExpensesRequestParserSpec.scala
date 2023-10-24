@@ -42,7 +42,7 @@ class IgnoreEmploymentExpensesRequestParserSpec extends UnitSpec {
         MockIgnoreEmploymentExpensesValidator.validate(inputData).returns(Nil)
 
         parser.parseRequest(inputData) shouldBe
-          Right(IgnoreEmploymentExpensesRequest(Nino(nino), TaxYear.fromMtd(taxYear)))
+          Right(IgnoreEmploymentExpensesRequestData(Nino(nino), TaxYear.fromMtd(taxYear)))
       }
     }
 

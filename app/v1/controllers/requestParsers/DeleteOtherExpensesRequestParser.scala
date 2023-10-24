@@ -19,14 +19,14 @@ package v1.controllers.requestParsers
 import api.controllers.requestParsers.RequestParser
 import api.models.domain.{Nino, TaxYear}
 import v1.controllers.requestParsers.validators.DeleteOtherExpensesValidator
-import v1.models.request.deleteOtherExpenses.{DeleteOtherExpensesRawData, DeleteOtherExpensesRequest}
+import v1.models.request.deleteOtherExpenses.{DeleteOtherExpensesRawData, DeleteOtherExpensesRequestData}
 
 import javax.inject.Inject
 
 class DeleteOtherExpensesRequestParser @Inject() (val validator: DeleteOtherExpensesValidator)
-    extends RequestParser[DeleteOtherExpensesRawData, DeleteOtherExpensesRequest] {
+    extends RequestParser[DeleteOtherExpensesRawData, DeleteOtherExpensesRequestData] {
 
-  override protected def requestFor(data: DeleteOtherExpensesRawData): DeleteOtherExpensesRequest =
-    DeleteOtherExpensesRequest(Nino(data.nino), TaxYear.fromMtd(data.taxYear))
+  override protected def requestFor(data: DeleteOtherExpensesRawData): DeleteOtherExpensesRequestData =
+    DeleteOtherExpensesRequestData(Nino(data.nino), TaxYear.fromMtd(data.taxYear))
 
 }

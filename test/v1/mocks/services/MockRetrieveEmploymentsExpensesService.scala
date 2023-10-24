@@ -21,7 +21,7 @@ import api.models.errors.ErrorWrapper
 import api.models.outcomes.ResponseWrapper
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
-import v1.models.request.retrieveEmploymentExpenses.RetrieveEmploymentsExpensesRequest
+import v1.models.request.retrieveEmploymentExpenses.RetrieveEmploymentsExpensesRequestData
 import v1.models.response.retrieveEmploymentExpenses.RetrieveEmploymentsExpensesResponse
 import v1.services.RetrieveEmploymentsExpensesService
 
@@ -33,10 +33,10 @@ trait MockRetrieveEmploymentsExpensesService extends MockFactory {
 
   object MockRetrieveEmploymentsExpensesService {
 
-    def retrieveEmploymentsExpenses(requestData: RetrieveEmploymentsExpensesRequest)
+    def retrieveEmploymentsExpenses(requestData: RetrieveEmploymentsExpensesRequestData)
         : CallHandler[Future[Either[ErrorWrapper, ResponseWrapper[RetrieveEmploymentsExpensesResponse]]]] = {
       (mockRetrieveEmploymentsExpensesService
-        .retrieveEmploymentsExpenses(_: RetrieveEmploymentsExpensesRequest)(_: RequestContext, _: ExecutionContext))
+        .retrieveEmploymentsExpenses(_: RetrieveEmploymentsExpensesRequestData)(_: RequestContext, _: ExecutionContext))
         .expects(requestData, *, *)
     }
 

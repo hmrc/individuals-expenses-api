@@ -21,7 +21,7 @@ import api.models.errors._
 import api.services.{BaseService, ServiceOutcome}
 import cats.implicits._
 import v1.connectors.IgnoreEmploymentExpensesConnector
-import v1.models.request.ignoreEmploymentExpenses.IgnoreEmploymentExpensesRequest
+import v1.models.request.ignoreEmploymentExpenses.IgnoreEmploymentExpensesRequestData
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -29,7 +29,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class IgnoreEmploymentExpensesService @Inject() (connector: IgnoreEmploymentExpensesConnector) extends BaseService {
 
-  def ignore(request: IgnoreEmploymentExpensesRequest)(implicit ctx: RequestContext, ec: ExecutionContext): Future[ServiceOutcome[Unit]] = {
+  def ignore(request: IgnoreEmploymentExpensesRequestData)(implicit ctx: RequestContext, ec: ExecutionContext): Future[ServiceOutcome[Unit]] = {
 
     connector.ignore(request).map(_.leftMap(mapDownstreamErrors(downstreamErrorMap)))
   }

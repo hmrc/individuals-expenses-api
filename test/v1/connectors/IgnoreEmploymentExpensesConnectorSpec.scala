@@ -19,7 +19,7 @@ package v1.connectors
 import api.connectors.ConnectorSpec
 import api.models.domain.{Nino, TaxYear}
 import api.models.outcomes.ResponseWrapper
-import v1.models.request.ignoreEmploymentExpenses.{IgnoreEmploymentExpensesBody, IgnoreEmploymentExpensesRequest}
+import v1.models.request.ignoreEmploymentExpenses.{IgnoreEmploymentExpensesBody, IgnoreEmploymentExpensesRequestData}
 
 import scala.concurrent.Future
 
@@ -41,7 +41,7 @@ class IgnoreEmploymentExpensesConnectorSpec extends ConnectorSpec {
   "ignore" should {
     "return the expected response for a non-TYS request" when {
       "a valid request is made" in new IfsR6Test with Test {
-        val request = IgnoreEmploymentExpensesRequest(Nino("AA123456A"), TaxYear.fromMtd("2021-22"))
+        val request = IgnoreEmploymentExpensesRequestData(Nino("AA123456A"), TaxYear.fromMtd("2021-22"))
 
         willPut(
           url = s"$baseUrl/income-tax/expenses/employments/AA123456A/2021-22",
@@ -54,7 +54,7 @@ class IgnoreEmploymentExpensesConnectorSpec extends ConnectorSpec {
 
     "return the expected response for a TYS request" when {
       "a valid request is made" in new TysIfsTest with Test {
-        val request = IgnoreEmploymentExpensesRequest(Nino("AA123456A"), TaxYear.fromMtd("2023-24"))
+        val request = IgnoreEmploymentExpensesRequestData(Nino("AA123456A"), TaxYear.fromMtd("2023-24"))
 
         willPut(
           url = s"$baseUrl/income-tax/23-24/expenses/employments/AA123456A",

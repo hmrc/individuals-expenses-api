@@ -68,7 +68,7 @@ class IgnoreEmploymentExpensesControllerSpec
        |""".stripMargin)
 
   private val rawData     = IgnoreEmploymentExpensesRawData(nino, taxYear)
-  private val requestData = IgnoreEmploymentExpensesRequest(Nino(nino), TaxYear.fromMtd(taxYear))
+  private val requestData = IgnoreEmploymentExpensesRequestData(Nino(nino), TaxYear.fromMtd(taxYear))
 
   "handleRequest" should {
     "return Ok" when {

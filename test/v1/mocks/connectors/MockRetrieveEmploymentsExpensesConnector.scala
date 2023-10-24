@@ -21,7 +21,7 @@ import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
 import uk.gov.hmrc.http.HeaderCarrier
 import v1.connectors.RetrieveEmploymentsExpensesConnector
-import v1.models.request.retrieveEmploymentExpenses.RetrieveEmploymentsExpensesRequest
+import v1.models.request.retrieveEmploymentExpenses.RetrieveEmploymentsExpensesRequestData
 import v1.models.response.retrieveEmploymentExpenses.RetrieveEmploymentsExpensesResponse
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -33,10 +33,10 @@ trait MockRetrieveEmploymentsExpensesConnector extends MockFactory {
   object MockRetrieveEmploymentsExpensesConnector {
 
     def retrieveEmploymentsExpenses(
-        requestData: RetrieveEmploymentsExpensesRequest): CallHandler[Future[DownstreamOutcome[RetrieveEmploymentsExpensesResponse]]] = {
+        requestData: RetrieveEmploymentsExpensesRequestData): CallHandler[Future[DownstreamOutcome[RetrieveEmploymentsExpensesResponse]]] = {
       (
         mockRetrieveEmploymentsExpensesConnector
-          .retrieveEmploymentExpenses(_: RetrieveEmploymentsExpensesRequest)(
+          .retrieveEmploymentExpenses(_: RetrieveEmploymentsExpensesRequestData)(
             _: HeaderCarrier,
             _: ExecutionContext,
             _: String

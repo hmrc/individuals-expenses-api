@@ -22,7 +22,7 @@ import api.models.outcomes.ResponseWrapper
 import api.services.ServiceSpec
 import v1.fixtures.RetrieveEmploymentsExpensesFixtures._
 import v1.mocks.connectors.MockRetrieveEmploymentsExpensesConnector
-import v1.models.request.retrieveEmploymentExpenses.RetrieveEmploymentsExpensesRequest
+import v1.models.request.retrieveEmploymentExpenses.RetrieveEmploymentsExpensesRequestData
 
 import scala.concurrent.Future
 
@@ -32,7 +32,7 @@ class RetrieveEmploymentsExpensesServiceSpec extends ServiceSpec {
   val nino: Nino                    = Nino("AA123456A")
   val source: MtdSource.`user`.type = MtdSource.`user`
 
-  private val requestData = RetrieveEmploymentsExpensesRequest(nino, TaxYear.fromMtd(taxYear), source)
+  private val requestData = RetrieveEmploymentsExpensesRequestData(nino, TaxYear.fromMtd(taxYear), source)
 
   trait Test extends MockRetrieveEmploymentsExpensesConnector {
 

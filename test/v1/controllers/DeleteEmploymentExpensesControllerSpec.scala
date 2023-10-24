@@ -25,7 +25,7 @@ import play.api.libs.json.JsValue
 import play.api.mvc.Result
 import v1.mocks.requestParsers.MockDeleteEmploymentExpensesRequestParser
 import v1.mocks.services.MockDeleteEmploymentExpensesService
-import v1.models.request.deleteEmploymentExpenses.{DeleteEmploymentExpensesRawData, DeleteEmploymentExpensesRequest}
+import v1.models.request.deleteEmploymentExpenses.{DeleteEmploymentExpensesRawData, DeleteEmploymentExpensesRequestData}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -39,7 +39,7 @@ class DeleteEmploymentExpensesControllerSpec
   private val taxYear = "2019-20"
 
   private val rawData     = DeleteEmploymentExpensesRawData(nino, taxYear)
-  private val requestData = DeleteEmploymentExpensesRequest(Nino(nino), TaxYear.fromMtd(taxYear))
+  private val requestData = DeleteEmploymentExpensesRequestData(Nino(nino), TaxYear.fromMtd(taxYear))
 
   "handleRequest" should {
     "return a successful response with status 204 (No Content)" when {

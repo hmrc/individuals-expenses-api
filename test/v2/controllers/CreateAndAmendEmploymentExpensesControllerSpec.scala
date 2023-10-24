@@ -103,7 +103,7 @@ class CreateAndAmendEmploymentExpensesControllerSpec
        |""".stripMargin)
 
   private val rawData     = CreateAndAmendEmploymentExpensesRawData(nino, taxYear, requestBodyJson)
-  private val requestData = CreateAndAmendEmploymentExpensesRequest(Nino(nino), TaxYear.fromMtd(taxYear), requestBody)
+  private val requestData = CreateAndAmendEmploymentExpensesRequestData(Nino(nino), TaxYear.fromMtd(taxYear), requestBody)
 
   "handleRequest" should {
     "return OK" when {

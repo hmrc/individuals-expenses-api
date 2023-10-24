@@ -19,18 +19,18 @@ package v1.controllers.requestParsers
 import api.controllers.requestParsers.RequestParser
 import api.models.domain.{MtdSource, Nino, TaxYear}
 import v1.controllers.requestParsers.validators.RetrieveEmploymentExpensesValidator
-import v1.models.request.retrieveEmploymentExpenses.{RetrieveEmploymentsExpensesRawData, RetrieveEmploymentsExpensesRequest}
+import v1.models.request.retrieveEmploymentExpenses.{RetrieveEmploymentsExpensesRawData, RetrieveEmploymentsExpensesRequestData}
 
 import javax.inject.Inject
 
 class RetrieveEmploymentsExpensesRequestParser @Inject() (val validator: RetrieveEmploymentExpensesValidator)
-    extends RequestParser[RetrieveEmploymentsExpensesRawData, RetrieveEmploymentsExpensesRequest] {
+    extends RequestParser[RetrieveEmploymentsExpensesRawData, RetrieveEmploymentsExpensesRequestData] {
 
-  override protected def requestFor(data: RetrieveEmploymentsExpensesRawData): RetrieveEmploymentsExpensesRequest = {
+  override protected def requestFor(data: RetrieveEmploymentsExpensesRawData): RetrieveEmploymentsExpensesRequestData = {
 
     val source: MtdSource = MtdSource.parser(data.source)
 
-    RetrieveEmploymentsExpensesRequest(Nino(data.nino), TaxYear.fromMtd(data.taxYear), source)
+    RetrieveEmploymentsExpensesRequestData(Nino(data.nino), TaxYear.fromMtd(data.taxYear), source)
   }
 
 }

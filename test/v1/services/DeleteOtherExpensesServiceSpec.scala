@@ -21,7 +21,7 @@ import api.models.errors._
 import api.models.outcomes.ResponseWrapper
 import api.services.ServiceSpec
 import v1.mocks.connectors.MockDeleteOtherExpensesConnector
-import v1.models.request.deleteOtherExpenses.DeleteOtherExpensesRequest
+import v1.models.request.deleteOtherExpenses.DeleteOtherExpensesRequestData
 
 import scala.concurrent.Future
 
@@ -30,7 +30,7 @@ class DeleteOtherExpensesServiceSpec extends ServiceSpec {
   private val taxYear    = TaxYear.fromMtd("2017-18")
   private val nino: Nino = Nino("AA123456A")
 
-  private val requestData = DeleteOtherExpensesRequest(nino, taxYear)
+  private val requestData = DeleteOtherExpensesRequestData(nino, taxYear)
 
   trait Test extends MockDeleteOtherExpensesConnector {
 

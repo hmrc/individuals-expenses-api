@@ -19,7 +19,7 @@ package v2.connectors
 import api.connectors.{ConnectorSpec, DownstreamOutcome}
 import api.models.domain.{Nino, TaxYear}
 import api.models.outcomes.ResponseWrapper
-import v2.models.request.createAndAmendEmploymentExpenses.{CreateAndAmendEmploymentExpensesBody, CreateAndAmendEmploymentExpensesRequest, Expenses}
+import v2.models.request.createAndAmendEmploymentExpenses.{CreateAndAmendEmploymentExpensesBody, CreateAndAmendEmploymentExpensesRequestData, Expenses}
 
 import scala.concurrent.Future
 
@@ -50,7 +50,7 @@ class CreateAndAmendEmploymentExpensesConnectorSpec extends ConnectorSpec {
       appConfig = mockAppConfig
     )
 
-    val request: CreateAndAmendEmploymentExpensesRequest = CreateAndAmendEmploymentExpensesRequest(Nino(nino), taxYear, body)
+    val request: CreateAndAmendEmploymentExpensesRequestData = CreateAndAmendEmploymentExpensesRequestData(Nino(nino), taxYear, body)
 
   }
 

@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-package v1.models.request.ignoreEmploymentExpenses
+package v1.models.request.deleteEmploymentExpenses
 
 import api.models.domain.{Nino, TaxYear}
 
-case class IgnoreEmploymentExpensesRequest(nino: Nino, taxYear: TaxYear)
+case class DeleteEmploymentExpensesRequestData(nino: Nino, taxYear: TaxYear)

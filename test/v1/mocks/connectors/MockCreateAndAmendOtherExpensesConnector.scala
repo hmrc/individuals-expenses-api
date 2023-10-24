@@ -21,7 +21,7 @@ import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
 import uk.gov.hmrc.http.HeaderCarrier
 import v1.connectors.CreateAndAmendOtherExpensesConnector
-import v1.models.request.createAndAmendOtherExpenses.CreateAndAmendOtherExpensesRequest
+import v1.models.request.createAndAmendOtherExpenses.CreateAndAmendOtherExpensesRequestData
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -31,9 +31,9 @@ trait MockCreateAndAmendOtherExpensesConnector extends MockFactory {
 
   object MockCreateAndAmendOtherExpensesConnector {
 
-    def createAndAmend(requestData: CreateAndAmendOtherExpensesRequest): CallHandler[Future[DownstreamOutcome[Unit]]] = {
+    def createAndAmend(requestData: CreateAndAmendOtherExpensesRequestData): CallHandler[Future[DownstreamOutcome[Unit]]] = {
       (mockCreateAndAmendOtherExpensesConnector
-        .createAndAmend(_: CreateAndAmendOtherExpensesRequest)(_: HeaderCarrier, _: ExecutionContext, _: String))
+        .createAndAmend(_: CreateAndAmendOtherExpensesRequestData)(_: HeaderCarrier, _: ExecutionContext, _: String))
         .expects(requestData, *, *, *)
     }
 

@@ -21,7 +21,7 @@ import api.models.errors.ErrorWrapper
 import api.models.outcomes.ResponseWrapper
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
-import v1.models.request.retrieveOtherExpenses.RetrieveOtherExpensesRequest
+import v1.models.request.retrieveOtherExpenses.RetrieveOtherExpensesRequestData
 import v1.models.response.retrieveOtherExpenses.RetrieveOtherExpensesResponse
 import v1.services.RetrieveOtherExpensesService
 
@@ -34,9 +34,9 @@ trait MockRetrieveOtherExpensesService extends MockFactory {
   object MockRetrieveOtherExpensesService {
 
     def retrieveOtherExpenses(
-        requestData: RetrieveOtherExpensesRequest): CallHandler[Future[Either[ErrorWrapper, ResponseWrapper[RetrieveOtherExpensesResponse]]]] = {
+        requestData: RetrieveOtherExpensesRequestData): CallHandler[Future[Either[ErrorWrapper, ResponseWrapper[RetrieveOtherExpensesResponse]]]] = {
       (mockRetrieveOtherExpensesService
-        .retrieveOtherExpenses(_: RetrieveOtherExpensesRequest)(_: RequestContext, _: ExecutionContext))
+        .retrieveOtherExpenses(_: RetrieveOtherExpensesRequestData)(_: RequestContext, _: ExecutionContext))
         .expects(requestData, *, *)
     }
 

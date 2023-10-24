@@ -21,7 +21,7 @@ import api.models.errors.ErrorWrapper
 import api.models.outcomes.ResponseWrapper
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
-import v1.models.request.createAndAmendOtherExpenses.CreateAndAmendOtherExpensesRequest
+import v1.models.request.createAndAmendOtherExpenses.CreateAndAmendOtherExpensesRequestData
 import v1.services.CreateAndAmendOtherExpensesService
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -32,9 +32,9 @@ trait MockCreateAndAmendOtherExpensesService extends MockFactory {
 
   object MockCreateAndAmendOtherExpensesService {
 
-    def createAndAmend(requestData: CreateAndAmendOtherExpensesRequest): CallHandler[Future[Either[ErrorWrapper, ResponseWrapper[Unit]]]] = {
+    def createAndAmend(requestData: CreateAndAmendOtherExpensesRequestData): CallHandler[Future[Either[ErrorWrapper, ResponseWrapper[Unit]]]] = {
       (mockService
-        .createAndAmend(_: CreateAndAmendOtherExpensesRequest)(_: RequestContext, _: ExecutionContext))
+        .createAndAmend(_: CreateAndAmendOtherExpensesRequestData)(_: RequestContext, _: ExecutionContext))
         .expects(requestData, *, *)
     }
 

@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-package v1.models.request.deleteEmploymentExpenses
+package v1.models.request.createAndAmendOtherExpenses
 
 import api.models.domain.{Nino, TaxYear}
 
-case class DeleteEmploymentExpensesRequest(nino: Nino, taxYear: TaxYear)
+case class CreateAndAmendOtherExpensesRequestData(nino: Nino, taxYear: TaxYear, body: CreateAndAmendOtherExpensesBody)

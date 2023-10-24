@@ -18,4 +18,4 @@ package v1.models.request.deleteOtherExpenses
 
 import api.models.domain.{Nino, TaxYear}
 
-case class DeleteOtherExpensesRequest(nino: Nino, taxYear: TaxYear)
+case class DeleteOtherExpensesRequestData(nino: Nino, taxYear: TaxYear)

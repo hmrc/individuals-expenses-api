@@ -26,7 +26,7 @@ import play.api.mvc.Result
 import v1.fixtures.RetrieveOtherExpensesFixtures._
 import v1.mocks.requestParsers.MockRetrieveOtherExpensesRequestParser
 import v1.mocks.services.MockRetrieveOtherExpensesService
-import v1.models.request.retrieveOtherExpenses.{RetrieveOtherExpensesRawData, RetrieveOtherExpensesRequest}
+import v1.models.request.retrieveOtherExpenses.{RetrieveOtherExpensesRawData, RetrieveOtherExpensesRequestData}
 import v1.models.response.retrieveOtherExpenses._
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -42,7 +42,7 @@ class RetrieveOtherExpensesControllerSpec
   private val taxYear = "2019-20"
 
   private val rawData     = RetrieveOtherExpensesRawData(nino, taxYear)
-  private val requestData = RetrieveOtherExpensesRequest(Nino(nino), TaxYear.fromMtd(taxYear))
+  private val requestData = RetrieveOtherExpensesRequestData(Nino(nino), TaxYear.fromMtd(taxYear))
 
   private val testHateoasLink = Seq(
     Link(href = s"/individuals/expenses/other/$nino/$taxYear", method = PUT, rel = "amend-expenses-other"),

@@ -21,7 +21,7 @@ import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
 import uk.gov.hmrc.http.HeaderCarrier
 import v1.connectors.IgnoreEmploymentExpensesConnector
-import v1.models.request.ignoreEmploymentExpenses.IgnoreEmploymentExpensesRequest
+import v1.models.request.ignoreEmploymentExpenses.IgnoreEmploymentExpensesRequestData
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -31,9 +31,9 @@ trait MockIgnoreEmploymentExpensesConnector extends MockFactory {
 
   object MockIgnoreEmploymentExpensesConnector {
 
-    def ignore(requestData: IgnoreEmploymentExpensesRequest): CallHandler[Future[DownstreamOutcome[Unit]]] = {
+    def ignore(requestData: IgnoreEmploymentExpensesRequestData): CallHandler[Future[DownstreamOutcome[Unit]]] = {
       (mockIgnoreEmploymentExpensesConnector
-        .ignore(_: IgnoreEmploymentExpensesRequest)(_: HeaderCarrier, _: ExecutionContext, _: String))
+        .ignore(_: IgnoreEmploymentExpensesRequestData)(_: HeaderCarrier, _: ExecutionContext, _: String))
         .expects(requestData, *, *, *)
     }
 

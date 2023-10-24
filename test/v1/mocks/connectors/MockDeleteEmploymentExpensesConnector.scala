@@ -21,7 +21,7 @@ import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
 import uk.gov.hmrc.http.HeaderCarrier
 import v1.connectors.DeleteEmploymentExpensesConnector
-import v1.models.request.deleteEmploymentExpenses.DeleteEmploymentExpensesRequest
+import v1.models.request.deleteEmploymentExpenses.DeleteEmploymentExpensesRequestData
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -31,9 +31,9 @@ trait MockDeleteEmploymentExpensesConnector extends MockFactory {
 
   object MockDeleteEmploymentExpensesConnector {
 
-    def deleteEmploymentExpenses(requestData: DeleteEmploymentExpensesRequest): CallHandler[Future[DownstreamOutcome[Unit]]] = {
+    def deleteEmploymentExpenses(requestData: DeleteEmploymentExpensesRequestData): CallHandler[Future[DownstreamOutcome[Unit]]] = {
       (mockDeleteEmploymentExpensesConnector
-        .deleteEmploymentExpenses(_: DeleteEmploymentExpensesRequest)(_: HeaderCarrier, _: ExecutionContext, _: String))
+        .deleteEmploymentExpenses(_: DeleteEmploymentExpensesRequestData)(_: HeaderCarrier, _: ExecutionContext, _: String))
         .expects(requestData, *, *, *)
     }
 

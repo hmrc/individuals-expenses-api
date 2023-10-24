@@ -27,6 +27,7 @@ case class Expenses(businessTravelCosts: Option[BigDecimal],
                     vehicleExpenses: Option[BigDecimal],
                     mileageAllowanceRelief: Option[BigDecimal]) {
 
+  // TODO delete
   def isEmpty: Boolean = businessTravelCosts.isEmpty &&
     jobExpenses.isEmpty &&
     flatRateJobExpenses.isEmpty &&

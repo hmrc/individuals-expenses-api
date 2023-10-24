@@ -21,7 +21,7 @@ import api.models.errors._
 import api.models.outcomes.ResponseWrapper
 import api.services.ServiceSpec
 import v2.mocks.connectors.MockCreateAndAmendEmploymentExpensesConnector
-import v2.models.request.createAndAmendEmploymentExpenses.{CreateAndAmendEmploymentExpensesBody, CreateAndAmendEmploymentExpensesRequest, Expenses}
+import v2.models.request.createAndAmendEmploymentExpenses.{CreateAndAmendEmploymentExpensesBody, CreateAndAmendEmploymentExpensesRequestData, Expenses}
 
 import scala.concurrent.Future
 
@@ -43,7 +43,7 @@ class CreateAndAmendEmploymentExpensesServiceSpec extends ServiceSpec {
     )
   )
 
-  private val requestData = CreateAndAmendEmploymentExpensesRequest(nino, taxYear, body)
+  private val requestData = CreateAndAmendEmploymentExpensesRequestData(nino, taxYear, body)
 
   "service" should {
 

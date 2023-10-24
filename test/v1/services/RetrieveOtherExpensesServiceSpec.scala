@@ -21,7 +21,7 @@ import api.models.errors._
 import api.models.outcomes.ResponseWrapper
 import api.services.ServiceSpec
 import v1.mocks.connectors.MockRetrieveOtherExpensesConnector
-import v1.models.request.retrieveOtherExpenses.RetrieveOtherExpensesRequest
+import v1.models.request.retrieveOtherExpenses.RetrieveOtherExpensesRequestData
 import v1.models.response.retrieveOtherExpenses._
 
 import scala.concurrent.Future
@@ -37,7 +37,7 @@ class RetrieveOtherExpensesServiceSpec extends ServiceSpec {
     Some(PatentRoyaltiesPayments(Some("ROYALTIES PAYMENTS"), 5423.65))
   )
 
-  private val requestData = RetrieveOtherExpensesRequest(nino, TaxYear.fromMtd(taxYear))
+  private val requestData = RetrieveOtherExpensesRequestData(nino, TaxYear.fromMtd(taxYear))
 
   trait Test extends MockRetrieveOtherExpensesConnector {
 

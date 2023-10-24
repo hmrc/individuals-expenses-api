@@ -20,7 +20,7 @@ import api.models.domain.{MtdSource, Nino, TaxYear}
 import api.models.errors.{BadRequestError, ErrorWrapper, NinoFormatError, TaxYearFormatError}
 import support.UnitSpec
 import v1.mocks.validators.MockRetrieveEmploymentExpensesValidator
-import v1.models.request.retrieveEmploymentExpenses.{RetrieveEmploymentsExpensesRawData, RetrieveEmploymentsExpensesRequest}
+import v1.models.request.retrieveEmploymentExpenses.{RetrieveEmploymentsExpensesRawData, RetrieveEmploymentsExpensesRequestData}
 
 class RetrieveEmploymentsExpensesRequestParserSpec extends UnitSpec {
 
@@ -44,17 +44,17 @@ class RetrieveEmploymentsExpensesRequestParserSpec extends UnitSpec {
       "valid request data is supplied with the latest query parameter" in new Test {
         MockRetrieveEmploymentExpensesValidator.validate(inputDataLatest).returns(Nil)
 
-        parser.parseRequest(inputDataLatest) shouldBe Right(RetrieveEmploymentsExpensesRequest(Nino(nino), parsedTaxYear, MtdSource.`latest`))
+        parser.parseRequest(inputDataLatest) shouldBe Right(RetrieveEmploymentsExpensesRequestData(Nino(nino), parsedTaxYear, MtdSource.`latest`))
       }
       "valid request data is supplied with the HMRC Held query parameter" in new Test {
         MockRetrieveEmploymentExpensesValidator.validate(inputDataHmrcHeld).returns(Nil)
 
-        parser.parseRequest(inputDataHmrcHeld) shouldBe Right(RetrieveEmploymentsExpensesRequest(Nino(nino), parsedTaxYear, MtdSource.`hmrcHeld`))
+        parser.parseRequest(inputDataHmrcHeld) shouldBe Right(RetrieveEmploymentsExpensesRequestData(Nino(nino), parsedTaxYear, MtdSource.`hmrcHeld`))
       }
       "valid request data is supplied with the user query parameter" in new Test {
         MockRetrieveEmploymentExpensesValidator.validate(inputDataUser).returns(Nil)
 
-        parser.parseRequest(inputDataUser) shouldBe Right(RetrieveEmploymentsExpensesRequest(Nino(nino), parsedTaxYear, MtdSource.`user`))
+        parser.parseRequest(inputDataUser) shouldBe Right(RetrieveEmploymentsExpensesRequestData(Nino(nino), parsedTaxYear, MtdSource.`user`))
       }
     }
 

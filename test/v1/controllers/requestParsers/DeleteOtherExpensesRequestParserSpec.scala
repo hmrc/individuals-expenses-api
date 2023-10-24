@@ -20,7 +20,7 @@ import api.models.domain.{Nino, TaxYear}
 import api.models.errors.{BadRequestError, ErrorWrapper, NinoFormatError, TaxYearFormatError}
 import support.UnitSpec
 import v1.mocks.validators.MockDeleteOtherExpensesValidator
-import v1.models.request.deleteOtherExpenses.{DeleteOtherExpensesRawData, DeleteOtherExpensesRequest}
+import v1.models.request.deleteOtherExpenses.{DeleteOtherExpensesRawData, DeleteOtherExpensesRequestData}
 
 class DeleteOtherExpensesRequestParserSpec extends UnitSpec {
 
@@ -41,7 +41,7 @@ class DeleteOtherExpensesRequestParserSpec extends UnitSpec {
         MockDeleteOtherExpensesValidator.validate(rawData).returns(Nil)
 
         parser.parseRequest(rawData) shouldBe
-          Right(DeleteOtherExpensesRequest(Nino(nino), TaxYear.fromMtd(taxYear)))
+          Right(DeleteOtherExpensesRequestData(Nino(nino), TaxYear.fromMtd(taxYear)))
       }
     }
 

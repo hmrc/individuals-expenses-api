@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-package v1.models.request.retrieveOtherExpenses
+package v1.models.request.retrieveEmploymentExpenses
 
-import api.models.domain.{Nino, TaxYear}
+import api.models.domain.{MtdSource, Nino, TaxYear}
 
-case class RetrieveOtherExpensesRequest(nino: Nino, taxYear: TaxYear)
+case class RetrieveEmploymentsExpensesRequestData(nino: Nino, taxYear: TaxYear, source: MtdSource)

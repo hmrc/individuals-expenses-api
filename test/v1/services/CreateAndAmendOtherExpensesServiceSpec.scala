@@ -35,7 +35,7 @@ class CreateAndAmendOtherExpensesServiceSpec extends ServiceSpec {
     Some(PatentRoyaltiesPayments(Some("ROYALTIES PAYMENTS"), 2000.99))
   )
 
-  private val requestData = CreateAndAmendOtherExpensesRequest(nino, TaxYear.fromMtd(taxYear), body)
+  private val requestData = CreateAndAmendOtherExpensesRequestData(nino, TaxYear.fromMtd(taxYear), body)
 
   trait Test extends MockCreateAndAmendOtherExpensesConnector {
 

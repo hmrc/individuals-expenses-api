@@ -20,7 +20,7 @@ import api.controllers.{AuthorisedController, EndpointLogContext, RequestContext
 import api.hateoas.HateoasFactory
 import api.services.{EnrolmentsAuthService, MtdIdLookupService}
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
-import utils.{IdGenerator, Logging}
+import utils.IdGenerator
 import v1.controllers.requestParsers.RetrieveOtherExpensesRequestParser
 import v1.models.request.retrieveOtherExpenses.RetrieveOtherExpensesRawData
 import v1.models.response.retrieveOtherExpenses.RetrieveOtherExpensesHateoasData
@@ -37,8 +37,7 @@ class RetrieveOtherExpensesController @Inject() (val authService: EnrolmentsAuth
                                                  hateoasFactory: HateoasFactory,
                                                  cc: ControllerComponents,
                                                  val idGenerator: IdGenerator)(implicit ec: ExecutionContext)
-    extends AuthorisedController(cc)
-    with Logging {
+    extends AuthorisedController(cc) {
 
   implicit val endpointLogContext: EndpointLogContext =
     EndpointLogContext(controllerName = "RetrieveOtherExpensesController", endpointName = "retrieveOtherExpenses")

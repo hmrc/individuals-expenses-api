@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-package v1.models.request.createAndAmendOtherExpenses
+package v1.models.request.ignoreEmploymentExpenses
 
 import api.models.domain.{Nino, TaxYear}
 
-case class CreateAndAmendOtherExpensesRequest(nino: Nino, taxYear: TaxYear, body: CreateAndAmendOtherExpensesBody)
+case class IgnoreEmploymentExpensesRequestData(nino: Nino, taxYear: TaxYear)

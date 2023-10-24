@@ -56,7 +56,7 @@ class CreateAndAmendOtherExpensesRequestParserSpec extends UnitSpec {
 
         parser.parseRequest(inputData) shouldBe
           Right(
-            CreateAndAmendOtherExpensesRequest(
+            CreateAndAmendOtherExpensesRequestData(
               Nino(nino),
               TaxYear.fromMtd(taxYear),
               CreateAndAmendOtherExpensesBody(

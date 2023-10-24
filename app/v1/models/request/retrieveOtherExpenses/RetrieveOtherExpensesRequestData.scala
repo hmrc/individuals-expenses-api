@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-package v2.models.request.createAndAmendEmploymentExpenses
+package v1.models.request.retrieveOtherExpenses
 
 import api.models.domain.{Nino, TaxYear}
 
-case class CreateAndAmendEmploymentExpensesRequest(nino: Nino, taxYear: TaxYear, body: CreateAndAmendEmploymentExpensesBody)
+case class RetrieveOtherExpensesRequestData(nino: Nino, taxYear: TaxYear)

@@ -21,7 +21,7 @@ import api.models.errors.ErrorWrapper
 import api.models.outcomes.ResponseWrapper
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
-import v1.models.request.ignoreEmploymentExpenses.IgnoreEmploymentExpensesRequest
+import v1.models.request.ignoreEmploymentExpenses.IgnoreEmploymentExpensesRequestData
 import v1.services.IgnoreEmploymentExpensesService
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -32,9 +32,9 @@ trait MockIgnoreEmploymentExpensesService extends MockFactory {
 
   object MockIgnoreEmploymentExpensesService {
 
-    def ignore(requestData: IgnoreEmploymentExpensesRequest): CallHandler[Future[Either[ErrorWrapper, ResponseWrapper[Unit]]]] = {
+    def ignore(requestData: IgnoreEmploymentExpensesRequestData): CallHandler[Future[Either[ErrorWrapper, ResponseWrapper[Unit]]]] = {
       (mockService
-        .ignore(_: IgnoreEmploymentExpensesRequest)(_: RequestContext, _: ExecutionContext))
+        .ignore(_: IgnoreEmploymentExpensesRequestData)(_: RequestContext, _: ExecutionContext))
         .expects(requestData, *, *)
     }
 

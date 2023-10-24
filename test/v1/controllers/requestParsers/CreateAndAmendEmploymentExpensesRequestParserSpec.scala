@@ -21,7 +21,7 @@ import api.models.errors.{BadRequestError, ErrorWrapper, NinoFormatError, TaxYea
 import play.api.libs.json.Json
 import support.UnitSpec
 import v1.mocks.validators.MockCreateAndAmendEmploymentExpensesValidator
-import v1.models.request.createAndAmendEmploymentExpenses.{CreateAndAmendEmploymentExpensesBody, CreateAndAmendEmploymentExpensesRawData, CreateAndAmendEmploymentExpensesRequest, Expenses}
+import v1.models.request.createAndAmendEmploymentExpenses.{CreateAndAmendEmploymentExpensesBody, CreateAndAmendEmploymentExpensesRawData, CreateAndAmendEmploymentExpensesRequestData, Expenses}
 
 class CreateAndAmendEmploymentExpensesRequestParserSpec extends UnitSpec {
 
@@ -47,7 +47,7 @@ class CreateAndAmendEmploymentExpensesRequestParserSpec extends UnitSpec {
   private val rawData: CreateAndAmendEmploymentExpensesRawData =
     CreateAndAmendEmploymentExpensesRawData(nino = nino, taxYear = taxYear, body = requestBodyJson)
 
-  private val requestData = CreateAndAmendEmploymentExpensesRequest(
+  private val requestData = CreateAndAmendEmploymentExpensesRequestData(
     nino = Nino(nino),
     taxYear = TaxYear.fromMtd(taxYear),
     body = CreateAndAmendEmploymentExpensesBody(
@@ -68,7 +68,7 @@ class CreateAndAmendEmploymentExpensesRequestParserSpec extends UnitSpec {
 
         MockCreateAndAmendEmploymentExpensesValidator.validate(rawData).returns(Nil)
 
-        val result: Either[ErrorWrapper, CreateAndAmendEmploymentExpensesRequest] = parser.parseRequest(rawData)
+        val result: Either[ErrorWrapper, CreateAndAmendEmploymentExpensesRequestData] = parser.parseRequest(rawData)
 
         result shouldBe Right(requestData)
       }
@@ -91,7 +91,7 @@ class CreateAndAmendEmploymentExpensesRequestParserSpec extends UnitSpec {
           .validate(rawData)
           .returns(List(NinoFormatError, TaxYearFormatError))
 
-        val result: Either[ErrorWrapper, CreateAndAmendEmploymentExpensesRequest] = parser.parseRequest(rawData)
+        val result: Either[ErrorWrapper, CreateAndAmendEmploymentExpensesRequestData] = parser.parseRequest(rawData)
 
         result shouldBe Left(ErrorWrapper(correlationId, BadRequestError, Some(Seq(NinoFormatError, TaxYearFormatError))))
       }

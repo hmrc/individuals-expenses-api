@@ -20,7 +20,7 @@ import api.models.errors.ErrorWrapper
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
 import v1.controllers.requestParsers.CreateAndAmendEmploymentExpensesRequestParser
-import v1.models.request.createAndAmendEmploymentExpenses.{CreateAndAmendEmploymentExpensesRawData, CreateAndAmendEmploymentExpensesRequest}
+import v1.models.request.createAndAmendEmploymentExpenses.{CreateAndAmendEmploymentExpensesRawData, CreateAndAmendEmploymentExpensesRequestData}
 
 trait MockCreateAndAmendEmploymentExpensesRequestParser extends MockFactory {
 
@@ -28,7 +28,7 @@ trait MockCreateAndAmendEmploymentExpensesRequestParser extends MockFactory {
 
   object MockCreateAndAmendEmploymentExpensesRequestParser {
 
-    def parseRequest(data: CreateAndAmendEmploymentExpensesRawData): CallHandler[Either[ErrorWrapper, CreateAndAmendEmploymentExpensesRequest]] = {
+    def parseRequest(data: CreateAndAmendEmploymentExpensesRawData): CallHandler[Either[ErrorWrapper, CreateAndAmendEmploymentExpensesRequestData]] = {
       (mockRequestParser.parseRequest(_: CreateAndAmendEmploymentExpensesRawData)(_: String)).expects(data, *)
     }
 

@@ -19,14 +19,14 @@ package v1.controllers.requestParsers
 import api.controllers.requestParsers.RequestParser
 import api.models.domain.{Nino, TaxYear}
 import v1.controllers.requestParsers.validators.IgnoreEmploymentExpensesValidator
-import v1.models.request.ignoreEmploymentExpenses.{IgnoreEmploymentExpensesRawData, IgnoreEmploymentExpensesRequest}
+import v1.models.request.ignoreEmploymentExpenses.{IgnoreEmploymentExpensesRawData, IgnoreEmploymentExpensesRequestData}
 
 import javax.inject.Inject
 
 class IgnoreEmploymentExpensesRequestParser @Inject() (val validator: IgnoreEmploymentExpensesValidator)
-    extends RequestParser[IgnoreEmploymentExpensesRawData, IgnoreEmploymentExpensesRequest] {
+    extends RequestParser[IgnoreEmploymentExpensesRawData, IgnoreEmploymentExpensesRequestData] {
 
-  override protected def requestFor(data: IgnoreEmploymentExpensesRawData): IgnoreEmploymentExpensesRequest =
-    IgnoreEmploymentExpensesRequest(Nino(data.nino), TaxYear.fromMtd(data.taxYear))
+  override protected def requestFor(data: IgnoreEmploymentExpensesRawData): IgnoreEmploymentExpensesRequestData =
+    IgnoreEmploymentExpensesRequestData(Nino(data.nino), TaxYear.fromMtd(data.taxYear))
 
 }

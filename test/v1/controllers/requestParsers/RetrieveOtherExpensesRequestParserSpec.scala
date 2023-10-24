@@ -20,7 +20,7 @@ import api.models.domain.{Nino, TaxYear}
 import api.models.errors.{BadRequestError, ErrorWrapper, NinoFormatError, TaxYearFormatError}
 import support.UnitSpec
 import v1.mocks.validators.MockRetrieveOtherExpensesValidator
-import v1.models.request.retrieveOtherExpenses.{RetrieveOtherExpensesRawData, RetrieveOtherExpensesRequest}
+import v1.models.request.retrieveOtherExpenses.{RetrieveOtherExpensesRawData, RetrieveOtherExpensesRequestData}
 
 class RetrieveOtherExpensesRequestParserSpec extends UnitSpec {
 
@@ -41,7 +41,7 @@ class RetrieveOtherExpensesRequestParserSpec extends UnitSpec {
         MockRetrieveOtherExpensesValidator.validate(inputData).returns(Nil)
 
         parser.parseRequest(inputData) shouldBe
-          Right(RetrieveOtherExpensesRequest(Nino(nino), TaxYear.fromMtd(taxYear)))
+          Right(RetrieveOtherExpensesRequestData(Nino(nino), TaxYear.fromMtd(taxYear)))
       }
     }
 
