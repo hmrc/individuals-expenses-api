@@ -32,7 +32,7 @@ trait MockIgnoreEmploymentExpensesValidatorFactory extends MockFactory {
   object MockedIgnoreEmploymentExpensesValidatorFactory {
 
     def validator(): CallHandler[Validator[IgnoreEmploymentExpensesRequestData]] =
-      (mockIgnoreEmploymentExpensesValidatorFactory.validator(_: String, _: String)).expects(*, *)
+      (mockIgnoreEmploymentExpensesValidatorFactory.validator(_: String, _: String, _: Boolean)).expects(*, *, *)
 
   }
 

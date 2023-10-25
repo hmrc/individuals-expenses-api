@@ -18,22 +18,25 @@ package v1.controllers.validators
 
 import api.controllers.validators.Validator
 import api.controllers.validators.resolvers.{DetailedResolveTaxYear, ResolveNino}
-import api.models.domain.TaxYear
+import api.models.domain.{TaxYear, TodaySupplier}
 import api.models.errors.MtdError
 import cats.data.Validated
 import cats.data.Validated._
 import cats.implicits._
 import v1.models.request.ignoreEmploymentExpenses.IgnoreEmploymentExpensesRequestData
 
-import javax.inject.Singleton
+import javax.inject.{Inject, Singleton}
 
 @Singleton
-class IgnoreEmploymentExpensesValidatorFactory {
+class IgnoreEmploymentExpensesValidatorFactory @Inject() (implicit todaySupplier: TodaySupplier = new TodaySupplier) {
 
-  private val resolveTaxYear = DetailedResolveTaxYear(maybeMinimumTaxYear = Some(TaxYear.employmentExpensesMinimumTaxYear))
-
-  def validator(nino: String, taxYear: String): Validator[IgnoreEmploymentExpensesRequestData] =
+  def validator(nino: String, taxYear: String, temporalValidationEnabled: Boolean): Validator[IgnoreEmploymentExpensesRequestData] =
     new Validator[IgnoreEmploymentExpensesRequestData] {
+
+      private val resolveTaxYear = DetailedResolveTaxYear(
+        allowIncompleteTaxYear = !temporalValidationEnabled,
+        maybeMinimumTaxYear = Some(TaxYear.employmentExpensesMinimumTaxYear)
+      )
 
       def validate: Validated[Seq[MtdError], IgnoreEmploymentExpensesRequestData] =
         (

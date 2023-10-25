@@ -16,24 +16,31 @@
 
 package v1.controllers.validators
 
-import api.models.domain.{Nino, TaxYear}
+import api.models.domain.{Nino, TaxYear, TodaySupplier}
 import api.models.errors._
 import support.UnitSpec
 import v1.models.request.ignoreEmploymentExpenses.IgnoreEmploymentExpensesRequestData
+
+import java.time.LocalDate
 
 class IgnoreEmploymentExpensesValidatorFactorySpec extends UnitSpec {
 
   private implicit val correlationId: String = "1234"
 
   private val validNino    = "AA123456A"
-  private val validTaxYear = "2023-24"
+  private val validTaxYear = "2021-22"
 
   private val parsedNino    = Nino(validNino)
   private val parsedTaxYear = TaxYear.fromMtd(validTaxYear)
 
+  implicit val todaySupplier: TodaySupplier = new TodaySupplier {
+    override def today(): LocalDate = LocalDate.parse("2022-07-11")
+  }
+
   private val validatorFactory = new IgnoreEmploymentExpensesValidatorFactory
 
-  private def validator(nino: String, taxYear: String) = validatorFactory.validator(nino, taxYear)
+  private def validator(nino: String, taxYear: String, temporalValidationEnabled: Boolean = true) =
+    validatorFactory.validator(nino, taxYear, temporalValidationEnabled)
 
   "validator" should {
     "return the parsed domain object" when {
@@ -42,6 +49,14 @@ class IgnoreEmploymentExpensesValidatorFactorySpec extends UnitSpec {
 
         result shouldBe Right(
           IgnoreEmploymentExpensesRequestData(parsedNino, parsedTaxYear)
+        )
+      }
+
+      "the taxYear has not ended but temporal validation is not enabled" in {
+        val result = validator(validNino, "2023-24", temporalValidationEnabled = false).validateAndWrapResult()
+
+        result shouldBe Right(
+          IgnoreEmploymentExpensesRequestData(parsedNino, TaxYear.fromMtd("2023-24"))
         )
       }
     }
@@ -73,6 +88,11 @@ class IgnoreEmploymentExpensesValidatorFactorySpec extends UnitSpec {
         result shouldBe Left(
           ErrorWrapper(correlationId, RuleTaxYearNotSupportedError)
         )
+      }
+
+      "the taxYear has not ended and temporal validation is enabled" in {
+        val result = validator(validNino, "2023-24").validateAndWrapResult()
+        result shouldBe Left(ErrorWrapper(correlationId, RuleTaxYearNotEndedError))
       }
     }
 

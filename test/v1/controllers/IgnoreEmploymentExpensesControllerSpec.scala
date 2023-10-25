@@ -24,6 +24,7 @@ import api.models.errors._
 import api.hateoas.Method.{DELETE, GET}
 import api.models.outcomes.ResponseWrapper
 import mocks.MockAppConfig
+import play.api.Configuration
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Result
 import v1.controllers.validators.MockIgnoreEmploymentExpensesValidatorFactory
@@ -112,6 +113,7 @@ class IgnoreEmploymentExpensesControllerSpec
 
     val controller = new IgnoreEmploymentExpensesController(
       authService = mockEnrolmentsAuthService,
+      appConfig = mockAppConfig,
       lookupService = mockMtdIdLookupService,
       validatorFactory = mockIgnoreEmploymentExpensesValidatorFactory,
       service = mockService,
@@ -121,7 +123,7 @@ class IgnoreEmploymentExpensesControllerSpec
       idGenerator = mockIdGenerator
     )
 
-//    MockAppConfig.featureSwitches.returns(Configuration("allowTemporalValidationSuspension.enabled" -> true)).anyNumberOfTimes()
+    MockedAppConfig.featureSwitches.returns(Configuration("allowTemporalValidationSuspension.enabled" -> true)).anyNumberOfTimes()
 
     protected def callController(): Future[Result] = controller.handleRequest(nino, taxYear)(fakeRequest)
 

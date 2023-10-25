@@ -19,6 +19,7 @@ package v1.controllers
 import api.controllers._
 import api.hateoas.HateoasFactory
 import api.services.{AuditService, EnrolmentsAuthService, MtdIdLookupService}
+import config.{AppConfig, FeatureSwitches}
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import routing.{Version, Version1}
 import utils.IdGenerator
@@ -33,7 +34,7 @@ import scala.concurrent.ExecutionContext
 @Singleton
 class IgnoreEmploymentExpensesController @Inject() (val authService: EnrolmentsAuthService,
                                                     val lookupService: MtdIdLookupService,
-//                                                    appConfig: AppConfig,
+                                                    appConfig: AppConfig,
                                                     validatorFactory: IgnoreEmploymentExpensesValidatorFactory,
                                                     service: IgnoreEmploymentExpensesService,
                                                     auditService: AuditService,
@@ -49,11 +50,8 @@ class IgnoreEmploymentExpensesController @Inject() (val authService: EnrolmentsA
     authorisedAction(nino).async { implicit request =>
       implicit val ctx: RequestContext = RequestContext.from(idGenerator, endpointLogContext)
 
-      val validator = validatorFactory.validator(
-        nino = nino,
-        taxYear = taxYear
-//        temporalValidationEnabled = FeatureSwitches()(appConfig).isTemporalValidationEnabled
-      )
+      val temporalValidationEnabled = FeatureSwitches()(appConfig).isTemporalValidationEnabled
+      val validator                 = validatorFactory.validator(nino, taxYear, temporalValidationEnabled)
 
       val requestHandler = RequestHandler
         .withValidator(validator)
