@@ -155,7 +155,12 @@ class CreateAndAmendOtherExpensesControllerISpec extends IntegrationBaseSpec {
 
           val response: WSResponse = await(request().put(requestBodyJson))
           response.status shouldBe BAD_REQUEST
-          response.json shouldBe Json.toJson(RuleIncorrectOrEmptyBodyError)
+          response.json shouldBe Json.toJson(
+            RuleIncorrectOrEmptyBodyError.withPaths(
+              List(
+                "/patentRoyaltiesPayments/expenseAmount",
+                "/paymentsToTradeUnionsForDeathBenefits/expenseAmount"
+              )))
         }
       }
 
@@ -173,7 +178,7 @@ class CreateAndAmendOtherExpensesControllerISpec extends IntegrationBaseSpec {
           }
         }
 
-        val errors = Seq(
+        val errors = List(
           (BAD_REQUEST, "INVALID_TAXABLE_ENTITY_ID", BAD_REQUEST, NinoFormatError),
           (BAD_REQUEST, "INVALID_TAX_YEAR", BAD_REQUEST, TaxYearFormatError),
           (BAD_REQUEST, "INVALID_CORRELATIONID", INTERNAL_SERVER_ERROR, InternalError),

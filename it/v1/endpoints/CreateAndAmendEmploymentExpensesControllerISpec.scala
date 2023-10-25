@@ -28,11 +28,8 @@ import support.IntegrationBaseSpec
 class CreateAndAmendEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
 
   "Calling the amend endpoint" should {
-
     "return a 200 status code" when {
-
       "any valid request is made" in new NonTysTest {
-
         override def setupStubs(): Unit =
           DownstreamStub.onSuccess(DownstreamStub.PUT, downstreamUri, NO_CONTENT, JsObject.empty)
 
@@ -141,7 +138,7 @@ class CreateAndAmendEmploymentExpensesControllerISpec extends IntegrationBaseSpe
 
           val response: WSResponse = await(request().put(requestBodyJson))
           response.status shouldBe BAD_REQUEST
-          response.json shouldBe Json.toJson(RuleIncorrectOrEmptyBodyError)
+          response.json shouldBe Json.toJson(RuleIncorrectOrEmptyBodyError.withPath("/expenses"))
         }
       }
 

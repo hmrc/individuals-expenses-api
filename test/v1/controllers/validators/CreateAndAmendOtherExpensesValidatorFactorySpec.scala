@@ -19,7 +19,7 @@ package v1.controllers.validators
 import api.models.domain.{Nino, TaxYear}
 import api.models.errors._
 import api.models.utils.JsonErrorValidators
-import play.api.libs.json.{JsNumber, JsObject, JsValue, Json}
+import play.api.libs.json.{JsNumber, JsObject, JsString, JsValue, Json}
 import support.UnitSpec
 import v1.models.request.createAndAmendOtherExpenses.{
   CreateAndAmendOtherExpensesBody,
@@ -162,6 +162,24 @@ class CreateAndAmendOtherExpensesValidatorFactorySpec extends UnitSpec with Json
         val invalidBody = expenseAmountPaths.foldLeft(validBody())((body, path) => body.update(path, JsNumber(-1)))
         val result      = validator(validNino, validTaxYear, invalidBody).validateAndWrapResult()
         result shouldBe Left(ErrorWrapper(correlationId, ValueFormatError.withPaths(expenseAmountPaths)))
+      }
+
+      val customerReferencePaths = List(
+        "/paymentsToTradeUnionsForDeathBenefits/customerReference",
+        "/patentRoyaltiesPayments/customerReference"
+      )
+
+      customerReferencePaths.foreach(path =>
+        s"passed a body with an invalid customer reference for $path" in {
+          val invalidBody = validBody().update(path, JsString("this!&ßisinvalid"))
+          val result      = validator(validNino, validTaxYear, invalidBody).validateAndWrapResult()
+          result shouldBe Left(ErrorWrapper(correlationId, CustomerReferenceFormatError.withPath(path)))
+        })
+
+      "passed a body with multiple customer reference fields containing invalid values" in {
+        val invalidBody = customerReferencePaths.foldLeft(validBody())((body, path) => body.update(path, JsString("this!&ßisinvalid")))
+        val result      = validator(validNino, validTaxYear, invalidBody).validateAndWrapResult()
+        result shouldBe Left(ErrorWrapper(correlationId, CustomerReferenceFormatError.withPaths(customerReferencePaths)))
       }
     }
 

@@ -17,21 +17,20 @@
 package v2.controllers
 
 import api.controllers.{ControllerBaseSpec, ControllerTestRunner}
+import api.hateoas.Method.{DELETE, GET, PUT}
 import api.hateoas.{HateoasWrapper, Link, MockHateoasFactory}
 import api.models.audit.{AuditEvent, AuditResponse, GenericAuditDetail}
 import api.models.domain.{Nino, TaxYear}
-import api.models.errors
 import api.models.errors._
-import api.hateoas.Method.{DELETE, GET, PUT}
 import api.models.outcomes.ResponseWrapper
 import mocks.MockAppConfig
 import play.api.Configuration
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Result
-import v2.mocks.requestParsers.MockCreateAndAmendEmploymentExpensesRequestParser
-import v2.mocks.services.MockCreateAndAmendEmploymentExpensesService
+import v2.controllers.validators.MockCreateAndAmendEmploymentExpensesValidatorFactory
 import v2.models.request.createAndAmendEmploymentExpenses._
 import v2.models.response.createAndAmendEmploymentExpenses.CreateAndAmendEmploymentExpensesHateoasData
+import v2.services.MockCreateAndAmendEmploymentExpensesService
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -41,7 +40,7 @@ class CreateAndAmendEmploymentExpensesControllerSpec
     with ControllerTestRunner
     with MockAppConfig
     with MockCreateAndAmendEmploymentExpensesService
-    with MockCreateAndAmendEmploymentExpensesRequestParser
+    with MockCreateAndAmendEmploymentExpensesValidatorFactory
     with MockHateoasFactory {
 
   private val taxYear = "2021-22"
@@ -102,16 +101,12 @@ class CreateAndAmendEmploymentExpensesControllerSpec
        |}
        |""".stripMargin)
 
-  private val rawData     = CreateAndAmendEmploymentExpensesRawData(nino, taxYear, requestBodyJson)
   private val requestData = CreateAndAmendEmploymentExpensesRequestData(Nino(nino), TaxYear.fromMtd(taxYear), requestBody)
 
   "handleRequest" should {
     "return OK" when {
       "the request received is valid" in new Test {
-
-        MockCreateAndAmendEmploymentExpensesRequestParser
-          .parseRequest(rawData)
-          .returns(Right(requestData))
+        willUseValidator(returningSuccess(requestData))
 
         MockCreateAndAmendEmploymentExpensesService
           .amend(requestData)
@@ -132,19 +127,13 @@ class CreateAndAmendEmploymentExpensesControllerSpec
 
     "return the error as per spec" when {
       "the parser validation fails" in new Test {
-
-        MockCreateAndAmendEmploymentExpensesRequestParser
-          .parseRequest(rawData)
-          .returns(Left(errors.ErrorWrapper(correlationId, NinoFormatError)))
+        willUseValidator(returning(NinoFormatError))
 
         runErrorTestWithAudit(NinoFormatError, Some(requestBodyJson))
       }
 
       "the service returns an error" in new Test {
-
-        MockCreateAndAmendEmploymentExpensesRequestParser
-          .parseRequest(rawData)
-          .returns(Right(requestData))
+        willUseValidator(returningSuccess(requestData))
 
         MockCreateAndAmendEmploymentExpensesService
           .amend(requestData)
@@ -158,10 +147,10 @@ class CreateAndAmendEmploymentExpensesControllerSpec
   trait Test extends ControllerTest with AuditEventChecking {
 
     val controller = new CreateAndAmendEmploymentExpensesController(
-      appConfig = mockAppConfig,
       authService = mockEnrolmentsAuthService,
+      appConfig = mockAppConfig,
       lookupService = mockMtdIdLookupService,
-      parser = mockRequestParser,
+      validatorFactory = mockCreateAndAmendEmploymentExpensesValidatorFactory,
       service = mockService,
       auditService = mockAuditService,
       hateoasFactory = mockHateoasFactory,
@@ -169,21 +158,22 @@ class CreateAndAmendEmploymentExpensesControllerSpec
       idGenerator = mockIdGenerator
     )
 
-    MockAppConfig.featureSwitches.returns(Configuration("allowTemporalValidationSuspension.enabled" -> true)).anyNumberOfTimes()
+    MockedAppConfig.featureSwitches.returns(Configuration("allowTemporalValidationSuspension.enabled" -> true)).anyNumberOfTimes()
 
     protected def callController(): Future[Result] = controller.handleRequest(nino, taxYear)(fakePutRequest(requestBodyJson))
 
-    def event(auditResponse: AuditResponse, requestBody: Option[JsValue]): AuditEvent[GenericAuditDetail] =
+    def event(auditResponse: AuditResponse, maybeRequestBody: Option[JsValue]): AuditEvent[GenericAuditDetail] =
       AuditEvent(
         auditType = "CreateAmendEmploymentExpenses",
         transactionName = "create-amend-employment-expenses",
         detail = GenericAuditDetail(
+          versionNumber = "2.0",
           userType = "Individual",
           agentReferenceNumber = None,
           params = Map("nino" -> nino, "taxYear" -> taxYear),
-          request = requestBody,
+          requestBody = maybeRequestBody,
           `X-CorrelationId` = correlationId,
-          response = auditResponse
+          auditResponse = auditResponse
         )
       )
 

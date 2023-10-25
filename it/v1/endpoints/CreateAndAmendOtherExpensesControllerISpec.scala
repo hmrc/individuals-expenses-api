@@ -54,7 +54,7 @@ class CreateAndAmendOtherExpensesControllerISpec extends IntegrationBaseSpec {
 
     "return error according to spec" when {
       "validation error" when {
-        s"an invalid NINO is provided" in new NonTysTest {
+        "an invalid NINO is provided" in new NonTysTest {
           override val nino: String = "INVALID_NINO"
 
           override def setupStubs(): Unit = {}
@@ -63,7 +63,7 @@ class CreateAndAmendOtherExpensesControllerISpec extends IntegrationBaseSpec {
           response.status shouldBe BAD_REQUEST
           response.json shouldBe Json.toJson(NinoFormatError)
         }
-        s"an invalid taxYear is provided" in new NonTysTest {
+        "an invalid taxYear is provided" in new NonTysTest {
           override val taxYear: String = "INVALID_TAXYEAR"
 
           override def setupStubs(): Unit = {}
@@ -72,7 +72,7 @@ class CreateAndAmendOtherExpensesControllerISpec extends IntegrationBaseSpec {
           response.status shouldBe BAD_REQUEST
           response.json shouldBe Json.toJson(TaxYearFormatError)
         }
-        s"a taxYear before the minimum in sandbox of 2021-22 is provided" in new NonTysTest {
+        "a taxYear before the minimum in sandbox of 2021-22 is provided" in new NonTysTest {
           override val taxYear: String = "2018-19"
 
           override def setupStubs(): Unit = {}
@@ -81,9 +81,9 @@ class CreateAndAmendOtherExpensesControllerISpec extends IntegrationBaseSpec {
           response.status shouldBe BAD_REQUEST
           response.json shouldBe Json.toJson(RuleTaxYearNotSupportedError)
         }
-        s"an invalid amount is provided" in new NonTysTest {
+        "an invalid amount is provided" in new NonTysTest {
           override val requestBodyJson: JsValue = Json.parse(
-            s"""
+            """
                |{
                |  "paymentsToTradeUnionsForDeathBenefits": {
                |    "customerReference": "TRADE UNION PAYMENTS",
@@ -104,9 +104,9 @@ class CreateAndAmendOtherExpensesControllerISpec extends IntegrationBaseSpec {
           response.json shouldBe Json.toJson(ValueFormatError.copy(paths =
             Some(Seq("/paymentsToTradeUnionsForDeathBenefits/expenseAmount", "/patentRoyaltiesPayments/expenseAmount"))))
         }
-        s"an invalid customer reference is provided" in new NonTysTest {
+        "an invalid customer reference is provided" in new NonTysTest {
           override val requestBodyJson: JsValue = Json.parse(
-            s"""
+            """
                |{
                |  "paymentsToTradeUnionsForDeathBenefits": {
                |    "customerReference": "TRADE UNION PAYMENTS AND OTHER THINGS THAT LEAD TO A REALLY LONG NAME THAT I'M HOPING IS OVER NINETY CHARACTERS",
@@ -145,7 +145,7 @@ class CreateAndAmendOtherExpensesControllerISpec extends IntegrationBaseSpec {
           response.status shouldBe BAD_REQUEST
           response.json shouldBe Json.toJson(RuleIncorrectOrEmptyBodyError)
         }
-        s"a body missing mandatory fields is provided" in new NonTysTest {
+        "a body missing mandatory fields is provided" in new NonTysTest {
           override val requestBodyJson: JsValue = Json.parse("""{
               | "paymentsToTradeUnionsForDeathBenefits": {},
               | "patentRoyaltiesPayments": {}
@@ -155,7 +155,8 @@ class CreateAndAmendOtherExpensesControllerISpec extends IntegrationBaseSpec {
 
           val response: WSResponse = await(request().put(requestBodyJson))
           response.status shouldBe BAD_REQUEST
-          response.json shouldBe Json.toJson(RuleIncorrectOrEmptyBodyError)
+          response.json shouldBe Json.toJson(RuleIncorrectOrEmptyBodyError.withPaths(
+            List("/patentRoyaltiesPayments/expenseAmount", "/paymentsToTradeUnionsForDeathBenefits/expenseAmount")))
         }
       }
 

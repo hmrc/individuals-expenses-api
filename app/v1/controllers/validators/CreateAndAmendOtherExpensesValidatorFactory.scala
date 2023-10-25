@@ -19,7 +19,7 @@ package v1.controllers.validators
 import api.controllers.validators.Validator
 import api.controllers.validators.resolvers.{DetailedResolveTaxYear, ResolveNino, ResolveNonEmptyJsonObject, ResolveParsedNumber}
 import api.models.domain.TaxYear
-import api.models.errors.MtdError
+import api.models.errors.{CustomerReferenceFormatError, MtdError}
 import cats.data.Validated
 import cats.data.Validated._
 import cats.implicits._
@@ -49,17 +49,30 @@ class CreateAndAmendOtherExpensesValidatorFactory {
           resolveJson(body)
         ).mapN(CreateAndAmendOtherExpensesRequestData) andThen validateBusinessRules
 
+      private val customerRefRegex = "^[0-9a-zA-Z{À-˿’}\\- _&`():.'^]{1,90}$".r
+
       private def validateBusinessRules(
           parsed: CreateAndAmendOtherExpensesRequestData): Validated[Seq[MtdError], CreateAndAmendOtherExpensesRequestData] = {
         import parsed.body._
 
-        List(
+        val validatedExpensesAmounts = List(
           (paymentsToTradeUnionsForDeathBenefits.map(_.expenseAmount), "/paymentsToTradeUnionsForDeathBenefits/expenseAmount"),
           (patentRoyaltiesPayments.map(_.expenseAmount), "/patentRoyaltiesPayments/expenseAmount")
-        ).traverse_ { case (value, path) =>
-          resolveParsedNumber(value, path = Some(path))
-        }.map(_ => parsed)
+        ).traverse_ { case (value, path) => resolveParsedNumber(value, path = Some(path)) }
+
+        val validatedCustomerReferences = List(
+          (paymentsToTradeUnionsForDeathBenefits.map(_.customerReference), "/paymentsToTradeUnionsForDeathBenefits/customerReference"),
+          (patentRoyaltiesPayments.map(_.customerReference), "/patentRoyaltiesPayments/customerReference")
+        ).traverse_ { case (maybeValue, path) => maybeValue.map(validate(_, path)).getOrElse(Valid(())) }
+
+        List(validatedExpensesAmounts, validatedCustomerReferences).traverse_(identity).map(_ => parsed)
       }
+
+      private def validate(maybeCustomerRef: Option[String], path: String): Validated[Seq[MtdError], Unit] =
+        maybeCustomerRef match {
+          case Some(ref) if customerRefRegex.matches(ref) => Valid(())
+          case _                                          => Invalid(List(CustomerReferenceFormatError.withPath(path)))
+        }
 
     }
 

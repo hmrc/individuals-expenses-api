@@ -17,17 +17,17 @@
 package v1.controllers
 
 import api.controllers.{ControllerBaseSpec, ControllerTestRunner}
+import api.hateoas.Method.{DELETE, GET, PUT}
 import api.hateoas.{HateoasWrapper, Link, MockHateoasFactory}
 import api.models.domain.{Nino, TaxYear}
 import api.models.errors._
-import api.hateoas.Method.{DELETE, GET, PUT}
 import api.models.outcomes.ResponseWrapper
 import play.api.mvc.Result
+import v1.controllers.validators.MockRetrieveOtherExpensesValidatorFactory
 import v1.fixtures.RetrieveOtherExpensesFixtures._
-import v1.mocks.requestParsers.MockRetrieveOtherExpensesRequestParser
-import v1.mocks.services.MockRetrieveOtherExpensesService
-import v1.models.request.retrieveOtherExpenses.{RetrieveOtherExpensesRawData, RetrieveOtherExpensesRequestData}
+import v1.models.request.retrieveOtherExpenses.RetrieveOtherExpensesRequestData
 import v1.models.response.retrieveOtherExpenses._
+import v1.services.MockRetrieveOtherExpensesService
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -36,15 +36,14 @@ class RetrieveOtherExpensesControllerSpec
     extends ControllerBaseSpec
     with ControllerTestRunner
     with MockRetrieveOtherExpensesService
-    with MockRetrieveOtherExpensesRequestParser
+    with MockRetrieveOtherExpensesValidatorFactory
     with MockHateoasFactory {
 
   private val taxYear = "2019-20"
 
-  private val rawData     = RetrieveOtherExpensesRawData(nino, taxYear)
   private val requestData = RetrieveOtherExpensesRequestData(Nino(nino), TaxYear.fromMtd(taxYear))
 
-  private val testHateoasLink = Seq(
+  private val testHateoasLink = List(
     Link(href = s"/individuals/expenses/other/$nino/$taxYear", method = PUT, rel = "amend-expenses-other"),
     Link(href = s"/individuals/expenses/other/$nino/$taxYear", method = GET, rel = "self"),
     Link(href = s"/individuals/expenses/other/$nino/$taxYear", method = DELETE, rel = "delete-expenses-other")
@@ -55,10 +54,7 @@ class RetrieveOtherExpensesControllerSpec
   "handleRequest" should {
     "return a successful response with status 200 (OK)" when {
       "given a valid request" in new Test {
-
-        MockRetrieveOtherExpensesRequestParser
-          .parse(rawData)
-          .returns(Right(requestData))
+        willUseValidator(returningSuccess(requestData))
 
         MockRetrieveOtherExpensesService
           .retrieveOtherExpenses(requestData)
@@ -77,20 +73,13 @@ class RetrieveOtherExpensesControllerSpec
 
     "return the error as per spec" when {
       "the parser validation fails" in new Test {
-
-        MockRetrieveOtherExpensesRequestParser
-          .parse(rawData)
-          .returns(Left(ErrorWrapper(correlationId, NinoFormatError)))
+        willUseValidator(returning(NinoFormatError))
 
         runErrorTest(NinoFormatError)
-
       }
 
       "the service returns an error" in new Test {
-
-        MockRetrieveOtherExpensesRequestParser
-          .parse(rawData)
-          .returns(Right(requestData))
+        willUseValidator(returningSuccess(requestData))
 
         MockRetrieveOtherExpensesService
           .retrieveOtherExpenses(requestData)
@@ -106,7 +95,7 @@ class RetrieveOtherExpensesControllerSpec
     val controller = new RetrieveOtherExpensesController(
       authService = mockEnrolmentsAuthService,
       lookupService = mockMtdIdLookupService,
-      parser = mockRetrieveOtherExpensesRequestParser,
+      validatorFactory = mockRetrieveOtherExpensesValidatorFactory,
       service = mockRetrieveOtherExpensesService,
       hateoasFactory = mockHateoasFactory,
       cc = cc,

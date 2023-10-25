@@ -18,7 +18,7 @@ package v1.controllers.validators
 
 import api.controllers.validators.Validator
 import api.controllers.validators.resolvers.{DetailedResolveTaxYear, ResolveNino, ResolveNonEmptyJsonObject, ResolveParsedNumber}
-import api.models.domain.TaxYear
+import api.models.domain.{TaxYear, TodaySupplier}
 import api.models.errors.MtdError
 import cats.data.Validated
 import cats.data.Validated._
@@ -26,21 +26,27 @@ import cats.implicits._
 import play.api.libs.json.JsValue
 import v1.models.request.createAndAmendEmploymentExpenses.{CreateAndAmendEmploymentExpensesBody, CreateAndAmendEmploymentExpensesRequestData}
 
-import javax.inject.Singleton
+import javax.inject.{Inject, Singleton}
 import scala.annotation.nowarn
 
 @Singleton
-class CreateAndAmendEmploymentExpensesValidatorFactory {
-
-  private val resolveTaxYear = DetailedResolveTaxYear(maybeMinimumTaxYear = Some(TaxYear.employmentExpensesMinimumTaxYear))
+class CreateAndAmendEmploymentExpensesValidatorFactory @Inject() (implicit todaySupplier: TodaySupplier = new TodaySupplier) {
 
   @nowarn("cat=lint-byname-implicit")
   private val resolveJson = new ResolveNonEmptyJsonObject[CreateAndAmendEmploymentExpensesBody]()
 
   private val resolveParsedNumber = ResolveParsedNumber()
 
-  def validator(nino: String, taxYear: String, body: JsValue): Validator[CreateAndAmendEmploymentExpensesRequestData] =
+  def validator(nino: String,
+                taxYear: String,
+                body: JsValue,
+                temporalValidationEnabled: Boolean): Validator[CreateAndAmendEmploymentExpensesRequestData] =
     new Validator[CreateAndAmendEmploymentExpensesRequestData] {
+
+      private val resolveTaxYear = DetailedResolveTaxYear(
+        allowIncompleteTaxYear = !temporalValidationEnabled,
+        maybeMinimumTaxYear = Some(TaxYear.employmentExpensesMinimumTaxYear)
+      )
 
       def validate: Validated[Seq[MtdError], CreateAndAmendEmploymentExpensesRequestData] =
         (

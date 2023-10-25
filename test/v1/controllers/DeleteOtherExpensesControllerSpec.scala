@@ -23,9 +23,9 @@ import api.models.errors._
 import api.models.outcomes.ResponseWrapper
 import play.api.libs.json.JsValue
 import play.api.mvc.Result
-import v1.mocks.requestParsers.MockDeleteOtherExpensesRequestDataParser
-import v1.mocks.services._
-import v1.models.request.deleteOtherExpenses.{DeleteOtherExpensesRawData, DeleteOtherExpensesRequestData}
+import v1.controllers.validators.MockDeleteOtherExpensesValidatorFactory
+import v1.models.request.deleteOtherExpenses.DeleteOtherExpensesRequestData
+import v1.services.MockDeleteOtherExpensesService
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -34,20 +34,16 @@ class DeleteOtherExpensesControllerSpec
     extends ControllerBaseSpec
     with ControllerTestRunner
     with MockDeleteOtherExpensesService
-    with MockDeleteOtherExpensesRequestDataParser {
+    with MockDeleteOtherExpensesValidatorFactory {
 
   private val taxYear = "2019-20"
 
-  private val rawData     = DeleteOtherExpensesRawData(nino, taxYear)
   private val requestData = DeleteOtherExpensesRequestData(Nino(nino), TaxYear.fromMtd(taxYear))
 
   "handleRequest" should {
     "return a successful response with status 204 (No Content)" when {
       "a valid request is supplied" in new Test {
-
-        MockDeleteOtherExpensesRequestDataParser
-          .parse(rawData)
-          .returns(Right(requestData))
+        willUseValidator(returningSuccess(requestData))
 
         MockDeleteOtherExpensesService
           .delete(requestData)
@@ -59,19 +55,13 @@ class DeleteOtherExpensesControllerSpec
 
     "return the error as per spec" when {
       "the parser validation fails" in new Test {
-
-        MockDeleteOtherExpensesRequestDataParser
-          .parse(rawData)
-          .returns(Left(ErrorWrapper(correlationId, NinoFormatError)))
+        willUseValidator(returning(NinoFormatError))
 
         runErrorTestWithAudit(NinoFormatError)
       }
 
       "service returns an error" in new Test {
-
-        MockDeleteOtherExpensesRequestDataParser
-          .parse(rawData)
-          .returns(Right(requestData))
+        willUseValidator(returningSuccess(requestData))
 
         MockDeleteOtherExpensesService
           .delete(requestData)
@@ -87,7 +77,7 @@ class DeleteOtherExpensesControllerSpec
     val controller = new DeleteOtherExpensesController(
       authService = mockEnrolmentsAuthService,
       lookupService = mockMtdIdLookupService,
-      parser = mockRequestDataParser,
+      validatorFactory = mockDeleteOtherExpensesValidatorFactory,
       service = mockDeleteOtherExpensesService,
       auditService = mockAuditService,
       cc = cc,
@@ -96,17 +86,18 @@ class DeleteOtherExpensesControllerSpec
 
     protected def callController(): Future[Result] = controller.handleRequest(nino, taxYear)(fakeDeleteRequest)
 
-    def event(auditResponse: AuditResponse, requestBody: Option[JsValue]): AuditEvent[GenericAuditDetail] =
+    def event(auditResponse: AuditResponse, maybeRequestBody: Option[JsValue]): AuditEvent[GenericAuditDetail] =
       AuditEvent(
         auditType = "DeleteOtherExpenses",
         transactionName = "delete-other-expenses",
         detail = GenericAuditDetail(
+          versionNumber = "1.0",
           userType = "Individual",
           agentReferenceNumber = None,
           params = Map("nino" -> nino, "taxYear" -> taxYear),
-          request = None,
+          requestBody = maybeRequestBody,
           `X-CorrelationId` = correlationId,
-          response = auditResponse
+          auditResponse = auditResponse
         )
       )
 

@@ -20,7 +20,7 @@ import api.models.domain.{Nino, TaxYear, Timestamp}
 import api.models.errors._
 import api.models.outcomes.ResponseWrapper
 import api.services.ServiceSpec
-import v1.mocks.connectors.MockRetrieveOtherExpensesConnector
+import v1.connectors.MockRetrieveOtherExpensesConnector
 import v1.models.request.retrieveOtherExpenses.RetrieveOtherExpensesRequestData
 import v1.models.response.retrieveOtherExpenses._
 

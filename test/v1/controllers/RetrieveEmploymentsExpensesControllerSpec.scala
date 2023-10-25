@@ -17,17 +17,17 @@
 package v1.controllers
 
 import api.controllers.{ControllerBaseSpec, ControllerTestRunner}
+import api.hateoas.Method.{DELETE, GET, POST, PUT}
 import api.hateoas.{HateoasWrapper, Link, MockHateoasFactory}
 import api.models.domain.{MtdSource, Nino, TaxYear}
 import api.models.errors._
-import api.hateoas.Method.{DELETE, GET, POST, PUT}
 import api.models.outcomes.ResponseWrapper
 import play.api.mvc.Result
+import v1.controllers.validators.MockRetrieveEmploymentExpensesValidatorFactory
 import v1.fixtures.RetrieveEmploymentsExpensesFixtures._
-import v1.mocks.requestParsers.MockRetrieveEmploymentsExpensesRequestParser
-import v1.mocks.services.MockRetrieveEmploymentsExpensesService
-import v1.models.request.retrieveEmploymentExpenses.{RetrieveEmploymentsExpensesRawData, RetrieveEmploymentsExpensesRequestData}
+import v1.models.request.retrieveEmploymentExpenses.RetrieveEmploymentsExpensesRequestData
 import v1.models.response.retrieveEmploymentExpenses.RetrieveEmploymentsExpensesHateoasData
+import v1.services.MockRetrieveEmploymentsExpensesService
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -36,16 +36,15 @@ class RetrieveEmploymentsExpensesControllerSpec
     extends ControllerBaseSpec
     with ControllerTestRunner
     with MockRetrieveEmploymentsExpensesService
-    with MockRetrieveEmploymentsExpensesRequestParser
+    with MockRetrieveEmploymentExpensesValidatorFactory
     with MockHateoasFactory {
 
   private val taxYear = "2019-20"
   private val source  = MtdSource.`latest`
 
-  private val rawData     = RetrieveEmploymentsExpensesRawData(nino, taxYear, source.toString)
   private val requestData = RetrieveEmploymentsExpensesRequestData(Nino(nino), TaxYear.fromMtd(taxYear), source)
 
-  private val testHateoasLinks = Seq(
+  private val testHateoasLinks = List(
     Link(href = s"/individuals/expenses/employments/$nino/$taxYear", method = PUT, rel = "amend-employment-expenses"),
     Link(href = s"/individuals/expenses/employments/$nino/$taxYear", method = GET, rel = "self"),
     Link(href = s"/individuals/expenses/employments/$nino/$taxYear", method = DELETE, rel = "delete-employment-expenses"),
@@ -57,10 +56,7 @@ class RetrieveEmploymentsExpensesControllerSpec
   "handleRequest" should {
     "return a successful response with status 200 (OK)" when {
       "given a valid request" in new Test {
-
-        MockRetrieveEmploymentsExpensesRequestParser
-          .parse(rawData)
-          .returns(Right(requestData))
+        willUseValidator(returningSuccess(requestData))
 
         MockRetrieveEmploymentsExpensesService
           .retrieveEmploymentsExpenses(requestData)
@@ -79,20 +75,14 @@ class RetrieveEmploymentsExpensesControllerSpec
 
     "return the error as per spec" when {
       "the parser validation fails" in new Test {
-
-        MockRetrieveEmploymentsExpensesRequestParser
-          .parse(rawData)
-          .returns(Left(ErrorWrapper(correlationId, NinoFormatError)))
+        willUseValidator(returning(NinoFormatError))
 
         runErrorTest(NinoFormatError)
 
       }
 
       "the service returns an error" in new Test {
-
-        MockRetrieveEmploymentsExpensesRequestParser
-          .parse(rawData)
-          .returns(Right(requestData))
+        willUseValidator(returningSuccess(requestData))
 
         MockRetrieveEmploymentsExpensesService
           .retrieveEmploymentsExpenses(requestData)
@@ -108,10 +98,9 @@ class RetrieveEmploymentsExpensesControllerSpec
     val controller = new RetrieveEmploymentsExpensesController(
       authService = mockEnrolmentsAuthService,
       lookupService = mockMtdIdLookupService,
-      parser = mockRetrieveEmploymentsExpensesRequestParser,
+      validatorFactory = mockRetrieveEmploymentExpensesValidatorFactory,
       service = mockRetrieveEmploymentsExpensesService,
       hateoasFactory = mockHateoasFactory,
-      auditService = mockAuditService,
       cc = cc,
       idGenerator = mockIdGenerator
     )

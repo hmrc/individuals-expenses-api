@@ -20,7 +20,7 @@ import api.models.domain.{Nino, TaxYear}
 import api.models.errors._
 import api.models.outcomes.ResponseWrapper
 import api.services.ServiceSpec
-import v1.mocks.connectors.MockIgnoreEmploymentExpensesConnector
+import v1.connectors.MockIgnoreEmploymentExpensesConnector
 import v1.models.request.ignoreEmploymentExpenses.IgnoreEmploymentExpensesRequestData
 
 import scala.concurrent.Future

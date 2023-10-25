@@ -21,9 +21,9 @@ import api.hateoas.HateoasFactory
 import api.services.{AuditService, EnrolmentsAuthService, MtdIdLookupService}
 import play.api.libs.json.JsValue
 import play.api.mvc.{Action, ControllerComponents}
-import utils.{IdGenerator, Logging}
-import v1.controllers.requestParsers.CreateAndAmendOtherExpensesRequestParser
-import v1.models.request.createAndAmendOtherExpenses.CreateAndAmendOtherExpensesRawData
+import routing.{Version, Version1}
+import utils.IdGenerator
+import v1.controllers.validators.CreateAndAmendOtherExpensesValidatorFactory
 import v1.models.response.createAndAmendOtherExpenses.CreateAndAmendOtherExpensesHateoasData
 import v1.models.response.createAndAmendOtherExpenses.CreateAndAmendOtherExpensesResponse.CreateAndAmendOtherExpensesLinksFactory
 import v1.services.CreateAndAmendOtherExpensesService
@@ -34,14 +34,13 @@ import scala.concurrent.ExecutionContext
 @Singleton
 class CreateAndAmendOtherExpensesController @Inject() (val authService: EnrolmentsAuthService,
                                                        val lookupService: MtdIdLookupService,
-                                                       parser: CreateAndAmendOtherExpensesRequestParser,
+                                                       validatorFactory: CreateAndAmendOtherExpensesValidatorFactory,
                                                        service: CreateAndAmendOtherExpensesService,
                                                        auditService: AuditService,
                                                        hateoasFactory: HateoasFactory,
                                                        cc: ControllerComponents,
                                                        val idGenerator: IdGenerator)(implicit ec: ExecutionContext)
-    extends AuthorisedController(cc)
-    with Logging {
+    extends AuthorisedController(cc) {
 
   implicit val endpointLogContext: EndpointLogContext =
     EndpointLogContext(controllerName = "CreateAndAmendOtherExpensesController", endpointName = "createAndAmendOtherExpenses")
@@ -50,21 +49,22 @@ class CreateAndAmendOtherExpensesController @Inject() (val authService: Enrolmen
     authorisedAction(nino).async(parse.json) { implicit request =>
       implicit val ctx: RequestContext = RequestContext.from(idGenerator, endpointLogContext)
 
-      val rawData = CreateAndAmendOtherExpensesRawData(nino, taxYear, request.body)
+      val validator = validatorFactory.validator(nino, taxYear, request.body)
       val requestHandler = RequestHandler
-        .withParser(parser)
+        .withValidator(validator)
         .withService(service.createAndAmend)
         .withAuditing(AuditHandler(
           auditService = auditService,
           auditType = "CreateAmendOtherExpenses",
           transactionName = "create-amend-other-expenses",
+          apiVersion = Version.from(request, orElse = Version1),
           params = Map("nino" -> nino, "taxYear" -> taxYear),
           requestBody = Some(request.body),
           includeResponse = true
         ))
         .withHateoasResult(hateoasFactory)(CreateAndAmendOtherExpensesHateoasData(nino, taxYear))
 
-      requestHandler.handleRequest(rawData)
+      requestHandler.handleRequest()
     }
 
 }

@@ -19,9 +19,9 @@ package v1.controllers
 import api.controllers._
 import api.services.{AuditService, EnrolmentsAuthService, MtdIdLookupService}
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
-import utils.{IdGenerator, Logging}
-import v1.controllers.requestParsers.DeleteEmploymentExpensesRequestParser
-import v1.models.request.deleteEmploymentExpenses.DeleteEmploymentExpensesRawData
+import routing.{Version, Version1}
+import utils.IdGenerator
+import v1.controllers.validators.DeleteEmploymentExpensesValidatorFactory
 import v1.services.DeleteEmploymentExpensesService
 
 import javax.inject.{Inject, Singleton}
@@ -30,13 +30,12 @@ import scala.concurrent.ExecutionContext
 @Singleton
 class DeleteEmploymentExpensesController @Inject() (val authService: EnrolmentsAuthService,
                                                     val lookupService: MtdIdLookupService,
-                                                    parser: DeleteEmploymentExpensesRequestParser,
+                                                    validatorFactory: DeleteEmploymentExpensesValidatorFactory,
                                                     service: DeleteEmploymentExpensesService,
                                                     auditService: AuditService,
                                                     cc: ControllerComponents,
                                                     val idGenerator: IdGenerator)(implicit ec: ExecutionContext)
-    extends AuthorisedController(cc)
-    with Logging {
+    extends AuthorisedController(cc) {
 
   implicit val endpointLogContext: EndpointLogContext =
     EndpointLogContext(controllerName = "DeleteEmploymentExpensesController", endpointName = "delete-employment-expenses")
@@ -45,22 +44,22 @@ class DeleteEmploymentExpensesController @Inject() (val authService: EnrolmentsA
     authorisedAction(nino).async { implicit request =>
       implicit val ctx: RequestContext = RequestContext.from(idGenerator, endpointLogContext)
 
-      val rawData: DeleteEmploymentExpensesRawData =
-        DeleteEmploymentExpensesRawData(nino, taxYear)
+      val validator = validatorFactory.validator(nino, taxYear)
 
       val requestHandler =
         RequestHandler
-          .withParser(parser)
+          .withValidator(validator)
           .withService(service.deleteEmploymentExpenses)
           .withNoContentResult()
-          .withAuditing(
-            AuditHandler(
-              auditService,
-              auditType = "DeleteEmploymentExpenses",
-              transactionName = "delete-employment-expenses",
-              params = Map("nino" -> nino, "taxYear" -> taxYear)))
+          .withAuditing(AuditHandler(
+            auditService,
+            auditType = "DeleteEmploymentExpenses",
+            transactionName = "delete-employment-expenses",
+            apiVersion = Version.from(request, orElse = Version1),
+            params = Map("nino" -> nino, "taxYear" -> taxYear)
+          ))
 
-      requestHandler.handleRequest(rawData)
+      requestHandler.handleRequest()
 
     }
 

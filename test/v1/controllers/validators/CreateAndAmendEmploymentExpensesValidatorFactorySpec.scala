@@ -16,7 +16,7 @@
 
 package v1.controllers.validators
 
-import api.models.domain.{Nino, TaxYear}
+import api.models.domain.{Nino, TaxYear, TodaySupplier}
 import api.models.errors._
 import api.models.utils.JsonErrorValidators
 import play.api.libs.json.{JsNumber, JsObject, JsValue, Json}
@@ -27,12 +27,14 @@ import v1.models.request.createAndAmendEmploymentExpenses.{
   Expenses
 }
 
+import java.time.LocalDate
+
 class CreateAndAmendEmploymentExpensesValidatorFactorySpec extends UnitSpec with JsonErrorValidators {
 
   private implicit val correlationId: String = "1234"
 
   private val validNino    = "AA123456A"
-  private val validTaxYear = "2023-24"
+  private val validTaxYear = "2021-22"
 
   private def getNumber(withDecimals: Boolean)(base: Int) = if (withDecimals) base else base + 0.12
 
@@ -62,9 +64,14 @@ class CreateAndAmendEmploymentExpensesValidatorFactorySpec extends UnitSpec with
 
   private def parsedBody(expenses: Expenses = parsedExpenses) = CreateAndAmendEmploymentExpensesBody(expenses)
 
+  implicit val todaySupplier: TodaySupplier = new TodaySupplier {
+    override def today(): LocalDate = LocalDate.parse("2022-07-11")
+  }
+
   private val validatorFactory = new CreateAndAmendEmploymentExpensesValidatorFactory
 
-  private def validator(nino: String, taxYear: String, body: JsValue) = validatorFactory.validator(nino, taxYear, body)
+  private def validator(nino: String, taxYear: String, body: JsValue, temporalValidationEnabled: Boolean = true) =
+    validatorFactory.validator(nino, taxYear, body, temporalValidationEnabled)
 
   "validator" should {
     "return the parsed domain object" when {
@@ -84,8 +91,6 @@ class CreateAndAmendEmploymentExpensesValidatorFactorySpec extends UnitSpec with
         )
       }
 
-      // TODO could easily have a single list foreached over
-
       List(
         ("/expenses/businessTravelCosts", parsedExpenses.copy(businessTravelCosts = None)),
         ("/expenses/jobExpenses", parsedExpenses.copy(jobExpenses = None)),
@@ -100,6 +105,11 @@ class CreateAndAmendEmploymentExpensesValidatorFactorySpec extends UnitSpec with
           val result = validator(validNino, validTaxYear, validBody().removeProperty(path)).validateAndWrapResult()
           result shouldBe Right(CreateAndAmendEmploymentExpensesRequestData(parsedNino, parsedTaxYear, parsedBody(expenses)))
         }
+      }
+
+      "the taxYear has not ended but temporal validation is not enabled" in {
+        val result = validator(validNino, "2023-24", validBody(), temporalValidationEnabled = false).validateAndWrapResult()
+        result shouldBe Right(CreateAndAmendEmploymentExpensesRequestData(parsedNino, TaxYear.fromMtd("2023-24"), parsedBody()))
       }
     }
 
@@ -124,8 +134,10 @@ class CreateAndAmendEmploymentExpensesValidatorFactorySpec extends UnitSpec with
         result shouldBe Left(ErrorWrapper(correlationId, RuleTaxYearNotSupportedError))
       }
 
-      // TODO maybe this needs testing?
-//      "the taxYear has not ended but temporal validation is disabled" in new Test {
+      "the taxYear has not ended and temporal validation is enabled" in {
+        val result = validator(validNino, "2023-24", validBody()).validateAndWrapResult()
+        result shouldBe Left(ErrorWrapper(correlationId, RuleTaxYearNotEndedError))
+      }
 
       "passed an empty JSON body" in {
         val invalidBody = JsObject.empty

@@ -24,13 +24,12 @@ import api.models.errors._
 import api.hateoas.Method.{DELETE, GET}
 import api.models.outcomes.ResponseWrapper
 import mocks.MockAppConfig
-import play.api.Configuration
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Result
-import v1.mocks.requestParsers.MockIgnoreEmploymentExpensesRequestParser
-import v1.mocks.services.MockIgnoreEmploymentExpensesService
+import v1.controllers.validators.MockIgnoreEmploymentExpensesValidatorFactory
 import v1.models.request.ignoreEmploymentExpenses._
 import v1.models.response.ignoreEmploymentExpenses.IgnoreEmploymentExpensesHateoasData
+import v1.services.MockIgnoreEmploymentExpensesService
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -39,18 +38,18 @@ class IgnoreEmploymentExpensesControllerSpec
     extends ControllerBaseSpec
     with ControllerTestRunner
     with MockIgnoreEmploymentExpensesService
-    with MockIgnoreEmploymentExpensesRequestParser
+    with MockIgnoreEmploymentExpensesValidatorFactory
     with MockHateoasFactory
     with MockAppConfig {
 
   private val taxYear = "2019-20"
 
-  private val testHateoasLinks = Seq(
+  private val testHateoasLinks = List(
     Link(href = s"/individuals/expenses/employments/$nino/$taxYear", method = GET, rel = "self"),
     Link(href = s"/individuals/expenses/employments/$nino/$taxYear", method = DELETE, rel = "delete-employment-expenses")
   )
 
-  val responseBodyJson: JsValue = Json.parse(s"""
+  private val responseBodyJson: JsValue = Json.parse(s"""
        |{
        |  "links": [
        |    {
@@ -67,16 +66,12 @@ class IgnoreEmploymentExpensesControllerSpec
        |}
        |""".stripMargin)
 
-  private val rawData     = IgnoreEmploymentExpensesRawData(nino, taxYear)
   private val requestData = IgnoreEmploymentExpensesRequestData(Nino(nino), TaxYear.fromMtd(taxYear))
 
   "handleRequest" should {
     "return Ok" when {
       "the request received is valid" in new Test {
-
-        MockIgnoreEmploymentExpensesRequestParser
-          .parseRequest(rawData)
-          .returns(Right(requestData))
+        willUseValidator(returningSuccess(requestData))
 
         MockIgnoreEmploymentExpensesService
           .ignore(requestData)
@@ -96,19 +91,13 @@ class IgnoreEmploymentExpensesControllerSpec
 
     "return the error as per spec" when {
       "the parser validation fails" in new Test {
-
-        MockIgnoreEmploymentExpensesRequestParser
-          .parseRequest(rawData)
-          .returns(Left(ErrorWrapper(correlationId, NinoFormatError)))
+        willUseValidator(returning(NinoFormatError))
 
         runErrorTestWithAudit(NinoFormatError)
       }
 
       "service errors occur" in new Test {
-
-        MockIgnoreEmploymentExpensesRequestParser
-          .parseRequest(rawData)
-          .returns(Right(requestData))
+        willUseValidator(returningSuccess(requestData))
 
         MockIgnoreEmploymentExpensesService
           .ignore(requestData)
@@ -122,10 +111,9 @@ class IgnoreEmploymentExpensesControllerSpec
   trait Test extends ControllerTest with AuditEventChecking {
 
     val controller = new IgnoreEmploymentExpensesController(
-      appConfig = mockAppConfig,
       authService = mockEnrolmentsAuthService,
       lookupService = mockMtdIdLookupService,
-      parser = mockRequestParser,
+      validatorFactory = mockIgnoreEmploymentExpensesValidatorFactory,
       service = mockService,
       auditService = mockAuditService,
       hateoasFactory = mockHateoasFactory,
@@ -133,21 +121,22 @@ class IgnoreEmploymentExpensesControllerSpec
       idGenerator = mockIdGenerator
     )
 
-    MockAppConfig.featureSwitches.returns(Configuration("allowTemporalValidationSuspension.enabled" -> true)).anyNumberOfTimes()
+//    MockAppConfig.featureSwitches.returns(Configuration("allowTemporalValidationSuspension.enabled" -> true)).anyNumberOfTimes()
 
     protected def callController(): Future[Result] = controller.handleRequest(nino, taxYear)(fakeRequest)
 
-    def event(auditResponse: AuditResponse, requestBody: Option[JsValue]): AuditEvent[GenericAuditDetail] =
+    def event(auditResponse: AuditResponse, maybeRequestBody: Option[JsValue]): AuditEvent[GenericAuditDetail] =
       AuditEvent(
         auditType = "IgnoreEmploymentExpenses",
         transactionName = "ignore-employment-expenses",
         detail = GenericAuditDetail(
+          versionNumber = "1.0",
           userType = "Individual",
           agentReferenceNumber = None,
           params = Map("nino" -> nino, "taxYear" -> taxYear),
-          request = None,
+          requestBody = maybeRequestBody,
           `X-CorrelationId` = correlationId,
-          response = auditResponse
+          auditResponse = auditResponse
         )
       )
 
