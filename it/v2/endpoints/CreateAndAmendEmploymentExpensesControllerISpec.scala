@@ -106,7 +106,7 @@ class CreateAndAmendEmploymentExpensesControllerISpec extends IntegrationBaseSpe
 
           val response: WSResponse = await(request().put(requestBodyJson))
           response.status shouldBe BAD_REQUEST
-          response.json shouldBe Json.toJson(ValueFormatError.copy(paths = Some(Seq(
+          response.json shouldBe Json.toJson(ValueFormatError.copy(paths = Some(List(
             "/expenses/businessTravelCosts",
             "/expenses/jobExpenses",
             "/expenses/flatRateJobExpenses",

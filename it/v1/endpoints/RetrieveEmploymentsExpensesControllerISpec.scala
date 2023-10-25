@@ -99,7 +99,7 @@ class RetrieveEmploymentsExpensesControllerISpec extends IntegrationBaseSpec {
           }
         }
 
-        val input = Seq(
+        val input = List(
           ("Walrus", "2019-20", "latest", BAD_REQUEST, NinoFormatError),
           ("AA123456A", "203100", "latest", BAD_REQUEST, TaxYearFormatError),
           ("AA123456A", "2019-20", "Walrus", BAD_REQUEST, SourceFormatError),

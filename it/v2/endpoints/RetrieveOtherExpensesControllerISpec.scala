@@ -171,7 +171,7 @@ class RetrieveOtherExpensesControllerISpec extends IntegrationBaseSpec {
             }
           }
 
-          val input = Seq(
+          val input = List(
             ("Walrus", "2019-20", BAD_REQUEST, NinoFormatError),
             ("AA123456A", "203100", BAD_REQUEST, TaxYearFormatError),
             ("AA123456A", "2018-20", BAD_REQUEST, RuleTaxYearRangeInvalidError),
@@ -196,7 +196,7 @@ class RetrieveOtherExpensesControllerISpec extends IntegrationBaseSpec {
             }
           }
 
-          val errors: Seq[(Int, String, Int, MtdError)] = Seq(
+          val errors: Seq[(Int, String, Int, MtdError)] = List(
             (BAD_REQUEST, "INVALID_TAXABLE_ENTITY_ID", BAD_REQUEST, NinoFormatError),
             (BAD_REQUEST, "FORMAT_TAX_YEAR", BAD_REQUEST, TaxYearFormatError),
             (NOT_FOUND, "NO_DATA_FOUND", NOT_FOUND, NotFoundError),
@@ -204,7 +204,7 @@ class RetrieveOtherExpensesControllerISpec extends IntegrationBaseSpec {
             (SERVICE_UNAVAILABLE, "SERVICE_UNAVAILABLE", INTERNAL_SERVER_ERROR, InternalError)
           )
 
-          val extraTysErrors: Seq[(Int, String, Int, MtdError)] = Seq(
+          val extraTysErrors: Seq[(Int, String, Int, MtdError)] = List(
             (BAD_REQUEST, "INVALID_CORRELATION_ID", INTERNAL_SERVER_ERROR, InternalError),
             (UNPROCESSABLE_ENTITY, "TAX_YEAR_NOT_SUPPORTED", BAD_REQUEST, RuleTaxYearNotSupportedError)
           )
