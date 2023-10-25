@@ -25,19 +25,7 @@ case class Expenses(businessTravelCosts: Option[BigDecimal],
                     hotelAndMealExpenses: Option[BigDecimal],
                     otherAndCapitalAllowances: Option[BigDecimal],
                     vehicleExpenses: Option[BigDecimal],
-                    mileageAllowanceRelief: Option[BigDecimal]) {
-
-  // TODO delete
-  def isEmpty: Boolean = businessTravelCosts.isEmpty &&
-    jobExpenses.isEmpty &&
-    flatRateJobExpenses.isEmpty &&
-    professionalSubscriptions.isEmpty &&
-    hotelAndMealExpenses.isEmpty &&
-    otherAndCapitalAllowances.isEmpty &&
-    vehicleExpenses.isEmpty &&
-    mileageAllowanceRelief.isEmpty
-
-}
+                    mileageAllowanceRelief: Option[BigDecimal])
 
 object Expenses {
   implicit val format: OFormat[Expenses] = Json.format[Expenses]
