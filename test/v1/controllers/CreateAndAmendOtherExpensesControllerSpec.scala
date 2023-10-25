@@ -17,19 +17,18 @@
 package v1.controllers
 
 import api.controllers.{ControllerBaseSpec, ControllerTestRunner}
-import api.mocks.hateoas.MockHateoasFactory
+import api.hateoas.{HateoasWrapper, Link, MockHateoasFactory}
 import api.models.audit.{AuditEvent, AuditResponse, GenericAuditDetail}
 import api.models.domain.{Nino, TaxYear}
 import api.models.errors._
-import api.models.hateoas.Method.{DELETE, GET, PUT}
-import api.models.hateoas.{HateoasWrapper, Link}
+import api.hateoas.Method.{DELETE, GET, PUT}
 import api.models.outcomes.ResponseWrapper
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Result
-import v1.mocks.requestParsers.MockCreateAndAmendOtherExpensesRequestParser
-import v1.mocks.services._
+import v1.controllers.validators.MockCreateAndAmendOtherExpensesValidatorFactory
 import v1.models.request.createAndAmendOtherExpenses._
 import v1.models.response.createAndAmendOtherExpenses.CreateAndAmendOtherExpensesHateoasData
+import v1.services.MockCreateAndAmendOtherExpensesService
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -38,12 +37,12 @@ class CreateAndAmendOtherExpensesControllerSpec
     extends ControllerBaseSpec
     with ControllerTestRunner
     with MockCreateAndAmendOtherExpensesService
-    with MockCreateAndAmendOtherExpensesRequestParser
+    with MockCreateAndAmendOtherExpensesValidatorFactory
     with MockHateoasFactory {
 
   private val taxYear = "2021-22"
 
-  private val testHateoasLinks = Seq(
+  private val testHateoasLinks = List(
     Link(href = s"/individuals/expenses/other/$nino/$taxYear", method = GET, rel = "self"),
     Link(href = s"/individuals/expenses/other/$nino/$taxYear", method = PUT, rel = "amend-expenses-other"),
     Link(href = s"/individuals/expenses/other/$nino/$taxYear", method = DELETE, rel = "delete-expenses-other")
@@ -89,16 +88,12 @@ class CreateAndAmendOtherExpensesControllerSpec
        |}
        |""".stripMargin)
 
-  private val rawData     = CreateAndAmendOtherExpensesRawData(nino, taxYear, requestBodyJson)
-  private val requestData = CreateAndAmendOtherExpensesRequest(Nino(nino), TaxYear.fromMtd(taxYear), requestBody)
+  private val requestData = CreateAndAmendOtherExpensesRequestData(Nino(nino), TaxYear.fromMtd(taxYear), requestBody)
 
   "handleRequest" should {
     "return Ok" when {
       "the request received is valid" in new Test {
-
-        MockCreateAndAmendOtherExpensesRequestParser
-          .parseRequest(rawData)
-          .returns(Right(requestData))
+        willUseValidator(returningSuccess(requestData))
 
         MockCreateAndAmendOtherExpensesService
           .createAndAmend(requestData)
@@ -119,19 +114,13 @@ class CreateAndAmendOtherExpensesControllerSpec
 
     "return the error as per spec" when {
       "the parser validation fails" in new Test {
-
-        MockCreateAndAmendOtherExpensesRequestParser
-          .parseRequest(rawData)
-          .returns(Left(ErrorWrapper(correlationId, NinoFormatError)))
+        willUseValidator(returning(NinoFormatError))
 
         runErrorTestWithAudit(NinoFormatError, Some(requestBodyJson))
       }
 
       "the service returns an error" in new Test {
-
-        MockCreateAndAmendOtherExpensesRequestParser
-          .parseRequest(rawData)
-          .returns(Right(requestData))
+        willUseValidator(returningSuccess(requestData))
 
         MockCreateAndAmendOtherExpensesService
           .createAndAmend(requestData)
@@ -147,7 +136,7 @@ class CreateAndAmendOtherExpensesControllerSpec
     val controller = new CreateAndAmendOtherExpensesController(
       authService = mockEnrolmentsAuthService,
       lookupService = mockMtdIdLookupService,
-      parser = mockRequestParser,
+      validatorFactory = mockCreateAndAmendOtherExpensesValidatorFactory,
       service = mockService,
       hateoasFactory = mockHateoasFactory,
       auditService = mockAuditService,
@@ -157,17 +146,18 @@ class CreateAndAmendOtherExpensesControllerSpec
 
     protected def callController(): Future[Result] = controller.handleRequest(nino, taxYear)(fakePutRequest(requestBodyJson))
 
-    def event(auditResponse: AuditResponse, requestBody: Option[JsValue]): AuditEvent[GenericAuditDetail] =
+    def event(auditResponse: AuditResponse, maybeRequestBody: Option[JsValue]): AuditEvent[GenericAuditDetail] =
       AuditEvent(
         auditType = "CreateAmendOtherExpenses",
         transactionName = "create-amend-other-expenses",
         detail = GenericAuditDetail(
+          versionNumber = "1.0",
           userType = "Individual",
           agentReferenceNumber = None,
           params = Map("nino" -> nino, "taxYear" -> taxYear),
-          request = requestBody,
+          requestBody = maybeRequestBody,
           `X-CorrelationId` = correlationId,
-          response = auditResponse
+          auditResponse = auditResponse
         )
       )
 

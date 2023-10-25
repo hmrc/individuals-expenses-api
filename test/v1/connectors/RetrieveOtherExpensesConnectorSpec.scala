@@ -19,7 +19,7 @@ package v1.connectors
 import api.connectors.ConnectorSpec
 import api.models.domain.{Nino, TaxYear, Timestamp}
 import api.models.outcomes.ResponseWrapper
-import v1.models.request.retrieveOtherExpenses.RetrieveOtherExpensesRequest
+import v1.models.request.retrieveOtherExpenses.RetrieveOtherExpensesRequestData
 import v1.models.response.retrieveOtherExpenses.{PatentRoyaltiesPayments, PaymentsToTradeUnionsForDeathBenefits, RetrieveOtherExpensesResponse}
 
 import scala.concurrent.Future
@@ -44,7 +44,7 @@ class RetrieveOtherExpensesConnectorSpec extends ConnectorSpec {
       appConfig = mockAppConfig
     )
 
-    lazy val request: RetrieveOtherExpensesRequest = RetrieveOtherExpensesRequest(Nino(nino), TaxYear.fromMtd(taxYear))
+    lazy val request: RetrieveOtherExpensesRequestData = RetrieveOtherExpensesRequestData(Nino(nino), TaxYear.fromMtd(taxYear))
 
   }
 

@@ -25,11 +25,11 @@ import support.UnitSpec
 class OasFeatureRewriterSpec extends UnitSpec with MockAppConfig {
 
   private def setupCheckAndRewrite(oasFeatureEnabled: Boolean, versionEnabled: Boolean): (CheckRewrite, Rewriter) = {
-    MockAppConfig.featureSwitches returns Configuration(
+    MockedAppConfig.featureSwitches returns Configuration(
       "oasFeature.enabled" -> oasFeatureEnabled
     )
 
-    MockAppConfig.endpointsEnabled("1.0").anyNumberOfTimes() returns versionEnabled
+    MockedAppConfig.endpointsEnabled("1.0").anyNumberOfTimes() returns versionEnabled
 
     val rewriter = new OasFeatureRewriter()(mockAppConfig)
     rewriter.rewriteOasFeature.asTuple

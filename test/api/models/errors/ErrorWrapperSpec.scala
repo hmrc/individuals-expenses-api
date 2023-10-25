@@ -22,39 +22,31 @@ import support.UnitSpec
 
 class ErrorWrapperSpec extends UnitSpec {
 
-  val correlationId = "X-123"
+  private val correlationId = "X-123"
+
+  private val ninoFormatJson = Json.parse(
+    s"""
+       |{
+       |   "code": "${NinoFormatError.code}",
+       |   "message": "${NinoFormatError.message}"
+       |}
+      """.stripMargin
+  )
 
   "Rendering a error response with one error" should {
-    val error = ErrorWrapper(correlationId, NinoFormatError, Some(Seq.empty))
-
-    val json = Json.parse(
-      """
-        |{
-        |   "code": "FORMAT_NINO",
-        |   "message": "The provided NINO is invalid"
-        |}
-      """.stripMargin
-    )
+    val error = ErrorWrapper(correlationId, NinoFormatError, Some(List.empty))
 
     "generate the correct JSON" in {
-      Json.toJson(error) shouldBe json
+      val result = Json.toJson(error)
+      result shouldBe ninoFormatJson
     }
   }
 
   "Rendering a error response with one error and an empty sequence of errors" should {
-    val error = ErrorWrapper(correlationId, NinoFormatError, Some(Seq.empty))
-
-    val json = Json.parse(
-      """
-        |{
-        |   "code": "FORMAT_NINO",
-        |   "message": "The provided NINO is invalid"
-        |}
-      """.stripMargin
-    )
+    val error = ErrorWrapper(correlationId, NinoFormatError, Some(List.empty))
 
     "generate the correct JSON" in {
-      Json.toJson(error) shouldBe json
+      Json.toJson(error) shouldBe ninoFormatJson
     }
   }
 
@@ -63,41 +55,50 @@ class ErrorWrapperSpec extends UnitSpec {
       correlationId,
       BadRequestError,
       Some(
-        Seq(
+        List(
           NinoFormatError,
           TaxYearFormatError
         )
       ))
 
     val json = Json.parse(
-      """
-        |{
-        |   "code": "INVALID_REQUEST",
-        |   "message": "Invalid request",
-        |   "errors": [
-        |       {
-        |         "code": "FORMAT_NINO",
-        |         "message": "The provided NINO is invalid"
-        |       },
-        |       {
-        |         "code": "FORMAT_TAX_YEAR",
-        |         "message": "The provided tax year is invalid"
-        |       }
-        |   ]
-        |}
+      s"""
+         |{
+         |   "code": "${BadRequestError.code}",
+         |   "message": "${BadRequestError.message}",
+         |   "errors": [
+         |       {
+         |         "code": "${NinoFormatError.code}",
+         |         "message": "${NinoFormatError.message}"
+         |       },
+         |       {
+         |         "code": "${TaxYearFormatError.code}",
+         |         "message": "${TaxYearFormatError.message}"
+         |       }
+         |   ]
+         |}
       """.stripMargin
     )
 
     "generate the correct JSON" in {
-      Json.toJson(error) shouldBe json
+      val result = Json.toJson(error)
+      result shouldBe json
     }
   }
 
-  "Rendering a error response" should {
-    val error = ErrorWrapper(correlationId, NinoFormatError, None)
+  "auditErrors" should {
+    "return the correct AuditError list" when {
+      "given a single error" in {
+        val errorWrapper = ErrorWrapper(correlationId, BadRequestError, None)
+        val result       = errorWrapper.auditErrors
+        result shouldBe List(AuditError(BadRequestError.code))
+      }
 
-    "convert an error to an audit error with that error code" in {
-      error.auditErrors shouldBe Seq(AuditError("FORMAT_NINO"))
+      "given multiple errors" in {
+        val errorWrapper = ErrorWrapper(correlationId, BadRequestError, Some(List(NinoFormatError, TaxYearFormatError)))
+        val result       = errorWrapper.auditErrors
+        result shouldBe List(AuditError(NinoFormatError.code), AuditError(TaxYearFormatError.code))
+      }
     }
   }
 

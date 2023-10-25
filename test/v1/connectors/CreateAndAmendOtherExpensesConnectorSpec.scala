@@ -82,7 +82,7 @@ class CreateAndAmendOtherExpensesConnectorSpec extends ConnectorSpec {
         ))
     )
 
-    lazy val request: CreateAndAmendOtherExpensesRequest = CreateAndAmendOtherExpensesRequest(Nino(nino), TaxYear.fromMtd(taxYear), body)
+    lazy val request: CreateAndAmendOtherExpensesRequestData = CreateAndAmendOtherExpensesRequestData(Nino(nino), TaxYear.fromMtd(taxYear), body)
   }
 
 }

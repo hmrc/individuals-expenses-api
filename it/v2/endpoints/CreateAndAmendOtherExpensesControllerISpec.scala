@@ -102,7 +102,7 @@ class CreateAndAmendOtherExpensesControllerISpec extends IntegrationBaseSpec {
           val response: WSResponse = await(request().put(requestBodyJson))
           response.status shouldBe BAD_REQUEST
           response.json shouldBe Json.toJson(ValueFormatError.copy(paths =
-            Some(Seq("/paymentsToTradeUnionsForDeathBenefits/expenseAmount", "/patentRoyaltiesPayments/expenseAmount"))))
+            Some(List("/paymentsToTradeUnionsForDeathBenefits/expenseAmount", "/patentRoyaltiesPayments/expenseAmount"))))
         }
         s"an invalid customer reference is provided" in new NonTysTest {
           override val requestBodyJson: JsValue = Json.parse(
@@ -125,7 +125,7 @@ class CreateAndAmendOtherExpensesControllerISpec extends IntegrationBaseSpec {
           val response: WSResponse = await(request().put(requestBodyJson))
           response.status shouldBe BAD_REQUEST
           response.json shouldBe Json.toJson(CustomerReferenceFormatError.copy(paths =
-            Some(Seq("/paymentsToTradeUnionsForDeathBenefits/customerReference", "/patentRoyaltiesPayments/customerReference"))))
+            Some(List("/paymentsToTradeUnionsForDeathBenefits/customerReference", "/patentRoyaltiesPayments/customerReference"))))
         }
         s"a taxYear with range of greater than a year is provided" in new NonTysTest {
           override val taxYear: String = "2019-21"
@@ -155,7 +155,12 @@ class CreateAndAmendOtherExpensesControllerISpec extends IntegrationBaseSpec {
 
           val response: WSResponse = await(request().put(requestBodyJson))
           response.status shouldBe BAD_REQUEST
-          response.json shouldBe Json.toJson(RuleIncorrectOrEmptyBodyError)
+          response.json shouldBe Json.toJson(
+            RuleIncorrectOrEmptyBodyError.withPaths(
+              List(
+                "/patentRoyaltiesPayments/expenseAmount",
+                "/paymentsToTradeUnionsForDeathBenefits/expenseAmount"
+              )))
         }
       }
 
@@ -173,18 +178,18 @@ class CreateAndAmendOtherExpensesControllerISpec extends IntegrationBaseSpec {
           }
         }
 
-        val errors = Seq(
+        val errors = List(
           (BAD_REQUEST, "INVALID_TAXABLE_ENTITY_ID", BAD_REQUEST, NinoFormatError),
           (BAD_REQUEST, "INVALID_TAX_YEAR", BAD_REQUEST, TaxYearFormatError),
-          (BAD_REQUEST, "INVALID_CORRELATIONID", INTERNAL_SERVER_ERROR, StandardDownstreamError),
-          (BAD_REQUEST, "INVALID_PAYLOAD", INTERNAL_SERVER_ERROR, StandardDownstreamError),
-          (UNPROCESSABLE_ENTITY, "UNPROCESSABLE_ENTITY", INTERNAL_SERVER_ERROR, StandardDownstreamError),
-          (INTERNAL_SERVER_ERROR, "SERVER_ERROR", INTERNAL_SERVER_ERROR, StandardDownstreamError),
-          (SERVICE_UNAVAILABLE, "SERVICE_UNAVAILABLE", INTERNAL_SERVER_ERROR, StandardDownstreamError)
+          (BAD_REQUEST, "INVALID_CORRELATIONID", INTERNAL_SERVER_ERROR, InternalError),
+          (BAD_REQUEST, "INVALID_PAYLOAD", INTERNAL_SERVER_ERROR, InternalError),
+          (UNPROCESSABLE_ENTITY, "UNPROCESSABLE_ENTITY", INTERNAL_SERVER_ERROR, InternalError),
+          (INTERNAL_SERVER_ERROR, "SERVER_ERROR", INTERNAL_SERVER_ERROR, InternalError),
+          (SERVICE_UNAVAILABLE, "SERVICE_UNAVAILABLE", INTERNAL_SERVER_ERROR, InternalError)
         )
 
-        val extraTysErrors = Seq(
-          (BAD_REQUEST, "INVALID_CORRELATION_ID", INTERNAL_SERVER_ERROR, StandardDownstreamError),
+        val extraTysErrors = List(
+          (BAD_REQUEST, "INVALID_CORRELATION_ID", INTERNAL_SERVER_ERROR, InternalError),
           (UNPROCESSABLE_ENTITY, "TAX_YEAR_NOT_SUPPORTED", BAD_REQUEST, RuleTaxYearNotSupportedError)
         )
 

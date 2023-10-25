@@ -21,7 +21,7 @@ import api.models.errors._
 import api.services.{BaseService, ServiceOutcome}
 import cats.implicits._
 import v1.connectors.RetrieveEmploymentsExpensesConnector
-import v1.models.request.retrieveEmploymentExpenses.RetrieveEmploymentsExpensesRequest
+import v1.models.request.retrieveEmploymentExpenses.RetrieveEmploymentsExpensesRequestData
 import v1.models.response.retrieveEmploymentExpenses.RetrieveEmploymentsExpensesResponse
 
 import javax.inject.{Inject, Singleton}
@@ -30,9 +30,9 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class RetrieveEmploymentsExpensesService @Inject() (connector: RetrieveEmploymentsExpensesConnector) extends BaseService {
 
-  def retrieveEmploymentsExpenses(request: RetrieveEmploymentsExpensesRequest)(implicit
-      ctx: RequestContext,
-      ec: ExecutionContext): Future[ServiceOutcome[RetrieveEmploymentsExpensesResponse]] = {
+  def retrieveEmploymentsExpenses(request: RetrieveEmploymentsExpensesRequestData)(implicit
+                                                                                   ctx: RequestContext,
+                                                                                   ec: ExecutionContext): Future[ServiceOutcome[RetrieveEmploymentsExpensesResponse]] = {
 
     connector.retrieveEmploymentExpenses(request).map(_.leftMap(mapDownstreamErrors(downstreamErrorMap)))
   }
@@ -42,15 +42,15 @@ class RetrieveEmploymentsExpensesService @Inject() (connector: RetrieveEmploymen
       "INVALID_TAXABLE_ENTITY_ID" -> NinoFormatError,
       "INVALID_TAX_YEAR"          -> TaxYearFormatError,
       "INVALID_VIEW"              -> SourceFormatError,
-      "INVALID_CORRELATIONID"     -> StandardDownstreamError,
+      "INVALID_CORRELATIONID"     -> InternalError,
       "NO_DATA_FOUND"             -> NotFoundError,
       "INVALID_DATE_RANGE"        -> RuleTaxYearNotSupportedError,
-      "SERVER_ERROR"              -> StandardDownstreamError,
-      "SERVICE_UNAVAILABLE"       -> StandardDownstreamError
+      "SERVER_ERROR"              -> InternalError,
+      "SERVICE_UNAVAILABLE"       -> InternalError
     )
 
     val extraTysErrors = Map(
-      "INVALID_CORRELATION_ID" -> StandardDownstreamError,
+      "INVALID_CORRELATION_ID" -> InternalError,
       "NOT_FOUND"              -> NotFoundError,
       "TAX_YEAR_NOT_SUPPORTED" -> RuleTaxYearNotSupportedError
     )

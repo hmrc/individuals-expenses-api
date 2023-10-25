@@ -20,8 +20,8 @@ import api.models.domain.{Nino, TaxYear, Timestamp}
 import api.models.errors._
 import api.models.outcomes.ResponseWrapper
 import api.services.ServiceSpec
-import v1.mocks.connectors.MockRetrieveOtherExpensesConnector
-import v1.models.request.retrieveOtherExpenses.RetrieveOtherExpensesRequest
+import v1.connectors.MockRetrieveOtherExpensesConnector
+import v1.models.request.retrieveOtherExpenses.RetrieveOtherExpensesRequestData
 import v1.models.response.retrieveOtherExpenses._
 
 import scala.concurrent.Future
@@ -37,7 +37,7 @@ class RetrieveOtherExpensesServiceSpec extends ServiceSpec {
     Some(PatentRoyaltiesPayments(Some("ROYALTIES PAYMENTS"), 5423.65))
   )
 
-  private val requestData = RetrieveOtherExpensesRequest(nino, TaxYear.fromMtd(taxYear))
+  private val requestData = RetrieveOtherExpensesRequestData(nino, TaxYear.fromMtd(taxYear))
 
   trait Test extends MockRetrieveOtherExpensesConnector {
 
@@ -77,12 +77,12 @@ class RetrieveOtherExpensesServiceSpec extends ServiceSpec {
         "INVALID_TAXABLE_ENTITY_ID" -> NinoFormatError,
         "FORMAT_TAX_YEAR"           -> TaxYearFormatError,
         "NO_DATA_FOUND"             -> NotFoundError,
-        "INVALID_CORRELATIONID"     -> StandardDownstreamError,
-        "SERVER_ERROR"              -> StandardDownstreamError,
-        "SERVICE_UNAVAILABLE"       -> StandardDownstreamError
+        "INVALID_CORRELATIONID"     -> InternalError,
+        "SERVER_ERROR"              -> InternalError,
+        "SERVICE_UNAVAILABLE"       -> InternalError
       )
       val extraTysErrors = Seq(
-        "INVALID_CORRELATION_ID" -> StandardDownstreamError,
+        "INVALID_CORRELATION_ID" -> InternalError,
         "TAX_YEAR_NOT_SUPPORTED" -> RuleTaxYearNotSupportedError
       )
 

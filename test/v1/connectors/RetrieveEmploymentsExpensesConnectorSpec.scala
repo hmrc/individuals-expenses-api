@@ -20,7 +20,7 @@ import api.connectors.ConnectorSpec
 import api.models.domain.{MtdSource, Nino, TaxYear}
 import api.models.outcomes.ResponseWrapper
 import v1.fixtures.RetrieveEmploymentsExpensesFixtures._
-import v1.models.request.retrieveEmploymentExpenses.RetrieveEmploymentsExpensesRequest
+import v1.models.request.retrieveEmploymentExpenses.RetrieveEmploymentsExpensesRequestData
 
 import scala.concurrent.Future
 
@@ -37,8 +37,8 @@ class RetrieveEmploymentsExpensesConnectorSpec extends ConnectorSpec {
       appConfig = mockAppConfig
     )
 
-    val request: RetrieveEmploymentsExpensesRequest =
-      RetrieveEmploymentsExpensesRequest(
+    val request: RetrieveEmploymentsExpensesRequestData =
+      RetrieveEmploymentsExpensesRequestData(
         nino = Nino(nino),
         taxYear = TaxYear.fromMtd(taxYear),
         source = MtdSource.`user`

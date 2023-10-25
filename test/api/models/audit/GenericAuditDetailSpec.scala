@@ -16,105 +16,22 @@
 
 package api.models.audit
 
-import play.api.http.Status.{BAD_REQUEST, OK}
-import play.api.libs.json.{JsValue, Json}
+import GenericAuditDetailFixture._
+import play.api.libs.json.Json
 import support.UnitSpec
 
 class GenericAuditDetailSpec extends UnitSpec {
 
-  val auditErrors: Seq[AuditError] = Seq(AuditError(errorCode = "FORMAT_NINO"), AuditError(errorCode = "FORMAT_TAX_YEAR"))
-  val body: JsValue                = Json.parse("""{ "aField" : "aValue" }""")
-
-  val nino: String                         = "ZG903729C"
-  val taxYear: String                      = "2019-20"
-  val userType: String                     = "Agent"
-  val agentReferenceNumber: Option[String] = Some("012345678")
-  val pathParams: Map[String, String]      = Map("nino" -> nino, "taxYear" -> taxYear)
-  val requestBody: Option[JsValue]         = None
-  val xCorrId                              = "a1e8057e-fbbc-47a8-a8b478d9f015c253"
-
-  val auditResponseModelWithBody: AuditResponse =
-    AuditResponse(
-      httpStatus = OK,
-      response = Right(Some(body))
-    )
-
-  val auditDetailModelSuccess: GenericAuditDetail =
-    GenericAuditDetail(
-      userType = userType,
-      agentReferenceNumber = agentReferenceNumber,
-      params = pathParams,
-      request = requestBody,
-      `X-CorrelationId` = xCorrId,
-      response = auditResponseModelWithBody
-    )
-
-  val auditResponseModelWithErrors: AuditResponse =
-    AuditResponse(
-      httpStatus = BAD_REQUEST,
-      response = Left(auditErrors)
-    )
-
-  val auditDetailModelError: GenericAuditDetail =
-    auditDetailModelSuccess.copy(
-      response = auditResponseModelWithErrors
-    )
-
-  val auditDetailJsonSuccess: JsValue = Json.parse(
-    s"""
-       |{
-       |   "userType" : "$userType",
-       |   "agentReferenceNumber" : "${agentReferenceNumber.get}",
-       |   "nino" : "$nino",
-       |   "taxYear" : "$taxYear",
-       |   "response":{
-       |     "httpStatus": ${auditResponseModelWithBody.httpStatus},
-       |     "body": ${auditResponseModelWithBody.body.get}
-       |   },
-       |   "X-CorrelationId": "$xCorrId"
-       |}
-    """.stripMargin
-  )
-
-  val auditResponseJsonWithErrors: JsValue = Json.parse(
-    s"""
-       |{
-       |  "httpStatus": $BAD_REQUEST,
-       |  "errors" : [
-       |    {
-       |      "errorCode" : "FORMAT_NINO"
-       |    },
-       |    {
-       |      "errorCode" : "FORMAT_TAX_YEAR"
-       |    }
-       |  ]
-       |}
-    """.stripMargin
-  )
-
-  val auditDetailJsonError: JsValue = Json.parse(
-    s"""
-       |{
-       |   "userType" : "$userType",
-       |   "agentReferenceNumber" : "${agentReferenceNumber.get}",
-       |   "nino": "$nino",
-       |   "taxYear" : "$taxYear",
-       |   "response": $auditResponseJsonWithErrors,
-       |   "X-CorrelationId": "$xCorrId"
-       |}
-     """.stripMargin
-  )
-
   "GenericAuditDetail" when {
     "written to JSON (success)" should {
       "produce the expected JsObject" in {
-        Json.toJson(auditDetailModelSuccess) shouldBe auditDetailJsonSuccess
+        Json.toJson(genericAuditDetailModelSuccess) shouldBe genericAuditDetailJsonSuccess
       }
     }
 
     "written to JSON (error)" should {
       "produce the expected JsObject" in {
-        Json.toJson(auditDetailModelError) shouldBe auditDetailJsonError
+        Json.toJson(genericAuditDetailModelError) shouldBe genericAuditDetailJsonError
       }
     }
   }

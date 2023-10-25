@@ -21,9 +21,9 @@ import api.hateoas.HateoasFactory
 import api.services.{AuditService, EnrolmentsAuthService, MtdIdLookupService}
 import config.{AppConfig, FeatureSwitches}
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
+import routing.{Version, Version1}
 import utils.IdGenerator
-import v1.controllers.requestParsers.IgnoreEmploymentExpensesRequestParser
-import v1.models.request.ignoreEmploymentExpenses.IgnoreEmploymentExpensesRawData
+import v1.controllers.validators.IgnoreEmploymentExpensesValidatorFactory
 import v1.models.response.ignoreEmploymentExpenses.IgnoreEmploymentExpensesHateoasData
 import v1.models.response.ignoreEmploymentExpenses.IgnoreEmploymentExpensesResponse.IgnoreEmploymentExpensesLinksFactory
 import v1.services.IgnoreEmploymentExpensesService
@@ -35,7 +35,7 @@ import scala.concurrent.ExecutionContext
 class IgnoreEmploymentExpensesController @Inject() (val authService: EnrolmentsAuthService,
                                                     val lookupService: MtdIdLookupService,
                                                     appConfig: AppConfig,
-                                                    parser: IgnoreEmploymentExpensesRequestParser,
+                                                    validatorFactory: IgnoreEmploymentExpensesValidatorFactory,
                                                     service: IgnoreEmploymentExpensesService,
                                                     auditService: AuditService,
                                                     hateoasFactory: HateoasFactory,
@@ -50,24 +50,23 @@ class IgnoreEmploymentExpensesController @Inject() (val authService: EnrolmentsA
     authorisedAction(nino).async { implicit request =>
       implicit val ctx: RequestContext = RequestContext.from(idGenerator, endpointLogContext)
 
-      val rawData = IgnoreEmploymentExpensesRawData(
-        nino = nino,
-        taxYear = taxYear,
-        temporalValidationEnabled = FeatureSwitches()(appConfig).isTemporalValidationEnabled
-      )
+      val temporalValidationEnabled = FeatureSwitches()(appConfig).isTemporalValidationEnabled
+      val validator                 = validatorFactory.validator(nino, taxYear, temporalValidationEnabled)
+
       val requestHandler = RequestHandler
-        .withParser(parser)
+        .withValidator(validator)
         .withService(service.ignore)
         .withAuditing(AuditHandler(
           auditService = auditService,
           auditType = "IgnoreEmploymentExpenses",
+          apiVersion = Version.from(request, orElse = Version1),
           transactionName = "ignore-employment-expenses",
           params = Map("nino" -> nino, "taxYear" -> taxYear),
           includeResponse = true
         ))
         .withHateoasResult(hateoasFactory)(IgnoreEmploymentExpensesHateoasData(nino, taxYear))
 
-      requestHandler.handleRequest(rawData)
+      requestHandler.handleRequest()
 
     }
 

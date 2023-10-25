@@ -16,15 +16,27 @@
 
 package api.models.outcomes
 
+import play.api.libs.json.{JsValue, Json}
 import support.UnitSpec
 
 class ResponseWrapperSpec extends UnitSpec {
 
-  "mapping a ResponseWrapper" should {
-    "return the same response wrapper with correlationId and responseData" in {
-      val response = ResponseWrapper("X-123", "Response")
+  "ResponseWrapper" should {
 
-      response.map(a => a) shouldBe ResponseWrapper("X-123", "Response")
+    val responseData = Json.parse(
+      """
+        |{
+        |   "who": "Knows"
+        |}
+    """.stripMargin
+    )
+
+    val correlationId = "a1e8057e-fbbc-47a8-a8b4-78d9f015c253"
+    val wrapper       = ResponseWrapper(correlationId, responseData)
+
+    "read in a singleError" in {
+      val result: ResponseWrapper[JsValue] = wrapper.map(a => a)
+      result shouldBe ResponseWrapper(correlationId, responseData)
     }
   }
 

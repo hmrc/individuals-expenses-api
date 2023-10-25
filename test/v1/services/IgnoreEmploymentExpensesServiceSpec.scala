@@ -20,8 +20,8 @@ import api.models.domain.{Nino, TaxYear}
 import api.models.errors._
 import api.models.outcomes.ResponseWrapper
 import api.services.ServiceSpec
-import v1.mocks.connectors.MockIgnoreEmploymentExpensesConnector
-import v1.models.request.ignoreEmploymentExpenses.IgnoreEmploymentExpensesRequest
+import v1.connectors.MockIgnoreEmploymentExpensesConnector
+import v1.models.request.ignoreEmploymentExpenses.IgnoreEmploymentExpensesRequestData
 
 import scala.concurrent.Future
 
@@ -30,7 +30,7 @@ class IgnoreEmploymentExpensesServiceSpec extends ServiceSpec {
   val taxYear    = "2021-22"
   val nino: Nino = Nino("AA123456A")
 
-  private val requestData = IgnoreEmploymentExpensesRequest(nino, TaxYear.fromMtd(taxYear))
+  private val requestData = IgnoreEmploymentExpensesRequestData(nino, TaxYear.fromMtd(taxYear))
 
   trait Test extends MockIgnoreEmploymentExpensesConnector {
 
@@ -68,16 +68,16 @@ class IgnoreEmploymentExpensesServiceSpec extends ServiceSpec {
       val errors = List(
         "INVALID_TAXABLE_ENTITY_ID"       -> NinoFormatError,
         "INVALID_TAX_YEAR"                -> TaxYearFormatError,
-        "INVALID_CORRELATIONID"           -> StandardDownstreamError,
-        "INVALID_PAYLOAD"                 -> StandardDownstreamError,
+        "INVALID_CORRELATIONID"           -> InternalError,
+        "INVALID_PAYLOAD"                 -> InternalError,
         "INVALID_REQUEST_BEFORE_TAX_YEAR" -> RuleTaxYearNotEndedError,
         "INCOME_SOURCE_NOT_FOUND"         -> NotFoundError,
-        "SERVER_ERROR"                    -> StandardDownstreamError,
-        "SERVICE_UNAVAILABLE"             -> StandardDownstreamError
+        "SERVER_ERROR"                    -> InternalError,
+        "SERVICE_UNAVAILABLE"             -> InternalError
       )
 
       val extraTysErrors = List(
-        "INVALID_CORRELATION_ID" -> StandardDownstreamError,
+        "INVALID_CORRELATION_ID" -> InternalError,
         "TAX_YEAR_NOT_SUPPORTED" -> RuleTaxYearNotSupportedError
       )
 

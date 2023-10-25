@@ -19,7 +19,7 @@ package v1.connectors
 import api.connectors.ConnectorSpec
 import api.models.domain.{Nino, TaxYear}
 import api.models.outcomes.ResponseWrapper
-import v1.models.request.deleteEmploymentExpenses.DeleteEmploymentExpensesRequest
+import v1.models.request.deleteEmploymentExpenses.DeleteEmploymentExpensesRequestData
 
 import scala.concurrent.Future
 
@@ -36,8 +36,8 @@ class DeleteEmploymentExpensesConnectorSpec extends ConnectorSpec {
         appConfig = mockAppConfig
       )
 
-    protected val request: DeleteEmploymentExpensesRequest =
-      DeleteEmploymentExpensesRequest(
+    protected val request: DeleteEmploymentExpensesRequestData =
+      DeleteEmploymentExpensesRequestData(
         nino = Nino(nino),
         taxYear = taxYear
       )

@@ -16,10 +16,9 @@
 
 package v1.models.response.retrieveEmploymentExpenses
 
-import api.hateoas.{HateoasLinks, HateoasLinksFactory}
+import api.hateoas.{HateoasData, HateoasLinks, HateoasLinksFactory, Link}
 import api.models.domain.{MtdSource, Timestamp}
 import api.models.downstream.DownstreamSource
-import api.models.hateoas.{HateoasData, Link}
 import config.AppConfig
 import play.api.libs.functional.syntax._
 import play.api.libs.json.{JsPath, Json, OWrites, Reads}

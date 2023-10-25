@@ -16,7 +16,7 @@
 
 package v1.models.request.createAndAmendEmploymentExpenses
 
-import api.utils.JsonErrorValidators
+import api.models.utils.JsonErrorValidators
 import play.api.libs.json.{JsValue, Json}
 import support.UnitSpec
 
@@ -54,19 +54,6 @@ class CreateAndAmendEmploymentExpensesBodySpec extends UnitSpec with JsonErrorVa
     "passed valid model" should {
       "return valid JSON" in {
         Json.toJson(createAndAmendEmploymentExpensesBody) shouldBe json
-      }
-    }
-  }
-
-  "isIncorrectOrEmptyBody" should {
-    "return true" when {
-      "expenses is empty" in {
-        val expenses = Expenses(None, None, None, None, None, None, None, None)
-        CreateAndAmendEmploymentExpensesBody(expenses).isIncorrectOrEmptyBody shouldBe true
-      }
-      "expenses is not empty" in {
-        val expenses = Expenses(Some(1), None, None, None, None, None, None, None)
-        CreateAndAmendEmploymentExpensesBody(expenses).isIncorrectOrEmptyBody shouldBe false
       }
     }
   }

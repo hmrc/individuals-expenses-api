@@ -23,9 +23,9 @@ import api.models.errors._
 import api.models.outcomes.ResponseWrapper
 import play.api.libs.json.JsValue
 import play.api.mvc.Result
-import v1.mocks.requestParsers.MockDeleteEmploymentExpensesRequestParser
-import v1.mocks.services.MockDeleteEmploymentExpensesService
-import v1.models.request.deleteEmploymentExpenses.{DeleteEmploymentExpensesRawData, DeleteEmploymentExpensesRequest}
+import v1.controllers.validators.MockDeleteEmploymentExpensesValidatorFactory
+import v1.models.request.deleteEmploymentExpenses.DeleteEmploymentExpensesRequestData
+import v1.services.MockDeleteEmploymentExpensesService
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -34,20 +34,16 @@ class DeleteEmploymentExpensesControllerSpec
     extends ControllerBaseSpec
     with ControllerTestRunner
     with MockDeleteEmploymentExpensesService
-    with MockDeleteEmploymentExpensesRequestParser {
+    with MockDeleteEmploymentExpensesValidatorFactory {
 
   private val taxYear = "2019-20"
 
-  private val rawData     = DeleteEmploymentExpensesRawData(nino, taxYear)
-  private val requestData = DeleteEmploymentExpensesRequest(Nino(nino), TaxYear.fromMtd(taxYear))
+  private val requestData = DeleteEmploymentExpensesRequestData(Nino(nino), TaxYear.fromMtd(taxYear))
 
   "handleRequest" should {
     "return a successful response with status 204 (No Content)" when {
       "a valid request is supplied" in new Test {
-
-        MockDeleteEmploymentExpensesRequestParser
-          .parse(rawData)
-          .returns(Right(requestData))
+        willUseValidator(returningSuccess(requestData))
 
         MockDeleteEmploymentExpensesService
           .delete(requestData)
@@ -59,19 +55,13 @@ class DeleteEmploymentExpensesControllerSpec
 
     "return the error as per spec" when {
       "the parser validation fails" in new Test {
-
-        MockDeleteEmploymentExpensesRequestParser
-          .parse(rawData)
-          .returns(Left(ErrorWrapper(correlationId, NinoFormatError)))
+        willUseValidator(returning(NinoFormatError))
 
         runErrorTestWithAudit(NinoFormatError)
       }
 
       "service returns an error" in new Test {
-
-        MockDeleteEmploymentExpensesRequestParser
-          .parse(rawData)
-          .returns(Right(requestData))
+        willUseValidator(returningSuccess(requestData))
 
         MockDeleteEmploymentExpensesService
           .delete(requestData)
@@ -87,7 +77,7 @@ class DeleteEmploymentExpensesControllerSpec
     val controller = new DeleteEmploymentExpensesController(
       authService = mockEnrolmentsAuthService,
       lookupService = mockMtdIdLookupService,
-      parser = mockRequestDataParser,
+      validatorFactory = mockDeleteEmploymentExpensesValidatorFactory,
       service = mockDeleteEmploymentExpensesService,
       auditService = mockAuditService,
       cc = cc,
@@ -96,17 +86,18 @@ class DeleteEmploymentExpensesControllerSpec
 
     protected def callController(): Future[Result] = controller.handleRequest(nino, taxYear)(fakeDeleteRequest)
 
-    def event(auditResponse: AuditResponse, requestBody: Option[JsValue]): AuditEvent[GenericAuditDetail] =
+    def event(auditResponse: AuditResponse, maybeRequestBody: Option[JsValue]): AuditEvent[GenericAuditDetail] =
       AuditEvent(
         auditType = "DeleteEmploymentExpenses",
         transactionName = "delete-employment-expenses",
         detail = GenericAuditDetail(
+          versionNumber = "1.0",
           userType = "Individual",
           agentReferenceNumber = None,
           params = Map("nino" -> nino, "taxYear" -> taxYear),
-          request = None,
+          requestBody = maybeRequestBody,
           `X-CorrelationId` = correlationId,
-          response = auditResponse
+          auditResponse = auditResponse
         )
       )
 

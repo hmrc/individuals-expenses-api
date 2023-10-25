@@ -22,9 +22,9 @@ import api.services.{AuditService, EnrolmentsAuthService, MtdIdLookupService}
 import config.{AppConfig, FeatureSwitches}
 import play.api.libs.json.JsValue
 import play.api.mvc.{Action, ControllerComponents}
+import routing.{Version, Version1}
 import utils.IdGenerator
-import v1.controllers.requestParsers.CreateAndAmendEmploymentExpensesRequestParser
-import v1.models.request.createAndAmendEmploymentExpenses.CreateAndAmendEmploymentExpensesRawData
+import v1.controllers.validators.CreateAndAmendEmploymentExpensesValidatorFactory
 import v1.models.response.createAndAmendEmploymentExpenses.CreateAndAmendEmploymentExpensesHateoasData
 import v1.models.response.createAndAmendEmploymentExpenses.CreateAndAmendEmploymentExpensesResponse.AmendOrderLinksFactory
 import v1.services.CreateAndAmendEmploymentExpensesService
@@ -36,7 +36,7 @@ import scala.concurrent.ExecutionContext
 class CreateAndAmendEmploymentExpensesController @Inject() (val authService: EnrolmentsAuthService,
                                                             val lookupService: MtdIdLookupService,
                                                             appConfig: AppConfig,
-                                                            parser: CreateAndAmendEmploymentExpensesRequestParser,
+                                                            validatorFactory: CreateAndAmendEmploymentExpensesValidatorFactory,
                                                             service: CreateAndAmendEmploymentExpensesService,
                                                             auditService: AuditService,
                                                             hateoasFactory: HateoasFactory,
@@ -51,26 +51,24 @@ class CreateAndAmendEmploymentExpensesController @Inject() (val authService: Enr
     authorisedAction(nino).async(parse.json) { implicit request =>
       implicit val ctx: RequestContext = RequestContext.from(idGenerator, endpointLogContext)
 
-      val rawData = CreateAndAmendEmploymentExpensesRawData(
-        nino = nino,
-        taxYear = taxYear,
-        body = request.body,
-        temporalValidationEnabled = FeatureSwitches()(appConfig).isTemporalValidationEnabled
-      )
+      val temporalValidationEnabled = FeatureSwitches()(appConfig).isTemporalValidationEnabled
+      val validator                 = validatorFactory.validator(nino, taxYear, request.body, temporalValidationEnabled)
+
       val requestHandler = RequestHandler
-        .withParser(parser)
+        .withValidator(validator)
         .withService(service.createAndAmendEmploymentExpenses)
         .withAuditing(AuditHandler(
           auditService = auditService,
           auditType = "CreateAmendEmploymentExpenses",
           transactionName = "create-amend-employment-expenses",
+          apiVersion = Version.from(request, orElse = Version1),
           params = Map("nino" -> nino, "taxYear" -> taxYear),
           requestBody = Some(request.body),
           includeResponse = true
         ))
         .withHateoasResult(hateoasFactory)(CreateAndAmendEmploymentExpensesHateoasData(nino, taxYear))
 
-      requestHandler.handleRequest(rawData)
+      requestHandler.handleRequest()
     }
 
 }

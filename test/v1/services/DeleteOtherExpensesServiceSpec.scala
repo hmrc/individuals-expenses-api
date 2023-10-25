@@ -20,8 +20,8 @@ import api.models.domain.{Nino, TaxYear}
 import api.models.errors._
 import api.models.outcomes.ResponseWrapper
 import api.services.ServiceSpec
-import v1.mocks.connectors.MockDeleteOtherExpensesConnector
-import v1.models.request.deleteOtherExpenses.DeleteOtherExpensesRequest
+import v1.connectors.MockDeleteOtherExpensesConnector
+import v1.models.request.deleteOtherExpenses.DeleteOtherExpensesRequestData
 
 import scala.concurrent.Future
 
@@ -30,7 +30,7 @@ class DeleteOtherExpensesServiceSpec extends ServiceSpec {
   private val taxYear    = TaxYear.fromMtd("2017-18")
   private val nino: Nino = Nino("AA123456A")
 
-  private val requestData = DeleteOtherExpensesRequest(nino, taxYear)
+  private val requestData = DeleteOtherExpensesRequestData(nino, taxYear)
 
   trait Test extends MockDeleteOtherExpensesConnector {
 
@@ -69,13 +69,13 @@ class DeleteOtherExpensesServiceSpec extends ServiceSpec {
         "INVALID_TAXABLE_ENTITY_ID" -> NinoFormatError,
         "INVALID_TAX_YEAR"          -> TaxYearFormatError,
         "NO_DATA_FOUND"             -> NotFoundError,
-        "INVALID_CORRELATIONID"     -> StandardDownstreamError,
-        "SERVER_ERROR"              -> StandardDownstreamError,
-        "SERVICE_UNAVAILABLE"       -> StandardDownstreamError
+        "INVALID_CORRELATIONID"     -> InternalError,
+        "SERVER_ERROR"              -> InternalError,
+        "SERVICE_UNAVAILABLE"       -> InternalError
       )
 
       val extraTysErrors = Seq(
-        "INVALID_CORRELATION_ID" -> StandardDownstreamError,
+        "INVALID_CORRELATION_ID" -> InternalError,
         "TAX_YEAR_NOT_SUPPORTED" -> RuleTaxYearNotSupportedError
       )
 

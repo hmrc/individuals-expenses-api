@@ -16,8 +16,8 @@
 
 package v2.models.response.createAndAmendEmploymentExpenses
 
-import api.models.hateoas.Link
-import api.models.hateoas.Method.{DELETE, GET, PUT}
+import api.hateoas.Link
+import api.hateoas.Method.{DELETE, GET, PUT}
 import mocks.MockAppConfig
 import support.UnitSpec
 
@@ -28,7 +28,7 @@ class CreateAndAmendEmploymentExpensesResponseSpec extends UnitSpec with MockApp
       val nino    = "mynino"
       val taxYear = "mytaxyear"
 
-      MockAppConfig.apiGatewayContext.returns("my/context").anyNumberOfTimes()
+      MockedAppConfig.apiGatewayContext.returns("my/context").anyNumberOfTimes()
       CreateAndAmendEmploymentExpensesResponse.AmendOrderLinksFactory.links(
         mockAppConfig,
         CreateAndAmendEmploymentExpensesHateoasData(nino, taxYear)) shouldBe

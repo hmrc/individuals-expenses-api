@@ -16,9 +16,8 @@
 
 package v1.models.response.retrieveOtherExpenses
 
-import api.hateoas.{HateoasLinks, HateoasLinksFactory}
+import api.hateoas.{HateoasData, HateoasLinks, HateoasLinksFactory, Link}
 import api.models.domain.Timestamp
-import api.models.hateoas.{HateoasData, Link}
 import config.AppConfig
 import play.api.libs.json.{Json, OFormat}
 
