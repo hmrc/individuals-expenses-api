@@ -20,15 +20,15 @@ import io.swagger.v3.parser.OpenAPIV3Parser
 import play.api.http.Status.OK
 import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
+import routing.{Version1, Version2}
 import support.IntegrationBaseSpec
-import uk.gov.hmrc.auth.core.ConfidenceLevel
 
 import scala.util.Try
 
 class DocumentationControllerISpec extends IntegrationBaseSpec {
 
-  val config: AppConfig                = app.injector.instanceOf[AppConfig]
-  val confidenceLevel: ConfidenceLevel = config.confidenceLevelConfig.confidenceLevel
+  private val config          = app.injector.instanceOf[AppConfig]
+  private val confidenceLevel = config.confidenceLevelConfig.confidenceLevel
 
   private val apiDefinitionJson = Json.parse(
     s"""
@@ -79,34 +79,34 @@ class DocumentationControllerISpec extends IntegrationBaseSpec {
   }
 
   "an OAS documentation request" must {
-    "return the V1 documentation that passes OAS V3 parser" in {
-      val response = get("/api/conf/1.0/application.yaml")
+    List(Version1, Version2).foreach { version =>
+      s"return the documentation for $version" in {
+        val response = get(s"/api/conf/${version.name}/application.yaml")
 
-      val body         = response.body[String]
-      val parserResult = Try(new OpenAPIV3Parser().readContents(body))
-      parserResult.isSuccess shouldBe true
+        val body         = response.body[String]
+        val parserResult = Try(new OpenAPIV3Parser().readContents(body))
+        parserResult.isSuccess shouldBe true
 
-      val openAPI = Option(parserResult.get.getOpenAPI).getOrElse(fail("openAPI wasn't defined"))
-      openAPI.getOpenapi shouldBe "3.0.3"
-      withClue("If v1.0 endpoints are enabled in application.conf, remove the [test only] from this test: ") {
-        openAPI.getInfo.getTitle shouldBe "Individuals Expenses (MTD)"
+        val openAPI = Option(parserResult.get.getOpenAPI).getOrElse(fail("openAPI wasn't defined"))
+        openAPI.getOpenapi shouldBe "3.0.3"
+        withClue(s"If v${version.name} endpoints are enabled in application.conf, remove the [test only] from this test: ") {
+          openAPI.getInfo.getTitle shouldBe "Individuals Expenses (MTD)"
+        }
+        openAPI.getInfo.getVersion shouldBe version.toString
       }
-      openAPI.getInfo.getVersion shouldBe "1.0"
-    }
 
-    "return the V2 documentation that passes OAS V3 parser" in {
-      val response = get("/api/conf/2.0/application.yaml")
+      s"return the documentation with the correct accept header for version $version" in {
+        val response = get(s"/api/conf/${version.name}/common/headers.yaml")
+        val body     = response.body[String]
 
-      val body         = response.body[String]
-      val parserResult = Try(new OpenAPIV3Parser().readContents(body))
-      parserResult.isSuccess shouldBe true
+        val headerRegex = """(?s).*?application/vnd\.hmrc\.(\d+\.\d+)\+json.*?""".r
+        val header      = headerRegex.findFirstMatchIn(body)
+        header.isDefined shouldBe true
 
-      val openAPI = Option(parserResult.get.getOpenAPI).getOrElse(fail("openAPI wasn't defined"))
-      openAPI.getOpenapi shouldBe "3.0.3"
-      withClue("If v2.0 endpoints are enabled and released in production in application.conf, remove the [test only] from this test: ") {
-        openAPI.getInfo.getTitle shouldBe "Individuals Expenses (MTD) [test only]"
+        val versionFromHeader = header.get.group(1)
+        versionFromHeader shouldBe version.name
+
       }
-      openAPI.getInfo.getVersion shouldBe "2.0"
     }
 
     "return the expected endpoint description" when {
@@ -115,7 +115,7 @@ class DocumentationControllerISpec extends IntegrationBaseSpec {
         val body     = response.body[String]
 
         withClue("Depends on the oas-feature-example feature switch") {
-          body should not include ("Gov-Test-Scenario headers are available only in")
+          body should not include "Gov-Test-Scenario headers are available only in"
           body should include("Gov-Test-Scenario headers is only available in")
         }
       }
