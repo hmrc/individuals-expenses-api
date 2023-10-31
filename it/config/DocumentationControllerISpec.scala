@@ -83,11 +83,10 @@ class DocumentationControllerISpec extends IntegrationBaseSpec {
       s"return the documentation for $version" in {
         val response = get(s"/api/conf/${version.name}/application.yaml")
 
-        val body         = response.body[String]
-        val parserResult = Try(new OpenAPIV3Parser().readContents(body))
-        parserResult.isSuccess shouldBe true
+        val body         = response.body
+        val parserResult = Try(new OpenAPIV3Parser().readContents(body)).getOrElse(fail("openAPI couldn't read contents"))
 
-        val openAPI = Option(parserResult.get.getOpenAPI).getOrElse(fail("openAPI wasn't defined"))
+        val openAPI = Option(parserResult.getOpenAPI).getOrElse(fail("openAPI wasn't defined"))
         openAPI.getOpenapi shouldBe "3.0.3"
         withClue(s"If v${version.name} endpoints are enabled in application.conf, remove the [test only] from this test: ") {
           openAPI.getInfo.getTitle shouldBe "Individuals Expenses (MTD)"
@@ -97,7 +96,7 @@ class DocumentationControllerISpec extends IntegrationBaseSpec {
 
       s"return the documentation with the correct accept header for version $version" in {
         val response = get(s"/api/conf/${version.name}/common/headers.yaml")
-        val body     = response.body[String]
+        val body     = response.body
 
         val headerRegex = """(?s).*?application/vnd\.hmrc\.(\d+\.\d+)\+json.*?""".r
         val header      = headerRegex.findFirstMatchIn(body)
@@ -112,7 +111,7 @@ class DocumentationControllerISpec extends IntegrationBaseSpec {
     "return the expected endpoint description" when {
       "the relevant feature switch is enabled" in {
         val response = get("/api/conf/2.0/employment_expenses_retrieve.yaml")
-        val body     = response.body[String]
+        val body     = response.body
 
         withClue("Depends on the oas-feature-example feature switch") {
           body should not include "Gov-Test-Scenario headers are available only in"
