@@ -144,7 +144,7 @@ trait ConnectorSpec extends UnitSpec with Status with MimeTypes with HeaderNames
 
     protected lazy val requiredHeaders: Seq[(String, String)] = requiredDesHeaders
 
-    MockedAppConfig.desBaseUrl returns baseUrl
+    MockedAppConfig.desBaseUrl returns this.baseUrl
     MockedAppConfig.desToken returns "des-token"
     MockedAppConfig.desEnvironment returns "des-environment"
     MockedAppConfig.desEnvironmentHeaders returns Some(allowedDownstreamHeaders)
@@ -157,7 +157,7 @@ trait ConnectorSpec extends UnitSpec with Status with MimeTypes with HeaderNames
 
     protected lazy val requiredHeaders: Seq[(String, String)] = requiredIfsR5Headers
 
-    MockedAppConfig.ifsR5BaseUrl returns baseUrl
+    MockedAppConfig.ifsR5BaseUrl returns this.baseUrl
     MockedAppConfig.ifsR5Token returns "ifs-r5-token"
     MockedAppConfig.ifsR5Environment returns "ifs-r5-environment"
     MockedAppConfig.ifsR5EnvironmentHeaders returns Some(allowedDownstreamHeaders)
@@ -170,7 +170,7 @@ trait ConnectorSpec extends UnitSpec with Status with MimeTypes with HeaderNames
 
     protected lazy val requiredHeaders: Seq[(String, String)] = requiredIfsR6Headers
 
-    MockedAppConfig.ifsR6BaseUrl returns baseUrl
+    MockedAppConfig.ifsR6BaseUrl returns this.baseUrl
     MockedAppConfig.ifsR6Token returns "ifs-r6-token"
     MockedAppConfig.ifsR6Environment returns "ifs-r6-environment"
     MockedAppConfig.ifsR6EnvironmentHeaders returns Some(allowedDownstreamHeaders)
@@ -183,7 +183,7 @@ trait ConnectorSpec extends UnitSpec with Status with MimeTypes with HeaderNames
 
     protected lazy val requiredHeaders: Seq[(String, String)] = requiredTysIfsHeaders
 
-    MockedAppConfig.tysIfsBaseUrl returns baseUrl
+    MockedAppConfig.tysIfsBaseUrl returns this.baseUrl
     MockedAppConfig.tysIfsToken returns "TYS-IFS-token"
     MockedAppConfig.tysIfsEnvironment returns "TYS-IFS-environment"
     MockedAppConfig.tysIfsEnvironmentHeaders returns Some(allowedDownstreamHeaders)

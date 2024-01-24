@@ -26,22 +26,22 @@ object Version {
     Versions.getFromRequest(request).getOrElse(orElse)
 
   object VersionWrites extends Writes[Version] {
-
-    def writes(version: Version): JsValue = version match {
-      case Version1 => Json.toJson(Version1.name)
-      case Version2 => Json.toJson(Version2.name)
-    }
-
+    def writes(version: Version): JsValue = version.asJson
   }
 
   object VersionReads extends Reads[Version] {
 
+    /** @param version
+      *   expecting a JsString e.g. "1.0"
+      */
     override def reads(version: JsValue): JsResult[Version] =
-      version.validate[String].flatMap {
-        case Version1.name => JsSuccess(Version1)
-        case Version2.name => JsSuccess(Version2)
-        case _             => JsError("Unrecognised version")
-      }
+      version
+        .validate[String]
+        .flatMap(name =>
+          Versions.getFrom(name) match {
+            case Left(_)        => JsError("Version not recognised")
+            case Right(version) => JsSuccess(version)
+          })
 
   }
 
@@ -50,19 +50,16 @@ object Version {
 
 sealed trait Version {
   val name: String
-  val configName: String
-
+  lazy val asJson: JsValue      = Json.toJson(name)
   override def toString: String = name
 }
 
 case object Version1 extends Version {
-  val name       = "1.0"
-  val configName = "1"
+  val name = "1.0"
 }
 
 case object Version2 extends Version {
-  val name       = "2.0"
-  val configName = "2"
+  val name = "2.0"
 }
 
 object Versions {
@@ -83,7 +80,7 @@ object Versions {
   private def getFrom(headers: Seq[(String, String)]): Either[GetFromRequestError, String] =
     headers.collectFirst { case (ACCEPT, versionRegex(ver)) => ver }.toRight(left = InvalidHeader)
 
-  private def getFrom(name: String): Either[GetFromRequestError, Version] =
+  def getFrom(name: String): Either[GetFromRequestError, Version] =
     versionsByName.get(name).toRight(left = VersionNotFound)
 
 }
