@@ -67,8 +67,7 @@ trait MockAppConfig extends MockFactory {
     def endpointReleasedInProduction(version: String, key: String): CallHandler[Boolean] =
       (mockAppConfig.endpointReleasedInProduction: (String, String) => Boolean).expects(version, key)
 
-    def confidenceLevelCheckEnabled: CallHandler[ConfidenceLevelConfig] =
-      (() => mockAppConfig.confidenceLevelConfig).expects()
+    def confidenceLevelConfig: CallHandler[ConfidenceLevelConfig] = (() => mockAppConfig.confidenceLevelConfig: ConfidenceLevelConfig).expects()
 
     // Business Rule Config
     def otherExpensesMinimumTaxYear: CallHandler[Int]      = (() => mockAppConfig.otherExpensesMinimumTaxYear).expects()

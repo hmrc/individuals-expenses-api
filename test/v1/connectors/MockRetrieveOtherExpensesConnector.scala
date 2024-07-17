@@ -31,7 +31,8 @@ trait MockRetrieveOtherExpensesConnector extends MockFactory {
 
   object MockRetrieveOtherExpensesConnector {
 
-    def retrieveOtherExpenses(requestData: RetrieveOtherExpensesRequestData): CallHandler[Future[DownstreamOutcome[RetrieveOtherExpensesResponse]]] = {
+    def retrieveOtherExpenses(
+        requestData: RetrieveOtherExpensesRequestData): CallHandler[Future[DownstreamOutcome[RetrieveOtherExpensesResponse]]] = {
       (mockRetrieveOtherExpensesConnector
         .retrieveOtherExpenses(_: RetrieveOtherExpensesRequestData)(_: HeaderCarrier, _: ExecutionContext, _: String))
         .expects(requestData, *, *, *)

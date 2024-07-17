@@ -49,7 +49,7 @@ class ApiDefinitionFactorySpec extends UnitSpec {
         MockedAppConfig.apiStatus(Version2) returns "ALPHA"
         MockedAppConfig.endpointsEnabled(Version1) returns true
         MockedAppConfig.endpointsEnabled(Version2) returns false
-        MockedAppConfig.confidenceLevelCheckEnabled.returns(confidenceLevelConfig).anyNumberOfTimes()
+        MockedAppConfig.confidenceLevelConfig.returns(confidenceLevelConfig).anyNumberOfTimes()
 
         val readScope: String                = "read:self-assessment"
         val writeScope: String               = "write:self-assessment"
@@ -103,7 +103,7 @@ class ApiDefinitionFactorySpec extends UnitSpec {
     ).foreach { case (definitionEnabled, configCL, expectedDefinitionCL) =>
       s"confidence-level-check.definition.enabled is $definitionEnabled and confidence-level = $configCL" should {
         s"return confidence level $expectedDefinitionCL" in new Test {
-          MockedAppConfig.confidenceLevelCheckEnabled returns ConfidenceLevelConfig(
+          MockedAppConfig.confidenceLevelConfig returns ConfidenceLevelConfig(
             confidenceLevel = configCL,
             definitionEnabled = definitionEnabled,
             authValidationEnabled = true)

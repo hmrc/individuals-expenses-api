@@ -58,7 +58,7 @@ class ErrorHandler @Inject() (config: Configuration, auditConnector: AuditConnec
         Future.successful(NotFound(NotFoundError.asJson))
       case _ =>
         val errorCode = statusCode match {
-          case UNAUTHORIZED           => ClientNotAuthenticatedError
+          case UNAUTHORIZED           => ClientOrAgentNotAuthorisedError.withStatus401
           case METHOD_NOT_ALLOWED     => InvalidHttpMethodError
           case UNSUPPORTED_MEDIA_TYPE => InvalidBodyTypeError
           case _                      => MtdError("INVALID_REQUEST", message, BAD_REQUEST)
@@ -77,6 +77,9 @@ class ErrorHandler @Inject() (config: Configuration, auditConnector: AuditConnec
     }
   }
 
+
+  private def versionIfSpecified(request: RequestHeader): String = Versions.getFromRequest(request).map(_.name).getOrElse("<unspecified>")
+
   override def onServerError(request: RequestHeader, ex: Throwable): Future[Result] = {
     implicit val headerCarrier: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
@@ -89,7 +92,7 @@ class ErrorHandler @Inject() (config: Configuration, auditConnector: AuditConnec
 
     val (errorCode, eventType) = ex match {
       case _: NotFoundException      => (NotFoundError, "ResourceNotFound")
-      case _: AuthorisationException => (ClientNotAuthenticatedError, "ClientError")
+      case _: AuthorisationException => (ClientOrAgentNotAuthorisedError.withStatus401, "ClientError")
       case _: JsValidationException  => (BadRequestError, "ServerValidationError")
       case _: HttpException          => (BadRequestError, "ServerValidationError")
       case e: UpstreamErrorResponse if UpstreamErrorResponse.Upstream4xxResponse.unapply(e).isDefined =>
@@ -109,11 +112,6 @@ class ErrorHandler @Inject() (config: Configuration, auditConnector: AuditConnec
     )
 
     Future.successful(Status(errorCode.httpStatus)(errorCode.asJson))
-  }
-
-  private def versionIfSpecified(request: RequestHeader): String = Versions.getFromRequest(request) match {
-    case Right(version) => version.name
-    case _              => "<unspecified>"
   }
 
 }
