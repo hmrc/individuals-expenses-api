@@ -21,7 +21,11 @@ import api.models.errors._
 import api.models.outcomes.ResponseWrapper
 import api.services.ServiceSpec
 import v2.connectors.MockCreateAndAmendEmploymentExpensesConnector
-import v2.models.request.createAndAmendEmploymentExpenses.{CreateAndAmendEmploymentExpensesBody, CreateAndAmendEmploymentExpensesRequestData, Expenses}
+import v2.models.request.createAndAmendEmploymentExpenses.{
+  CreateAndAmendEmploymentExpensesBody,
+  CreateAndAmendEmploymentExpensesRequestData,
+  Expenses
+}
 
 import scala.concurrent.Future
 

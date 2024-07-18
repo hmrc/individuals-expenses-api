@@ -19,6 +19,7 @@ package api.connectors
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
 import uk.gov.hmrc.http.HeaderCarrier
+import api.connectors.MtdIdLookupConnector
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -28,7 +29,7 @@ trait MockMtdIdLookupConnector extends MockFactory {
 
   object MockedMtdIdLookupConnector {
 
-    def lookup(nino: String): CallHandler[Future[MtdIdLookupOutcome]] = {
+    def lookup(nino: String): CallHandler[Future[MtdIdLookupConnector.Outcome]] = {
       (mockMtdIdLookupConnector
         .getMtdId(_: String)(_: HeaderCarrier, _: ExecutionContext))
         .expects(nino, *, *)
