@@ -17,7 +17,6 @@
 import sbt.*
 import sbt.Keys.{baseDirectory, parallelExecution, unmanagedClasspath}
 import uk.gov.hmrc.DefaultBuildSettings.{addTestReportOption, defaultSettings}
-import uk.gov.hmrc.SbtAutoBuildPlugin
 import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
 
 val appName = "individuals-expenses-api"
@@ -25,7 +24,7 @@ val appName = "individuals-expenses-api"
 lazy val ItTest = config("it") extend Test
 
 lazy val microservice = Project(appName, file("."))
-  .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtDistributablesPlugin)
+  .enablePlugins(play.sbt.PlayScala, SbtDistributablesPlugin)
   .disablePlugins(JUnitXmlReportPlugin) // Required to prevent https://github.com/scalatest/scalatest/issues/1427
   .settings(
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test(),
