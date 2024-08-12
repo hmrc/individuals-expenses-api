@@ -22,7 +22,7 @@ import play.api.http.Status.OK
 import play.api.libs.json.{JsValue, JsObject}
 import play.api.libs.ws.{WSRequest, WSResponse}
 
-class IgnoreEmploymentExpensesAuthMainAgentsOnlyISpec extends AuthMainAgentsOnlyISpec {
+class IndividualsExpensesAuthMainAgentsOnlyISpec extends AuthMainAgentsOnlyISpec {
 
   override protected val callingApiVersion = "1.0"
 

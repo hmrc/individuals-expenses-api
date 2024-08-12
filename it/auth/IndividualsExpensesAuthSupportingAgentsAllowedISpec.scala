@@ -21,7 +21,7 @@ import api.services.DownstreamStub
 import play.api.libs.json.{JsValue, JsObject}
 import play.api.libs.ws.{WSRequest, WSResponse}
 
-class IgnoreEmploymentExpensesAuthSupportingAgentsAllowedISpec extends AuthSupportingAgentsAllowedISpec {
+class IndividualsExpensesAuthSupportingAgentsAllowedISpec extends AuthSupportingAgentsAllowedISpec {
 
   override protected val callingApiVersion = "1.0"
   private val taxYear                      = TaxYear.fromMtd("2019-20")
