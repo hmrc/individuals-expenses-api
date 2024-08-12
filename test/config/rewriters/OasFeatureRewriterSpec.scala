@@ -18,7 +18,7 @@ package config.rewriters
 
 import config.rewriters.DocumentationRewriters.CheckRewrite
 import controllers.Rewriter
-import mocks.MockAppConfig
+import config.MockAppConfig
 import play.api.Configuration
 import support.UnitSpec
 

@@ -24,7 +24,9 @@ import api.models.errors._
 import api.hateoas.Method.{DELETE, GET, PUT}
 import api.models.outcomes.ResponseWrapper
 import play.api.libs.json.{JsValue, Json}
+import play.api.Configuration
 import play.api.mvc.Result
+import config.MockAppConfig
 import v1.controllers.validators.MockCreateAndAmendOtherExpensesValidatorFactory
 import v1.models.request.createAndAmendOtherExpenses._
 import v1.models.response.createAndAmendOtherExpenses.CreateAndAmendOtherExpensesHateoasData
@@ -38,6 +40,7 @@ class CreateAndAmendOtherExpensesControllerSpec
     with ControllerTestRunner
     with MockCreateAndAmendOtherExpensesService
     with MockCreateAndAmendOtherExpensesValidatorFactory
+    with MockAppConfig
     with MockHateoasFactory {
 
   private val taxYear = "2021-22"
@@ -95,6 +98,12 @@ class CreateAndAmendOtherExpensesControllerSpec
       "the request received is valid" in new Test {
         willUseValidator(returningSuccess(requestData))
 
+        MockedAppConfig.featureSwitches.anyNumberOfTimes() returns Configuration(
+          "supporting-agents-access-control.enabled" -> true
+        )
+
+        MockedAppConfig.endpointAllowsSupportingAgents(controller.endpointName).anyNumberOfTimes() returns false
+
         MockCreateAndAmendOtherExpensesService
           .createAndAmend(requestData)
           .returns(Future.successful(Right(ResponseWrapper(correlationId, ()))))
@@ -114,12 +123,24 @@ class CreateAndAmendOtherExpensesControllerSpec
 
     "return the error as per spec" when {
       "the parser validation fails" in new Test {
+
+        MockedAppConfig.featureSwitches.anyNumberOfTimes() returns Configuration(
+          "supporting-agents-access-control.enabled" -> true
+        )
+
+        MockedAppConfig.endpointAllowsSupportingAgents(controller.endpointName).anyNumberOfTimes() returns false
         willUseValidator(returning(NinoFormatError))
 
         runErrorTestWithAudit(NinoFormatError, Some(requestBodyJson))
       }
 
       "the service returns an error" in new Test {
+
+        MockedAppConfig.featureSwitches.anyNumberOfTimes() returns Configuration(
+          "supporting-agents-access-control.enabled" -> true
+        )
+
+        MockedAppConfig.endpointAllowsSupportingAgents(controller.endpointName).anyNumberOfTimes() returns false
         willUseValidator(returningSuccess(requestData))
 
         MockCreateAndAmendOtherExpensesService

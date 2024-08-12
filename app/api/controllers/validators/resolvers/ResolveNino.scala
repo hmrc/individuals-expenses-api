@@ -21,7 +21,6 @@ import api.models.errors.{MtdError, NinoFormatError}
 import cats.data.Validated
 import cats.data.Validated.{Invalid, Valid}
 
-
 object ResolveNino {
 
   def apply(value: String): Validated[Seq[MtdError], Nino] =

@@ -48,8 +48,9 @@ object RequestHandler {
 
   class ValidatorOnlyBuilder[Input] private[RequestHandler] (validator: Validator[Input]) {
 
-    def withService[Output](serviceFunction: Input => Future[ServiceOutcome[Output]]): RequestHandlerBuilder[Input, Output] =
+    def withService[Output](serviceFunction: Input => Future[ServiceOutcome[Output]]): RequestHandlerBuilder[Input, Output] = {
       RequestHandlerBuilder(validator, serviceFunction)
+    }
 
   }
 
@@ -67,8 +68,9 @@ object RequestHandler {
     def withErrorHandling(errorHandling: ErrorHandling): RequestHandlerBuilder[Input, Output] =
       copy(errorHandling = errorHandling)
 
-    def withAuditing(auditHandler: AuditHandler): RequestHandlerBuilder[Input, Output] =
+    def withAuditing(auditHandler: AuditHandler): RequestHandlerBuilder[Input, Output] = {
       copy(auditHandler = Some(auditHandler))
+    }
 
     /** Shorthand for
       * {{{
@@ -107,8 +109,9 @@ object RequestHandler {
       */
     def withHateoasResult[HData <: HateoasData](hateoasFactory: HateoasFactory)(data: HData, successStatus: Int = Status.OK)(implicit
         linksFactory: HateoasLinksFactory[Output, HData],
-        writes: Writes[HateoasWrapper[Output]]): RequestHandlerBuilder[Input, Output] =
+        writes: Writes[HateoasWrapper[Output]]): RequestHandlerBuilder[Input, Output] = {
       withResultCreator(ResultCreator.hateoasWrapping(hateoasFactory, successStatus)((_, _) => data))
+    }
 
     // Scoped as a private delegate so as to keep the logic completely separate from the configuration
     private object Delegate extends RequestHandler with Logging with RequestContextImplicits {

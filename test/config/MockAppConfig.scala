@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package mocks
+package config
 
 import config.{AppConfig, ConfidenceLevelConfig}
 import org.scalamock.handlers.CallHandler
@@ -24,7 +24,7 @@ import routing.Version
 
 trait MockAppConfig extends MockFactory {
 
-  val mockAppConfig: AppConfig = mock[AppConfig]
+  implicit val mockAppConfig: AppConfig = mock[AppConfig]
 
   object MockedAppConfig {
 
@@ -72,6 +72,8 @@ trait MockAppConfig extends MockFactory {
     // Business Rule Config
     def otherExpensesMinimumTaxYear: CallHandler[Int]      = (() => mockAppConfig.otherExpensesMinimumTaxYear).expects()
     def employmentExpensesMinimumTaxYear: CallHandler[Int] = (() => mockAppConfig.employmentExpensesMinimumTaxYear).expects()
+    def endpointAllowsSupportingAgents(endpointName: String): CallHandler[Boolean] =
+      (mockAppConfig.endpointAllowsSupportingAgents(_: String)).expects(endpointName)
 
   }
 

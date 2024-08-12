@@ -19,7 +19,7 @@ package v1.models.response.retrieveOtherExpenses
 import api.hateoas.Link
 import api.models.domain.Timestamp
 import api.hateoas.Method.{DELETE, GET, PUT}
-import mocks.MockAppConfig
+import config.MockAppConfig
 import play.api.libs.json.Json
 import support.UnitSpec
 

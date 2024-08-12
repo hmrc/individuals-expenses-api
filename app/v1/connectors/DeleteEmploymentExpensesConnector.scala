@@ -31,9 +31,9 @@ import scala.concurrent.{ExecutionContext, Future}
 class DeleteEmploymentExpensesConnector @Inject() (val http: HttpClient, val appConfig: AppConfig) extends BaseDownstreamConnector {
 
   def deleteEmploymentExpenses(request: DeleteEmploymentExpensesRequestData)(implicit
-                                                                             hc: HeaderCarrier,
-                                                                             ec: ExecutionContext,
-                                                                             correlationId: String): Future[DownstreamOutcome[Unit]] = {
+      hc: HeaderCarrier,
+      ec: ExecutionContext,
+      correlationId: String): Future[DownstreamOutcome[Unit]] = {
 
     implicit val successCode: SuccessCode = SuccessCode(NO_CONTENT)
 

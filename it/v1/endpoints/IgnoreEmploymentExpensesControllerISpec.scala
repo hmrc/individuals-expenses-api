@@ -22,7 +22,7 @@ import play.api.http.Status._
 import play.api.libs.json.{JsObject, JsValue, Json}
 import play.api.libs.ws.{WSRequest, WSResponse}
 import play.api.test.Helpers.AUTHORIZATION
-import stubs.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
+import api.services.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 import support.IntegrationBaseSpec
 
 class IgnoreEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
@@ -31,7 +31,7 @@ class IgnoreEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
 
     "return a 200 status code" when {
 
-      "any valid request is made" in new NonTysTest {
+      "any valid request is made XXXX" in new NonTysTest {
 
         override def setupStubs(): Unit = {
           DownstreamStub.onSuccess(DownstreamStub.PUT, downstreamUri, NO_CONTENT, JsObject.empty)
@@ -149,8 +149,8 @@ class IgnoreEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
 
     def request(): WSRequest = {
       AuditStub.audit()
-      AuthStub.authorised()
       MtdIdLookupStub.ninoFound(nino)
+      AuthStub.authorised()
       setupStubs()
 
       buildRequest(s"/employments/$nino/$taxYear/ignore")
@@ -177,6 +177,7 @@ class IgnoreEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
   private trait NonTysTest extends Test {
     val taxYear: String = "2019-20"
 
+    AuthStub.resetAll()
     val downstreamUri: String = s"/income-tax/expenses/employments/$nino/2019-20"
   }
 
@@ -185,8 +186,10 @@ class IgnoreEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
 
     val downstreamUri: String = s"/income-tax/23-24/expenses/employments/$nino"
 
-    override def request(): WSRequest =
+    override def request(): WSRequest = {
+      AuthStub.resetAll()
       super.request().addHttpHeaders("suspend-temporal-validations" -> "true")
+    }
 
   }
 

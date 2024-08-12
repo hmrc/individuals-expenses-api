@@ -77,7 +77,6 @@ class ErrorHandler @Inject() (config: Configuration, auditConnector: AuditConnec
     }
   }
 
-
   private def versionIfSpecified(request: RequestHeader): String = Versions.getFromRequest(request).map(_.name).getOrElse("<unspecified>")
 
   override def onServerError(request: RequestHeader, ex: Throwable): Future[Result] = {

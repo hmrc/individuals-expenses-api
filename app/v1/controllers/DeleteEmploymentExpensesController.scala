@@ -19,6 +19,7 @@ package v1.controllers
 import api.controllers._
 import api.services.{AuditService, EnrolmentsAuthService, MtdIdLookupService}
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
+import config.AppConfig
 import routing.{Version, Version1}
 import utils.IdGenerator
 import v1.controllers.validators.DeleteEmploymentExpensesValidatorFactory
@@ -34,11 +35,13 @@ class DeleteEmploymentExpensesController @Inject() (val authService: EnrolmentsA
                                                     service: DeleteEmploymentExpensesService,
                                                     auditService: AuditService,
                                                     cc: ControllerComponents,
-                                                    val idGenerator: IdGenerator)(implicit ec: ExecutionContext)
+                                                    val idGenerator: IdGenerator)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends AuthorisedController(cc) {
 
+  val endpointName = "delete-employment-expenses"
+
   implicit val endpointLogContext: EndpointLogContext =
-    EndpointLogContext(controllerName = "DeleteEmploymentExpensesController", endpointName = "delete-employment-expenses")
+    EndpointLogContext(controllerName = "DeleteEmploymentExpensesController", endpointName)
 
   def handleRequest(nino: String, taxYear: String): Action[AnyContent] =
     authorisedAction(nino).async { implicit request =>

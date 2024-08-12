@@ -23,17 +23,20 @@ import api.models.errors._
 import api.models.outcomes.ResponseWrapper
 import play.api.libs.json.JsValue
 import play.api.mvc.Result
+import play.api.Configuration
 import v1.controllers.validators.MockDeleteEmploymentExpensesValidatorFactory
 import v1.models.request.deleteEmploymentExpenses.DeleteEmploymentExpensesRequestData
 import v1.services.MockDeleteEmploymentExpensesService
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import config.MockAppConfig
 
 class DeleteEmploymentExpensesControllerSpec
     extends ControllerBaseSpec
     with ControllerTestRunner
     with MockDeleteEmploymentExpensesService
+    with MockAppConfig
     with MockDeleteEmploymentExpensesValidatorFactory {
 
   private val taxYear = "2019-20"
@@ -45,6 +48,12 @@ class DeleteEmploymentExpensesControllerSpec
       "a valid request is supplied" in new Test {
         willUseValidator(returningSuccess(requestData))
 
+        MockedAppConfig.featureSwitches.anyNumberOfTimes() returns Configuration(
+          "supporting-agents-access-control.enabled" -> true
+        )
+
+        MockedAppConfig.endpointAllowsSupportingAgents(controller.endpointName).anyNumberOfTimes() returns false
+
         MockDeleteEmploymentExpensesService
           .delete(requestData)
           .returns(Future.successful(Right(ResponseWrapper(correlationId, ()))))
@@ -55,12 +64,24 @@ class DeleteEmploymentExpensesControllerSpec
 
     "return the error as per spec" when {
       "the parser validation fails" in new Test {
+        MockedAppConfig.featureSwitches.anyNumberOfTimes() returns Configuration(
+          "supporting-agents-access-control.enabled" -> true
+        )
+
+        MockedAppConfig.endpointAllowsSupportingAgents(controller.endpointName).anyNumberOfTimes() returns false
+
         willUseValidator(returning(NinoFormatError))
 
         runErrorTestWithAudit(NinoFormatError)
       }
 
       "service returns an error" in new Test {
+        MockedAppConfig.featureSwitches.anyNumberOfTimes() returns Configuration(
+          "supporting-agents-access-control.enabled" -> true
+        )
+
+        MockedAppConfig.endpointAllowsSupportingAgents(controller.endpointName).anyNumberOfTimes() returns false
+
         willUseValidator(returningSuccess(requestData))
 
         MockDeleteEmploymentExpensesService

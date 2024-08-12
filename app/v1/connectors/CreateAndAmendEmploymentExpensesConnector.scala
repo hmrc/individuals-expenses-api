@@ -30,9 +30,9 @@ import scala.concurrent.{ExecutionContext, Future}
 class CreateAndAmendEmploymentExpensesConnector @Inject() (val http: HttpClient, val appConfig: AppConfig) extends BaseDownstreamConnector {
 
   def createAmendEmploymentExpenses(request: CreateAndAmendEmploymentExpensesRequestData)(implicit
-                                                                                          hc: HeaderCarrier,
-                                                                                          ec: ExecutionContext,
-                                                                                          correlationId: String): Future[DownstreamOutcome[Unit]] = {
+      hc: HeaderCarrier,
+      ec: ExecutionContext,
+      correlationId: String): Future[DownstreamOutcome[Unit]] = {
 
     import request._
 

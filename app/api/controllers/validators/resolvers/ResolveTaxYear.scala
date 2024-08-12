@@ -28,7 +28,7 @@ trait TaxYearResolving extends Resolver[String, TaxYear] {
 
   protected val rangeInvalidError: MtdError = RuleTaxYearRangeInvalidError
 
-  protected def resolve(value: String, maybeFormatError: Option[MtdError], path: Option[String]): Validated[Seq[MtdError], TaxYear] =
+  protected def resolve(value: String, maybeFormatError: Option[MtdError], path: Option[String]): Validated[Seq[MtdError], TaxYear] = {
     if (taxYearFormat.matches(value)) {
       val startTaxYearStart: Int = 2
       val startTaxYearEnd: Int   = 4
@@ -47,6 +47,7 @@ trait TaxYearResolving extends Resolver[String, TaxYear] {
     } else {
       Invalid(List(withError(maybeFormatError, TaxYearFormatError, path)))
     }
+  }
 
 }
 

@@ -23,6 +23,7 @@ import api.models.domain.{MtdSource, Nino, TaxYear}
 import api.models.errors._
 import api.models.outcomes.ResponseWrapper
 import play.api.mvc.Result
+import play.api.Configuration
 import v1.controllers.validators.MockRetrieveEmploymentExpensesValidatorFactory
 import v1.fixtures.RetrieveEmploymentsExpensesFixtures._
 import v1.models.request.retrieveEmploymentExpenses.RetrieveEmploymentsExpensesRequestData
@@ -31,12 +32,14 @@ import v1.services.MockRetrieveEmploymentsExpensesService
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import config.MockAppConfig
 
 class RetrieveEmploymentsExpensesControllerSpec
     extends ControllerBaseSpec
     with ControllerTestRunner
     with MockRetrieveEmploymentsExpensesService
     with MockRetrieveEmploymentExpensesValidatorFactory
+    with MockAppConfig
     with MockHateoasFactory {
 
   private val taxYear = "2019-20"
@@ -58,6 +61,12 @@ class RetrieveEmploymentsExpensesControllerSpec
       "given a valid request" in new Test {
         willUseValidator(returningSuccess(requestData))
 
+        MockedAppConfig.featureSwitches.anyNumberOfTimes() returns Configuration(
+          "supporting-agents-access-control.enabled" -> true
+        )
+
+        MockedAppConfig.endpointAllowsSupportingAgents(controller.endpointName).anyNumberOfTimes() returns false
+
         MockRetrieveEmploymentsExpensesService
           .retrieveEmploymentsExpenses(requestData)
           .returns(Future.successful(Right(ResponseWrapper(correlationId, responseModelLatest))))
@@ -75,6 +84,12 @@ class RetrieveEmploymentsExpensesControllerSpec
 
     "return the error as per spec" when {
       "the parser validation fails" in new Test {
+        MockedAppConfig.featureSwitches.anyNumberOfTimes() returns Configuration(
+          "supporting-agents-access-control.enabled" -> true
+        )
+
+        MockedAppConfig.endpointAllowsSupportingAgents(controller.endpointName).anyNumberOfTimes() returns false
+
         willUseValidator(returning(NinoFormatError))
 
         runErrorTest(NinoFormatError)
@@ -82,6 +97,12 @@ class RetrieveEmploymentsExpensesControllerSpec
       }
 
       "the service returns an error" in new Test {
+        MockedAppConfig.featureSwitches.anyNumberOfTimes() returns Configuration(
+          "supporting-agents-access-control.enabled" -> true
+        )
+
+        MockedAppConfig.endpointAllowsSupportingAgents(controller.endpointName).anyNumberOfTimes() returns false
+
         willUseValidator(returningSuccess(requestData))
 
         MockRetrieveEmploymentsExpensesService

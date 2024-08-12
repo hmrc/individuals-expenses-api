@@ -31,9 +31,9 @@ import scala.concurrent.{ExecutionContext, Future}
 class RetrieveEmploymentsExpensesConnector @Inject() (val http: HttpClient, val appConfig: AppConfig) extends BaseDownstreamConnector {
 
   def retrieveEmploymentExpenses(request: RetrieveEmploymentsExpensesRequestData)(implicit
-                                                                                  hc: HeaderCarrier,
-                                                                                  ec: ExecutionContext,
-                                                                                  correlationId: String): Future[DownstreamOutcome[RetrieveEmploymentsExpensesResponse]] = {
+      hc: HeaderCarrier,
+      ec: ExecutionContext,
+      correlationId: String): Future[DownstreamOutcome[RetrieveEmploymentsExpensesResponse]] = {
 
     val source  = request.source.toDownstream
     val nino    = request.nino.value

@@ -34,4 +34,5 @@ case class ResolveParsedNumber(min: BigDecimal = 0, max: BigDecimal = 9999999999
           ValueFormatError.forPathAndRange(usePath, min.toString, max.toString)
         ))
   }
+
 }

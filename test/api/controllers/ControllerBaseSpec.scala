@@ -21,6 +21,7 @@ import api.mocks.MockIdGenerator
 import api.models.audit.{AuditError, AuditEvent, AuditResponse, GenericAuditDetail}
 import api.models.errors.MtdError
 import api.services.{MockAuditService, MockEnrolmentsAuthService, MockMtdIdLookupService}
+import config.RealAppConfig
 import play.api.http.{HeaderNames, MimeTypes, Status}
 import play.api.libs.json.JsValue
 import play.api.mvc.{AnyContentAsEmpty, ControllerComponents, Result}
@@ -31,7 +32,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future
 
-class ControllerBaseSpec
+abstract class ControllerBaseSpec
     extends UnitSpec
     with Status
     with MimeTypes
@@ -58,7 +59,8 @@ class ControllerBaseSpec
 
 }
 
-trait ControllerTestRunner extends MockEnrolmentsAuthService with MockMtdIdLookupService with MockIdGenerator { _: ControllerBaseSpec =>
+trait ControllerTestRunner extends MockEnrolmentsAuthService with MockMtdIdLookupService with MockIdGenerator with RealAppConfig {
+  _: ControllerBaseSpec =>
   protected val nino: String  = validNino
   protected val correlationId = "X-123"
 

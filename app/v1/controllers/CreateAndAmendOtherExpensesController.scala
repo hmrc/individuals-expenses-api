@@ -21,6 +21,7 @@ import api.hateoas.HateoasFactory
 import api.services.{AuditService, EnrolmentsAuthService, MtdIdLookupService}
 import play.api.libs.json.JsValue
 import play.api.mvc.{Action, ControllerComponents}
+import config.AppConfig
 import routing.{Version, Version1}
 import utils.IdGenerator
 import v1.controllers.validators.CreateAndAmendOtherExpensesValidatorFactory
@@ -39,11 +40,13 @@ class CreateAndAmendOtherExpensesController @Inject() (val authService: Enrolmen
                                                        auditService: AuditService,
                                                        hateoasFactory: HateoasFactory,
                                                        cc: ControllerComponents,
-                                                       val idGenerator: IdGenerator)(implicit ec: ExecutionContext)
+                                                       val idGenerator: IdGenerator)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends AuthorisedController(cc) {
 
+  val endpointName = "create-and-amend-other-expenses"
+
   implicit val endpointLogContext: EndpointLogContext =
-    EndpointLogContext(controllerName = "CreateAndAmendOtherExpensesController", endpointName = "createAndAmendOtherExpenses")
+    EndpointLogContext(controllerName = "CreateAndAmendOtherExpensesController", endpointName)
 
   def handleRequest(nino: String, taxYear: String): Action[JsValue] =
     authorisedAction(nino).async(parse.json) { implicit request =>
