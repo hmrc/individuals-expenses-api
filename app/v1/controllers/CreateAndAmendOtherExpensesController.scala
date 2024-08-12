@@ -43,7 +43,7 @@ class CreateAndAmendOtherExpensesController @Inject() (val authService: Enrolmen
                                                        val idGenerator: IdGenerator)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends AuthorisedController(cc) {
 
-  val endpointName = "create-and-amend-other-expenses"
+  val endpointName = "create-amend-other-expenses"
 
   implicit val endpointLogContext: EndpointLogContext =
     EndpointLogContext(controllerName = "CreateAndAmendOtherExpensesController", endpointName)

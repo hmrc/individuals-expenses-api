@@ -42,7 +42,7 @@ class IgnoreEmploymentExpensesController @Inject() (val authService: EnrolmentsA
                                                     val idGenerator: IdGenerator)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends AuthorisedController(cc) {
 
-  val endpointName = "ignore-employed-expenses"
+  val endpointName = "ignore-employment-expenses"
 
   implicit val endpointLogContext: EndpointLogContext =
     EndpointLogContext(controllerName = "IgnoreEmploymentExpensesController", endpointName)
