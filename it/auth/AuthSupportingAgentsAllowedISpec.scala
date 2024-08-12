@@ -25,29 +25,25 @@ import play.api.libs.ws.{WSRequest, WSResponse}
 import play.api.test.Helpers.AUTHORIZATION
 import support.IntegrationBaseSpec
 
-class AuthSupportingAgentsAllowedISpec extends IntegrationBaseSpec {
+abstract class AuthSupportingAgentsAllowedISpec extends IntegrationBaseSpec {
 
   /** The API's latest version, e.g. "1.0".
     */
-  val callingApiVersion = "1.0"
-
-  protected val nino = "AA123456A"
+  protected val callingApiVersion: String
 
   /** As the IT supplies the "supported" config below, this can be any endpoint IF there's no actual "supporting agents allowed" endpoint in the API.
     */
-  val supportingAgentsAllowedEndpoint = "ignore-employed-expenses"
+  protected val supportingAgentsAllowedEndpoint: String
 
-  private val taxYearStr = "2019-20"
+  protected def sendMtdRequest(request: WSRequest): WSResponse
 
-  def sendMtdRequest(request: WSRequest): WSResponse = await(request.post(JsObject.empty))
+  protected val mtdUrl: String
 
-  val mtdUrl = s"/employments/$nino/$taxYearStr/ignore"
+  protected val downstreamUri: String
 
-  val downstreamUri: String = s"/income-tax/expenses/employments/$nino/2019-20"
+  protected val maybeDownstreamResponseJson: Option[JsValue]
 
-  val maybeDownstreamResponseJson: Option[JsValue] = Some(JsObject.empty)
-
-  protected val downstreamHttpMethod: DownstreamStub.HTTPMethod = DownstreamStub.POST
+  protected val downstreamHttpMethod: DownstreamStub.HTTPMethod
 
   protected val downstreamSuccessStatus: Int = OK
 
@@ -60,11 +56,12 @@ class AuthSupportingAgentsAllowedISpec extends IntegrationBaseSpec {
       s"api.supporting-agent-endpoints.$supportingAgentsAllowedEndpoint" -> "true"
     ) ++ super.servicesConfig
 
+  protected val nino = "AA123456A"
+
   "Calling an endpoint that allows supporting agents" when {
     "the client is the primary agent" should {
       "return a success response" in new Test {
         def setupStubs(): StubMapping = {
-          AuthStub.resetAll()
           AuditStub.audit()
           MtdIdLookupStub.ninoFound(nino)
 
@@ -82,7 +79,6 @@ class AuthSupportingAgentsAllowedISpec extends IntegrationBaseSpec {
     "the client is a supporting agent" should {
       "return a success response" in new Test {
         def setupStubs(): StubMapping = {
-          AuthStub.resetAll()
           AuditStub.audit()
           MtdIdLookupStub.ninoFound(nino)
 

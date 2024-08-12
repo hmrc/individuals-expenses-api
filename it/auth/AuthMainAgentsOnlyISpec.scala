@@ -20,39 +20,35 @@ import api.models.errors.{ClientOrAgentNotAuthorisedError, InternalError}
 import api.services.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import play.api.http.HeaderNames.ACCEPT
-import play.api.http.Status.{FORBIDDEN, INTERNAL_SERVER_ERROR, OK, NO_CONTENT}
-import play.api.libs.json.{JsValue, JsObject}
+import play.api.http.Status.{FORBIDDEN, INTERNAL_SERVER_ERROR, NO_CONTENT}
+import play.api.libs.json.{JsObject, JsValue}
 import play.api.libs.ws.{WSRequest, WSResponse}
 import play.api.test.Helpers.AUTHORIZATION
 import support.IntegrationBaseSpec
 
-class AuthMainAgentsOnlyISpec extends IntegrationBaseSpec {
+abstract class AuthMainAgentsOnlyISpec extends IntegrationBaseSpec {
 
   /** The API's latest version, e.g. "1.0".
     */
-  val callingApiVersion = "1.0"
-
-  protected val nino = "AA123456A"
+  protected val callingApiVersion: String
 
   /** As the IT supplies the "supported" config below, this can be any endpoint IF there's no actual "main agents only" endpoint in the API.
     */
-  val supportingAgentsNotAllowedEndpoint = "ignore-employed-expenses"
+  protected val supportingAgentsNotAllowedEndpoint: String
 
-  private val taxYearStr = "2019-20"
+  protected def sendMtdRequest(request: WSRequest): WSResponse
 
-  def sendMtdRequest(request: WSRequest): WSResponse = await(request.post(JsObject.empty))
+  protected val mtdUrl: String
 
-  val mtdUrl = s"/employments/$nino/$taxYearStr/ignore"
+  protected val downstreamUri: String
 
-  val downstreamUri: String = s"/income-tax/expenses/employments/$nino/2019-20"
+  protected val maybeDownstreamResponseJson: Option[JsValue]
 
-  val maybeDownstreamResponseJson: Option[JsValue] = Some(JsObject.empty)
+  protected val downstreamHttpMethod: DownstreamStub.HTTPMethod = DownstreamStub.POST
 
-  protected val downstreamHttpMethod: DownstreamStub.HTTPMethod = DownstreamStub.PUT
+  protected val downstreamSuccessStatus: Int
 
-  protected val downstreamSuccessStatus: Int = OK
-
-  protected val expectedMtdSuccessStatus: Int = OK
+  protected val expectedMtdSuccessStatus: Int
 
   /** One endpoint where supporting agents are allowed.
     */
@@ -61,12 +57,12 @@ class AuthMainAgentsOnlyISpec extends IntegrationBaseSpec {
       s"api.supporting-agent-endpoints.$supportingAgentsNotAllowedEndpoint" -> "false"
     ) ++ super.servicesConfig
 
+  protected val nino = "AA123456A"
+
   "Calling an endpoint that only allows primary agents" when {
     "the client is the primary agent" should {
       "return a success response" in new Test {
-
         override def setupStubs(): StubMapping = {
-          AuthStub.resetAll()
           AuditStub.audit()
           MtdIdLookupStub.ninoFound(nino)
 
@@ -74,8 +70,8 @@ class AuthMainAgentsOnlyISpec extends IntegrationBaseSpec {
           AuthStub.authorisedWithPrimaryAgentEnrolment()
 
           DownstreamStub.onSuccess(DownstreamStub.PUT, downstreamUri, NO_CONTENT, JsObject.empty)
-
         }
+
         val response: WSResponse = sendMtdRequest(request())
         response.status shouldBe expectedMtdSuccessStatus
       }
