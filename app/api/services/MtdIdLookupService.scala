@@ -32,7 +32,6 @@ object MtdIdLookupService {
 @Singleton
 class MtdIdLookupService @Inject() (val connector: MtdIdLookupConnector) {
 
-
   def lookup(nino: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[MtdIdLookupService.Outcome] = {
     if (!ResolveNino.isValid(nino)) {
       Future.successful(Left(NinoFormatError))

@@ -23,6 +23,8 @@ import api.models.errors._
 import api.models.outcomes.ResponseWrapper
 import play.api.libs.json.JsValue
 import play.api.mvc.Result
+import play.api.Configuration
+import config.MockAppConfig
 import v1.controllers.validators.MockDeleteOtherExpensesValidatorFactory
 import v1.models.request.deleteOtherExpenses.DeleteOtherExpensesRequestData
 import v1.services.MockDeleteOtherExpensesService
@@ -34,6 +36,7 @@ class DeleteOtherExpensesControllerSpec
     extends ControllerBaseSpec
     with ControllerTestRunner
     with MockDeleteOtherExpensesService
+    with MockAppConfig
     with MockDeleteOtherExpensesValidatorFactory {
 
   private val taxYear = "2019-20"
@@ -45,6 +48,12 @@ class DeleteOtherExpensesControllerSpec
       "a valid request is supplied" in new Test {
         willUseValidator(returningSuccess(requestData))
 
+        MockedAppConfig.featureSwitches.anyNumberOfTimes() returns Configuration(
+          "supporting-agents-access-control.enabled" -> true
+        )
+
+        MockedAppConfig.endpointAllowsSupportingAgents(controller.endpointName).anyNumberOfTimes() returns false
+
         MockDeleteOtherExpensesService
           .delete(requestData)
           .returns(Future.successful(Right(ResponseWrapper(correlationId, ()))))
@@ -55,12 +64,24 @@ class DeleteOtherExpensesControllerSpec
 
     "return the error as per spec" when {
       "the parser validation fails" in new Test {
+        MockedAppConfig.featureSwitches.anyNumberOfTimes() returns Configuration(
+          "supporting-agents-access-control.enabled" -> true
+        )
+
+        MockedAppConfig.endpointAllowsSupportingAgents(controller.endpointName).anyNumberOfTimes() returns false
+
         willUseValidator(returning(NinoFormatError))
 
         runErrorTestWithAudit(NinoFormatError)
       }
 
       "service returns an error" in new Test {
+        MockedAppConfig.featureSwitches.anyNumberOfTimes() returns Configuration(
+          "supporting-agents-access-control.enabled" -> true
+        )
+
+        MockedAppConfig.endpointAllowsSupportingAgents(controller.endpointName).anyNumberOfTimes() returns false
+
         willUseValidator(returningSuccess(requestData))
 
         MockDeleteOtherExpensesService

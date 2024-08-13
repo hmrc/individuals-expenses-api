@@ -19,6 +19,7 @@ package v1.controllers
 import api.controllers.{AuthorisedController, EndpointLogContext, RequestContext, RequestHandler}
 import api.hateoas.HateoasFactory
 import api.services.{EnrolmentsAuthService, MtdIdLookupService}
+import config.AppConfig
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import utils.IdGenerator
 import v1.controllers.validators.RetrieveOtherExpensesValidatorFactory
@@ -35,11 +36,13 @@ class RetrieveOtherExpensesController @Inject() (val authService: EnrolmentsAuth
                                                  service: RetrieveOtherExpensesService,
                                                  hateoasFactory: HateoasFactory,
                                                  cc: ControllerComponents,
-                                                 val idGenerator: IdGenerator)(implicit ec: ExecutionContext)
+                                                 val idGenerator: IdGenerator)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends AuthorisedController(cc) {
 
+  val endpointName = "retrieve-other-expenses"
+
   implicit val endpointLogContext: EndpointLogContext =
-    EndpointLogContext(controllerName = "RetrieveOtherExpensesController", endpointName = "retrieveOtherExpenses")
+    EndpointLogContext(controllerName = "RetrieveOtherExpensesController", endpointName)
 
   def handleRequest(nino: String, taxYear: String): Action[AnyContent] =
     authorisedAction(nino).async { implicit request =>

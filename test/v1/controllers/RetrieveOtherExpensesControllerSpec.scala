@@ -23,6 +23,8 @@ import api.models.domain.{Nino, TaxYear}
 import api.models.errors._
 import api.models.outcomes.ResponseWrapper
 import play.api.mvc.Result
+import play.api.Configuration
+import config.MockAppConfig
 import v1.controllers.validators.MockRetrieveOtherExpensesValidatorFactory
 import v1.fixtures.RetrieveOtherExpensesFixtures._
 import v1.models.request.retrieveOtherExpenses.RetrieveOtherExpensesRequestData
@@ -37,6 +39,7 @@ class RetrieveOtherExpensesControllerSpec
     with ControllerTestRunner
     with MockRetrieveOtherExpensesService
     with MockRetrieveOtherExpensesValidatorFactory
+    with MockAppConfig
     with MockHateoasFactory {
 
   private val taxYear = "2019-20"
@@ -56,6 +59,11 @@ class RetrieveOtherExpensesControllerSpec
       "given a valid request" in new Test {
         willUseValidator(returningSuccess(requestData))
 
+        MockedAppConfig.featureSwitches.anyNumberOfTimes() returns Configuration(
+          "supporting-agents-access-control.enabled" -> true
+        )
+
+        MockedAppConfig.endpointAllowsSupportingAgents(controller.endpointName).anyNumberOfTimes() returns false
         MockRetrieveOtherExpensesService
           .retrieveOtherExpenses(requestData)
           .returns(Future.successful(Right(ResponseWrapper(correlationId, responseModel))))
@@ -73,12 +81,24 @@ class RetrieveOtherExpensesControllerSpec
 
     "return the error as per spec" when {
       "the parser validation fails" in new Test {
+
+        MockedAppConfig.featureSwitches.anyNumberOfTimes() returns Configuration(
+          "supporting-agents-access-control.enabled" -> true
+        )
+
+        MockedAppConfig.endpointAllowsSupportingAgents(controller.endpointName).anyNumberOfTimes() returns false
         willUseValidator(returning(NinoFormatError))
 
         runErrorTest(NinoFormatError)
       }
 
       "the service returns an error" in new Test {
+
+        MockedAppConfig.featureSwitches.anyNumberOfTimes() returns Configuration(
+          "supporting-agents-access-control.enabled" -> true
+        )
+
+        MockedAppConfig.endpointAllowsSupportingAgents(controller.endpointName).anyNumberOfTimes() returns false
         willUseValidator(returningSuccess(requestData))
 
         MockRetrieveOtherExpensesService

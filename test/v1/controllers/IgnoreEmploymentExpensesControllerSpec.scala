@@ -23,7 +23,7 @@ import api.models.domain.{Nino, TaxYear}
 import api.models.errors._
 import api.hateoas.Method.{DELETE, GET}
 import api.models.outcomes.ResponseWrapper
-import mocks.MockAppConfig
+import config.MockAppConfig
 import play.api.Configuration
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Result
@@ -73,6 +73,11 @@ class IgnoreEmploymentExpensesControllerSpec
     "return Ok" when {
       "the request received is valid" in new Test {
         willUseValidator(returningSuccess(requestData))
+        MockedAppConfig.featureSwitches.anyNumberOfTimes() returns Configuration(
+          "supporting-agents-access-control.enabled" -> true
+        )
+
+        MockedAppConfig.endpointAllowsSupportingAgents(controller.endpointName).anyNumberOfTimes() returns false
 
         MockIgnoreEmploymentExpensesService
           .ignore(requestData)
@@ -92,12 +97,24 @@ class IgnoreEmploymentExpensesControllerSpec
 
     "return the error as per spec" when {
       "the parser validation fails" in new Test {
+        MockedAppConfig.featureSwitches.anyNumberOfTimes() returns Configuration(
+          "supporting-agents-access-control.enabled" -> true
+        )
+
+        MockedAppConfig.endpointAllowsSupportingAgents(controller.endpointName).anyNumberOfTimes() returns false
+
         willUseValidator(returning(NinoFormatError))
 
         runErrorTestWithAudit(NinoFormatError)
       }
 
       "service errors occur" in new Test {
+        MockedAppConfig.featureSwitches.anyNumberOfTimes() returns Configuration(
+          "supporting-agents-access-control.enabled" -> true
+        )
+
+        MockedAppConfig.endpointAllowsSupportingAgents(controller.endpointName).anyNumberOfTimes() returns false
+
         willUseValidator(returningSuccess(requestData))
 
         MockIgnoreEmploymentExpensesService
@@ -113,7 +130,6 @@ class IgnoreEmploymentExpensesControllerSpec
 
     val controller = new IgnoreEmploymentExpensesController(
       authService = mockEnrolmentsAuthService,
-      appConfig = mockAppConfig,
       lookupService = mockMtdIdLookupService,
       validatorFactory = mockIgnoreEmploymentExpensesValidatorFactory,
       service = mockService,

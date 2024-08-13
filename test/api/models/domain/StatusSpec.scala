@@ -52,4 +52,3 @@ class StatusSpec extends UnitSpec {
   }
 
 }
-

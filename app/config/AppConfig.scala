@@ -80,6 +80,8 @@ trait AppConfig {
   def endpointsEnabled(version: String): Boolean
   def endpointsEnabled(version: Version): Boolean
 
+  def safeEndpointsEnabled(version: String): Boolean
+
   /** Currently only for OAS documentation.
     */
   def apiVersionReleasedInProduction(version: String): Boolean
@@ -87,10 +89,14 @@ trait AppConfig {
   /** Currently only for OAS documentation.
     */
   def endpointReleasedInProduction(version: String, name: String): Boolean
+
+  /** Defaults to false
+    */
+  def endpointAllowsSupportingAgents(endpointName: String): Boolean
 }
 
 @Singleton
-class AppConfigImpl @Inject() (config: ServicesConfig, configuration: Configuration) extends AppConfig {
+class AppConfigImpl @Inject() (config: ServicesConfig, protected[config] val configuration: Configuration) extends AppConfig {
 
   val keyValuesJ: util.Map[String, ConfigValue] = configuration.entrySet.toMap.asJava
 
@@ -129,8 +135,14 @@ class AppConfigImpl @Inject() (config: ServicesConfig, configuration: Configurat
   val otherExpensesMinimumTaxYear: Int      = config.getInt("otherExpensesMinimumTaxYear")
   val employmentExpensesMinimumTaxYear: Int = config.getInt("employmentExpensesMinimumTaxYear")
 
-  def endpointsEnabled(version: String): Boolean               = config.getBoolean(s"api.$version.endpoints.enabled")
-  def endpointsEnabled(version: Version): Boolean              = config.getBoolean(s"api.${version.name}.endpoints.enabled")
+  def endpointsEnabled(version: String): Boolean  = config.getBoolean(s"api.$version.endpoints.enabled")
+  def endpointsEnabled(version: Version): Boolean = config.getBoolean(s"api.${version.name}.endpoints.enabled")
+
+  def safeEndpointsEnabled(version: String): Boolean =
+    configuration
+      .getOptional[Boolean](s"api.$version.endpoints.enabled")
+      .getOrElse(false)
+
   def apiVersionReleasedInProduction(version: String): Boolean = config.getBoolean(s"api.$version.endpoints.api-released-in-production")
 
   def endpointReleasedInProduction(version: String, name: String): Boolean = {
@@ -140,6 +152,14 @@ class AppConfigImpl @Inject() (config: ServicesConfig, configuration: Configurat
     val conf = configuration.underlying
     if (versionReleasedInProd && conf.hasPath(path)) config.getBoolean(path) else versionReleasedInProd
   }
+
+  def endpointAllowsSupportingAgents(endpointName: String): Boolean =
+    supportingAgentEndpoints.getOrElse(endpointName, false)
+
+  private val supportingAgentEndpoints: Map[String, Boolean] =
+    configuration
+      .getOptional[Map[String, Boolean]]("api.supporting-agent-endpoints")
+      .getOrElse(Map.empty)
 
 }
 

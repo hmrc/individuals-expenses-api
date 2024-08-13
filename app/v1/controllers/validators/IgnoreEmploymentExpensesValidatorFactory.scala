@@ -38,11 +38,12 @@ class IgnoreEmploymentExpensesValidatorFactory @Inject() (implicit todaySupplier
         maybeMinimumTaxYear = Some(TaxYear.employmentExpensesMinimumTaxYear)
       )
 
-      def validate: Validated[Seq[MtdError], IgnoreEmploymentExpensesRequestData] =
+      def validate: Validated[Seq[MtdError], IgnoreEmploymentExpensesRequestData] = {
         (
           ResolveNino(nino),
           resolveTaxYear(taxYear)
         ).mapN(IgnoreEmploymentExpensesRequestData)
+      }
 
     }
 

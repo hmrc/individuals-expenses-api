@@ -61,7 +61,7 @@ object StandardDownstreamHttpParser extends HttpParser {
     response.status match {
       case successCode.status                                                    => success(correlationId, url, successOutcomeFactory)
       case BAD_REQUEST | NOT_FOUND | FORBIDDEN | CONFLICT | UNPROCESSABLE_ENTITY => Left(ResponseWrapper(correlationId, parseErrors(response)))
-      case _ => Left(ResponseWrapper(correlationId, OutboundError(InternalError)))
+      case _                                                                     => Left(ResponseWrapper(correlationId, OutboundError(InternalError)))
     }
   }
 

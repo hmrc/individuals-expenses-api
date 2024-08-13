@@ -34,17 +34,18 @@ import scala.concurrent.ExecutionContext
 @Singleton
 class IgnoreEmploymentExpensesController @Inject() (val authService: EnrolmentsAuthService,
                                                     val lookupService: MtdIdLookupService,
-                                                    appConfig: AppConfig,
                                                     validatorFactory: IgnoreEmploymentExpensesValidatorFactory,
                                                     service: IgnoreEmploymentExpensesService,
                                                     auditService: AuditService,
                                                     hateoasFactory: HateoasFactory,
                                                     cc: ControllerComponents,
-                                                    val idGenerator: IdGenerator)(implicit ec: ExecutionContext)
+                                                    val idGenerator: IdGenerator)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends AuthorisedController(cc) {
 
+  val endpointName = "ignore-employment-expenses"
+
   implicit val endpointLogContext: EndpointLogContext =
-    EndpointLogContext(controllerName = "IgnoreEmploymentExpensesController", endpointName = "ignoreEmploymentExpenses")
+    EndpointLogContext(controllerName = "IgnoreEmploymentExpensesController", endpointName)
 
   def handleRequest(nino: String, taxYear: String): Action[AnyContent] =
     authorisedAction(nino).async { implicit request =>
