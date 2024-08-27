@@ -72,6 +72,7 @@ trait MockAppConfig extends MockFactory {
     // Business Rule Config
     def otherExpensesMinimumTaxYear: CallHandler[Int]      = (() => mockAppConfig.otherExpensesMinimumTaxYear).expects()
     def employmentExpensesMinimumTaxYear: CallHandler[Int] = (() => mockAppConfig.employmentExpensesMinimumTaxYear).expects()
+
     def endpointAllowsSupportingAgents(endpointName: String): CallHandler[Boolean] =
       (mockAppConfig.endpointAllowsSupportingAgents(_: String)).expects(endpointName)
 

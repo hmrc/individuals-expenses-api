@@ -59,11 +59,10 @@ abstract class ControllerBaseSpec
 
 }
 
-trait ControllerTestRunner extends MockEnrolmentsAuthService with MockMtdIdLookupService with MockIdGenerator with RealAppConfig  {
+trait ControllerTestRunner extends MockEnrolmentsAuthService with MockMtdIdLookupService with MockIdGenerator with RealAppConfig {
   _: ControllerBaseSpec =>
   protected val nino: String  = validNino
   protected val correlationId = "X-123"
-
 
   trait ControllerTest {
     protected val hc: HeaderCarrier = HeaderCarrier()
@@ -73,7 +72,6 @@ trait ControllerTestRunner extends MockEnrolmentsAuthService with MockMtdIdLooku
     MockedMtdIdLookupService.lookup(nino).returns(Future.successful(Right("test-mtd-id")))
     MockedEnrolmentsAuthService.authoriseUser()
     MockIdGenerator.generateCorrelationId.returns(correlationId)
-
 
     def runOkTest(expectedStatus: Int, maybeExpectedResponseBody: Option[JsValue] = None): Unit = {
       val result: Future[Result] = callController()
@@ -112,8 +110,8 @@ trait ControllerTestRunner extends MockEnrolmentsAuthService with MockMtdIdLooku
 
       realAppConfig.endpointAllowsSupportingAgents(controller.endpointName) shouldBe endpointSupportingAgentsAllowed
     }
-  }
 
+  }
 
   trait AuditEventChecking {
     _: ControllerTest =>

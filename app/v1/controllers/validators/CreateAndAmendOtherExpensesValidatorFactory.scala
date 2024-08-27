@@ -27,14 +27,12 @@ import play.api.libs.json.JsValue
 import v1.models.request.createAndAmendOtherExpenses.{CreateAndAmendOtherExpensesBody, CreateAndAmendOtherExpensesRequestData}
 
 import javax.inject.Singleton
-import scala.annotation.nowarn
 
 @Singleton
 class CreateAndAmendOtherExpensesValidatorFactory {
 
   private val resolveTaxYear = DetailedResolveTaxYear(maybeMinimumTaxYear = Some(TaxYear.otherExpensesMinimumTaxYear))
 
-  @nowarn("cat=lint-byname-implicit")
   private val resolveJson = new ResolveNonEmptyJsonObject[CreateAndAmendOtherExpensesBody]()
 
   private val resolveParsedNumber = ResolveParsedNumber()
