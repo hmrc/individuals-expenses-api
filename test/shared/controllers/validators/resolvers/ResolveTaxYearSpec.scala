@@ -169,6 +169,28 @@ class ResolveTaxYearSpec extends UnitSpec with ResolverSupport {
         result shouldBe Invalid(List(BadRequestError))
       }
     }
+
+    "ResolveTaxYearMinMax" should {
+      "return no errors when given an optional valid tax year" in {
+        val result: Validated[Seq[MtdError], Option[TaxYear]] = resolver(Some("2021-22"))
+        result shouldBe Valid(Some(minimumTaxYear))
+      }
+
+      "return RuleTaxYearNotSupportedError when given an optional invalid tax year earlier than the minimum" in {
+        val result: Validated[Seq[MtdError], Option[TaxYear]] = resolver(Some("2020-21"))
+        result shouldBe Invalid(Seq(RuleTaxYearNotSupportedError))
+      }
+
+      "return RuleTaxYearNotSupportedError when given an optional invalid tax year later than the maximum" in {
+        val result: Validated[Seq[MtdError], Option[TaxYear]] = resolver(Some("2025-26"))
+        result shouldBe Invalid(Seq(RuleTaxYearNotSupportedError))
+      }
+
+      "return no errors when given no tax year" in {
+        val result: Validated[Seq[MtdError], Option[TaxYear]] = resolver(None)
+        result shouldBe Valid(None)
+      }
+    }
   }
 
   "ResolveTysTaxYear" should {
