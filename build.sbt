@@ -14,12 +14,9 @@
  * limitations under the License.
  */
 
-import sbt.*
-import sbt.Keys.{baseDirectory, parallelExecution, unmanagedClasspath}
+import sbt._
 import uk.gov.hmrc.DefaultBuildSettings.{addTestReportOption, defaultSettings}
-import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
-
-val appName = "individuals-expenses-api"
+import org.scalafmt.sbt.ScalafmtPlugin
 
 lazy val ItTest = config("it") extend Test
 
@@ -31,7 +28,14 @@ lazy val microservice = Project(appName, file("."))
     retrieveManaged                 := true,
     update / evictionWarningOptions := EvictionWarningOptions.default.withWarnScalaVersionEviction(warnScalaVersionEviction = false),
     scalaVersion                    := "2.13.12",
-    scalacOptions ++= Seq("-Xfatal-warnings", "-Wconf:src=routes/.*:silent")
+    scalafmtOnCompile := true,
+    scalacOptions ++= List(
+      "-language:higherKinds",
+      "-Xlint:-byname-implicit",
+      "-Xfatal-warnings",
+      "-Wconf:src=routes/.*:silent",
+      "-feature"
+    )
   )
   .settings(
     Compile / unmanagedResourceDirectories += baseDirectory.value / "resources"
@@ -40,8 +44,7 @@ lazy val microservice = Project(appName, file("."))
   .settings(CodeCoverageSettings.settings: _*)
   .settings(defaultSettings(): _*)
   .configs(ItTest)
-  .settings(inConfig(ItTest)(
-    Defaults.itSettings ++ headerSettings(ItTest) ++ automateHeaderSettings(ItTest) ++ ScalafmtPlugin.scalafmtConfigSettings): _*)
+  .settings(inConfig(ItTest)(Defaults.itSettings): _*)
   .settings(
     ItTest / fork                       := true,
     ItTest / unmanagedSourceDirectories := Seq((ItTest / baseDirectory).value / "it"),
@@ -49,19 +52,12 @@ lazy val microservice = Project(appName, file("."))
     Runtime / unmanagedClasspath += baseDirectory.value / "resources",
     ItTest / javaOptions += "-Dlogger.resource=logback-test.xml",
     ItTest / parallelExecution := false,
-    addTestReportOption(ItTest, directory = "int-test-reports")
+    addTestReportOption(ItTest, "int-test-reports")
   )
   .settings(
     resolvers += Resolver.jcenterRepo
   )
   .settings(PlayKeys.playDefaultPort := 7795)
 
-Global / excludeLintKeys += update / evictionWarningOptions
 
-dependencyUpdatesFilter -= moduleFilter(organization = "org.playframework")
-dependencyUpdatesFilter -= moduleFilter(name = "scala-library")
-dependencyUpdatesFilter -= moduleFilter(name = "flexmark-all")
-dependencyUpdatesFilter -= moduleFilter(name = "scalatestplus-play")
-dependencyUpdatesFilter -= moduleFilter(name = "scalatestplus-scalacheck")
-dependencyUpdatesFilter -= moduleFilter(name = "bootstrap-backend-play-28")
-dependencyUpdatesFailBuild := true
+val appName = "individuals-expenses-api"

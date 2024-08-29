@@ -102,4 +102,35 @@ class ErrorWrapperSpec extends UnitSpec {
     }
   }
 
+  "containsAnyOf" should {
+
+    "return true" when {
+      "the main error is in the errorsToCheck list" in {
+        val errorWrapper = ErrorWrapper(correlationId, NinoFormatError, None)
+        val result       = errorWrapper.containsAnyOf(NinoFormatError, TaxYearFormatError)
+        result shouldBe true
+      }
+
+      "the main error is the only error in the errorsToCheck list" in {
+        val errorWrapper = ErrorWrapper(correlationId, BadRequestError, None)
+        val result       = errorWrapper.containsAnyOf(BadRequestError)
+        result shouldBe true
+      }
+    }
+
+    "return false" when {
+      "the main error is not in the errorsToCheck list" in {
+        val errorWrapper = ErrorWrapper(correlationId, NinoFormatError, None)
+        val result       = errorWrapper.containsAnyOf(TaxYearFormatError, BadRequestError)
+        result shouldBe false
+      }
+
+      "the errorsToCheck list is empty" in {
+        val errorWrapper = ErrorWrapper(correlationId, NinoFormatError, None)
+        val result       = errorWrapper.containsAnyOf()
+        result shouldBe false
+      }
+    }
+  }
+
 }

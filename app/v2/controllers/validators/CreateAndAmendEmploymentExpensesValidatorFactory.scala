@@ -27,12 +27,10 @@ import play.api.libs.json.JsValue
 import v2.models.request.createAndAmendEmploymentExpenses.{CreateAndAmendEmploymentExpensesBody, CreateAndAmendEmploymentExpensesRequestData}
 
 import javax.inject.{Inject, Singleton}
-import scala.annotation.nowarn
 
 @Singleton
 class CreateAndAmendEmploymentExpensesValidatorFactory @Inject() (implicit todaySupplier: TodaySupplier = new TodaySupplier) {
 
-  @nowarn("cat=lint-byname-implicit")
   private val resolveJson = new ResolveNonEmptyJsonObject[CreateAndAmendEmploymentExpensesBody]()
 
   private val resolveParsedNumber = ResolveParsedNumber()
