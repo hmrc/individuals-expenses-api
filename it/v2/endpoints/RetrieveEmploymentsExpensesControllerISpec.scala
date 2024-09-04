@@ -24,7 +24,7 @@ import play.api.libs.ws.{WSRequest, WSResponse}
 import play.api.test.Helpers.AUTHORIZATION
 import api.services.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 import support.IntegrationBaseSpec
-import v1.fixtures.RetrieveEmploymentsExpensesFixtures._
+import v2.fixtures.RetrieveEmploymentsExpensesFixtures._
 
 class RetrieveEmploymentsExpensesControllerISpec extends IntegrationBaseSpec {
 
