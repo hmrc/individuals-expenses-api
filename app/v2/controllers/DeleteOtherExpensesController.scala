@@ -20,7 +20,7 @@ import api.controllers._
 import api.services.{AuditService, EnrolmentsAuthService, MtdIdLookupService}
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import config.AppConfig
-import routing.{Version, Version1}
+import routing.{Version, Version2}
 import utils.IdGenerator
 import v2.controllers.validators.DeleteOtherExpensesValidatorFactory
 import v2.services.DeleteOtherExpensesService
@@ -58,7 +58,7 @@ class DeleteOtherExpensesController @Inject() (val authService: EnrolmentsAuthSe
             auditService,
             auditType = "DeleteOtherExpenses",
             transactionName = "delete-other-expenses",
-            apiVersion = Version.from(request, orElse = Version1),
+            apiVersion = Version.from(request, orElse = Version2),
             params = Map("nino" -> nino, "taxYear" -> taxYear)
           ))
 

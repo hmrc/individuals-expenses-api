@@ -22,7 +22,7 @@ import api.services.{AuditService, EnrolmentsAuthService, MtdIdLookupService}
 import play.api.libs.json.JsValue
 import play.api.mvc.{Action, ControllerComponents}
 import config.AppConfig
-import routing.{Version, Version1}
+import routing.{Version, Version2}
 import utils.IdGenerator
 import v2.controllers.validators.CreateAndAmendOtherExpensesValidatorFactory
 import v2.models.response.createAndAmendOtherExpenses.CreateAndAmendOtherExpensesHateoasData
@@ -60,7 +60,7 @@ class CreateAndAmendOtherExpensesController @Inject() (val authService: Enrolmen
           auditService = auditService,
           auditType = "CreateAmendOtherExpenses",
           transactionName = "create-amend-other-expenses",
-          apiVersion = Version.from(request, orElse = Version1),
+          apiVersion = Version.from(request, orElse = Version2),
           params = Map("nino" -> nino, "taxYear" -> taxYear),
           requestBody = Some(request.body),
           includeResponse = true

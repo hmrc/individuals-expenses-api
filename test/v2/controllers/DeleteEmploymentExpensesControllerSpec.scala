@@ -112,7 +112,7 @@ class DeleteEmploymentExpensesControllerSpec
         auditType = "DeleteEmploymentExpenses",
         transactionName = "delete-employment-expenses",
         detail = GenericAuditDetail(
-          versionNumber = "1.0",
+          versionNumber = "2.0",
           userType = "Individual",
           agentReferenceNumber = None,
           params = Map("nino" -> nino, "taxYear" -> taxYear),

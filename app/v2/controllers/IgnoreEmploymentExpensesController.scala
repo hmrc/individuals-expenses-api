@@ -21,7 +21,7 @@ import api.hateoas.HateoasFactory
 import api.services.{AuditService, EnrolmentsAuthService, MtdIdLookupService}
 import config.{AppConfig, FeatureSwitches}
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
-import routing.{Version, Version1}
+import routing.{Version, Version2}
 import utils.IdGenerator
 import v2.controllers.validators.IgnoreEmploymentExpensesValidatorFactory
 import v2.models.response.ignoreEmploymentExpenses.IgnoreEmploymentExpensesHateoasData
@@ -60,7 +60,7 @@ class IgnoreEmploymentExpensesController @Inject() (val authService: EnrolmentsA
         .withAuditing(AuditHandler(
           auditService = auditService,
           auditType = "IgnoreEmploymentExpenses",
-          apiVersion = Version.from(request, orElse = Version1),
+          apiVersion = Version.from(request, orElse = Version2),
           transactionName = "ignore-employment-expenses",
           params = Map("nino" -> nino, "taxYear" -> taxYear),
           includeResponse = true

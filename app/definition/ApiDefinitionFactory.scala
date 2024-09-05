@@ -18,7 +18,7 @@ package definition
 
 import config.AppConfig
 import play.api.Logger
-import routing.{Version, Version1, Version2}
+import routing.{Version, Version2}
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 
 import javax.inject.{Inject, Singleton}
@@ -58,11 +58,6 @@ class ApiDefinitionFactory @Inject() (appConfig: AppConfig) {
         context = appConfig.apiGatewayContext,
         categories = List("INCOME_TAX_MTD"),
         versions = List(
-          APIVersion(
-            version = Version1,
-            status = buildAPIStatus(Version1),
-            endpointsEnabled = appConfig.endpointsEnabled(Version1)
-          ),
           APIVersion(
             version = Version2,
             status = buildAPIStatus(Version2),
