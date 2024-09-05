@@ -29,7 +29,7 @@ class OasFeatureRewriterSpec extends UnitSpec with MockAppConfig {
       "oasFeature.enabled" -> oasFeatureEnabled
     )
 
-    MockedAppConfig.endpointsEnabled("1.0").anyNumberOfTimes() returns versionEnabled
+    MockedAppConfig.endpointsEnabled("2.0").anyNumberOfTimes() returns versionEnabled
 
     val rewriter = new OasFeatureRewriter()(mockAppConfig)
     rewriter.rewriteOasFeature.asTuple
@@ -38,17 +38,17 @@ class OasFeatureRewriterSpec extends UnitSpec with MockAppConfig {
   "check and rewrite" should {
 
     "indicate whether it wants to rewrite the file" when {
-      "1.0 endpoints are disabled" in {
+      "2.0 endpoints are disabled" in {
         val (check, _) = setupCheckAndRewrite(oasFeatureEnabled = true, versionEnabled = false)
 
-        val result = check("1.0", "any-file.yaml")
+        val result = check("2.0", "any-file.yaml")
         result shouldBe false
       }
 
-      "1.0 endpoints are enabled" in {
+      "2.0 endpoints are enabled" in {
         val (check, _) = setupCheckAndRewrite(oasFeatureEnabled = true, versionEnabled = true)
 
-        val result = check("1.0", "any-file.yaml")
+        val result = check("2.0", "any-file.yaml")
         result shouldBe true
       }
     }

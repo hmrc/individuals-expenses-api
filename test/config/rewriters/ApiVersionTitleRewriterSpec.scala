@@ -27,15 +27,15 @@ class ApiVersionTitleRewriterSpec extends UnitSpec with MockAppConfig {
   "ApiVersionTitleRewriter" when {
     "checking if rewrite is needed for a given version" should {
       "indicate rewrite needed when API endpoints are disabled in production" in {
-        MockedAppConfig.apiVersionReleasedInProduction("1.0") returns false
-        val result = checkAndRewrite.check("1.0", "application.yaml")
+        MockedAppConfig.apiVersionReleasedInProduction("2.0") returns false
+        val result = checkAndRewrite.check("2.0", "application.yaml")
         result shouldBe true
       }
 
       "indicate rewrite not needed for any other combination" in {
-        MockedAppConfig.apiVersionReleasedInProduction("1.0") returns true
-        val result1 = checkAndRewrite.check("1.0", "application.yaml")
-        val result2 = checkAndRewrite.check("1.0", "some_other_file.yaml")
+        MockedAppConfig.apiVersionReleasedInProduction("2.0") returns true
+        val result1 = checkAndRewrite.check("2.0", "application.yaml")
+        val result2 = checkAndRewrite.check("2.0", "some_other_file.yaml")
         result1 shouldBe false
         result2 shouldBe false
       }
@@ -54,7 +54,7 @@ class ApiVersionTitleRewriterSpec extends UnitSpec with MockAppConfig {
                     |openapi: "3.0.3"
                     |
                     |info:
-                    |  version: "1.0"
+                    |  version: "2.0"
                     |  title: Individuals Expenses (MTD)
                     |  description: |
                     |    # Send fraud prevention data
@@ -69,7 +69,7 @@ class ApiVersionTitleRewriterSpec extends UnitSpec with MockAppConfig {
                     |openapi: "3.0.3"
                     |
                     |info:
-                    |  version: "1.0"
+                    |  version: "2.0"
                     |  title: "Individuals Expenses (MTD) [test only]"
                     |  description: |
                     |    # Send fraud prevention data

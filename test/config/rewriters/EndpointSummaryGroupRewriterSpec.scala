@@ -106,7 +106,7 @@ class EndpointSummaryGroupRewriterSpec extends UnitSpec with MockAppConfig {
                   |
                   |""".stripMargin
 
-        val result = checkAndRewrite.rewrite(path = "/public/api/conf/1.0", filename = "employment_expenses.yaml", yaml)
+        val result = checkAndRewrite.rewrite(path = "/public/api/conf/2.0", filename = "employment_expenses.yaml", yaml)
         result shouldBe expected
       }
 
@@ -139,7 +139,7 @@ class EndpointSummaryGroupRewriterSpec extends UnitSpec with MockAppConfig {
             |
             |""".stripMargin
 
-        val result = checkAndRewrite.rewrite("/public/api/conf/1.0", "employment_expenses.yaml", yaml)
+        val result = checkAndRewrite.rewrite("/public/api/conf/2.0", "employment_expenses.yaml", yaml)
         result shouldBe yaml
 
       }
@@ -158,7 +158,7 @@ class EndpointSummaryGroupRewriterSpec extends UnitSpec with MockAppConfig {
              |""".stripMargin
 
         val exception = intercept[HandlebarsException] {
-          checkAndRewrite.rewrite("/public/api/conf/1.0", "employment_expenses.yaml", yaml)
+          checkAndRewrite.rewrite("/public/api/conf/2.0", "employment_expenses.yaml", yaml)
         }
 
         val cause = exception.getCause
