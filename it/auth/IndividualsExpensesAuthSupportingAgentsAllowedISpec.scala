@@ -23,7 +23,7 @@ import play.api.libs.ws.{WSRequest, WSResponse}
 
 class IndividualsExpensesAuthSupportingAgentsAllowedISpec extends AuthSupportingAgentsAllowedISpec {
 
-  override protected val callingApiVersion = "1.0"
+  override protected val callingApiVersion = "2.0"
   private val taxYear                      = TaxYear.fromMtd("2019-20")
 
   override protected val supportingAgentsAllowedEndpoint = "ignore-employment-expenses"

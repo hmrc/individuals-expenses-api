@@ -26,8 +26,8 @@ class VersionSpec extends UnitSpec {
 
   "serialized to Json" must {
     "return the expected Json output" in {
-      val version: Version = Version1
-      val expected         = Json.parse(""" "1.0" """)
+      val version: Version = Version2
+      val expected         = Json.parse(""" "2.0" """)
       val result           = Json.toJson(version)
       result shouldBe expected
     }
@@ -54,13 +54,6 @@ class VersionSpec extends UnitSpec {
   }
 
   "VersionReads" should {
-    "successfully read Version1" in {
-      val versionJson: JsValue      = JsString(Version1.name)
-      val result: JsResult[Version] = VersionReads.reads(versionJson)
-
-      result shouldEqual JsSuccess(Version1)
-    }
-
     "successfully read Version2" in {
       val versionJson: JsValue      = JsString(Version2.name)
       val result: JsResult[Version] = VersionReads.reads(versionJson)
