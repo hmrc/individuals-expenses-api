@@ -32,9 +32,11 @@ trait HttpParser {
     def validateJson[T](implicit reads: Reads[T]): Option[T] = {
       Try(response.json) match {
         case Success(json: JsValue) => parseResult(json)
+        // $COVERAGE-OFF$
         case _ =>
           logger.warn("[KnownJsonResponse][validateJson] No JSON was returned")
           None
+        // $COVERAGE-ON$
       }
     }
 
