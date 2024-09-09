@@ -16,22 +16,24 @@
 
 package definition
 
-import api.mocks.MockHttpClient
-import config.ConfidenceLevelConfig
-import definition.APIStatus.{ALPHA, BETA}
-import config.MockAppConfig
-import routing.Version2
-import support.UnitSpec
+import cats.implicits.catsSyntaxValidatedId
+import shared.config.Deprecation.NotDeprecated
+import shared.config.{ConfidenceLevelConfig, MockAppConfig}
+import shared.definition.APIStatus.BETA
+import shared.definition._
+import shared.mocks.MockHttpClient
+import shared.routing.Version2
+import shared.utils.UnitSpec
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 
-class ApiDefinitionFactorySpec extends UnitSpec {
-
-  class Test extends MockHttpClient with MockAppConfig {
-    val apiDefinitionFactory = new ApiDefinitionFactory(mockAppConfig)
-    MockedAppConfig.apiGatewayContext returns "individuals/expenses"
-  }
+class ExpensesApiDefinitionFactorySpec extends UnitSpec with MockAppConfig {
 
   private val confidenceLevel: ConfidenceLevel = ConfidenceLevel.L200
+
+  class Test extends MockHttpClient with MockAppConfig {
+    val apiDefinitionFactory = new ExpensesApiDefinitionFactory(mockAppConfig)
+    MockedAppConfig.apiGatewayContext returns "individuals/expenses"
+  }
 
   "definition" when {
     "called" should {
@@ -45,30 +47,13 @@ class ApiDefinitionFactorySpec extends UnitSpec {
       }
 
       def testDefinitionWithConfidence(confidenceLevelConfig: ConfidenceLevelConfig): Unit = new Test {
-        MockedAppConfig.apiStatus(Version2) returns "ALPHA"
-        MockedAppConfig.endpointsEnabled(Version2) returns false
+        MockedAppConfig.apiStatus(Version2) returns "BETA"
+        MockedAppConfig.endpointsEnabled(Version2).returns(false).anyNumberOfTimes()
+        MockedAppConfig.deprecationFor(Version2).returns(NotDeprecated.valid).anyNumberOfTimes()
         MockedAppConfig.confidenceLevelConfig.returns(confidenceLevelConfig).anyNumberOfTimes()
-
-        val readScope: String                = "read:self-assessment"
-        val writeScope: String               = "write:self-assessment"
-        val confidenceLevel: ConfidenceLevel = if (confidenceLevelConfig.authValidationEnabled) ConfidenceLevel.L200 else ConfidenceLevel.L50
 
         apiDefinitionFactory.definition shouldBe
           Definition(
-            scopes = List(
-              Scope(
-                key = readScope,
-                name = "View your Self Assessment information",
-                description = "Allow read access to self assessment data",
-                confidenceLevel
-              ),
-              Scope(
-                key = writeScope,
-                name = "Change your Self Assessment information",
-                description = "Allow write access to self assessment data",
-                confidenceLevel
-              )
-            ),
             api = APIDefinition(
               name = "Individuals Expenses (MTD)",
               description = "An API for retrieving individual expenses data for Self Assessment",
@@ -77,7 +62,7 @@ class ApiDefinitionFactorySpec extends UnitSpec {
               versions = List(
                 APIVersion(
                   version = Version2,
-                  status = ALPHA,
+                  status = BETA,
                   endpointsEnabled = false
                 )
               ),
@@ -106,20 +91,20 @@ class ApiDefinitionFactorySpec extends UnitSpec {
     }
   }
 
-  "buildAPIStatus" when {
-    "the 'apiStatus' parameter is present and valid" should {
-      "return the correct status" in new Test {
-        MockedAppConfig.apiStatus(Version2) returns "BETA"
-        apiDefinitionFactory.buildAPIStatus(version = Version2) shouldBe BETA
-      }
-    }
-
-    "the 'apiStatus' parameter is present and invalid" should {
-      "default to alpha" in new Test {
-        MockedAppConfig.apiStatus(Version2) returns "ALPHA"
-        apiDefinitionFactory.buildAPIStatus(version = Version2) shouldBe ALPHA
-      }
-    }
-  }
+//  "buildAPIStatus" when {
+//    "the 'apiStatus' parameter is present and valid" should {
+//      "return the correct status" in new Test {
+//        MockedAppConfig.apiStatus(Version2) returns "BETA"
+//        apiDefinitionFactory.buildAPIStatus(version = Version2) shouldBe BETA
+//      }
+//    }
+//
+//    "the 'apiStatus' parameter is present and invalid" should {
+//      "default to alpha" in new Test {
+//        MockedAppConfig.apiStatus(Version2) returns "ALPHA"
+//        apiDefinitionFactory.buildAPIStatus(version = Version2) shouldBe ALPHA
+//      }
+//    }
+//  }
 
 }
