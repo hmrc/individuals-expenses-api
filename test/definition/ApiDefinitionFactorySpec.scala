@@ -49,26 +49,8 @@ class ApiDefinitionFactorySpec extends UnitSpec {
         MockedAppConfig.endpointsEnabled(Version2) returns false
         MockedAppConfig.confidenceLevelConfig.returns(confidenceLevelConfig).anyNumberOfTimes()
 
-        val readScope: String                = "read:self-assessment"
-        val writeScope: String               = "write:self-assessment"
-        val confidenceLevel: ConfidenceLevel = if (confidenceLevelConfig.authValidationEnabled) ConfidenceLevel.L200 else ConfidenceLevel.L50
-
         apiDefinitionFactory.definition shouldBe
           Definition(
-            scopes = List(
-              Scope(
-                key = readScope,
-                name = "View your Self Assessment information",
-                description = "Allow read access to self assessment data",
-                confidenceLevel
-              ),
-              Scope(
-                key = writeScope,
-                name = "Change your Self Assessment information",
-                description = "Allow write access to self assessment data",
-                confidenceLevel
-              )
-            ),
             api = APIDefinition(
               name = "Individuals Expenses (MTD)",
               description = "An API for retrieving individual expenses data for Self Assessment",
