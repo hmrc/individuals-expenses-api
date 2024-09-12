@@ -129,7 +129,8 @@ class CreateAndAmendEmploymentExpensesValidatorFactorySpec extends UnitSpec with
       }
 
       "the taxYear has not ended and temporal validation is enabled" in {
-        val result = validator(validNino, "2023-24", validBody()).validateAndWrapResult()
+        val currentTaxYear = TaxYear.now.asMtd
+        val result         = validator(validNino, currentTaxYear, validBody()).validateAndWrapResult()
         result shouldBe Left(ErrorWrapper(correlationId, RuleTaxYearNotEndedError))
       }
 

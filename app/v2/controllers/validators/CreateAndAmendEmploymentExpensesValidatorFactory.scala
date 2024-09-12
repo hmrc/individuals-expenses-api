@@ -45,7 +45,7 @@ class CreateAndAmendEmploymentExpensesValidatorFactory @Inject() (implicit clock
 
       private lazy val resolvedTaxYear = {
         ResolveTaxYearMinimum(minimumTaxYear)(taxYear) andThen { parsedTaxYear =>
-          if (!temporalValidationEnabled) ResolveIncompleteTaxYear().resolver(taxYear) else Valid(parsedTaxYear)
+          if (temporalValidationEnabled) ResolveIncompleteTaxYear().resolver(taxYear) else Valid(parsedTaxYear)
         }
       }
 
