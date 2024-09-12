@@ -16,7 +16,7 @@
 
 package api.models.domain
 
-import api.models.downstream.DownstreamSource
+import common.domain.{DownstreamSource, MtdSource}
 import support.UnitSpec
 import utils.enums.EnumJsonSpecSupport
 

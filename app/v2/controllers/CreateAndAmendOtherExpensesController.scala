@@ -16,14 +16,14 @@
 
 package v2.controllers
 
-import api.controllers._
-import api.hateoas.HateoasFactory
-import api.services.{AuditService, EnrolmentsAuthService, MtdIdLookupService}
 import play.api.libs.json.JsValue
 import play.api.mvc.{Action, ControllerComponents}
-import config.AppConfig
-import routing.{Version, Version2}
-import utils.IdGenerator
+import shared.config.AppConfig
+import shared.controllers._
+import shared.hateoas.HateoasFactory
+import shared.routing.Version2
+import shared.services.{AuditService, EnrolmentsAuthService, MtdIdLookupService}
+import shared.utils.IdGenerator
 import v2.controllers.validators.CreateAndAmendOtherExpensesValidatorFactory
 import v2.models.response.createAndAmendOtherExpenses.CreateAndAmendOtherExpensesHateoasData
 import v2.models.response.createAndAmendOtherExpenses.CreateAndAmendOtherExpensesResponse.CreateAndAmendOtherExpensesLinksFactory
@@ -60,7 +60,7 @@ class CreateAndAmendOtherExpensesController @Inject() (val authService: Enrolmen
           auditService = auditService,
           auditType = "CreateAmendOtherExpenses",
           transactionName = "create-amend-other-expenses",
-          apiVersion = Version.from(request, orElse = Version2),
+          apiVersion = Version2,
           params = Map("nino" -> nino, "taxYear" -> taxYear),
           requestBody = Some(request.body),
           includeResponse = true

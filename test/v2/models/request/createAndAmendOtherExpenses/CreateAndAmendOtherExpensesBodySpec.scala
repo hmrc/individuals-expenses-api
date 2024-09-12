@@ -16,23 +16,23 @@
 
 package v2.models.request.createAndAmendOtherExpenses
 
-import api.models.utils.JsonErrorValidators
+import shared.models.utils.JsonErrorValidators
 import play.api.libs.json.Json
-import support.UnitSpec
+import shared.utils.UnitSpec
 
 class CreateAndAmendOtherExpensesBodySpec extends UnitSpec with JsonErrorValidators {
 
-  val createAndAmendOtherExpensesBody = CreateAndAmendOtherExpensesBody(
+  private val createAndAmendOtherExpensesBody = CreateAndAmendOtherExpensesBody(
     Some(PaymentsToTradeUnionsForDeathBenefits(Some("TRADE UNION PAYMENTS"), 2314.32)),
     Some(PatentRoyaltiesPayments(Some("ROYALTIES PAYMENTS"), 2314.32)))
 
-  val createAndAmendOtherExpensesBodyWithoutPatents =
+  private val createAndAmendOtherExpensesBodyWithoutPatents =
     CreateAndAmendOtherExpensesBody(Some(PaymentsToTradeUnionsForDeathBenefits(Some("TRADE UNION PAYMENTS"), 2314.32)), None)
 
-  val createAndAmendOtherExpensesBodyWithoutPayments =
+  private val createAndAmendOtherExpensesBodyWithoutPayments =
     CreateAndAmendOtherExpensesBody(None, Some(PatentRoyaltiesPayments(Some("ROYALTIES PAYMENTS"), 2314.32)))
 
-  val json = Json.parse(
+  private val json = Json.parse(
     """{
       |  "paymentsToTradeUnionsForDeathBenefits": {
       |    "customerReference": "TRADE UNION PAYMENTS",
@@ -45,7 +45,7 @@ class CreateAndAmendOtherExpensesBodySpec extends UnitSpec with JsonErrorValidat
       |}""".stripMargin
   )
 
-  val patentsMissingJson = Json.parse(
+  private val patentsMissingJson = Json.parse(
     """{
       |  "paymentsToTradeUnionsForDeathBenefits": {
       |    "customerReference": "TRADE UNION PAYMENTS",
@@ -54,7 +54,7 @@ class CreateAndAmendOtherExpensesBodySpec extends UnitSpec with JsonErrorValidat
       |}""".stripMargin
   )
 
-  val paymentsMissingJson = Json.parse(
+  private val paymentsMissingJson = Json.parse(
     """{
       |  "patentRoyaltiesPayments":{
       |    "customerReference": "ROYALTIES PAYMENTS",

@@ -16,23 +16,23 @@
 
 package v2.models.request.createAndAmendOtherExpenses
 
-import api.models.utils.JsonErrorValidators
+import shared.models.utils.JsonErrorValidators
 import play.api.libs.json.Json
-import support.UnitSpec
+import shared.utils.UnitSpec
 
 class PaymentsToTradeUnionsForDeathBenefitsSpec extends UnitSpec with JsonErrorValidators {
 
-  val paymentsToTradeUnionsForDeathBenefits      = PaymentsToTradeUnionsForDeathBenefits(Some("TRADE UNION PAYMENTS"), 2314.32)
-  val emptyPaymentsToTradeUnionsForDeathBenefits = PaymentsToTradeUnionsForDeathBenefits(None, 2314.32)
+  private val paymentsToTradeUnionsForDeathBenefits      = PaymentsToTradeUnionsForDeathBenefits(Some("TRADE UNION PAYMENTS"), 2314.32)
+  private val emptyPaymentsToTradeUnionsForDeathBenefits = PaymentsToTradeUnionsForDeathBenefits(None, 2314.32)
 
-  val json = Json.parse(
+  private val json = Json.parse(
     """{
       |  "customerReference": "TRADE UNION PAYMENTS",
       |  "expenseAmount": 2314.32
       |}""".stripMargin
   )
 
-  val noReferenceJson = Json.parse(
+  private val noReferenceJson = Json.parse(
     """{
       |  "expenseAmount": 2314.32
       |}""".stripMargin

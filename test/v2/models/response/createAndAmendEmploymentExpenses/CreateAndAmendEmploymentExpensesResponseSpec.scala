@@ -16,10 +16,10 @@
 
 package v2.models.response.createAndAmendEmploymentExpenses
 
-import api.hateoas.Link
-import api.hateoas.Method.{DELETE, GET, PUT}
-import config.MockAppConfig
-import support.UnitSpec
+import shared.config.MockAppConfig
+import shared.hateoas.Link
+import shared.hateoas.Method.{DELETE, GET, PUT}
+import shared.utils.UnitSpec
 
 class CreateAndAmendEmploymentExpensesResponseSpec extends UnitSpec with MockAppConfig {
 

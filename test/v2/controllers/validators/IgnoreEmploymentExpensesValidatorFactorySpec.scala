@@ -16,12 +16,10 @@
 
 package v2.controllers.validators
 
-import api.models.domain.{Nino, TaxYear, TodaySupplier}
-import api.models.errors._
-import support.UnitSpec
+import shared.models.domain.{Nino, TaxYear}
+import shared.models.errors._
+import shared.utils.UnitSpec
 import v2.models.request.ignoreEmploymentExpenses.IgnoreEmploymentExpensesRequestData
-
-import java.time.LocalDate
 
 class IgnoreEmploymentExpensesValidatorFactorySpec extends UnitSpec {
 
@@ -33,9 +31,9 @@ class IgnoreEmploymentExpensesValidatorFactorySpec extends UnitSpec {
   private val parsedNino    = Nino(validNino)
   private val parsedTaxYear = TaxYear.fromMtd(validTaxYear)
 
-  implicit val todaySupplier: TodaySupplier = new TodaySupplier {
-    override def today(): LocalDate = LocalDate.parse("2022-07-11")
-  }
+//  implicit val todaySupplier: TodaySupplier = new TodaySupplier {
+//    override def today(): LocalDate = LocalDate.parse("2022-07-11")
+//  }
 
   private val validatorFactory = new IgnoreEmploymentExpensesValidatorFactory
 

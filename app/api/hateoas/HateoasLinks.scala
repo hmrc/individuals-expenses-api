@@ -16,9 +16,10 @@
 
 package api.hateoas
 
-import Method.{DELETE, GET, POST, PUT}
-import RelType._
-import config.AppConfig
+import api.hateoas.RelType._
+import shared.config.AppConfig
+import shared.hateoas.Link
+import shared.hateoas.Method._
 
 trait HateoasLinks {
 

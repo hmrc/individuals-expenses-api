@@ -14,14 +14,24 @@
  * limitations under the License.
  */
 
-package config
+package routing
 
-import com.google.inject.AbstractModule
+import play.api.routing.Router
+import shared.config.AppConfig
+import shared.routing._
 
-class DIModule extends AbstractModule {
+import javax.inject.{Inject, Singleton}
 
-  override def configure(): Unit = {
-    bind(classOf[AppConfig]).to(classOf[AppConfigImpl]).asEagerSingleton()
-  }
+@Singleton case class ExpensesVersionRoutingMap @Inject() (
+    appConfig: AppConfig,
+    defaultRouter: Router,
+    v2Router: v2.Routes
+) extends VersionRoutingMap {
+
+  /** Routes corresponding to available versions.
+    */
+  val map: Map[Version, Router] = Map(
+    Version2 -> v2Router
+  )
 
 }

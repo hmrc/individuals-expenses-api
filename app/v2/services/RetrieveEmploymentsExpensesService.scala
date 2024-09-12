@@ -16,10 +16,11 @@
 
 package v2.services
 
-import api.controllers.RequestContext
-import api.models.errors._
-import api.services.{BaseService, ServiceOutcome}
 import cats.implicits._
+import common.error.SourceFormatError
+import shared.controllers.RequestContext
+import shared.models.errors._
+import shared.services.{BaseService, ServiceOutcome}
 import v2.connectors.RetrieveEmploymentsExpensesConnector
 import v2.models.request.retrieveEmploymentExpenses.RetrieveEmploymentsExpensesRequestData
 import v2.models.response.retrieveEmploymentExpenses.RetrieveEmploymentsExpensesResponse

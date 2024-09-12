@@ -16,12 +16,12 @@
 
 package v2.controllers
 
-import api.controllers._
-import api.services.{AuditService, EnrolmentsAuthService, MtdIdLookupService}
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
-import config.AppConfig
-import routing.{Version, Version2}
-import utils.IdGenerator
+import shared.config.AppConfig
+import shared.controllers._
+import shared.routing.Version2
+import shared.services.{AuditService, EnrolmentsAuthService, MtdIdLookupService}
+import shared.utils.IdGenerator
 import v2.controllers.validators.DeleteOtherExpensesValidatorFactory
 import v2.services.DeleteOtherExpensesService
 
@@ -54,13 +54,14 @@ class DeleteOtherExpensesController @Inject() (val authService: EnrolmentsAuthSe
           .withValidator(validator)
           .withService(service.deleteOtherExpenses)
           .withNoContentResult()
-          .withAuditing(AuditHandler(
-            auditService,
-            auditType = "DeleteOtherExpenses",
-            transactionName = "delete-other-expenses",
-            apiVersion = Version.from(request, orElse = Version2),
-            params = Map("nino" -> nino, "taxYear" -> taxYear)
-          ))
+          .withAuditing(
+            AuditHandler(
+              auditService,
+              auditType = "DeleteOtherExpenses",
+              transactionName = "delete-other-expenses",
+              apiVersion = Version2,
+              params = Map("nino" -> nino, "taxYear" -> taxYear)
+            ))
 
       requestHandler.handleRequest()
 

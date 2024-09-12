@@ -16,10 +16,10 @@
 
 package v2.services
 
-import api.controllers.RequestContext
-import api.models.errors._
-import api.services.{BaseService, ServiceOutcome}
 import cats.implicits._
+import shared.controllers.RequestContext
+import shared.models.errors._
+import shared.services.{BaseService, ServiceOutcome}
 import v2.connectors.IgnoreEmploymentExpensesConnector
 import v2.models.request.ignoreEmploymentExpenses.IgnoreEmploymentExpensesRequestData
 

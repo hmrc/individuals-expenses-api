@@ -16,9 +16,9 @@
 
 package v2.connectors
 
-import api.connectors.DownstreamOutcome
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
+import shared.connectors.DownstreamOutcome
 import uk.gov.hmrc.http.HeaderCarrier
 import v2.models.request.retrieveOtherExpenses.RetrieveOtherExpensesRequestData
 import v2.models.response.retrieveOtherExpenses.RetrieveOtherExpensesResponse

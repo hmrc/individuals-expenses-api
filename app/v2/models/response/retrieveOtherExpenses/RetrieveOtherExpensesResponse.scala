@@ -16,10 +16,11 @@
 
 package v2.models.response.retrieveOtherExpenses
 
-import api.hateoas.{HateoasData, HateoasLinks, HateoasLinksFactory, Link}
-import api.models.domain.Timestamp
-import config.AppConfig
+import api.hateoas.HateoasLinks
 import play.api.libs.json.{Json, OFormat}
+import shared.config.AppConfig
+import shared.hateoas.{HateoasData, HateoasLinksFactory, Link}
+import shared.models.domain.Timestamp
 
 case class RetrieveOtherExpensesResponse(submittedOn: Timestamp,
                                          paymentsToTradeUnionsForDeathBenefits: Option[PaymentsToTradeUnionsForDeathBenefits],

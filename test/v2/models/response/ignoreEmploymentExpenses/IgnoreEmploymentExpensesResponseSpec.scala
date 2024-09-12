@@ -16,10 +16,10 @@
 
 package v2.models.response.ignoreEmploymentExpenses
 
-import api.hateoas.Link
-import api.hateoas.Method.{DELETE, GET}
-import config.MockAppConfig
-import support.UnitSpec
+import shared.config.MockAppConfig
+import shared.hateoas.Link
+import shared.hateoas.Method.{DELETE, GET}
+import shared.utils.UnitSpec
 
 class IgnoreEmploymentExpensesResponseSpec extends UnitSpec with MockAppConfig {
 

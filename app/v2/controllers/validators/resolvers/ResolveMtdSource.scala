@@ -16,21 +16,22 @@
 
 package v2.controllers.validators.resolvers
 
-import api.controllers.validators.resolvers.Resolver
-import api.models.domain.MtdSource
-import api.models.errors.{MtdError, SourceFormatError}
 import cats.data.Validated
 import cats.data.Validated.{Invalid, Valid}
+import common.domain.MtdSource
+import common.error.SourceFormatError
+import shared.controllers.validators.resolvers.ResolverSupport
+import shared.models.errors.MtdError
 
 import scala.util.{Failure, Success, Try}
 
-object ResolveMtdSource extends Resolver[String, MtdSource] {
+object ResolveMtdSource extends ResolverSupport {
 
-  def apply(value: String, error: Option[MtdError], path: Option[String]): Validated[Seq[MtdError], MtdSource] =
+  def apply(value: String): Validated[Seq[MtdError], MtdSource] =
     Try {
       MtdSource.parser(value)
     } match {
-      case Failure(_)         => Invalid(List(error.getOrElse(SourceFormatError)))
+      case Failure(_)         => Invalid(List(SourceFormatError))
       case Success(mtdSource) => Valid(mtdSource)
     }
 

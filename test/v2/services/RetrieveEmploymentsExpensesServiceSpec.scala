@@ -16,10 +16,12 @@
 
 package v2.services
 
-import api.models.domain.{MtdSource, Nino, TaxYear}
-import api.models.errors._
-import api.models.outcomes.ResponseWrapper
-import api.services.ServiceSpec
+import common.domain.MtdSource
+import common.error.SourceFormatError
+import shared.models.domain.{Nino, TaxYear}
+import shared.models.errors._
+import shared.models.outcomes.ResponseWrapper
+import shared.services.ServiceSpec
 import v2.connectors.MockRetrieveEmploymentsExpensesConnector
 import v2.fixtures.RetrieveEmploymentsExpensesFixtures._
 import v2.models.request.retrieveEmploymentExpenses.RetrieveEmploymentsExpensesRequestData

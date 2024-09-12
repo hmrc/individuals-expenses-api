@@ -16,9 +16,9 @@
 
 package v2.connectors
 
-import api.connectors.ConnectorSpec
-import api.models.domain.{Nino, TaxYear, Timestamp}
-import api.models.outcomes.ResponseWrapper
+import shared.connectors.ConnectorSpec
+import shared.models.domain.{Nino, TaxYear, Timestamp}
+import shared.models.outcomes.ResponseWrapper
 import v2.models.request.retrieveOtherExpenses.RetrieveOtherExpensesRequestData
 import v2.models.response.retrieveOtherExpenses.{PatentRoyaltiesPayments, PaymentsToTradeUnionsForDeathBenefits, RetrieveOtherExpensesResponse}
 

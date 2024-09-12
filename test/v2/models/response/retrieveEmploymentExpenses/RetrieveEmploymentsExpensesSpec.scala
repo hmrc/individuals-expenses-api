@@ -16,8 +16,8 @@
 
 package v2.models.response.retrieveEmploymentExpenses
 
-import api.models.utils.JsonErrorValidators
-import support.UnitSpec
+import shared.models.utils.JsonErrorValidators
+import shared.utils.UnitSpec
 import v2.fixtures.RetrieveEmploymentsExpensesFixtures._
 
 class RetrieveEmploymentsExpensesSpec extends UnitSpec with JsonErrorValidators {

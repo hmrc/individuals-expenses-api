@@ -16,9 +16,17 @@
 
 package config
 
-case class DownstreamConfig(
-    baseUrl: String,
-    env: String,
-    token: String,
-    environmentHeaders: Option[Seq[String]]
-)
+import com.google.inject.AbstractModule
+import definition.ExpensesApiDefinitionFactory
+import routing.ExpensesVersionRoutingMap
+import shared.definition.ApiDefinitionFactory
+import shared.routing.VersionRoutingMap
+
+class ExpensesPlayModule extends AbstractModule {
+
+  override def configure(): Unit = {
+    bind(classOf[ApiDefinitionFactory]).to(classOf[ExpensesApiDefinitionFactory]).asEagerSingleton()
+    bind(classOf[VersionRoutingMap]).to(classOf[ExpensesVersionRoutingMap]).asEagerSingleton()
+  }
+
+}

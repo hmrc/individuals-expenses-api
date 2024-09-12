@@ -16,14 +16,15 @@
 
 package v2.controllers
 
-import api.controllers._
-import api.hateoas.HateoasFactory
-import api.services.{AuditService, EnrolmentsAuthService, MtdIdLookupService}
-import config.{AppConfig, FeatureSwitches}
+import config.ExpensesFeatureSwitches
 import play.api.libs.json.JsValue
 import play.api.mvc.{Action, ControllerComponents}
-import routing.{Version, Version2}
-import utils.IdGenerator
+import shared.config.AppConfig
+import shared.controllers._
+import shared.hateoas.HateoasFactory
+import shared.routing.Version2
+import shared.services.{AuditService, EnrolmentsAuthService, MtdIdLookupService}
+import shared.utils.IdGenerator
 import v2.controllers.validators.CreateAndAmendEmploymentExpensesValidatorFactory
 import v2.models.response.createAndAmendEmploymentExpenses.CreateAndAmendEmploymentExpensesHateoasData
 import v2.models.response.createAndAmendEmploymentExpenses.CreateAndAmendEmploymentExpensesResponse.AmendOrderLinksFactory
@@ -52,7 +53,7 @@ class CreateAndAmendEmploymentExpensesController @Inject() (val authService: Enr
     authorisedAction(nino).async(parse.json) { implicit request =>
       implicit val ctx: RequestContext = RequestContext.from(idGenerator, endpointLogContext)
 
-      val temporalValidationEnabled = FeatureSwitches()(appConfig).isTemporalValidationEnabled
+      val temporalValidationEnabled = ExpensesFeatureSwitches()(appConfig).isTemporalValidationEnabled
       val validator                 = validatorFactory.validator(nino, taxYear, request.body, temporalValidationEnabled)
 
       val requestHandler = RequestHandler
@@ -62,7 +63,7 @@ class CreateAndAmendEmploymentExpensesController @Inject() (val authService: Enr
           auditService = auditService,
           auditType = "CreateAmendEmploymentExpenses",
           transactionName = "create-amend-employment-expenses",
-          apiVersion = Version.from(request, orElse = Version2),
+          apiVersion = Version2,
           params = Map("nino" -> nino, "taxYear" -> taxYear),
           requestBody = Some(request.body),
           includeResponse = true

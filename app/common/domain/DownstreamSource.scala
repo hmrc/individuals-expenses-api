@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package api.models.downstream
+package common.domain
 
-import api.models.domain.MtdSource
 import play.api.libs.json._
-import utils.enums.Enums
+import shared.utils.enums.Enums
 
 sealed trait DownstreamSource {
   def toMtd: MtdSource

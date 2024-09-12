@@ -130,6 +130,18 @@ trait ConnectorSpec extends UnitSpec with Status with MimeTypes with HeaderNames
     MockedAppConfig.ifsDownstreamConfig.anyNumberOfTimes() returns config
   }
 
+  protected trait IfsR5Test extends StandardConnectorTest {
+    override val name = "ifsR5"
+
+    MockedAppConfig.ifsR5DownstreamConfig.anyNumberOfTimes() returns config
+  }
+
+  protected trait IfsR6Test extends StandardConnectorTest {
+    override val name = "ifsR6"
+
+    MockedAppConfig.ifsR6DownstreamConfig.anyNumberOfTimes() returns config
+  }
+
   protected trait TysIfsTest extends StandardConnectorTest {
     override val name = "tys-ifs"
 

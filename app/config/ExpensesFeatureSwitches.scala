@@ -16,13 +16,24 @@
 
 package config
 
+import org.apache.commons.lang3.BooleanUtils
 import play.api.Configuration
+import play.api.mvc.Request
 import shared.config.{AppConfig, FeatureSwitches}
 
 case class ExpensesFeatureSwitches private (protected val featureSwitchConfig: Configuration) extends FeatureSwitches {
 
   def isIfsEnabled: Boolean      = isEnabled("ifs")
   def isIfsInProduction: Boolean = isReleasedInProduction("ifs")
+
+  def isTemporalValidationEnabled(implicit request: Request[_]): Boolean = {
+    if (isEnabled("allowTemporalValidationSuspension")) {
+      request.headers.get("suspend-temporal-validations").forall(!BooleanUtils.toBoolean(_))
+    } else {
+      true
+    }
+  }
+
 }
 
 object ExpensesFeatureSwitches {

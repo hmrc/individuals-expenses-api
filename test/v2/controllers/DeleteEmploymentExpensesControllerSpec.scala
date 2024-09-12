@@ -16,21 +16,21 @@
 
 package v2.controllers
 
-import api.controllers.{ControllerBaseSpec, ControllerTestRunner}
-import api.models.audit.{AuditEvent, AuditResponse, GenericAuditDetail}
-import api.models.domain.{Nino, TaxYear}
-import api.models.errors._
-import api.models.outcomes.ResponseWrapper
+import play.api.Configuration
 import play.api.libs.json.JsValue
 import play.api.mvc.Result
-import play.api.Configuration
+import shared.config.MockAppConfig
+import shared.controllers.{ControllerBaseSpec, ControllerTestRunner}
+import shared.models.audit.{AuditEvent, AuditResponse, GenericAuditDetail}
+import shared.models.domain.{Nino, TaxYear}
+import shared.models.errors._
+import shared.models.outcomes.ResponseWrapper
 import v2.controllers.validators.MockDeleteEmploymentExpensesValidatorFactory
 import v2.models.request.deleteEmploymentExpenses.DeleteEmploymentExpensesRequestData
 import v2.services.MockDeleteEmploymentExpensesService
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import config.MockAppConfig
 
 class DeleteEmploymentExpensesControllerSpec
     extends ControllerBaseSpec
@@ -41,14 +41,14 @@ class DeleteEmploymentExpensesControllerSpec
 
   private val taxYear = "2019-20"
 
-  private val requestData = DeleteEmploymentExpensesRequestData(Nino(nino), TaxYear.fromMtd(taxYear))
+  private val requestData = DeleteEmploymentExpensesRequestData(Nino(validNino), TaxYear.fromMtd(taxYear))
 
   "handleRequest" should {
     "return a successful response with status 204 (No Content)" when {
       "a valid request is supplied" in new Test {
         willUseValidator(returningSuccess(requestData))
 
-        MockedAppConfig.featureSwitches.anyNumberOfTimes() returns Configuration(
+        MockedAppConfig.featureSwitchConfig.anyNumberOfTimes() returns Configuration(
           "supporting-agents-access-control.enabled" -> true
         )
 
@@ -64,7 +64,7 @@ class DeleteEmploymentExpensesControllerSpec
 
     "return the error as per spec" when {
       "the parser validation fails" in new Test {
-        MockedAppConfig.featureSwitches.anyNumberOfTimes() returns Configuration(
+        MockedAppConfig.featureSwitchConfig.anyNumberOfTimes() returns Configuration(
           "supporting-agents-access-control.enabled" -> true
         )
 
@@ -76,7 +76,7 @@ class DeleteEmploymentExpensesControllerSpec
       }
 
       "service returns an error" in new Test {
-        MockedAppConfig.featureSwitches.anyNumberOfTimes() returns Configuration(
+        MockedAppConfig.featureSwitchConfig.anyNumberOfTimes() returns Configuration(
           "supporting-agents-access-control.enabled" -> true
         )
 
@@ -93,7 +93,7 @@ class DeleteEmploymentExpensesControllerSpec
     }
   }
 
-  trait Test extends ControllerTest with AuditEventChecking {
+  trait Test extends ControllerTest with AuditEventChecking[GenericAuditDetail] {
 
     val controller = new DeleteEmploymentExpensesController(
       authService = mockEnrolmentsAuthService,
@@ -105,7 +105,7 @@ class DeleteEmploymentExpensesControllerSpec
       idGenerator = mockIdGenerator
     )
 
-    protected def callController(): Future[Result] = controller.handleRequest(nino, taxYear)(fakeDeleteRequest)
+    protected def callController(): Future[Result] = controller.handleRequest(validNino, taxYear)(fakeRequest)
 
     def event(auditResponse: AuditResponse, maybeRequestBody: Option[JsValue]): AuditEvent[GenericAuditDetail] =
       AuditEvent(
@@ -115,7 +115,7 @@ class DeleteEmploymentExpensesControllerSpec
           versionNumber = "2.0",
           userType = "Individual",
           agentReferenceNumber = None,
-          params = Map("nino" -> nino, "taxYear" -> taxYear),
+          params = Map("nino" -> validNino, "taxYear" -> taxYear),
           requestBody = maybeRequestBody,
           `X-CorrelationId` = correlationId,
           auditResponse = auditResponse

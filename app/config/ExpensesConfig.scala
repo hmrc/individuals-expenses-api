@@ -17,13 +17,30 @@
 package config
 
 import play.api.Configuration
-import shared.config.FeatureSwitches
+import shared.config.{DownstreamConfig, FeatureSwitches}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import javax.inject.{Inject, Singleton}
 
 @Singleton
 class ExpensesConfig @Inject() (config: ServicesConfig, configuration: Configuration) {
+
+  private def serviceKeyFor(serviceName: String) = s"microservice.services.$serviceName"
+
+  protected def downstreamConfig(serviceName: String): DownstreamConfig = {
+    val baseUrl = config.baseUrl(serviceName)
+
+    val serviceKey = serviceKeyFor(serviceName)
+
+    val env                = config.getString(s"$serviceKey.env")
+    val token              = config.getString(s"$serviceKey.token")
+    val environmentHeaders = configuration.getOptional[Seq[String]](s"$serviceKey.environmentHeaders")
+
+    DownstreamConfig(baseUrl, env, token, environmentHeaders)
+  }
+
+  def ifsR5DownstreamConfig: DownstreamConfig = downstreamConfig("ifsR5")
+  def ifsR6DownstreamConfig: DownstreamConfig = downstreamConfig("ifsR6")
 
   def featureSwitchConfig: Configuration = configuration.getOptional[Configuration](s"feature-switch").getOrElse(Configuration.empty)
 

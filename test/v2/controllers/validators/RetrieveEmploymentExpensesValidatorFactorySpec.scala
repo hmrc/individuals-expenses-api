@@ -16,17 +16,11 @@
 
 package v2.controllers.validators
 
-import api.models.domain.{MtdSource, Nino, TaxYear}
-import api.models.errors.{
-  BadRequestError,
-  ErrorWrapper,
-  NinoFormatError,
-  RuleTaxYearNotSupportedError,
-  RuleTaxYearRangeInvalidError,
-  SourceFormatError,
-  TaxYearFormatError
-}
-import support.UnitSpec
+import common.domain.MtdSource
+import common.error.SourceFormatError
+import shared.models.domain.{Nino, TaxYear}
+import shared.models.errors._
+import shared.utils.UnitSpec
 import v2.models.request.retrieveEmploymentExpenses.RetrieveEmploymentsExpensesRequestData
 
 class RetrieveEmploymentExpensesValidatorFactorySpec extends UnitSpec {

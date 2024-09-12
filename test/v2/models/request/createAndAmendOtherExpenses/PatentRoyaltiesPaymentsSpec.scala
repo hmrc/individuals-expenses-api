@@ -16,23 +16,23 @@
 
 package v2.models.request.createAndAmendOtherExpenses
 
-import api.models.utils.JsonErrorValidators
+import shared.models.utils.JsonErrorValidators
 import play.api.libs.json.Json
-import support.UnitSpec
+import shared.utils.UnitSpec
 
 class PatentRoyaltiesPaymentsSpec extends UnitSpec with JsonErrorValidators {
 
-  val patentRoyaltiesPayments      = PatentRoyaltiesPayments(Some("ROYALTIES PAYMENT"), 2314.32)
-  val emptyPatentRoyaltiesPayments = PatentRoyaltiesPayments(None, 2314.32)
+  private val patentRoyaltiesPayments      = PatentRoyaltiesPayments(Some("ROYALTIES PAYMENT"), 2314.32)
+  private val emptyPatentRoyaltiesPayments = PatentRoyaltiesPayments(None, 2314.32)
 
-  val json = Json.parse(
+  private val json = Json.parse(
     """{
       |  "customerReference": "ROYALTIES PAYMENT",
       |  "expenseAmount": 2314.32
       |}""".stripMargin
   )
 
-  val noReferenceJson = Json.parse(
+  private val noReferenceJson = Json.parse(
     """{
       |  "expenseAmount": 2314.32
       |}""".stripMargin

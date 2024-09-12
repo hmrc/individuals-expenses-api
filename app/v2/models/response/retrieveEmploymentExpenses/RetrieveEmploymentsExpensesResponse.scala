@@ -16,12 +16,13 @@
 
 package v2.models.response.retrieveEmploymentExpenses
 
-import api.hateoas.{HateoasData, HateoasLinks, HateoasLinksFactory, Link}
-import api.models.domain.{MtdSource, Timestamp}
-import api.models.downstream.DownstreamSource
-import config.AppConfig
+import api.hateoas.HateoasLinks
+import common.domain.{DownstreamSource, MtdSource}
 import play.api.libs.functional.syntax._
 import play.api.libs.json.{JsPath, Json, OWrites, Reads}
+import shared.config.AppConfig
+import shared.hateoas.{HateoasData, HateoasLinksFactory, Link}
+import shared.models.domain.Timestamp
 
 case class RetrieveEmploymentsExpensesResponse(submittedOn: Option[Timestamp],
                                                totalExpenses: Option[BigDecimal],

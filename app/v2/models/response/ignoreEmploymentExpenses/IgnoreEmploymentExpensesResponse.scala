@@ -16,8 +16,9 @@
 
 package v2.models.response.ignoreEmploymentExpenses
 
-import api.hateoas.{HateoasData, HateoasLinks, HateoasLinksFactory, Link}
-import config.AppConfig
+import api.hateoas.HateoasLinks
+import shared.config.AppConfig
+import shared.hateoas.{HateoasData, HateoasLinksFactory, Link}
 
 object IgnoreEmploymentExpensesResponse extends HateoasLinks {
 

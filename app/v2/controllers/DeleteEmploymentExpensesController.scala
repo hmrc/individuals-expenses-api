@@ -16,12 +16,12 @@
 
 package v2.controllers
 
-import api.controllers._
-import api.services.{AuditService, EnrolmentsAuthService, MtdIdLookupService}
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
-import config.AppConfig
-import routing.{Version, Version2}
-import utils.IdGenerator
+import shared.config.AppConfig
+import shared.controllers._
+import shared.routing.Version2
+import shared.services.{AuditService, EnrolmentsAuthService, MtdIdLookupService}
+import shared.utils.IdGenerator
 import v2.controllers.validators.DeleteEmploymentExpensesValidatorFactory
 import v2.services.DeleteEmploymentExpensesService
 
@@ -58,7 +58,7 @@ class DeleteEmploymentExpensesController @Inject() (val authService: EnrolmentsA
             auditService,
             auditType = "DeleteEmploymentExpenses",
             transactionName = "delete-employment-expenses",
-            apiVersion = Version.from(request, orElse = Version2),
+            apiVersion = Version2,
             params = Map("nino" -> nino, "taxYear" -> taxYear)
           ))
 

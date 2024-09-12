@@ -16,14 +16,16 @@
 
 package v2.controllers
 
-import api.controllers.{ControllerBaseSpec, ControllerTestRunner}
-import api.hateoas.Method.{DELETE, GET, POST, PUT}
-import api.hateoas.{HateoasWrapper, Link, MockHateoasFactory}
-import api.models.domain.{MtdSource, Nino, TaxYear}
-import api.models.errors._
-import api.models.outcomes.ResponseWrapper
-import play.api.mvc.Result
+import common.domain.MtdSource
 import play.api.Configuration
+import play.api.mvc.Result
+import shared.config.MockAppConfig
+import shared.controllers.{ControllerBaseSpec, ControllerTestRunner}
+import shared.hateoas.Method.{DELETE, GET, POST, PUT}
+import shared.hateoas.{HateoasWrapper, Link, MockHateoasFactory}
+import shared.models.domain.{Nino, TaxYear}
+import shared.models.errors._
+import shared.models.outcomes.ResponseWrapper
 import v2.controllers.validators.MockRetrieveEmploymentExpensesValidatorFactory
 import v2.fixtures.RetrieveEmploymentsExpensesFixtures._
 import v2.models.request.retrieveEmploymentExpenses.RetrieveEmploymentsExpensesRequestData
@@ -32,7 +34,6 @@ import v2.services.MockRetrieveEmploymentsExpensesService
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import config.MockAppConfig
 
 class RetrieveEmploymentsExpensesControllerSpec
     extends ControllerBaseSpec
@@ -45,13 +46,13 @@ class RetrieveEmploymentsExpensesControllerSpec
   private val taxYear = "2019-20"
   private val source  = MtdSource.`latest`
 
-  private val requestData = RetrieveEmploymentsExpensesRequestData(Nino(nino), TaxYear.fromMtd(taxYear), source)
+  private val requestData = RetrieveEmploymentsExpensesRequestData(Nino(validNino), TaxYear.fromMtd(taxYear), source)
 
   private val testHateoasLinks = List(
-    Link(href = s"/individuals/expenses/employments/$nino/$taxYear", method = PUT, rel = "amend-employment-expenses"),
-    Link(href = s"/individuals/expenses/employments/$nino/$taxYear", method = GET, rel = "self"),
-    Link(href = s"/individuals/expenses/employments/$nino/$taxYear", method = DELETE, rel = "delete-employment-expenses"),
-    Link(href = s"/individuals/expenses/employments/$nino/$taxYear/ignore", method = POST, rel = "ignore-employment-expenses")
+    Link(href = s"/individuals/expenses/employments/$validNino/$taxYear", method = PUT, rel = "amend-employment-expenses"),
+    Link(href = s"/individuals/expenses/employments/$validNino/$taxYear", method = GET, rel = "self"),
+    Link(href = s"/individuals/expenses/employments/$validNino/$taxYear", method = DELETE, rel = "delete-employment-expenses"),
+    Link(href = s"/individuals/expenses/employments/$validNino/$taxYear/ignore", method = POST, rel = "ignore-employment-expenses")
   )
 
   private val responseBodyJson = mtdResponseWithHateoasLinksLatest(taxYear)
@@ -61,7 +62,7 @@ class RetrieveEmploymentsExpensesControllerSpec
       "given a valid request" in new Test {
         willUseValidator(returningSuccess(requestData))
 
-        MockedAppConfig.featureSwitches.anyNumberOfTimes() returns Configuration(
+        MockedAppConfig.featureSwitchConfig.anyNumberOfTimes() returns Configuration(
           "supporting-agents-access-control.enabled" -> true
         )
 
@@ -72,7 +73,7 @@ class RetrieveEmploymentsExpensesControllerSpec
           .returns(Future.successful(Right(ResponseWrapper(correlationId, responseModelLatest))))
 
         MockHateoasFactory
-          .wrap(responseModelLatest, RetrieveEmploymentsExpensesHateoasData(nino, taxYear, source.toString))
+          .wrap(responseModelLatest, RetrieveEmploymentsExpensesHateoasData(validNino, taxYear, source.toString))
           .returns(HateoasWrapper(responseModelLatest, testHateoasLinks))
 
         runOkTest(
@@ -84,7 +85,7 @@ class RetrieveEmploymentsExpensesControllerSpec
 
     "return the error as per spec" when {
       "the parser validation fails" in new Test {
-        MockedAppConfig.featureSwitches.anyNumberOfTimes() returns Configuration(
+        MockedAppConfig.featureSwitchConfig.anyNumberOfTimes() returns Configuration(
           "supporting-agents-access-control.enabled" -> true
         )
 
@@ -97,7 +98,7 @@ class RetrieveEmploymentsExpensesControllerSpec
       }
 
       "the service returns an error" in new Test {
-        MockedAppConfig.featureSwitches.anyNumberOfTimes() returns Configuration(
+        MockedAppConfig.featureSwitchConfig.anyNumberOfTimes() returns Configuration(
           "supporting-agents-access-control.enabled" -> true
         )
 
@@ -126,7 +127,7 @@ class RetrieveEmploymentsExpensesControllerSpec
       idGenerator = mockIdGenerator
     )
 
-    protected def callController(): Future[Result] = controller.handleRequest(nino, taxYear, source.toString)(fakeGetRequest)
+    protected def callController(): Future[Result] = controller.handleRequest(validNino, taxYear, source.toString)(fakeGetRequest)
   }
 
 }

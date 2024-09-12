@@ -16,9 +16,9 @@
 
 package v2.controllers.validators
 
-import api.models.domain.{Nino, TaxYear}
-import api.models.errors._
-import support.UnitSpec
+import shared.models.domain.{Nino, TaxYear}
+import shared.models.errors._
+import shared.utils.UnitSpec
 import v2.models.request.deleteEmploymentExpenses.DeleteEmploymentExpensesRequestData
 
 class DeleteEmploymentExpensesValidatorFactorySpec extends UnitSpec {

@@ -16,14 +16,18 @@
 
 package config
 
-import org.scalamock.handlers.CallHandler
+import org.scalamock.handlers.{CallHandler, CallHandler0}
 import org.scalamock.scalatest.MockFactory
+import shared.config.DownstreamConfig
 
 trait MockExpensesConfig extends MockFactory {
 
   implicit val mockExpensesConfig: ExpensesConfig = mock[ExpensesConfig]
 
-  object MockedBsasConfig {
+  object MockedExpensesConfig {
+    // IFS Config
+    def ifsR5DownstreamConfig: CallHandler0[DownstreamConfig] = (() => mockExpensesConfig.ifsR5DownstreamConfig: DownstreamConfig).expects()
+    def ifsR6DownstreamConfig: CallHandler0[DownstreamConfig] = (() => mockExpensesConfig.ifsR6DownstreamConfig: DownstreamConfig).expects()
 
     def otherExpensesMinimumTaxYear: CallHandler[Int] = (() => mockExpensesConfig.otherExpensesMinimumTaxYear).expects()
 

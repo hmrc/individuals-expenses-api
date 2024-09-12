@@ -16,10 +16,10 @@
 
 package v2.services
 
-import api.models.domain.{Nino, TaxYear, Timestamp}
-import api.models.errors._
-import api.models.outcomes.ResponseWrapper
-import api.services.ServiceSpec
+import shared.models.domain.{Nino, TaxYear, Timestamp}
+import shared.models.errors._
+import shared.models.outcomes.ResponseWrapper
+import shared.services.ServiceSpec
 import v2.connectors.MockRetrieveOtherExpensesConnector
 import v2.models.request.retrieveOtherExpenses.RetrieveOtherExpensesRequestData
 import v2.models.response.retrieveOtherExpenses._

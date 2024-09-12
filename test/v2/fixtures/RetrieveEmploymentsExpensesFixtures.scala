@@ -16,8 +16,9 @@
 
 package v2.fixtures
 
-import api.models.domain.{MtdSource, Timestamp}
+import common.domain.MtdSource
 import play.api.libs.json.{JsObject, JsValue, Json}
+import shared.models.domain.Timestamp
 import v2.models.response.retrieveEmploymentExpenses.{Expenses, RetrieveEmploymentsExpensesResponse}
 
 object RetrieveEmploymentsExpensesFixtures {

@@ -16,10 +16,10 @@
 
 package v2.connectors
 
-import api.connectors.DownstreamUri._
-import api.connectors.httpparsers.StandardDownstreamHttpParser._
-import api.connectors.{BaseDownstreamConnector, DownstreamOutcome}
-import config.AppConfig
+import shared.config.AppConfig
+import shared.connectors.DownstreamUri._
+import shared.connectors.httpparsers.StandardDownstreamHttpParser._
+import shared.connectors.{BaseDownstreamConnector, DownstreamOutcome}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import v2.models.request.createAndAmendEmploymentExpenses.CreateAndAmendEmploymentExpensesRequestData
 
