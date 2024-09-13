@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package api.hateoas
+package v2.common.hateoas
 
-import api.hateoas.RelType._
 import shared.config.AppConfig
 import shared.hateoas.Link
 import shared.hateoas.Method._
+import v2.common.hateoas.RelType._
 
 trait HateoasLinks {
 

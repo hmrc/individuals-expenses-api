@@ -47,6 +47,6 @@ class DeleteOtherExpensesValidatorFactory {
 }
 
 object DeleteOtherExpensesValidatorFactory {
-  private val minimumTaxYear = TaxYear.starting(2022)
+  private val minimumTaxYear = TaxYear.ending(2022)
   private val resolveTaxYear = ResolveTaxYearMinimum(minimumTaxYear)
 }

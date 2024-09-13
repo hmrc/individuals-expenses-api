@@ -19,7 +19,7 @@ package v2.controllers.validators.resolvers
 import cats.data.Validated.{Invalid, Valid}
 import common.domain.MtdSource.{`hmrcHeld`, `latest`, `user`}
 import common.error.SourceFormatError
-import support.UnitSpec
+import shared.utils.UnitSpec
 
 class ResolveMtdSourceSpec extends UnitSpec {
 

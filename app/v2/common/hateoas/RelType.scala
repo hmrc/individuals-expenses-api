@@ -14,26 +14,15 @@
  * limitations under the License.
  */
 
-package api.models.errors
+package v2.common.hateoas
 
-import play.api.libs.json.Json
-import support.UnitSpec
+object RelType {
+  val AMEND_EXPENSES_OTHER  = "amend-expenses-other"
+  val DELETE_EXPENSES_OTHER = "delete-expenses-other"
 
-class DownstreamErrorCodeSpec extends UnitSpec {
+  val IGNORE_EMPLOYMENT_EXPENSES = "ignore-employment-expenses"
+  val AMEND_EMPLOYMENT_EXPENSES  = "amend-employment-expenses"
+  val DELETE_EMPLOYMENT_EXPENSES = "delete-employment-expenses"
 
-  "reads" should {
-    val json = Json.parse(
-      """
-        |{
-        |   "code": "CODE",
-        |   "reason": "ignored"
-        |}
-      """.stripMargin
-    )
-
-    "generate the correct error code" in {
-      json.as[DownstreamErrorCode] shouldBe DownstreamErrorCode("CODE")
-    }
-  }
-
+  val SELF = "self"
 }

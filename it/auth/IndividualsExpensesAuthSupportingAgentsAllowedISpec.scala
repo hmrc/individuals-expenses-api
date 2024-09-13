@@ -16,10 +16,11 @@
 
 package auth
 
-import api.models.domain.TaxYear
-import api.services.DownstreamStub
-import play.api.libs.json.{JsValue, JsObject}
+import shared.models.domain.TaxYear
+import shared.services.DownstreamStub
+import play.api.libs.json.{JsObject, JsValue}
 import play.api.libs.ws.{WSRequest, WSResponse}
+import shared.auth.AuthSupportingAgentsAllowedISpec
 
 class IndividualsExpensesAuthSupportingAgentsAllowedISpec extends AuthSupportingAgentsAllowedISpec {
 
@@ -34,7 +35,7 @@ class IndividualsExpensesAuthSupportingAgentsAllowedISpec extends AuthSupporting
 
   override protected val downstreamUri: String = s"/income-tax/expenses/employments/$nino/${taxYear.asMtd}"
 
-  override protected val downstreamHttpMethod: DownstreamStub.HTTPMethod = DownstreamStub.GET
+  override protected val downstreamHttpMethod: DownstreamStub.HTTPMethod = DownstreamStub.PUT
 
   override protected val maybeDownstreamResponseJson: Option[JsValue] = Some(JsObject.empty)
 

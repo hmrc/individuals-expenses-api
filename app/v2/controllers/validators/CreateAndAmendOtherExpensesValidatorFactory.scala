@@ -32,7 +32,7 @@ import javax.inject.Singleton
 @Singleton
 class CreateAndAmendOtherExpensesValidatorFactory {
 
-  private val minimumTaxYear = TaxYear.starting(2022)
+  private val minimumTaxYear = TaxYear.ending(2022)
 
   private val resolveJson = new ResolveNonEmptyJsonObject[CreateAndAmendOtherExpensesBody]()
 

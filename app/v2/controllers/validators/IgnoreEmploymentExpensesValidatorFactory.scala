@@ -26,14 +26,15 @@ import shared.models.errors.MtdError
 import v2.models.request.ignoreEmploymentExpenses.IgnoreEmploymentExpensesRequestData
 
 import java.time.Clock
-import javax.inject.{Inject, Singleton}
+import javax.inject.Singleton
 
 @Singleton
-class IgnoreEmploymentExpensesValidatorFactory @Inject() (implicit clock: Clock = Clock.systemUTC) {
+class IgnoreEmploymentExpensesValidatorFactory {
 
-  private val minimumTaxYear = TaxYear.starting(2020)
+  private val minimumTaxYear = TaxYear.ending(2020)
 
-  def validator(nino: String, taxYear: String, temporalValidationEnabled: Boolean): Validator[IgnoreEmploymentExpensesRequestData] =
+  def validator(nino: String, taxYear: String, temporalValidationEnabled: Boolean)(implicit
+      clock: Clock = Clock.systemUTC): Validator[IgnoreEmploymentExpensesRequestData] =
     new Validator[IgnoreEmploymentExpensesRequestData] {
 
       private lazy val resolvedTaxYear = {

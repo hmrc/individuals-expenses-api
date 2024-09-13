@@ -27,20 +27,18 @@ import shared.models.errors.MtdError
 import v2.models.request.createAndAmendEmploymentExpenses.{CreateAndAmendEmploymentExpensesBody, CreateAndAmendEmploymentExpensesRequestData}
 
 import java.time.Clock
-import javax.inject.{Inject, Singleton}
+import javax.inject.Singleton
 
 @Singleton
-class CreateAndAmendEmploymentExpensesValidatorFactory @Inject() (implicit clock: Clock = Clock.systemUTC) {
+class CreateAndAmendEmploymentExpensesValidatorFactory {
 
   private val resolveJson    = new ResolveNonEmptyJsonObject[CreateAndAmendEmploymentExpensesBody]()
-  private val minimumTaxYear = TaxYear.starting(2020)
+  private val minimumTaxYear = TaxYear.ending(2020)
 
   private val resolveParsedNumber = ResolveParsedNumber()
 
-  def validator(nino: String,
-                taxYear: String,
-                body: JsValue,
-                temporalValidationEnabled: Boolean): Validator[CreateAndAmendEmploymentExpensesRequestData] =
+  def validator(nino: String, taxYear: String, body: JsValue, temporalValidationEnabled: Boolean)(implicit
+      clock: Clock = Clock.systemUTC): Validator[CreateAndAmendEmploymentExpensesRequestData] =
     new Validator[CreateAndAmendEmploymentExpensesRequestData] {
 
       private lazy val resolvedTaxYear = {
