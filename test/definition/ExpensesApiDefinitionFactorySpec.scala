@@ -18,39 +18,26 @@ package definition
 
 import cats.implicits.catsSyntaxValidatedId
 import shared.config.Deprecation.NotDeprecated
-import shared.config.{ConfidenceLevelConfig, MockAppConfig}
+import shared.config.MockAppConfig
 import shared.definition.APIStatus.BETA
 import shared.definition._
 import shared.mocks.MockHttpClient
 import shared.routing.Version2
 import shared.utils.UnitSpec
-import uk.gov.hmrc.auth.core.ConfidenceLevel
 
 class ExpensesApiDefinitionFactorySpec extends UnitSpec with MockAppConfig {
 
-  private val confidenceLevel: ConfidenceLevel = ConfidenceLevel.L200
-
   class Test extends MockHttpClient with MockAppConfig {
-    val apiDefinitionFactory = new ExpensesApiDefinitionFactory(mockAppConfig)
     MockedAppConfig.apiGatewayContext returns "individuals/expenses"
+    val apiDefinitionFactory = new ExpensesApiDefinitionFactory(mockAppConfig)
   }
 
   "definition" when {
     "called" should {
-      "return a valid Definition case class when confidence level 200 checking is enforced" in {
-        testDefinitionWithConfidence(ConfidenceLevelConfig(confidenceLevel = confidenceLevel, definitionEnabled = true, authValidationEnabled = true))
-      }
-
-      "return a valid Definition case class when confidence level checking 50 is enforced" in {
-        testDefinitionWithConfidence(
-          ConfidenceLevelConfig(confidenceLevel = confidenceLevel, definitionEnabled = false, authValidationEnabled = false))
-      }
-
-      def testDefinitionWithConfidence(confidenceLevelConfig: ConfidenceLevelConfig): Unit = new Test {
+      "return a valid Definition case class" in new Test {
         MockedAppConfig.apiStatus(Version2) returns "BETA"
         MockedAppConfig.endpointsEnabled(Version2).returns(false).anyNumberOfTimes()
         MockedAppConfig.deprecationFor(Version2).returns(NotDeprecated.valid).anyNumberOfTimes()
-        MockedAppConfig.confidenceLevelConfig.returns(confidenceLevelConfig).anyNumberOfTimes()
 
         apiDefinitionFactory.definition shouldBe
           Definition(
@@ -72,39 +59,5 @@ class ExpensesApiDefinitionFactorySpec extends UnitSpec with MockAppConfig {
       }
     }
   }
-
-  "confidenceLevel" when {
-    List(
-      (true, ConfidenceLevel.L250, ConfidenceLevel.L250),
-      (true, ConfidenceLevel.L200, ConfidenceLevel.L200),
-      (false, ConfidenceLevel.L200, ConfidenceLevel.L50)
-    ).foreach { case (definitionEnabled, configCL, expectedDefinitionCL) =>
-      s"confidence-level-check.definition.enabled is $definitionEnabled and confidence-level = $configCL" should {
-        s"return confidence level $expectedDefinitionCL" in new Test {
-          MockedAppConfig.confidenceLevelConfig returns ConfidenceLevelConfig(
-            confidenceLevel = configCL,
-            definitionEnabled = definitionEnabled,
-            authValidationEnabled = true)
-          apiDefinitionFactory.confidenceLevel shouldBe expectedDefinitionCL
-        }
-      }
-    }
-  }
-
-//  "buildAPIStatus" when {
-//    "the 'apiStatus' parameter is present and valid" should {
-//      "return the correct status" in new Test {
-//        MockedAppConfig.apiStatus(Version2) returns "BETA"
-//        apiDefinitionFactory.buildAPIStatus(version = Version2) shouldBe BETA
-//      }
-//    }
-//
-//    "the 'apiStatus' parameter is present and invalid" should {
-//      "default to alpha" in new Test {
-//        MockedAppConfig.apiStatus(Version2) returns "ALPHA"
-//        apiDefinitionFactory.buildAPIStatus(version = Version2) shouldBe ALPHA
-//      }
-//    }
-//  }
 
 }
