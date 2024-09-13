@@ -16,18 +16,19 @@
 
 package v2.connectors
 
-import shared.connectors.ConnectorSpec
+import common.connectors.ExpensesConnectorSpec
+import config.MockExpensesConfig
 import shared.models.domain.{Nino, TaxYear}
 import shared.models.outcomes.ResponseWrapper
 import v2.models.request.deleteOtherExpenses.DeleteOtherExpensesRequestData
 
 import scala.concurrent.Future
 
-class DeleteOtherExpensesConnectorSpec extends ConnectorSpec {
+class DeleteOtherExpensesConnectorSpec extends ExpensesConnectorSpec {
 
   val nino: String = "AA123456A"
 
-  trait Test { _: ConnectorTest =>
+  trait Test extends MockExpensesConfig { _: ConnectorTest =>
     def taxYear: TaxYear
     protected val request = DeleteOtherExpensesRequestData(Nino(nino), taxYear)
 

@@ -14,20 +14,19 @@
  * limitations under the License.
  */
 
-package shared.connectors
+package common.connectors
 
-import com.google.common.base.Charsets
+import config.MockExpensesConfig
 import org.scalamock.handlers.CallHandler
 import play.api.http.{HeaderNames, MimeTypes, Status}
-import shared.config.{BasicAuthDownstreamConfig, DownstreamConfig, MockAppConfig}
+import shared.config.{DownstreamConfig, MockAppConfig}
 import shared.mocks.MockHttpClient
 import shared.utils.UnitSpec
 import uk.gov.hmrc.http.HeaderCarrier
 
-import java.util.Base64
 import scala.concurrent.{ExecutionContext, Future}
 
-trait ConnectorSpec extends UnitSpec with Status with MimeTypes with HeaderNames {
+trait ExpensesConnectorSpec extends UnitSpec with Status with MimeTypes with HeaderNames {
 
   lazy val baseUrl                   = "http://test-BaseUrl"
   implicit val correlationId: String = "a1e8057e-fbbc-47a8-a8b4-78d9f015c253"
@@ -47,7 +46,7 @@ trait ConnectorSpec extends UnitSpec with Status with MimeTypes with HeaderNames
       Some("this-api")
     )
 
-  protected trait ConnectorTest extends MockHttpClient with MockAppConfig {
+  protected trait ConnectorTest extends MockHttpClient with MockAppConfig with MockExpensesConfig {
     protected val baseUrl: String = "http://test-BaseUrl"
 
     protected val requiredHeaders: Seq[(String, String)]
@@ -118,44 +117,22 @@ trait ConnectorSpec extends UnitSpec with Status with MimeTypes with HeaderNames
     protected final val config: DownstreamConfig = DownstreamConfig(this.baseUrl, environment, token, Some(allowedHeaders))
   }
 
-  protected trait DesTest extends StandardConnectorTest {
-    val name = "des"
+  protected trait IfsR5Test extends StandardConnectorTest {
+    override val name = "ifsR5"
 
-    MockedAppConfig.desDownstreamConfig.anyNumberOfTimes() returns config
+    MockedExpensesConfig.ifsR5DownstreamConfig.anyNumberOfTimes() returns config
   }
 
-  protected trait IfsTest extends StandardConnectorTest {
-    override val name = "ifs"
+  protected trait IfsR6Test extends StandardConnectorTest {
+    override val name = "ifsR6"
 
-    MockedAppConfig.ifsDownstreamConfig.anyNumberOfTimes() returns config
+    MockedExpensesConfig.ifsR6DownstreamConfig.anyNumberOfTimes() returns config
   }
 
   protected trait TysIfsTest extends StandardConnectorTest {
     override val name = "tys-ifs"
 
     MockedAppConfig.tysIfsDownstreamConfig.anyNumberOfTimes() returns config
-  }
-
-  protected trait HipTest extends ConnectorTest {
-    private val clientId     = "clientId"
-    private val clientSecret = "clientSecret"
-
-    private val token =
-      Base64.getEncoder.encodeToString(s"$clientId:$clientSecret".getBytes(Charsets.UTF_8))
-
-    private val environment = "hip-environment"
-
-    protected final lazy val requiredHeaders: Seq[(String, String)] = List(
-      "Authorization"        -> s"Basic $token",
-      "Environment"          -> environment,
-      "User-Agent"           -> "this-api",
-      "CorrelationId"        -> correlationId,
-      "Gov-Test-Scenario"    -> "DEFAULT"
-    ) ++ intent.map("intent" -> _)
-
-    MockedAppConfig.hipDownstreamConfig
-      .anyNumberOfTimes() returns BasicAuthDownstreamConfig(this.baseUrl, environment, clientId, clientSecret, Some(allowedHeaders))
-
   }
 
 }

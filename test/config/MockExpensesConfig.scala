@@ -25,7 +25,6 @@ trait MockExpensesConfig extends MockFactory {
   implicit val mockExpensesConfig: ExpensesConfig = mock[ExpensesConfig]
 
   object MockedExpensesConfig {
-    // IFS Config
     def ifsR5DownstreamConfig: CallHandler0[DownstreamConfig] = (() => mockExpensesConfig.ifsR5DownstreamConfig: DownstreamConfig).expects()
     def ifsR6DownstreamConfig: CallHandler0[DownstreamConfig] = (() => mockExpensesConfig.ifsR6DownstreamConfig: DownstreamConfig).expects()
 

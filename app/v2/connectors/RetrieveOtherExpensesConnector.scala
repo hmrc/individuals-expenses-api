@@ -16,8 +16,10 @@
 
 package v2.connectors
 
+import common.connectors.ExpensesDownstreamUri.ifsR5Uri
+import config.ExpensesConfig
 import shared.config.AppConfig
-import shared.connectors.DownstreamUri.{IfsR5Uri, TaxYearSpecificIfsUri}
+import shared.connectors.DownstreamUri.TaxYearSpecificIfsUri
 import shared.connectors.httpparsers.StandardDownstreamHttpParser._
 import shared.connectors.{BaseDownstreamConnector, DownstreamOutcome}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
@@ -28,7 +30,8 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class RetrieveOtherExpensesConnector @Inject() (val http: HttpClient, val appConfig: AppConfig) extends BaseDownstreamConnector {
+class RetrieveOtherExpensesConnector @Inject() (val http: HttpClient, val appConfig: AppConfig)(implicit expensesConfig: ExpensesConfig)
+    extends BaseDownstreamConnector {
 
   def retrieveOtherExpenses(request: RetrieveOtherExpensesRequestData)(implicit
       hc: HeaderCarrier,
@@ -40,7 +43,7 @@ class RetrieveOtherExpensesConnector @Inject() (val http: HttpClient, val appCon
     val downstreamUri = if (taxYear.useTaxYearSpecificApi) {
       TaxYearSpecificIfsUri[RetrieveOtherExpensesResponse](s"income-tax/expenses/other/${taxYear.asTysDownstream}/$nino")
     } else {
-      IfsR5Uri[RetrieveOtherExpensesResponse](s"income-tax/expenses/other/$nino/${taxYear.asMtd}")
+      ifsR5Uri[RetrieveOtherExpensesResponse](s"income-tax/expenses/other/$nino/${taxYear.asMtd}")
     }
 
     get(uri = downstreamUri)

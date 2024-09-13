@@ -16,8 +16,9 @@
 
 package v2.connectors
 
+import common.connectors.ExpensesConnectorSpec
 import common.domain.MtdSource
-import shared.connectors.ConnectorSpec
+import config.MockExpensesConfig
 import shared.models.domain.{Nino, TaxYear}
 import shared.models.outcomes.ResponseWrapper
 import v2.fixtures.RetrieveEmploymentsExpensesFixtures._
@@ -25,11 +26,11 @@ import v2.models.request.retrieveEmploymentExpenses.RetrieveEmploymentsExpensesR
 
 import scala.concurrent.Future
 
-class RetrieveEmploymentsExpensesConnectorSpec extends ConnectorSpec {
+class RetrieveEmploymentsExpensesConnectorSpec extends ExpensesConnectorSpec {
 
   val nino: String = "AA123456A"
 
-  trait Test { _: ConnectorTest =>
+  trait Test extends MockExpensesConfig { _: ConnectorTest =>
 
     def taxYear: String
 

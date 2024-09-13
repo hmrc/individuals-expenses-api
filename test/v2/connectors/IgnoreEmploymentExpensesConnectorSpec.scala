@@ -16,18 +16,19 @@
 
 package v2.connectors
 
-import shared.connectors.ConnectorSpec
+import common.connectors.ExpensesConnectorSpec
+import config.MockExpensesConfig
 import shared.models.domain.{Nino, TaxYear}
 import shared.models.outcomes.ResponseWrapper
 import v2.models.request.ignoreEmploymentExpenses.{IgnoreEmploymentExpensesBody, IgnoreEmploymentExpensesRequestData}
 
 import scala.concurrent.Future
 
-class IgnoreEmploymentExpensesConnectorSpec extends ConnectorSpec {
+class IgnoreEmploymentExpensesConnectorSpec extends ExpensesConnectorSpec {
 
   val body: IgnoreEmploymentExpensesBody = IgnoreEmploymentExpensesBody(true)
 
-  trait Test { _: ConnectorTest =>
+  trait Test extends MockExpensesConfig { _: ConnectorTest =>
 
     val connector: IgnoreEmploymentExpensesConnector = new IgnoreEmploymentExpensesConnector(
       http = mockHttpClient,

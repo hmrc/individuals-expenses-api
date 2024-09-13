@@ -16,7 +16,9 @@
 
 package v2.connectors
 
-import shared.connectors.{ConnectorSpec, DownstreamOutcome}
+import common.connectors.ExpensesConnectorSpec
+import config.MockExpensesConfig
+import shared.connectors.DownstreamOutcome
 import shared.models.domain.{Nino, TaxYear}
 import shared.models.outcomes.ResponseWrapper
 import v2.models.request.createAndAmendEmploymentExpenses.{
@@ -27,7 +29,7 @@ import v2.models.request.createAndAmendEmploymentExpenses.{
 
 import scala.concurrent.Future
 
-class CreateAndAmendEmploymentExpensesConnectorSpec extends ConnectorSpec {
+class CreateAndAmendEmploymentExpensesConnectorSpec extends ExpensesConnectorSpec {
 
   val nino: String = "AA123456A"
 
@@ -44,7 +46,7 @@ class CreateAndAmendEmploymentExpensesConnectorSpec extends ConnectorSpec {
     )
   )
 
-  trait Test {
+  trait Test extends MockExpensesConfig {
     _: ConnectorTest =>
 
     def taxYear: TaxYear

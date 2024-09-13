@@ -30,12 +30,8 @@ trait MockAppConfig extends MockFactory {
     // MTD ID Lookup Config
     def mtdIdBaseUrl: CallHandler0[String] = (() => mockAppConfig.mtdIdBaseUrl: String).expects()
 
-    def desDownstreamConfig: CallHandler0[DownstreamConfig] = (() => mockAppConfig.desDownstreamConfig: DownstreamConfig).expects()
-    def ifsDownstreamConfig: CallHandler0[DownstreamConfig] = (() => mockAppConfig.ifsDownstreamConfig: DownstreamConfig).expects()
-
-    def ifsR5DownstreamConfig: CallHandler0[DownstreamConfig] = (() => mockAppConfig.ifsR5DownstreamConfig: DownstreamConfig).expects()
-
-    def ifsR6DownstreamConfig: CallHandler0[DownstreamConfig]  = (() => mockAppConfig.ifsR6DownstreamConfig: DownstreamConfig).expects()
+    def desDownstreamConfig: CallHandler0[DownstreamConfig]    = (() => mockAppConfig.desDownstreamConfig: DownstreamConfig).expects()
+    def ifsDownstreamConfig: CallHandler0[DownstreamConfig]    = (() => mockAppConfig.ifsDownstreamConfig: DownstreamConfig).expects()
     def tysIfsDownstreamConfig: CallHandler0[DownstreamConfig] = (() => mockAppConfig.tysIfsDownstreamConfig: DownstreamConfig).expects()
 
     def hipDownstreamConfig: CallHandler[BasicAuthDownstreamConfig] = (() => mockAppConfig.hipDownstreamConfig: BasicAuthDownstreamConfig).expects()

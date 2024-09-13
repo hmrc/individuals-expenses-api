@@ -16,14 +16,15 @@
 
 package v2.connectors
 
-import shared.connectors.ConnectorSpec
+import common.connectors.ExpensesConnectorSpec
+import config.MockExpensesConfig
 import shared.models.domain.{Nino, TaxYear}
 import shared.models.outcomes.ResponseWrapper
 import v2.models.request.createAndAmendOtherExpenses._
 
 import scala.concurrent.Future
 
-class CreateAndAmendOtherExpensesConnectorSpec extends ConnectorSpec {
+class CreateAndAmendOtherExpensesConnectorSpec extends ExpensesConnectorSpec {
 
   "CreateAndAmendOtherExpensesConnector" should {
     "return the expected response for a non-TYS request" when {
@@ -45,7 +46,7 @@ class CreateAndAmendOtherExpensesConnectorSpec extends ConnectorSpec {
       "a valid request is made" in new TysIfsTest with Test {
         def taxYear: String = "2023-24"
 
-        val outcome = Right(ResponseWrapper(correlationId, ()))
+        val outcome: Right[Nothing, ResponseWrapper[Unit]] = Right(ResponseWrapper(correlationId, ()))
 
         willPut(
           url = s"$baseUrl/income-tax/expenses/other/23-24/$nino",
@@ -58,7 +59,7 @@ class CreateAndAmendOtherExpensesConnectorSpec extends ConnectorSpec {
     }
   }
 
-  trait Test {
+  trait Test extends MockExpensesConfig {
     _: ConnectorTest =>
 
     val nino: String = "AA123456A"
