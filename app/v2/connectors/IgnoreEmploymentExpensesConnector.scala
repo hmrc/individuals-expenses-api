@@ -29,7 +29,10 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class IgnoreEmploymentExpensesConnector @Inject() (val http: HttpClient, val appConfig: AppConfig)(implicit expensesConfig: ExpensesConfig)
+class IgnoreEmploymentExpensesConnector @Inject() (
+    val http: HttpClient,
+    val appConfig: AppConfig
+)(implicit expensesConfig: ExpensesConfig)
     extends BaseDownstreamConnector {
 
   def ignore(request: IgnoreEmploymentExpensesRequestData)(implicit

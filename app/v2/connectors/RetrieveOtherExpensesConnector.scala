@@ -30,7 +30,10 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class RetrieveOtherExpensesConnector @Inject() (val http: HttpClient, val appConfig: AppConfig)(implicit expensesConfig: ExpensesConfig)
+class RetrieveOtherExpensesConnector @Inject() (
+    val http: HttpClient,
+    val appConfig: AppConfig
+)(implicit expensesConfig: ExpensesConfig)
     extends BaseDownstreamConnector {
 
   def retrieveOtherExpenses(request: RetrieveOtherExpensesRequestData)(implicit

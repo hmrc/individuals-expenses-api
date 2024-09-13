@@ -34,12 +34,6 @@ object DownstreamUri {
   def IfsUri[Resp](value: String)(implicit appConfig: AppConfig): DownstreamUri[Resp] =
     withStandardStrategy(value, appConfig.ifsDownstreamConfig)
 
-//  def IfsR5Uri[Resp](value: String)(implicit appConfig: AppConfig): DownstreamUri[Resp] =
-//    withStandardStrategy(value, appConfig.ifsR5DownstreamConfig)
-//
-//  def IfsR6Uri[Resp](value: String)(implicit appConfig: AppConfig): DownstreamUri[Resp] =
-//    withStandardStrategy(value, appConfig.ifsR6DownstreamConfig)
-
   def TaxYearSpecificIfsUri[Resp](value: String)(implicit appConfig: AppConfig): DownstreamUri[Resp] =
     withStandardStrategy(value, appConfig.tysIfsDownstreamConfig)
 

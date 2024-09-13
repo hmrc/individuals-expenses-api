@@ -29,7 +29,10 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class CreateAndAmendOtherExpensesConnector @Inject() (val http: HttpClient, val appConfig: AppConfig)(implicit expensesConfig: ExpensesConfig)
+class CreateAndAmendOtherExpensesConnector @Inject() (
+    val http: HttpClient,
+    val appConfig: AppConfig
+)(implicit expensesConfig: ExpensesConfig)
     extends BaseDownstreamConnector {
 
   def createAndAmend(request: CreateAndAmendOtherExpensesRequestData)(implicit
