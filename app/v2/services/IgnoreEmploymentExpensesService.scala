@@ -17,6 +17,7 @@
 package v2.services
 
 import cats.implicits._
+import common.error.TaxYearNotEndedError
 import shared.controllers.RequestContext
 import shared.models.errors._
 import shared.services.{BaseService, ServiceOutcome}
@@ -34,13 +35,13 @@ class IgnoreEmploymentExpensesService @Inject() (connector: IgnoreEmploymentExpe
     connector.ignore(request).map(_.leftMap(mapDownstreamErrors(downstreamErrorMap)))
   }
 
-  private val downstreamErrorMap = {
+  private val downstreamErrorMap: Map[String, MtdError] = {
     val errors = Map(
       "INVALID_TAXABLE_ENTITY_ID"       -> NinoFormatError,
       "INVALID_TAX_YEAR"                -> TaxYearFormatError,
       "INVALID_CORRELATIONID"           -> InternalError,
       "INVALID_PAYLOAD"                 -> InternalError,
-      "INVALID_REQUEST_BEFORE_TAX_YEAR" -> RuleTaxYearNotEndedError,
+      "INVALID_REQUEST_BEFORE_TAX_YEAR" -> TaxYearNotEndedError,
       "INCOME_SOURCE_NOT_FOUND"         -> NotFoundError,
       "SERVER_ERROR"                    -> InternalError,
       "SERVICE_UNAVAILABLE"             -> InternalError

@@ -28,3 +28,5 @@ object RuleInvalidSubmissionPensionScheme
 object SourceFormatError extends MtdError("FORMAT_SOURCE", "The provided source is invalid", BAD_REQUEST)
 
 object CustomerReferenceFormatError extends MtdError("FORMAT_CUSTOMER_REFERENCE", "The provided customer reference is not valid", BAD_REQUEST)
+
+object TaxYearNotEndedError extends MtdError("RULE_TAX_YEAR_NOT_ENDED", "Tax year not ended", BAD_REQUEST)

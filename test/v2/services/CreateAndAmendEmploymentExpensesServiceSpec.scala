@@ -16,7 +16,7 @@
 
 package v2.services
 
-import common.error.RuleInvalidSubmissionPensionScheme
+import common.error.{RuleInvalidSubmissionPensionScheme, TaxYearNotEndedError}
 import shared.models.domain.{Nino, TaxYear}
 import shared.models.errors._
 import shared.models.outcomes.ResponseWrapper
@@ -84,7 +84,7 @@ class CreateAndAmendEmploymentExpensesServiceSpec extends ServiceSpec {
         "INVALID_TAX_YEAR"                -> TaxYearFormatError,
         "INVALID_CORRELATIONID"           -> InternalError,
         "INVALID_PAYLOAD"                 -> InternalError,
-        "INVALID_REQUEST_BEFORE_TAX_YEAR" -> RuleTaxYearNotEndedError,
+        "INVALID_REQUEST_BEFORE_TAX_YEAR" -> TaxYearNotEndedError,
         "INCOME_SOURCE_NOT_FOUND"         -> NotFoundError,
         "SERVER_ERROR"                    -> InternalError,
         "SERVICE_UNAVAILABLE"             -> InternalError
