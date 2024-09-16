@@ -24,10 +24,13 @@ import play.api.libs.ws.{WSRequest, WSResponse}
 import play.api.test.Helpers.AUTHORIZATION
 import shared.models.errors._
 import shared.services.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
-import support.ExpensesIntegrationBaseSpec
+import common.ExpensesISpec
+import shared.support.IntegrationBaseSpec
 import v2.fixtures.RetrieveEmploymentsExpensesFixtures._
 
-class RetrieveEmploymentsExpensesControllerISpec extends ExpensesIntegrationBaseSpec {
+class RetrieveEmploymentsExpensesControllerISpec extends IntegrationBaseSpec with ExpensesISpec {
+
+  override def servicesConfig: Map[String, Any] = super.servicesConfig ++ expensesServicesConfig
 
   "Calling the retrieve endpoint" should {
     "return a 200 status code" when {
