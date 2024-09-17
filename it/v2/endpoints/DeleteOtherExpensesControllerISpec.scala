@@ -16,64 +16,19 @@
 
 package v2.endpoints
 
-import api.models.errors._
 import play.api.http.HeaderNames.ACCEPT
 import play.api.http.Status._
 import play.api.libs.json.{JsObject, Json}
 import play.api.libs.ws.{WSRequest, WSResponse}
 import play.api.test.Helpers.AUTHORIZATION
-import api.services.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
-import support.IntegrationBaseSpec
+import shared.models.errors._
+import shared.services.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
+import common.ExpensesISpec
+import shared.support.IntegrationBaseSpec
 
-class DeleteOtherExpensesControllerISpec extends IntegrationBaseSpec {
+class DeleteOtherExpensesControllerISpec extends IntegrationBaseSpec with ExpensesISpec {
 
-  private trait Test {
-
-    val nino = "AA123456A"
-
-    def taxYear: String
-
-    def uri: String = s"/other/$nino/$taxYear"
-
-    def downstreamUri: String
-
-    def setupStubs(): Unit
-
-    def request(): WSRequest = {
-      AuditStub.audit()
-      AuthStub.authorised()
-      MtdIdLookupStub.ninoFound(nino)
-      setupStubs()
-      buildRequest(uri)
-        .withHttpHeaders(
-          (ACCEPT, "application/vnd.hmrc.2.0+json"),
-          (AUTHORIZATION, "Bearer 123") // some bearer token
-        )
-    }
-
-    def errorBody(code: String): String =
-      s"""
-         |      {
-         |        "code": "$code",
-         |        "reason": "downstream message"
-         |      }
-    """.stripMargin
-
-  }
-
-  private trait NonTysTest extends Test {
-
-    def taxYear: String = "2021-22"
-
-    def downstreamUri: String = s"/income-tax/expenses/other/$nino/$taxYear"
-  }
-
-  private trait TysIfsTest extends Test {
-
-    def taxYear: String = "2023-24"
-
-    def downstreamUri: String = s"/income-tax/expenses/other/23-24/$nino"
-  }
+  override def servicesConfig: Map[String, Any] = super.servicesConfig ++ expensesServicesConfig
 
   "calling the delete endpoint" should {
 
@@ -155,6 +110,54 @@ class DeleteOtherExpensesControllerISpec extends IntegrationBaseSpec {
         (errors ++ extraTysErrors).foreach(args => (serviceErrorTest _).tupled(args))
       }
     }
+  }
+
+  private trait Test {
+
+    val nino = "AA123456A"
+
+    def taxYear: String
+
+    def uri: String = s"/other/$nino/$taxYear"
+
+    def downstreamUri: String
+
+    def setupStubs(): Unit
+
+    def request(): WSRequest = {
+      AuditStub.audit()
+      AuthStub.authorised()
+      MtdIdLookupStub.ninoFound(nino)
+      setupStubs()
+      buildRequest(uri)
+        .withHttpHeaders(
+          (ACCEPT, "application/vnd.hmrc.2.0+json"),
+          (AUTHORIZATION, "Bearer 123") // some bearer token
+        )
+    }
+
+    def errorBody(code: String): String =
+      s"""
+         |      {
+         |        "code": "$code",
+         |        "reason": "downstream message"
+         |      }
+    """.stripMargin
+
+  }
+
+  private trait NonTysTest extends Test {
+
+    def taxYear: String = "2021-22"
+
+    def downstreamUri: String = s"/income-tax/expenses/other/$nino/$taxYear"
+  }
+
+  private trait TysIfsTest extends Test {
+
+    def taxYear: String = "2023-24"
+
+    def downstreamUri: String = s"/income-tax/expenses/other/23-24/$nino"
   }
 
 }

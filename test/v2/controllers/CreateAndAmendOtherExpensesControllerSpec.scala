@@ -16,17 +16,17 @@
 
 package v2.controllers
 
-import api.controllers.{ControllerBaseSpec, ControllerTestRunner}
-import api.hateoas.{HateoasWrapper, Link, MockHateoasFactory}
-import api.models.audit.{AuditEvent, AuditResponse, GenericAuditDetail}
-import api.models.domain.{Nino, TaxYear}
-import api.models.errors._
-import api.hateoas.Method.{DELETE, GET, PUT}
-import api.models.outcomes.ResponseWrapper
-import play.api.libs.json.{JsValue, Json}
 import play.api.Configuration
+import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Result
-import config.MockAppConfig
+import shared.config.MockAppConfig
+import shared.controllers.{ControllerBaseSpec, ControllerTestRunner}
+import shared.hateoas.Method.{DELETE, GET, PUT}
+import shared.hateoas.{HateoasWrapper, Link, MockHateoasFactory}
+import shared.models.audit.{AuditEvent, AuditResponse, GenericAuditDetail}
+import shared.models.domain.{Nino, TaxYear}
+import shared.models.errors._
+import shared.models.outcomes.ResponseWrapper
 import v2.controllers.validators.MockCreateAndAmendOtherExpensesValidatorFactory
 import v2.models.request.createAndAmendOtherExpenses._
 import v2.models.response.createAndAmendOtherExpenses.CreateAndAmendOtherExpensesHateoasData
@@ -46,9 +46,9 @@ class CreateAndAmendOtherExpensesControllerSpec
   private val taxYear = "2021-22"
 
   private val testHateoasLinks = List(
-    Link(href = s"/individuals/expenses/other/$nino/$taxYear", method = GET, rel = "self"),
-    Link(href = s"/individuals/expenses/other/$nino/$taxYear", method = PUT, rel = "amend-expenses-other"),
-    Link(href = s"/individuals/expenses/other/$nino/$taxYear", method = DELETE, rel = "delete-expenses-other")
+    Link(href = s"/individuals/expenses/other/$validNino/$taxYear", method = GET, rel = "self"),
+    Link(href = s"/individuals/expenses/other/$validNino/$taxYear", method = PUT, rel = "amend-expenses-other"),
+    Link(href = s"/individuals/expenses/other/$validNino/$taxYear", method = DELETE, rel = "delete-expenses-other")
   )
 
   private val requestBody = CreateAndAmendOtherExpensesBody(
@@ -73,17 +73,17 @@ class CreateAndAmendOtherExpensesControllerSpec
        |{
        |  "links": [
        |    {
-       |      "href": "/individuals/expenses/other/$nino/$taxYear",
+       |      "href": "/individuals/expenses/other/$validNino/$taxYear",
        |      "method": "GET",
        |      "rel": "self"
        |    },
        |    {
-       |      "href": "/individuals/expenses/other/$nino/$taxYear",
+       |      "href": "/individuals/expenses/other/$validNino/$taxYear",
        |      "method": "PUT",
        |      "rel": "amend-expenses-other"
        |    },
        |    {
-       |      "href": "/individuals/expenses/other/$nino/$taxYear",
+       |      "href": "/individuals/expenses/other/$validNino/$taxYear",
        |      "method": "DELETE",
        |      "rel": "delete-expenses-other"
        |    }
@@ -91,14 +91,14 @@ class CreateAndAmendOtherExpensesControllerSpec
        |}
        |""".stripMargin)
 
-  private val requestData = CreateAndAmendOtherExpensesRequestData(Nino(nino), TaxYear.fromMtd(taxYear), requestBody)
+  private val requestData = CreateAndAmendOtherExpensesRequestData(Nino(validNino), TaxYear.fromMtd(taxYear), requestBody)
 
   "handleRequest" should {
     "return Ok" when {
       "the request received is valid" in new Test {
         willUseValidator(returningSuccess(requestData))
 
-        MockedAppConfig.featureSwitches.anyNumberOfTimes() returns Configuration(
+        MockedAppConfig.featureSwitchConfig.anyNumberOfTimes() returns Configuration(
           "supporting-agents-access-control.enabled" -> true
         )
 
@@ -109,7 +109,7 @@ class CreateAndAmendOtherExpensesControllerSpec
           .returns(Future.successful(Right(ResponseWrapper(correlationId, ()))))
 
         MockHateoasFactory
-          .wrap((), CreateAndAmendOtherExpensesHateoasData(nino, taxYear))
+          .wrap((), CreateAndAmendOtherExpensesHateoasData(validNino, taxYear))
           .returns(HateoasWrapper((), testHateoasLinks))
 
         runOkTestWithAudit(
@@ -124,7 +124,7 @@ class CreateAndAmendOtherExpensesControllerSpec
     "return the error as per spec" when {
       "the parser validation fails" in new Test {
 
-        MockedAppConfig.featureSwitches.anyNumberOfTimes() returns Configuration(
+        MockedAppConfig.featureSwitchConfig.anyNumberOfTimes() returns Configuration(
           "supporting-agents-access-control.enabled" -> true
         )
 
@@ -136,7 +136,7 @@ class CreateAndAmendOtherExpensesControllerSpec
 
       "the service returns an error" in new Test {
 
-        MockedAppConfig.featureSwitches.anyNumberOfTimes() returns Configuration(
+        MockedAppConfig.featureSwitchConfig.anyNumberOfTimes() returns Configuration(
           "supporting-agents-access-control.enabled" -> true
         )
 
@@ -152,7 +152,7 @@ class CreateAndAmendOtherExpensesControllerSpec
     }
   }
 
-  trait Test extends ControllerTest with AuditEventChecking {
+  trait Test extends ControllerTest with AuditEventChecking[GenericAuditDetail] {
 
     val controller = new CreateAndAmendOtherExpensesController(
       authService = mockEnrolmentsAuthService,
@@ -165,7 +165,7 @@ class CreateAndAmendOtherExpensesControllerSpec
       idGenerator = mockIdGenerator
     )
 
-    protected def callController(): Future[Result] = controller.handleRequest(nino, taxYear)(fakePutRequest(requestBodyJson))
+    protected def callController(): Future[Result] = controller.handleRequest(validNino, taxYear)(fakePostRequest(requestBodyJson))
 
     def event(auditResponse: AuditResponse, maybeRequestBody: Option[JsValue]): AuditEvent[GenericAuditDetail] =
       AuditEvent(
@@ -175,7 +175,7 @@ class CreateAndAmendOtherExpensesControllerSpec
           versionNumber = "2.0",
           userType = "Individual",
           agentReferenceNumber = None,
-          params = Map("nino" -> nino, "taxYear" -> taxYear),
+          params = Map("nino" -> validNino, "taxYear" -> taxYear),
           requestBody = maybeRequestBody,
           `X-CorrelationId` = correlationId,
           auditResponse = auditResponse

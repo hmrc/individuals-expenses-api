@@ -16,18 +16,16 @@
 
 package v2.controllers.validators
 
-import api.models.domain.{Nino, TaxYear, TodaySupplier}
-import api.models.errors._
-import api.models.utils.JsonErrorValidators
 import play.api.libs.json.{JsNumber, JsObject, JsValue, Json}
-import support.UnitSpec
+import shared.models.domain.{Nino, TaxYear}
+import shared.models.errors._
+import shared.models.utils.JsonErrorValidators
+import shared.utils.UnitSpec
 import v2.models.request.createAndAmendEmploymentExpenses.{
   CreateAndAmendEmploymentExpensesBody,
   CreateAndAmendEmploymentExpensesRequestData,
   Expenses
 }
-
-import java.time.LocalDate
 
 class CreateAndAmendEmploymentExpensesValidatorFactorySpec extends UnitSpec with JsonErrorValidators {
 
@@ -63,10 +61,6 @@ class CreateAndAmendEmploymentExpensesValidatorFactorySpec extends UnitSpec with
   private val parsedExpensesWithDecimals = Expenses(Some(0.12), Some(1.12), Some(2.12), Some(3.12), Some(4.12), Some(5.12), Some(6.12), Some(7.12))
 
   private def parsedBody(expenses: Expenses = parsedExpenses) = CreateAndAmendEmploymentExpensesBody(expenses)
-
-  implicit val todaySupplier: TodaySupplier = new TodaySupplier {
-    override def today(): LocalDate = LocalDate.parse("2022-07-11")
-  }
 
   private val validatorFactory = new CreateAndAmendEmploymentExpensesValidatorFactory
 
@@ -135,7 +129,8 @@ class CreateAndAmendEmploymentExpensesValidatorFactorySpec extends UnitSpec with
       }
 
       "the taxYear has not ended and temporal validation is enabled" in {
-        val result = validator(validNino, "2023-24", validBody()).validateAndWrapResult()
+        val currentTaxYear = TaxYear.now.asMtd
+        val result         = validator(validNino, currentTaxYear, validBody()).validateAndWrapResult()
         result shouldBe Left(ErrorWrapper(correlationId, RuleTaxYearNotEndedError))
       }
 

@@ -16,17 +16,17 @@
 
 package v2.controllers
 
-import api.controllers.{ControllerBaseSpec, ControllerTestRunner}
-import api.hateoas.{HateoasWrapper, Link, MockHateoasFactory}
-import api.models.audit.{AuditEvent, AuditResponse, GenericAuditDetail}
-import api.models.domain.{Nino, TaxYear}
-import api.models.errors._
-import api.hateoas.Method.{DELETE, GET}
-import api.models.outcomes.ResponseWrapper
-import config.MockAppConfig
 import play.api.Configuration
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Result
+import shared.config.MockAppConfig
+import shared.controllers.{ControllerBaseSpec, ControllerTestRunner}
+import shared.hateoas.Method.{DELETE, GET}
+import shared.hateoas.{HateoasWrapper, Link, MockHateoasFactory}
+import shared.models.audit.{AuditEvent, AuditResponse, GenericAuditDetail}
+import shared.models.domain.{Nino, TaxYear}
+import shared.models.errors._
+import shared.models.outcomes.ResponseWrapper
 import v2.controllers.validators.MockIgnoreEmploymentExpensesValidatorFactory
 import v2.models.request.ignoreEmploymentExpenses._
 import v2.models.response.ignoreEmploymentExpenses.IgnoreEmploymentExpensesHateoasData
@@ -46,20 +46,20 @@ class IgnoreEmploymentExpensesControllerSpec
   private val taxYear = "2019-20"
 
   private val testHateoasLinks = List(
-    Link(href = s"/individuals/expenses/employments/$nino/$taxYear", method = GET, rel = "self"),
-    Link(href = s"/individuals/expenses/employments/$nino/$taxYear", method = DELETE, rel = "delete-employment-expenses")
+    Link(href = s"/individuals/expenses/employments/$validNino/$taxYear", method = GET, rel = "self"),
+    Link(href = s"/individuals/expenses/employments/$validNino/$taxYear", method = DELETE, rel = "delete-employment-expenses")
   )
 
   private val responseBodyJson: JsValue = Json.parse(s"""
        |{
        |  "links": [
        |    {
-       |      "href": "/individuals/expenses/employments/$nino/$taxYear",
+       |      "href": "/individuals/expenses/employments/$validNino/$taxYear",
        |      "method": "GET",
        |      "rel": "self"
        |    },
        |    {
-       |      "href": "/individuals/expenses/employments/$nino/$taxYear",
+       |      "href": "/individuals/expenses/employments/$validNino/$taxYear",
        |      "method": "DELETE",
        |      "rel": "delete-employment-expenses"
        |    }
@@ -67,13 +67,13 @@ class IgnoreEmploymentExpensesControllerSpec
        |}
        |""".stripMargin)
 
-  private val requestData = IgnoreEmploymentExpensesRequestData(Nino(nino), TaxYear.fromMtd(taxYear))
+  private val requestData = IgnoreEmploymentExpensesRequestData(Nino(validNino), TaxYear.fromMtd(taxYear))
 
   "handleRequest" should {
     "return Ok" when {
       "the request received is valid" in new Test {
         willUseValidator(returningSuccess(requestData))
-        MockedAppConfig.featureSwitches.anyNumberOfTimes() returns Configuration(
+        MockedAppConfig.featureSwitchConfig.anyNumberOfTimes() returns Configuration(
           "supporting-agents-access-control.enabled" -> true
         )
 
@@ -84,7 +84,7 @@ class IgnoreEmploymentExpensesControllerSpec
           .returns(Future.successful(Right(ResponseWrapper(correlationId, ()))))
 
         MockHateoasFactory
-          .wrap((), IgnoreEmploymentExpensesHateoasData(nino, taxYear))
+          .wrap((), IgnoreEmploymentExpensesHateoasData(validNino, taxYear))
           .returns(HateoasWrapper((), testHateoasLinks))
 
         runOkTestWithAudit(
@@ -97,7 +97,7 @@ class IgnoreEmploymentExpensesControllerSpec
 
     "return the error as per spec" when {
       "the parser validation fails" in new Test {
-        MockedAppConfig.featureSwitches.anyNumberOfTimes() returns Configuration(
+        MockedAppConfig.featureSwitchConfig.anyNumberOfTimes() returns Configuration(
           "supporting-agents-access-control.enabled" -> true
         )
 
@@ -109,7 +109,7 @@ class IgnoreEmploymentExpensesControllerSpec
       }
 
       "service errors occur" in new Test {
-        MockedAppConfig.featureSwitches.anyNumberOfTimes() returns Configuration(
+        MockedAppConfig.featureSwitchConfig.anyNumberOfTimes() returns Configuration(
           "supporting-agents-access-control.enabled" -> true
         )
 
@@ -126,7 +126,7 @@ class IgnoreEmploymentExpensesControllerSpec
     }
   }
 
-  trait Test extends ControllerTest with AuditEventChecking {
+  trait Test extends ControllerTest with AuditEventChecking[GenericAuditDetail] {
 
     val controller = new IgnoreEmploymentExpensesController(
       authService = mockEnrolmentsAuthService,
@@ -139,9 +139,9 @@ class IgnoreEmploymentExpensesControllerSpec
       idGenerator = mockIdGenerator
     )
 
-    MockedAppConfig.featureSwitches.returns(Configuration("allowTemporalValidationSuspension.enabled" -> true)).anyNumberOfTimes()
+    MockedAppConfig.featureSwitchConfig.returns(Configuration("allowTemporalValidationSuspension.enabled" -> true)).anyNumberOfTimes()
 
-    protected def callController(): Future[Result] = controller.handleRequest(nino, taxYear)(fakeRequest)
+    protected def callController(): Future[Result] = controller.handleRequest(validNino, taxYear)(fakeRequest)
 
     def event(auditResponse: AuditResponse, maybeRequestBody: Option[JsValue]): AuditEvent[GenericAuditDetail] =
       AuditEvent(
@@ -151,7 +151,7 @@ class IgnoreEmploymentExpensesControllerSpec
           versionNumber = "2.0",
           userType = "Individual",
           agentReferenceNumber = None,
-          params = Map("nino" -> nino, "taxYear" -> taxYear),
+          params = Map("nino" -> validNino, "taxYear" -> taxYear),
           requestBody = maybeRequestBody,
           `X-CorrelationId` = correlationId,
           auditResponse = auditResponse

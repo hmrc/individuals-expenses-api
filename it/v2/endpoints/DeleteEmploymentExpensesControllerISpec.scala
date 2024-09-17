@@ -16,49 +16,20 @@
 
 package v2.endpoints
 
-import api.models.errors._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
+import common.ExpensesISpec
 import play.api.http.HeaderNames.ACCEPT
 import play.api.http.Status._
 import play.api.libs.json.{JsObject, Json}
 import play.api.libs.ws.{WSRequest, WSResponse}
 import play.api.test.Helpers.AUTHORIZATION
-import api.services.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
-import support.IntegrationBaseSpec
+import shared.models.errors._
+import shared.services.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
+import shared.support.IntegrationBaseSpec
 
-class DeleteEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
+class DeleteEmploymentExpensesControllerISpec extends IntegrationBaseSpec with ExpensesISpec {
 
-  private trait Test {
-    def taxYear: String
-
-    def setupStubs(): StubMapping
-
-    def nino: String = "AA123456A"
-
-    def uri: String = s"/employments/$nino/$taxYear"
-
-    def request(): WSRequest = {
-      setupStubs()
-      buildRequest(uri)
-        .withHttpHeaders(
-          (ACCEPT, "application/vnd.hmrc.2.0+json"),
-          (AUTHORIZATION, "Bearer 123") // some bearer token
-        )
-    }
-
-  }
-
-  private trait NonTysTest extends Test {
-    override def taxYear: String = "2021-22"
-
-    def downstreamUri: String = s"/income-tax/expenses/employments/$nino/2021-22"
-  }
-
-  private trait TysIfsTest extends Test {
-    override def taxYear: String = "2023-24"
-
-    def downstreamUri: String = s"/income-tax/expenses/employments/23-24/$nino"
-  }
+  override def servicesConfig: Map[String, Any] = super.servicesConfig ++ expensesServicesConfig
 
   "calling the delete employment expenses endpoint" should {
     "return a 204 status" when {
@@ -170,6 +141,38 @@ class DeleteEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
         (errors ++ extraTysErrors).foreach(args => (serviceErrorTest _).tupled(args))
       }
     }
+  }
+
+  private trait Test {
+    def taxYear: String
+
+    def setupStubs(): StubMapping
+
+    def nino: String = "AA123456A"
+
+    def uri: String = s"/employments/$nino/$taxYear"
+
+    def request(): WSRequest = {
+      setupStubs()
+      buildRequest(uri)
+        .withHttpHeaders(
+          (ACCEPT, "application/vnd.hmrc.2.0+json"),
+          (AUTHORIZATION, "Bearer 123") // some bearer token
+        )
+    }
+
+  }
+
+  private trait NonTysTest extends Test {
+    override def taxYear: String = "2021-22"
+
+    def downstreamUri: String = s"/income-tax/expenses/employments/$nino/2021-22"
+  }
+
+  private trait TysIfsTest extends Test {
+    override def taxYear: String = "2023-24"
+
+    def downstreamUri: String = s"/income-tax/expenses/employments/23-24/$nino"
   }
 
 }

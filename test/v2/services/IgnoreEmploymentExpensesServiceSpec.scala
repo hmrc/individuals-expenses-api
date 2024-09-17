@@ -16,10 +16,11 @@
 
 package v2.services
 
-import api.models.domain.{Nino, TaxYear}
-import api.models.errors._
-import api.models.outcomes.ResponseWrapper
-import api.services.ServiceSpec
+import common.error.TaxYearNotEndedError
+import shared.models.domain.{Nino, TaxYear}
+import shared.models.errors._
+import shared.models.outcomes.ResponseWrapper
+import shared.services.ServiceSpec
 import v2.connectors.MockIgnoreEmploymentExpensesConnector
 import v2.models.request.ignoreEmploymentExpenses.IgnoreEmploymentExpensesRequestData
 
@@ -70,7 +71,7 @@ class IgnoreEmploymentExpensesServiceSpec extends ServiceSpec {
         "INVALID_TAX_YEAR"                -> TaxYearFormatError,
         "INVALID_CORRELATIONID"           -> InternalError,
         "INVALID_PAYLOAD"                 -> InternalError,
-        "INVALID_REQUEST_BEFORE_TAX_YEAR" -> RuleTaxYearNotEndedError,
+        "INVALID_REQUEST_BEFORE_TAX_YEAR" -> TaxYearNotEndedError,
         "INCOME_SOURCE_NOT_FOUND"         -> NotFoundError,
         "SERVER_ERROR"                    -> InternalError,
         "SERVICE_UNAVAILABLE"             -> InternalError

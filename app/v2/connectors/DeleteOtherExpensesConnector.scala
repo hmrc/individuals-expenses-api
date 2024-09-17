@@ -16,10 +16,12 @@
 
 package v2.connectors
 
-import api.connectors.DownstreamUri.{IfsR5Uri, TaxYearSpecificIfsUri}
-import api.connectors.httpparsers.StandardDownstreamHttpParser._
-import api.connectors.{BaseDownstreamConnector, DownstreamOutcome}
-import config.AppConfig
+import common.connectors.ExpensesDownstreamUri.ifsR5Uri
+import config.ExpensesConfig
+import shared.config.AppConfig
+import shared.connectors.DownstreamUri.TaxYearSpecificIfsUri
+import shared.connectors.httpparsers.StandardDownstreamHttpParser._
+import shared.connectors.{BaseDownstreamConnector, DownstreamOutcome}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import v2.models.request.deleteOtherExpenses.DeleteOtherExpensesRequestData
 
@@ -27,7 +29,11 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class DeleteOtherExpensesConnector @Inject() (val http: HttpClient, val appConfig: AppConfig) extends BaseDownstreamConnector {
+class DeleteOtherExpensesConnector @Inject() (
+    val http: HttpClient,
+    val appConfig: AppConfig
+)(implicit expensesConfig: ExpensesConfig)
+    extends BaseDownstreamConnector {
 
   def deleteOtherExpenses(request: DeleteOtherExpensesRequestData)(implicit
       hc: HeaderCarrier,
@@ -39,7 +45,7 @@ class DeleteOtherExpensesConnector @Inject() (val http: HttpClient, val appConfi
     val uri = if (taxYear.useTaxYearSpecificApi) {
       TaxYearSpecificIfsUri[Unit](s"income-tax/expenses/other/${taxYear.asTysDownstream}/$nino")
     } else {
-      IfsR5Uri[Unit](s"income-tax/expenses/other/$nino/${taxYear.asMtd}")
+      ifsR5Uri[Unit](s"income-tax/expenses/other/$nino/${taxYear.asMtd}")
     }
 
     delete(uri)

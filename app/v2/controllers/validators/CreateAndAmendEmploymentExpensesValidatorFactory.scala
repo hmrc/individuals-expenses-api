@@ -16,39 +16,41 @@
 
 package v2.controllers.validators
 
-import api.controllers.validators.Validator
-import api.controllers.validators.resolvers.{DetailedResolveTaxYear, ResolveNino, ResolveNonEmptyJsonObject, ResolveParsedNumber}
-import api.models.domain.{TaxYear, TodaySupplier}
-import api.models.errors.MtdError
 import cats.data.Validated
 import cats.data.Validated._
 import cats.implicits._
 import play.api.libs.json.JsValue
+import shared.controllers.validators.Validator
+import shared.controllers.validators.resolvers._
+import shared.models.domain.TaxYear
+import shared.models.errors.MtdError
 import v2.models.request.createAndAmendEmploymentExpenses.{CreateAndAmendEmploymentExpensesBody, CreateAndAmendEmploymentExpensesRequestData}
 
-import javax.inject.{Inject, Singleton}
+import java.time.Clock
+import javax.inject.Singleton
 
 @Singleton
-class CreateAndAmendEmploymentExpensesValidatorFactory @Inject() (implicit todaySupplier: TodaySupplier = new TodaySupplier) {
+class CreateAndAmendEmploymentExpensesValidatorFactory {
 
-  private val resolveJson = new ResolveNonEmptyJsonObject[CreateAndAmendEmploymentExpensesBody]()
+  private val resolveJson    = new ResolveNonEmptyJsonObject[CreateAndAmendEmploymentExpensesBody]()
+  private val minimumTaxYear = TaxYear.ending(2020)
 
   private val resolveParsedNumber = ResolveParsedNumber()
 
-  def validator(nino: String,
-                taxYear: String,
-                body: JsValue,
-                temporalValidationEnabled: Boolean): Validator[CreateAndAmendEmploymentExpensesRequestData] =
+  def validator(nino: String, taxYear: String, body: JsValue, temporalValidationEnabled: Boolean)(implicit
+      clock: Clock = Clock.systemUTC): Validator[CreateAndAmendEmploymentExpensesRequestData] =
     new Validator[CreateAndAmendEmploymentExpensesRequestData] {
 
-      private val resolveTaxYear = DetailedResolveTaxYear(
-        allowIncompleteTaxYear = !temporalValidationEnabled,
-        maybeMinimumTaxYear = Some(TaxYear.employmentExpensesMinimumTaxYear))
+      private lazy val resolvedTaxYear = {
+        ResolveTaxYearMinimum(minimumTaxYear)(taxYear) andThen { parsedTaxYear =>
+          if (temporalValidationEnabled) ResolveIncompleteTaxYear().resolver(taxYear) else Valid(parsedTaxYear)
+        }
+      }
 
       def validate: Validated[Seq[MtdError], CreateAndAmendEmploymentExpensesRequestData] =
         (
           ResolveNino(nino),
-          resolveTaxYear(taxYear),
+          resolvedTaxYear,
           resolveJson(body)
         ).mapN(CreateAndAmendEmploymentExpensesRequestData) andThen validateBusinessRules
 
@@ -66,7 +68,7 @@ class CreateAndAmendEmploymentExpensesValidatorFactory @Inject() (implicit today
           (vehicleExpenses, "/expenses/vehicleExpenses"),
           (mileageAllowanceRelief, "/expenses/mileageAllowanceRelief")
         ).traverse_ { case (value, path) =>
-          resolveParsedNumber(value, path = Some(path))
+          resolveParsedNumber(value, path = path)
         }.map(_ => parsed)
       }
 

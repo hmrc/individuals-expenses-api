@@ -16,14 +16,16 @@
 
 package v2.controllers.validators
 
-import api.controllers.validators.Validator
-import api.models.errors.MtdError
 import cats.data.Validated
 import cats.data.Validated.{Invalid, Valid}
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
 import play.api.libs.json.JsValue
+import shared.controllers.validators.Validator
+import shared.models.errors.MtdError
 import v2.models.request.createAndAmendEmploymentExpenses.CreateAndAmendEmploymentExpensesRequestData
+
+import java.time.Clock
 
 trait MockCreateAndAmendEmploymentExpensesValidatorFactory extends MockFactory {
 
@@ -33,7 +35,7 @@ trait MockCreateAndAmendEmploymentExpensesValidatorFactory extends MockFactory {
   object MockedCreateAndAmendEmploymentExpensesValidatorFactory {
 
     def validator(): CallHandler[Validator[CreateAndAmendEmploymentExpensesRequestData]] =
-      (mockCreateAndAmendEmploymentExpensesValidatorFactory.validator(_: String, _: String, _: JsValue, _: Boolean)).expects(*, *, *, *)
+      (mockCreateAndAmendEmploymentExpensesValidatorFactory.validator(_: String, _: String, _: JsValue, _: Boolean)(_: Clock)).expects(*, *, *, *, *)
 
   }
 

@@ -16,10 +16,11 @@
 
 package v2.services
 
-import api.controllers.RequestContext
-import api.models.errors._
-import api.services.{BaseService, ServiceOutcome}
 import cats.implicits.toBifunctorOps
+import common.error.{RuleInvalidSubmissionPensionScheme, TaxYearNotEndedError}
+import shared.controllers.RequestContext
+import shared.models.errors._
+import shared.services.{BaseService, ServiceOutcome}
 import v2.connectors.CreateAndAmendEmploymentExpensesConnector
 import v2.models.request.createAndAmendEmploymentExpenses.CreateAndAmendEmploymentExpensesRequestData
 
@@ -42,7 +43,7 @@ class CreateAndAmendEmploymentExpensesService @Inject() (connector: CreateAndAme
       "INVALID_TAX_YEAR"                -> TaxYearFormatError,
       "INVALID_CORRELATIONID"           -> InternalError,
       "INVALID_PAYLOAD"                 -> InternalError,
-      "INVALID_REQUEST_BEFORE_TAX_YEAR" -> RuleTaxYearNotEndedError,
+      "INVALID_REQUEST_BEFORE_TAX_YEAR" -> TaxYearNotEndedError,
       "INCOME_SOURCE_NOT_FOUND"         -> NotFoundError,
       "SERVER_ERROR"                    -> InternalError,
       "SERVICE_UNAVAILABLE"             -> InternalError

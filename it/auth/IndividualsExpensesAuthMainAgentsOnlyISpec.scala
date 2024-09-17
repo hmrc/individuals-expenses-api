@@ -16,17 +16,21 @@
 
 package auth
 
-import api.models.domain.TaxYear
-import api.services.DownstreamStub
-import play.api.http.Status.OK
-import play.api.libs.json.{JsValue, JsObject}
+import common.ExpensesISpec
+import play.api.http.Status.NO_CONTENT
+import play.api.libs.json.{JsObject, JsValue}
 import play.api.libs.ws.{WSRequest, WSResponse}
+import shared.auth.AuthMainAgentsOnlyISpec
+import shared.models.domain.TaxYear
+import shared.services.DownstreamStub
 
-class IndividualsExpensesAuthMainAgentsOnlyISpec extends AuthMainAgentsOnlyISpec {
-
-  override protected val callingApiVersion = "2.0"
+class IndividualsExpensesAuthMainAgentsOnlyISpec extends AuthMainAgentsOnlyISpec with ExpensesISpec {
 
   private val taxYear = TaxYear.fromMtd("2019-20")
+
+  override def servicesConfig: Map[String, Any] = super.servicesConfig ++ expensesServicesConfig
+
+  override protected val callingApiVersion = "2.0"
 
   override protected val supportingAgentsNotAllowedEndpoint = "ignore-employment-expenses"
 
@@ -36,12 +40,10 @@ class IndividualsExpensesAuthMainAgentsOnlyISpec extends AuthMainAgentsOnlyISpec
 
   override protected val downstreamUri: String = s"/income-tax/expenses/employments/$nino/${taxYear.asMtd}"
 
-  override protected val downstreamSuccessStatus: Int = OK
-
   override protected val maybeDownstreamResponseJson: Option[JsValue] = Some(JsObject.empty)
 
   override protected val downstreamHttpMethod: DownstreamStub.HTTPMethod = DownstreamStub.PUT
 
-  override protected val expectedMtdSuccessStatus: Int = OK
+  override protected val downstreamSuccessStatus: Int = NO_CONTENT
 
 }

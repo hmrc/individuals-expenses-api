@@ -16,21 +16,20 @@
 
 package v2.controllers.validators
 
-import api.controllers.validators.Validator
-import api.controllers.validators.resolvers.{DetailedResolveTaxYear, ResolveNino}
-import api.models.domain.TaxYear
-import api.models.errors.MtdError
 import cats.data.Validated
 import cats.data.Validated._
-import cats.implicits._
+import cats.implicits.catsSyntaxTuple2Semigroupal
+import shared.controllers.validators.Validator
+import shared.controllers.validators.resolvers.{ResolveNino, ResolveTaxYearMinimum}
+import shared.models.domain.TaxYear
+import shared.models.errors.MtdError
+import v2.controllers.validators.RetrieveOtherExpensesValidatorFactory.resolveTaxYear
 import v2.models.request.retrieveOtherExpenses.RetrieveOtherExpensesRequestData
 
 import javax.inject.Singleton
 
 @Singleton
 class RetrieveOtherExpensesValidatorFactory {
-
-  private val resolveTaxYear = DetailedResolveTaxYear(maybeMinimumTaxYear = Some(TaxYear.otherExpensesMinimumTaxYear))
 
   def validator(nino: String, taxYear: String): Validator[RetrieveOtherExpensesRequestData] =
     new Validator[RetrieveOtherExpensesRequestData] {
@@ -42,5 +41,11 @@ class RetrieveOtherExpensesValidatorFactory {
         ).mapN(RetrieveOtherExpensesRequestData)
 
     }
+
+}
+
+object RetrieveOtherExpensesValidatorFactory {
+  private val minimumTaxYear = TaxYear.ending(2022)
+  private val resolveTaxYear = ResolveTaxYearMinimum(minimumTaxYear)
 
 }

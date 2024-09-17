@@ -16,8 +16,9 @@
 
 package v2.models.response.createAndAmendEmploymentExpenses
 
-import api.hateoas.{HateoasData, HateoasLinks, HateoasLinksFactory, Link}
-import config.AppConfig
+import shared.config.AppConfig
+import shared.hateoas.{HateoasData, HateoasLinksFactory, Link}
+import v2.common.hateoas.HateoasLinks
 
 object CreateAndAmendEmploymentExpensesResponse extends HateoasLinks {
 
@@ -25,6 +26,7 @@ object CreateAndAmendEmploymentExpensesResponse extends HateoasLinks {
 
     override def links(appConfig: AppConfig, data: CreateAndAmendEmploymentExpensesHateoasData): Seq[Link] = {
       import data._
+
       Seq(
         retrieveEmploymentExpenses(appConfig, nino, taxYear),
         createAndAmendEmploymentExpenses(appConfig, nino, taxYear),

@@ -16,32 +16,37 @@
 
 package v2.controllers.validators
 
-import api.controllers.validators.Validator
-import api.controllers.validators.resolvers.{DetailedResolveTaxYear, ResolveNino}
-import api.models.domain.{TaxYear, TodaySupplier}
-import api.models.errors.MtdError
 import cats.data.Validated
 import cats.data.Validated._
-import cats.implicits._
+import cats.implicits.catsSyntaxTuple2Semigroupal
+import shared.controllers.validators.Validator
+import shared.controllers.validators.resolvers.{ResolveIncompleteTaxYear, ResolveNino, ResolveTaxYearMinimum}
+import shared.models.domain.TaxYear
+import shared.models.errors.MtdError
 import v2.models.request.ignoreEmploymentExpenses.IgnoreEmploymentExpensesRequestData
 
-import javax.inject.{Inject, Singleton}
+import java.time.Clock
+import javax.inject.Singleton
 
 @Singleton
-class IgnoreEmploymentExpensesValidatorFactory @Inject() (implicit todaySupplier: TodaySupplier = new TodaySupplier) {
+class IgnoreEmploymentExpensesValidatorFactory {
 
-  def validator(nino: String, taxYear: String, temporalValidationEnabled: Boolean): Validator[IgnoreEmploymentExpensesRequestData] =
+  private val minimumTaxYear = TaxYear.ending(2020)
+
+  def validator(nino: String, taxYear: String, temporalValidationEnabled: Boolean)(implicit
+      clock: Clock = Clock.systemUTC): Validator[IgnoreEmploymentExpensesRequestData] =
     new Validator[IgnoreEmploymentExpensesRequestData] {
 
-      private val resolveTaxYear = DetailedResolveTaxYear(
-        allowIncompleteTaxYear = !temporalValidationEnabled,
-        maybeMinimumTaxYear = Some(TaxYear.employmentExpensesMinimumTaxYear)
-      )
+      private lazy val resolvedTaxYear = {
+        ResolveTaxYearMinimum(minimumTaxYear)(taxYear) andThen { parsedTaxYear =>
+          if (temporalValidationEnabled) ResolveIncompleteTaxYear().resolver(taxYear) else Valid(parsedTaxYear)
+        }
+      }
 
       def validate: Validated[Seq[MtdError], IgnoreEmploymentExpensesRequestData] = {
         (
           ResolveNino(nino),
-          resolveTaxYear(taxYear)
+          resolvedTaxYear
         ).mapN(IgnoreEmploymentExpensesRequestData)
       }
 

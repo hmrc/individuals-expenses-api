@@ -16,26 +16,34 @@
 
 package auth
 
-import api.models.domain.TaxYear
-import api.services.DownstreamStub
-import play.api.libs.json.{JsValue, JsObject}
+import common.ExpensesISpec
+import play.api.http.Status.NO_CONTENT
+import play.api.libs.json.{JsObject, JsValue}
 import play.api.libs.ws.{WSRequest, WSResponse}
+import shared.auth.AuthSupportingAgentsAllowedISpec
+import shared.models.domain.TaxYear
+import shared.services.DownstreamStub
 
-class IndividualsExpensesAuthSupportingAgentsAllowedISpec extends AuthSupportingAgentsAllowedISpec {
+class IndividualsExpensesAuthSupportingAgentsAllowedISpec extends AuthSupportingAgentsAllowedISpec with ExpensesISpec {
 
-  override protected val callingApiVersion = "2.0"
-  private val taxYear                      = TaxYear.fromMtd("2019-20")
+  private val taxYear = TaxYear.fromMtd("2019-20")
 
-  override protected val supportingAgentsAllowedEndpoint = "ignore-employment-expenses"
+  override def servicesConfig: Map[String, Any] = super.servicesConfig ++ expensesServicesConfig
 
-  override protected val mtdUrl = s"/employments/$nino/${taxYear.asMtd}/ignore"
+  override val callingApiVersion = "2.0"
 
-  override protected def sendMtdRequest(request: WSRequest): WSResponse = await(request.post(JsObject.empty))
+  override val supportingAgentsAllowedEndpoint = "ignore-employment-expenses"
 
-  override protected val downstreamUri: String = s"/income-tax/expenses/employments/$nino/${taxYear.asMtd}"
+  override val mtdUrl = s"/employments/$nino/${taxYear.asMtd}/ignore"
 
-  override protected val downstreamHttpMethod: DownstreamStub.HTTPMethod = DownstreamStub.GET
+  override def sendMtdRequest(request: WSRequest): WSResponse = await(request.post(JsObject.empty))
 
-  override protected val maybeDownstreamResponseJson: Option[JsValue] = Some(JsObject.empty)
+  override val downstreamUri: String = s"/income-tax/expenses/employments/$nino/${taxYear.asMtd}"
+
+  override val downstreamHttpMethod: DownstreamStub.HTTPMethod = DownstreamStub.PUT
+
+  override val downstreamSuccessStatus: Int = NO_CONTENT
+
+  override val maybeDownstreamResponseJson: Option[JsValue] = Some(JsObject.empty)
 
 }

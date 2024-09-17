@@ -16,26 +16,21 @@
 
 package v2.controllers.validators
 
-import api.models.domain.{Nino, TaxYear, TodaySupplier}
-import api.models.errors._
-import support.UnitSpec
+import shared.models.domain.{Nino, TaxYear}
+import shared.models.errors._
+import shared.utils.UnitSpec
 import v2.models.request.ignoreEmploymentExpenses.IgnoreEmploymentExpensesRequestData
-
-import java.time.LocalDate
 
 class IgnoreEmploymentExpensesValidatorFactorySpec extends UnitSpec {
 
   private implicit val correlationId: String = "1234"
 
-  private val validNino    = "AA123456A"
-  private val validTaxYear = "2021-22"
+  private val validNino      = "AA123456A"
+  private val validTaxYear   = "2021-22"
+  private val currentTaxYear = TaxYear.now.asMtd
 
   private val parsedNino    = Nino(validNino)
   private val parsedTaxYear = TaxYear.fromMtd(validTaxYear)
-
-  implicit val todaySupplier: TodaySupplier = new TodaySupplier {
-    override def today(): LocalDate = LocalDate.parse("2022-07-11")
-  }
 
   private val validatorFactory = new IgnoreEmploymentExpensesValidatorFactory
 
@@ -53,10 +48,10 @@ class IgnoreEmploymentExpensesValidatorFactorySpec extends UnitSpec {
       }
 
       "the taxYear has not ended but temporal validation is not enabled" in {
-        val result = validator(validNino, "2023-24", temporalValidationEnabled = false).validateAndWrapResult()
+        val result = validator(validNino, currentTaxYear, temporalValidationEnabled = false).validateAndWrapResult()
 
         result shouldBe Right(
-          IgnoreEmploymentExpensesRequestData(parsedNino, TaxYear.fromMtd("2023-24"))
+          IgnoreEmploymentExpensesRequestData(parsedNino, TaxYear.fromMtd(currentTaxYear))
         )
       }
     }
@@ -91,7 +86,7 @@ class IgnoreEmploymentExpensesValidatorFactorySpec extends UnitSpec {
       }
 
       "the taxYear has not ended and temporal validation is enabled" in {
-        val result = validator(validNino, "2023-24").validateAndWrapResult()
+        val result = validator(validNino, currentTaxYear).validateAndWrapResult()
         result shouldBe Left(ErrorWrapper(correlationId, RuleTaxYearNotEndedError))
       }
     }

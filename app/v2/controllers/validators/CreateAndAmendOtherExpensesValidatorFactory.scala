@@ -16,14 +16,15 @@
 
 package v2.controllers.validators
 
-import api.controllers.validators.Validator
-import api.controllers.validators.resolvers.{DetailedResolveTaxYear, ResolveNino, ResolveNonEmptyJsonObject, ResolveParsedNumber}
-import api.models.domain.TaxYear
-import api.models.errors.{CustomerReferenceFormatError, MtdError}
 import cats.data.Validated
 import cats.data.Validated._
 import cats.implicits._
+import common.error.CustomerReferenceFormatError
 import play.api.libs.json.JsValue
+import shared.controllers.validators.Validator
+import shared.controllers.validators.resolvers.{ResolveNino, ResolveNonEmptyJsonObject, ResolveParsedNumber, ResolveTaxYearMinimum}
+import shared.models.domain.TaxYear
+import shared.models.errors.MtdError
 import v2.models.request.createAndAmendOtherExpenses.{CreateAndAmendOtherExpensesBody, CreateAndAmendOtherExpensesRequestData}
 
 import javax.inject.Singleton
@@ -31,7 +32,7 @@ import javax.inject.Singleton
 @Singleton
 class CreateAndAmendOtherExpensesValidatorFactory {
 
-  private val resolveTaxYear = DetailedResolveTaxYear(maybeMinimumTaxYear = Some(TaxYear.otherExpensesMinimumTaxYear))
+  private val minimumTaxYear = TaxYear.ending(2022)
 
   private val resolveJson = new ResolveNonEmptyJsonObject[CreateAndAmendOtherExpensesBody]()
 
@@ -39,6 +40,8 @@ class CreateAndAmendOtherExpensesValidatorFactory {
 
   def validator(nino: String, taxYear: String, body: JsValue): Validator[CreateAndAmendOtherExpensesRequestData] =
     new Validator[CreateAndAmendOtherExpensesRequestData] {
+
+      private val resolveTaxYear = ResolveTaxYearMinimum(minimumTaxYear)
 
       def validate: Validated[Seq[MtdError], CreateAndAmendOtherExpensesRequestData] =
         (
@@ -56,7 +59,7 @@ class CreateAndAmendOtherExpensesValidatorFactory {
         val validatedExpensesAmounts = List(
           (paymentsToTradeUnionsForDeathBenefits.map(_.expenseAmount), "/paymentsToTradeUnionsForDeathBenefits/expenseAmount"),
           (patentRoyaltiesPayments.map(_.expenseAmount), "/patentRoyaltiesPayments/expenseAmount")
-        ).traverse_ { case (value, path) => resolveParsedNumber(value, path = Some(path)) }
+        ).traverse_ { case (value, path) => resolveParsedNumber(value, path = path) }
 
         val validatedCustomerReferences = List(
           (paymentsToTradeUnionsForDeathBenefits.map(_.customerReference), "/paymentsToTradeUnionsForDeathBenefits/customerReference"),

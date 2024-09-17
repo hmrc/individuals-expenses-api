@@ -16,15 +16,16 @@
 
 package v2.connectors
 
-import api.connectors.ConnectorSpec
-import api.models.domain.{Nino, TaxYear, Timestamp}
-import api.models.outcomes.ResponseWrapper
+import common.connectors.ExpensesConnectorSpec
+import config.MockExpensesConfig
+import shared.models.domain.{Nino, TaxYear, Timestamp}
+import shared.models.outcomes.ResponseWrapper
 import v2.models.request.retrieveOtherExpenses.RetrieveOtherExpensesRequestData
 import v2.models.response.retrieveOtherExpenses.{PatentRoyaltiesPayments, PaymentsToTradeUnionsForDeathBenefits, RetrieveOtherExpensesResponse}
 
 import scala.concurrent.Future
 
-class RetrieveOtherExpensesConnectorSpec extends ConnectorSpec {
+class RetrieveOtherExpensesConnectorSpec extends ExpensesConnectorSpec {
 
   val nino: String = "AA123456A"
 
@@ -35,7 +36,7 @@ class RetrieveOtherExpensesConnectorSpec extends ConnectorSpec {
       Some(PatentRoyaltiesPayments(Some("ROYALTIES PAYMENTS"), 98765.12))
     )
 
-  trait Test { _: ConnectorTest =>
+  trait Test extends MockExpensesConfig { _: ConnectorTest =>
 
     def taxYear: String
 

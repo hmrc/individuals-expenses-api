@@ -16,13 +16,14 @@
 
 package v2.controllers
 
-import api.controllers._
-import api.hateoas.HateoasFactory
-import api.services.{AuditService, EnrolmentsAuthService, MtdIdLookupService}
-import config.{AppConfig, FeatureSwitches}
+import config.ExpensesFeatureSwitches
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
-import routing.{Version, Version2}
-import utils.IdGenerator
+import shared.config.AppConfig
+import shared.controllers._
+import shared.hateoas.HateoasFactory
+import shared.routing.Version2
+import shared.services.{AuditService, EnrolmentsAuthService, MtdIdLookupService}
+import shared.utils.IdGenerator
 import v2.controllers.validators.IgnoreEmploymentExpensesValidatorFactory
 import v2.models.response.ignoreEmploymentExpenses.IgnoreEmploymentExpensesHateoasData
 import v2.models.response.ignoreEmploymentExpenses.IgnoreEmploymentExpensesResponse.IgnoreEmploymentExpensesLinksFactory
@@ -51,7 +52,7 @@ class IgnoreEmploymentExpensesController @Inject() (val authService: EnrolmentsA
     authorisedAction(nino).async { implicit request =>
       implicit val ctx: RequestContext = RequestContext.from(idGenerator, endpointLogContext)
 
-      val temporalValidationEnabled = FeatureSwitches()(appConfig).isTemporalValidationEnabled
+      val temporalValidationEnabled = ExpensesFeatureSwitches()(appConfig).isTemporalValidationEnabled
       val validator                 = validatorFactory.validator(nino, taxYear, temporalValidationEnabled)
 
       val requestHandler = RequestHandler
@@ -60,7 +61,7 @@ class IgnoreEmploymentExpensesController @Inject() (val authService: EnrolmentsA
         .withAuditing(AuditHandler(
           auditService = auditService,
           auditType = "IgnoreEmploymentExpenses",
-          apiVersion = Version.from(request, orElse = Version2),
+          apiVersion = Version2,
           transactionName = "ignore-employment-expenses",
           params = Map("nino" -> nino, "taxYear" -> taxYear),
           includeResponse = true

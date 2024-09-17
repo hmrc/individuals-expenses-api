@@ -16,15 +16,15 @@
 
 package v2.controllers
 
-import api.controllers.{ControllerBaseSpec, ControllerTestRunner}
-import api.hateoas.Method.{DELETE, GET, PUT}
-import api.hateoas.{HateoasWrapper, Link, MockHateoasFactory}
-import api.models.domain.{Nino, TaxYear}
-import api.models.errors._
-import api.models.outcomes.ResponseWrapper
-import play.api.mvc.Result
 import play.api.Configuration
-import config.MockAppConfig
+import play.api.mvc.Result
+import shared.config.MockAppConfig
+import shared.controllers.{ControllerBaseSpec, ControllerTestRunner}
+import shared.hateoas.Method.{DELETE, GET, PUT}
+import shared.hateoas.{HateoasWrapper, Link, MockHateoasFactory}
+import shared.models.domain.{Nino, TaxYear}
+import shared.models.errors._
+import shared.models.outcomes.ResponseWrapper
 import v2.controllers.validators.MockRetrieveOtherExpensesValidatorFactory
 import v2.fixtures.RetrieveOtherExpensesFixtures._
 import v2.models.request.retrieveOtherExpenses.RetrieveOtherExpensesRequestData
@@ -44,12 +44,12 @@ class RetrieveOtherExpensesControllerSpec
 
   private val taxYear = "2019-20"
 
-  private val requestData = RetrieveOtherExpensesRequestData(Nino(nino), TaxYear.fromMtd(taxYear))
+  private val requestData = RetrieveOtherExpensesRequestData(Nino(validNino), TaxYear.fromMtd(taxYear))
 
   private val testHateoasLink = List(
-    Link(href = s"/individuals/expenses/other/$nino/$taxYear", method = PUT, rel = "amend-expenses-other"),
-    Link(href = s"/individuals/expenses/other/$nino/$taxYear", method = GET, rel = "self"),
-    Link(href = s"/individuals/expenses/other/$nino/$taxYear", method = DELETE, rel = "delete-expenses-other")
+    Link(href = s"/individuals/expenses/other/$validNino/$taxYear", method = PUT, rel = "amend-expenses-other"),
+    Link(href = s"/individuals/expenses/other/$validNino/$taxYear", method = GET, rel = "self"),
+    Link(href = s"/individuals/expenses/other/$validNino/$taxYear", method = DELETE, rel = "delete-expenses-other")
   )
 
   private val responseBodyJson = mtdResponseWithHateoasLinks(taxYear)
@@ -59,7 +59,7 @@ class RetrieveOtherExpensesControllerSpec
       "given a valid request" in new Test {
         willUseValidator(returningSuccess(requestData))
 
-        MockedAppConfig.featureSwitches.anyNumberOfTimes() returns Configuration(
+        MockedAppConfig.featureSwitchConfig.anyNumberOfTimes() returns Configuration(
           "supporting-agents-access-control.enabled" -> true
         )
 
@@ -69,7 +69,7 @@ class RetrieveOtherExpensesControllerSpec
           .returns(Future.successful(Right(ResponseWrapper(correlationId, responseModel))))
 
         MockHateoasFactory
-          .wrap(responseModel, RetrieveOtherExpensesHateoasData(nino, taxYear))
+          .wrap(responseModel, RetrieveOtherExpensesHateoasData(validNino, taxYear))
           .returns(HateoasWrapper(responseModel, testHateoasLink))
 
         runOkTest(
@@ -82,7 +82,7 @@ class RetrieveOtherExpensesControllerSpec
     "return the error as per spec" when {
       "the parser validation fails" in new Test {
 
-        MockedAppConfig.featureSwitches.anyNumberOfTimes() returns Configuration(
+        MockedAppConfig.featureSwitchConfig.anyNumberOfTimes() returns Configuration(
           "supporting-agents-access-control.enabled" -> true
         )
 
@@ -94,7 +94,7 @@ class RetrieveOtherExpensesControllerSpec
 
       "the service returns an error" in new Test {
 
-        MockedAppConfig.featureSwitches.anyNumberOfTimes() returns Configuration(
+        MockedAppConfig.featureSwitchConfig.anyNumberOfTimes() returns Configuration(
           "supporting-agents-access-control.enabled" -> true
         )
 
@@ -122,7 +122,7 @@ class RetrieveOtherExpensesControllerSpec
       idGenerator = mockIdGenerator
     )
 
-    protected def callController(): Future[Result] = controller.handleRequest(nino, taxYear)(fakeGetRequest)
+    protected def callController(): Future[Result] = controller.handleRequest(validNino, taxYear)(fakeGetRequest)
   }
 
 }
