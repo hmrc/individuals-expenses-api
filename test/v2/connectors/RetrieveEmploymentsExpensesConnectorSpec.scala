@@ -16,9 +16,8 @@
 
 package v2.connectors
 
-import common.connectors.ExpensesConnectorSpec
 import common.domain.MtdSource
-import config.MockExpensesConfig
+import shared.connectors.ConnectorSpec
 import shared.models.domain.{Nino, TaxYear}
 import shared.models.outcomes.ResponseWrapper
 import v2.fixtures.RetrieveEmploymentsExpensesFixtures._
@@ -26,11 +25,12 @@ import v2.models.request.retrieveEmploymentExpenses.RetrieveEmploymentsExpensesR
 
 import scala.concurrent.Future
 
-class RetrieveEmploymentsExpensesConnectorSpec extends ExpensesConnectorSpec {
+class RetrieveEmploymentsExpensesConnectorSpec extends ConnectorSpec {
 
   val nino: String = "AA123456A"
 
-  trait Test extends MockExpensesConfig { _: ConnectorTest =>
+  trait Test {
+    _: ConnectorTest =>
 
     def taxYear: String
 
@@ -50,7 +50,7 @@ class RetrieveEmploymentsExpensesConnectorSpec extends ExpensesConnectorSpec {
 
   "retrieveEmploymentExpenses" should {
     "return a result" when {
-      "the downstream call is successful for a non-TYS tax year" in new IfsR6Test with Test {
+      "the downstream call is successful for a non-TYS tax year" in new IfsTest with Test {
         def taxYear: String = "2019-20"
         val outcome         = Right(ResponseWrapper(correlationId, responseModelUser))
 
@@ -60,7 +60,7 @@ class RetrieveEmploymentsExpensesConnectorSpec extends ExpensesConnectorSpec {
         await(connector.retrieveEmploymentExpenses(request)) shouldBe outcome
       }
 
-      "the downstream call is successful for a TYS tax year" in new TysIfsTest with Test {
+      "the downstream call is successful for a TYS tax year" in new IfsTest with Test {
         def taxYear: String = "2023-24"
         val outcome         = Right(ResponseWrapper(correlationId, responseModelUser))
 

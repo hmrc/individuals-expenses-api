@@ -18,7 +18,7 @@ package v2.connectors
 
 import play.api.http.Status.NO_CONTENT
 import shared.config.AppConfig
-import shared.connectors.DownstreamUri.{DesUri, TaxYearSpecificIfsUri}
+import shared.connectors.DownstreamUri.{DesUri, IfsUri}
 import shared.connectors.httpparsers.StandardDownstreamHttpParser._
 import shared.connectors.{BaseDownstreamConnector, DownstreamOutcome}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
@@ -41,7 +41,7 @@ class DeleteEmploymentExpensesConnector @Inject() (val http: HttpClient, val app
 
     val downstreamUri =
       if (request.taxYear.useTaxYearSpecificApi) {
-        TaxYearSpecificIfsUri[Unit](s"income-tax/expenses/employments/${taxYear.asTysDownstream}/$nino")
+        IfsUri[Unit](s"income-tax/expenses/employments/${taxYear.asTysDownstream}/$nino")
       } else {
         // The endpoint uses the MTD tax year format:
         DesUri[Unit](s"income-tax/expenses/employments/$nino/${taxYear.asMtd}")

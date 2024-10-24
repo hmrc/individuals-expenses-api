@@ -27,7 +27,8 @@ class DeleteEmploymentExpensesConnectorSpec extends ConnectorSpec {
 
   val nino: String = "AA123456A"
 
-  trait Test { _: ConnectorTest =>
+  trait Test {
+    _: ConnectorTest =>
     def taxYear: TaxYear
 
     protected val connector: DeleteEmploymentExpensesConnector =
@@ -57,7 +58,7 @@ class DeleteEmploymentExpensesConnectorSpec extends ConnectorSpec {
         result shouldBe outcome
       }
 
-      "the downstream call is successful and is tax year specific" in new TysIfsTest with Test {
+      "the downstream call is successful and is tax year specific" in new IfsTest with Test {
         def taxYear: TaxYear                               = TaxYear.fromMtd("2023-24")
         val outcome: Right[Nothing, ResponseWrapper[Unit]] = Right(ResponseWrapper(correlationId, ()))
 
