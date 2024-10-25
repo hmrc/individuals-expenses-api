@@ -23,14 +23,6 @@ import shared.utils.UnitSpec
 class ExpensesFeatureSwitchesSpec extends UnitSpec with FeatureSwitchesBehaviour[ExpensesFeatureSwitches] {
   override def featureSwitches(configuration: Configuration): ExpensesFeatureSwitches = ExpensesFeatureSwitches(configuration)
 
-  "isIfsEnabled" should {
-    behave like aFeatureSwitchWithKey("ifs.enabled", _.isIfsEnabled)
-  }
-
-  "isIfsInProduction" should {
-    behave like aFeatureSwitchWithKey("ifs.released-in-production", _.isIfsInProduction)
-  }
-
   "supportingAgentsAccessControlEnabled" should {
     behave like aFeatureSwitchWithKey("supporting-agents-access-control.enabled", _.supportingAgentsAccessControlEnabled)
   }

@@ -16,7 +16,6 @@
 
 package v2.endpoints
 
-import common.ExpensesISpec
 import common.error.TaxYearNotEndedError
 import play.api.http.HeaderNames.ACCEPT
 import play.api.http.Status._
@@ -27,9 +26,7 @@ import shared.models.errors._
 import shared.services.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 import shared.support.IntegrationBaseSpec
 
-class IgnoreEmploymentExpensesControllerISpec extends IntegrationBaseSpec with ExpensesISpec {
-
-  override def servicesConfig: Map[String, Any] = super.servicesConfig ++ expensesServicesConfig
+class IgnoreEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
 
   "Calling the ignore endpoint" should {
 

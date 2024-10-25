@@ -23,12 +23,9 @@ import play.api.libs.ws.{WSRequest, WSResponse}
 import play.api.test.Helpers.AUTHORIZATION
 import shared.models.errors._
 import shared.services.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
-import common.ExpensesISpec
 import shared.support.IntegrationBaseSpec
 
-class RetrieveOtherExpensesControllerISpec extends IntegrationBaseSpec with ExpensesISpec {
-
-  override def servicesConfig: Map[String, Any] = super.servicesConfig ++ expensesServicesConfig
+class RetrieveOtherExpensesControllerISpec extends IntegrationBaseSpec {
 
   "Calling the retrieve endpoint" should {
 
