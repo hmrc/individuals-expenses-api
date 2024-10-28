@@ -4,7 +4,7 @@ info:
   version: "2.0"
   title: "Individuals Expenses (MTD)"
   description: |
-    The following groups are stateful in the Sandbox:
+    The following groups of enpoints are stateful in the Sandbox:
     * [Employment Expenses](#tag/Employment-Expenses)
     * [Other Expenses](#tag/Other-Expenses)
     
