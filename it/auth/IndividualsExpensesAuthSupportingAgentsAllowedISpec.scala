@@ -16,7 +16,6 @@
 
 package auth
 
-import common.ExpensesISpec
 import play.api.http.Status.NO_CONTENT
 import play.api.libs.json.{JsObject, JsValue}
 import play.api.libs.ws.{WSRequest, WSResponse}
@@ -24,11 +23,9 @@ import shared.auth.AuthSupportingAgentsAllowedISpec
 import shared.models.domain.TaxYear
 import shared.services.DownstreamStub
 
-class IndividualsExpensesAuthSupportingAgentsAllowedISpec extends AuthSupportingAgentsAllowedISpec with ExpensesISpec {
+class IndividualsExpensesAuthSupportingAgentsAllowedISpec extends AuthSupportingAgentsAllowedISpec {
 
   private val taxYear = TaxYear.fromMtd("2019-20")
-
-  override def servicesConfig: Map[String, Any] = super.servicesConfig ++ expensesServicesConfig
 
   override val callingApiVersion = "2.0"
 

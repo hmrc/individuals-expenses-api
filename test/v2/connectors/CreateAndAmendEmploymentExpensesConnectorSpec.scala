@@ -16,9 +16,7 @@
 
 package v2.connectors
 
-import common.connectors.ExpensesConnectorSpec
-import config.MockExpensesConfig
-import shared.connectors.DownstreamOutcome
+import shared.connectors.{ConnectorSpec, DownstreamOutcome}
 import shared.models.domain.{Nino, TaxYear}
 import shared.models.outcomes.ResponseWrapper
 import v2.models.request.createAndAmendEmploymentExpenses.{
@@ -29,7 +27,7 @@ import v2.models.request.createAndAmendEmploymentExpenses.{
 
 import scala.concurrent.Future
 
-class CreateAndAmendEmploymentExpensesConnectorSpec extends ExpensesConnectorSpec {
+class CreateAndAmendEmploymentExpensesConnectorSpec extends ConnectorSpec {
 
   val nino: String = "AA123456A"
 
@@ -46,7 +44,7 @@ class CreateAndAmendEmploymentExpensesConnectorSpec extends ExpensesConnectorSpe
     )
   )
 
-  trait Test extends MockExpensesConfig {
+  trait Test {
     _: ConnectorTest =>
 
     def taxYear: TaxYear
@@ -64,7 +62,7 @@ class CreateAndAmendEmploymentExpensesConnectorSpec extends ExpensesConnectorSpe
 
     "amend" should {
 
-      "put a body and return 204 no body" in new IfsR6Test with Test {
+      "put a body and return 204 no body" in new IfsTest with Test {
 
         def taxYear: TaxYear = TaxYear.fromMtd("2021-22")
 
@@ -82,7 +80,7 @@ class CreateAndAmendEmploymentExpensesConnectorSpec extends ExpensesConnectorSpe
 
       }
 
-      "put a body and return 204 no body for a TYS request" in new TysIfsTest with Test {
+      "put a body and return 204 no body for a TYS request" in new IfsTest with Test {
 
         def taxYear: TaxYear = TaxYear.fromMtd("2023-24")
 

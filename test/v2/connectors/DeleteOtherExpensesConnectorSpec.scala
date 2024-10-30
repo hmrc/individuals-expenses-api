@@ -16,19 +16,19 @@
 
 package v2.connectors
 
-import common.connectors.ExpensesConnectorSpec
-import config.MockExpensesConfig
+import shared.connectors.ConnectorSpec
 import shared.models.domain.{Nino, TaxYear}
 import shared.models.outcomes.ResponseWrapper
 import v2.models.request.deleteOtherExpenses.DeleteOtherExpensesRequestData
 
 import scala.concurrent.Future
 
-class DeleteOtherExpensesConnectorSpec extends ExpensesConnectorSpec {
+class DeleteOtherExpensesConnectorSpec extends ConnectorSpec {
 
   val nino: String = "AA123456A"
 
-  trait Test extends MockExpensesConfig { _: ConnectorTest =>
+  trait Test {
+    _: ConnectorTest =>
     def taxYear: TaxYear
     protected val request = DeleteOtherExpensesRequestData(Nino(nino), taxYear)
 
@@ -41,7 +41,7 @@ class DeleteOtherExpensesConnectorSpec extends ExpensesConnectorSpec {
 
   "deleteOtherExpenses" should {
     "return a 204 with no body" when {
-      "the downstream call is successful" in new IfsR5Test with Test {
+      "the downstream call is successful" in new IfsTest with Test {
         def taxYear: TaxYear = TaxYear.fromMtd("2017-18")
         val outcome          = Right(ResponseWrapper(correlationId, ()))
 
@@ -50,7 +50,7 @@ class DeleteOtherExpensesConnectorSpec extends ExpensesConnectorSpec {
         await(connector.deleteOtherExpenses(request)) shouldBe outcome
       }
     }
-    "a valid request is called for a Tax Year Specific tax year" in new TysIfsTest with Test {
+    "a valid request is called for a Tax Year Specific tax year" in new IfsTest with Test {
       def taxYear: TaxYear = TaxYear.fromMtd("2023-24")
       val outcome          = Right(ResponseWrapper(correlationId, ()))
 

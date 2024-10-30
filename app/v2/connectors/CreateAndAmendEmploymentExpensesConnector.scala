@@ -16,8 +16,6 @@
 
 package v2.connectors
 
-import common.connectors.ExpensesDownstreamUri._
-import config.ExpensesConfig
 import shared.config.AppConfig
 import shared.connectors.DownstreamUri._
 import shared.connectors.httpparsers.StandardDownstreamHttpParser._
@@ -32,8 +30,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class CreateAndAmendEmploymentExpensesConnector @Inject() (
     val http: HttpClient,
     val appConfig: AppConfig
-)(implicit expensesConfig: ExpensesConfig)
-    extends BaseDownstreamConnector {
+) extends BaseDownstreamConnector {
 
   def createAmendEmploymentExpenses(request: CreateAndAmendEmploymentExpensesRequestData)(implicit
       hc: HeaderCarrier,
@@ -43,9 +40,9 @@ class CreateAndAmendEmploymentExpensesConnector @Inject() (
     import request._
 
     val downstreamUri = if (taxYear.useTaxYearSpecificApi) {
-      TaxYearSpecificIfsUri[Unit](s"income-tax/${taxYear.asTysDownstream}/expenses/employments/$nino")
+      IfsUri[Unit](s"income-tax/${taxYear.asTysDownstream}/expenses/employments/$nino")
     } else {
-      ifsR6Uri[Unit](s"income-tax/expenses/employments/$nino/${taxYear.asMtd}")
+      IfsUri[Unit](s"income-tax/expenses/employments/$nino/${taxYear.asMtd}")
     }
 
     put(body = body, uri = downstreamUri)

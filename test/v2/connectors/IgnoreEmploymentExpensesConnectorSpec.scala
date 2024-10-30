@@ -16,19 +16,19 @@
 
 package v2.connectors
 
-import common.connectors.ExpensesConnectorSpec
-import config.MockExpensesConfig
+import shared.connectors.ConnectorSpec
 import shared.models.domain.{Nino, TaxYear}
 import shared.models.outcomes.ResponseWrapper
 import v2.models.request.ignoreEmploymentExpenses.{IgnoreEmploymentExpensesBody, IgnoreEmploymentExpensesRequestData}
 
 import scala.concurrent.Future
 
-class IgnoreEmploymentExpensesConnectorSpec extends ExpensesConnectorSpec {
+class IgnoreEmploymentExpensesConnectorSpec extends ConnectorSpec {
 
   val body: IgnoreEmploymentExpensesBody = IgnoreEmploymentExpensesBody(true)
 
-  trait Test extends MockExpensesConfig { _: ConnectorTest =>
+  trait Test {
+    _: ConnectorTest =>
 
     val connector: IgnoreEmploymentExpensesConnector = new IgnoreEmploymentExpensesConnector(
       http = mockHttpClient,
@@ -41,7 +41,7 @@ class IgnoreEmploymentExpensesConnectorSpec extends ExpensesConnectorSpec {
 
   "ignore" should {
     "return the expected response for a non-TYS request" when {
-      "a valid request is made" in new IfsR6Test with Test {
+      "a valid request is made" in new IfsTest with Test {
         val request = IgnoreEmploymentExpensesRequestData(Nino("AA123456A"), TaxYear.fromMtd("2021-22"))
 
         willPut(
@@ -54,7 +54,7 @@ class IgnoreEmploymentExpensesConnectorSpec extends ExpensesConnectorSpec {
     }
 
     "return the expected response for a TYS request" when {
-      "a valid request is made" in new TysIfsTest with Test {
+      "a valid request is made" in new IfsTest with Test {
         val request = IgnoreEmploymentExpensesRequestData(Nino("AA123456A"), TaxYear.fromMtd("2023-24"))
 
         willPut(

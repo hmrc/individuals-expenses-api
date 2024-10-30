@@ -16,10 +16,8 @@
 
 package v2.connectors
 
-import common.connectors.ExpensesDownstreamUri.ifsR6Uri
-import config.ExpensesConfig
 import shared.config.AppConfig
-import shared.connectors.DownstreamUri.TaxYearSpecificIfsUri
+import shared.connectors.DownstreamUri.IfsUri
 import shared.connectors.httpparsers.StandardDownstreamHttpParser._
 import shared.connectors.{BaseDownstreamConnector, DownstreamOutcome}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
@@ -32,8 +30,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class IgnoreEmploymentExpensesConnector @Inject() (
     val http: HttpClient,
     val appConfig: AppConfig
-)(implicit expensesConfig: ExpensesConfig)
-    extends BaseDownstreamConnector {
+) extends BaseDownstreamConnector {
 
   def ignore(request: IgnoreEmploymentExpensesRequestData)(implicit
       hc: HeaderCarrier,
@@ -43,9 +40,9 @@ class IgnoreEmploymentExpensesConnector @Inject() (
     import request._
 
     val downstreamUri = if (taxYear.useTaxYearSpecificApi) {
-      TaxYearSpecificIfsUri[Unit](s"income-tax/${taxYear.asTysDownstream}/expenses/employments/$nino")
+      IfsUri[Unit](s"income-tax/${taxYear.asTysDownstream}/expenses/employments/$nino")
     } else {
-      ifsR6Uri[Unit](s"income-tax/expenses/employments/$nino/${taxYear.asMtd}")
+      IfsUri[Unit](s"income-tax/expenses/employments/$nino/${taxYear.asMtd}")
     }
 
     put(body = IgnoreEmploymentExpensesBody(true), downstreamUri)

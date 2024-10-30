@@ -16,8 +16,6 @@
 
 package v2.connectors
 
-import common.connectors.ExpensesDownstreamUri.ifsR6Uri
-import config.ExpensesConfig
 import shared.config.AppConfig
 import shared.connectors.DownstreamUri._
 import shared.connectors.httpparsers.StandardDownstreamHttpParser._
@@ -33,8 +31,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class RetrieveEmploymentsExpensesConnector @Inject() (
     val http: HttpClient,
     val appConfig: AppConfig
-)(implicit expensesConfig: ExpensesConfig)
-    extends BaseDownstreamConnector {
+) extends BaseDownstreamConnector {
 
   def retrieveEmploymentExpenses(request: RetrieveEmploymentsExpensesRequestData)(implicit
       hc: HeaderCarrier,
@@ -46,9 +43,9 @@ class RetrieveEmploymentsExpensesConnector @Inject() (
     val taxYear = request.taxYear
 
     val url = if (taxYear.useTaxYearSpecificApi) {
-      TaxYearSpecificIfsUri[RetrieveEmploymentsExpensesResponse](s"income-tax/expenses/employments/${taxYear.asTysDownstream}/$nino?view=$source")
+      IfsUri[RetrieveEmploymentsExpensesResponse](s"income-tax/expenses/employments/${taxYear.asTysDownstream}/$nino?view=$source")
     } else {
-      ifsR6Uri[RetrieveEmploymentsExpensesResponse](s"income-tax/expenses/employments/$nino/${taxYear.asMtd}?view=$source")
+      IfsUri[RetrieveEmploymentsExpensesResponse](s"income-tax/expenses/employments/$nino/${taxYear.asMtd}?view=$source")
     }
 
     get(url)
