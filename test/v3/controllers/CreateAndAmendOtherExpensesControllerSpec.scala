@@ -76,8 +76,7 @@ class CreateAndAmendOtherExpensesControllerSpec
           .createAndAmend(requestData)
           .returns(Future.successful(Right(ResponseWrapper(correlationId, ()))))
 
-        runOkTest(expectedStatus = NO_CONTENT)
-        // runOkTestWithAudit(expectedStatus = NO_CONTENT)
+        runOkTestWithAudit(expectedStatus = NO_CONTENT, maybeAuditRequestBody = Some(requestBodyJson))
       }
     }
 
@@ -91,8 +90,7 @@ class CreateAndAmendOtherExpensesControllerSpec
         MockedAppConfig.endpointAllowsSupportingAgents(controller.endpointName).anyNumberOfTimes() returns false
         willUseValidator(returning(NinoFormatError))
 
-        runErrorTest(NinoFormatError)
-        // runErrorTestWithAudit(NinoFormatError, Some(requestBodyJson))
+        runErrorTestWithAudit(NinoFormatError, Some(requestBodyJson))
       }
 
       "the service returns an error" in new Test {
@@ -108,8 +106,7 @@ class CreateAndAmendOtherExpensesControllerSpec
           .createAndAmend(requestData)
           .returns(Future.successful(Left(ErrorWrapper(correlationId, RuleTaxYearNotSupportedError))))
 
-        runErrorTest(RuleTaxYearNotSupportedError)
-        // runErrorTestWithAudit(RuleTaxYearNotSupportedError, maybeAuditRequestBody = Some(requestBodyJson))
+        runErrorTestWithAudit(RuleTaxYearNotSupportedError, maybeAuditRequestBody = Some(requestBodyJson))
       }
     }
   }

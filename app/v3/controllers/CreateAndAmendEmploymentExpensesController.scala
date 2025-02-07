@@ -21,7 +21,7 @@ import play.api.libs.json.JsValue
 import play.api.mvc.{Action, ControllerComponents}
 import shared.config.AppConfig
 import shared.controllers._
-import shared.routing.Version2
+import shared.routing.Version3
 import shared.services.{AuditService, EnrolmentsAuthService, MtdIdLookupService}
 import shared.utils.IdGenerator
 import v3.controllers.validators.CreateAndAmendEmploymentExpensesValidatorFactory
@@ -59,7 +59,7 @@ class CreateAndAmendEmploymentExpensesController @Inject() (val authService: Enr
           auditService = auditService,
           auditType = "CreateAmendEmploymentExpenses",
           transactionName = "create-amend-employment-expenses",
-          apiVersion = Version2,
+          apiVersion = Version3,
           params = Map("nino" -> nino, "taxYear" -> taxYear),
           requestBody = Some(request.body),
           includeResponse = true
