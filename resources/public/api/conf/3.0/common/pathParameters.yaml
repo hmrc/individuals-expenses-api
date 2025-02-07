@@ -1,0 +1,50 @@
+components:
+  parameters:
+    nino:
+      name: nino
+      in: path
+      description: |
+        National Insurance number, in the format `AA999999A`
+      schema:
+        type: string
+        example: TC663795B
+      required: true
+    taxYear:
+      name: taxYear
+      in: path
+      description: |
+        The tax year to which the data applies. For example: 2022-23. The start year and end year must not span two tax years. The minimum tax year is 2022-23. No gaps are allowed, for example, 2022-24 is not valid. (The minimum tax year in Sandbox is 2021-22.)
+      schema:
+        type: string
+        pattern: ^\d{4}-\d{2}$
+        example: 2022-23
+      required: true
+    businessId:
+      name: businessId
+      in: path
+      description: |
+        An identifier for the business, unique to the customer.<p>Must conform to the regular expression `^X[A-Z0-9]{1}IS[0-9]{11}$`
+      schema:
+        type: string
+        pattern: ^X[A-Z0-9]{1}IS[0-9]{11}$
+        example: XAIS12345678910
+      required: true
+    submissionId:
+      name: submissionId
+      in: path
+      description: |
+        An identifier for the income and expenditure period summary.<p>Must conform to the regular expression `^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$`
+      schema:
+        type: string
+        pattern: ^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$
+        example: 4557ecb5-fd32-48cc-81f5-e6acd1099f3c
+      required: true
+    periodId:
+      name: periodId
+      in: path
+      description: |
+        An identifier for the update period, unique to the customer's UK property business.
+      schema:
+        type: string
+        example: 2017-04-06_2017-07-04
+      required: true

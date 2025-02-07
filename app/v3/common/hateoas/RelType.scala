@@ -14,26 +14,15 @@
  * limitations under the License.
  */
 
-package routing
+package v3.common.hateoas
 
-import play.api.routing.Router
-import shared.config.AppConfig
-import shared.routing._
+object RelType {
+  val AMEND_EXPENSES_OTHER  = "amend-expenses-other"
+  val DELETE_EXPENSES_OTHER = "delete-expenses-other"
 
-import javax.inject.{Inject, Singleton}
+  val IGNORE_EMPLOYMENT_EXPENSES = "ignore-employment-expenses"
+  val AMEND_EMPLOYMENT_EXPENSES  = "amend-employment-expenses"
+  val DELETE_EMPLOYMENT_EXPENSES = "delete-employment-expenses"
 
-@Singleton case class ExpensesVersionRoutingMap @Inject() (
-    appConfig: AppConfig,
-    defaultRouter: Router,
-    v2Router: v2.Routes,
-    v3Router: v3.Routes
-) extends VersionRoutingMap {
-
-  /** Routes corresponding to available versions.
-    */
-  val map: Map[Version, Router] = Map(
-    Version2 -> v2Router,
-    Version3 -> v3Router
-  )
-
+  val SELF = "self"
 }

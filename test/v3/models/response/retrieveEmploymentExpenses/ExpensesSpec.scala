@@ -14,26 +14,29 @@
  * limitations under the License.
  */
 
-package routing
+package v3.models.response.retrieveEmploymentExpenses
 
-import play.api.routing.Router
-import shared.config.AppConfig
-import shared.routing._
+import play.api.libs.json.Json
+import shared.models.utils.JsonErrorValidators
+import shared.utils.UnitSpec
+import v3.fixtures.RetrieveEmploymentsExpensesFixtures._
 
-import javax.inject.{Inject, Singleton}
+class ExpensesSpec extends UnitSpec with JsonErrorValidators {
 
-@Singleton case class ExpensesVersionRoutingMap @Inject() (
-    appConfig: AppConfig,
-    defaultRouter: Router,
-    v2Router: v2.Routes,
-    v3Router: v3.Routes
-) extends VersionRoutingMap {
+  "reads" when {
+    "passed valid JSON" should {
+      "return a valid model" in {
+        expensesModel shouldBe expensesJson.as[Expenses]
+      }
+    }
+  }
 
-  /** Routes corresponding to available versions.
-    */
-  val map: Map[Version, Router] = Map(
-    Version2 -> v2Router,
-    Version3 -> v3Router
-  )
+  "writes" when {
+    "passed valid model" should {
+      "return valid JSON" in {
+        Json.toJson(expensesModel) shouldBe expensesJson
+      }
+    }
+  }
 
 }
