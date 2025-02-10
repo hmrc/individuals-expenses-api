@@ -1,0 +1,12 @@
+{
+  "expenses": {
+    "businessTravelCosts": 1234.23,
+    "jobExpenses": 1223.22,
+    "flatRateJobExpenses": 1223.22,
+    "professionalSubscriptions": 1223.22,
+    "hotelAndMealExpenses": 1223.22,
+    "otherAndCapitalAllowances": 1223.22,
+    "vehicleExpenses": 1223.22,
+    "mileageAllowanceRelief": 1223.22
+  }
+}

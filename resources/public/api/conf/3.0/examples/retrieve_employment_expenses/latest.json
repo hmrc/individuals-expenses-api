@@ -1,0 +1,16 @@
+{
+  "submittedOn": "2020-12-12T12:12:12Z",
+  "totalExpenses": 123.12,
+  "source": "latest",
+  "dateIgnored": "2020-12-11T12:12:12Z",
+  "expenses": {
+    "businessTravelCosts": 123.12,
+    "jobExpenses": 123.12,
+    "flatRateJobExpenses": 123.12,
+    "professionalSubscriptions": 123.12,
+    "hotelAndMealExpenses": 123.12,
+    "otherAndCapitalAllowances": 123.12,
+    "vehicleExpenses": 123.12,
+    "mileageAllowanceRelief": 123.12
+  }
+}

@@ -14,26 +14,8 @@
  * limitations under the License.
  */
 
-package routing
+package v3.models.request.deleteOtherExpenses
 
-import play.api.routing.Router
-import shared.config.AppConfig
-import shared.routing._
+import shared.models.domain.{Nino, TaxYear}
 
-import javax.inject.{Inject, Singleton}
-
-@Singleton case class ExpensesVersionRoutingMap @Inject() (
-    appConfig: AppConfig,
-    defaultRouter: Router,
-    v2Router: v2.Routes,
-    v3Router: v3.Routes
-) extends VersionRoutingMap {
-
-  /** Routes corresponding to available versions.
-    */
-  val map: Map[Version, Router] = Map(
-    Version2 -> v2Router,
-    Version3 -> v3Router
-  )
-
-}
+case class DeleteOtherExpensesRequestData(nino: Nino, taxYear: TaxYear)
