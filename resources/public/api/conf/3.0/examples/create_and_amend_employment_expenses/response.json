@@ -1,0 +1,19 @@
+{
+  "links":[
+    {
+      "href":"/individuals/expenses/employments/TC663795B/2021-22",
+      "method":"PUT",
+      "rel":"amend-employment-expenses"
+    },
+    {
+      "href":"/individuals/expenses/employments/TC663795B/2021-22",
+      "method":"GET",
+      "rel":"self"
+    },
+    {
+      "href":"/individuals/expenses/employments/TC663795B/2021-22",
+      "method":"DELETE",
+      "rel":"delete-employment-expenses"
+    }
+  ]
+}

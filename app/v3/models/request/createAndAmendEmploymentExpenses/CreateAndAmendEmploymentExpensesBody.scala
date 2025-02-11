@@ -14,26 +14,14 @@
  * limitations under the License.
  */
 
-package routing
+package v3.models.request.createAndAmendEmploymentExpenses
 
-import play.api.routing.Router
-import shared.config.AppConfig
-import shared.routing._
+import play.api.libs.json.{Json, OFormat}
 
-import javax.inject.{Inject, Singleton}
+case class CreateAndAmendEmploymentExpensesBody(expenses: Expenses) {
+  def isIncorrectOrEmptyBody: Boolean = expenses.isEmpty
+}
 
-@Singleton case class ExpensesVersionRoutingMap @Inject() (
-    appConfig: AppConfig,
-    defaultRouter: Router,
-    v2Router: v2.Routes,
-    v3Router: v3.Routes
-) extends VersionRoutingMap {
-
-  /** Routes corresponding to available versions.
-    */
-  val map: Map[Version, Router] = Map(
-    Version2 -> v2Router,
-    Version3 -> v3Router
-  )
-
+object CreateAndAmendEmploymentExpensesBody {
+  implicit val format: OFormat[CreateAndAmendEmploymentExpensesBody] = Json.format[CreateAndAmendEmploymentExpensesBody]
 }
