@@ -27,7 +27,7 @@ class IndividualsExpensesAuthMainAgentsOnlyISpec extends AuthMainAgentsOnlyISpec
 
   private val taxYear = TaxYear.fromMtd("2019-20")
 
-  override protected val callingApiVersion = "2.0"
+  override protected val callingApiVersion = "3.0"
 
   override protected val supportingAgentsNotAllowedEndpoint = "ignore-employment-expenses"
 
@@ -42,5 +42,4 @@ class IndividualsExpensesAuthMainAgentsOnlyISpec extends AuthMainAgentsOnlyISpec
   override protected val downstreamHttpMethod: DownstreamStub.HTTPMethod = DownstreamStub.PUT
 
   override protected val downstreamSuccessStatus: Int = NO_CONTENT
-
 }

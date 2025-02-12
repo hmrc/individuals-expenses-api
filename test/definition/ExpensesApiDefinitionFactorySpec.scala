@@ -22,7 +22,7 @@ import shared.config.MockAppConfig
 import shared.definition.APIStatus.BETA
 import shared.definition._
 import shared.mocks.MockHttpClient
-import shared.routing.Version2
+import shared.routing.{Version2, Version3}
 import shared.utils.UnitSpec
 
 class ExpensesApiDefinitionFactorySpec extends UnitSpec with MockAppConfig {
@@ -38,6 +38,9 @@ class ExpensesApiDefinitionFactorySpec extends UnitSpec with MockAppConfig {
         MockedAppConfig.apiStatus(Version2) returns "BETA"
         MockedAppConfig.endpointsEnabled(Version2).returns(false).anyNumberOfTimes()
         MockedAppConfig.deprecationFor(Version2).returns(NotDeprecated.valid).anyNumberOfTimes()
+        MockedAppConfig.apiStatus(Version3) returns "BETA"
+        MockedAppConfig.endpointsEnabled(Version3).returns(false).anyNumberOfTimes()
+        MockedAppConfig.deprecationFor(Version3).returns(NotDeprecated.valid).anyNumberOfTimes()
 
         apiDefinitionFactory.definition shouldBe
           Definition(
@@ -49,6 +52,11 @@ class ExpensesApiDefinitionFactorySpec extends UnitSpec with MockAppConfig {
               versions = List(
                 APIVersion(
                   version = Version2,
+                  status = BETA,
+                  endpointsEnabled = false
+                ),
+                APIVersion(
+                  version = Version3,
                   status = BETA,
                   endpointsEnabled = false
                 )

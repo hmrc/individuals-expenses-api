@@ -27,7 +27,7 @@ class IndividualsExpensesAuthSupportingAgentsAllowedISpec extends AuthSupporting
 
   private val taxYear = TaxYear.fromMtd("2019-20")
 
-  override val callingApiVersion = "2.0"
+  override val callingApiVersion = "3.0"
 
   override val supportingAgentsAllowedEndpoint = "ignore-employment-expenses"
 
