@@ -6,11 +6,13 @@ description: |
   ### Test data
   Scenario simulation using Gov-Test-Scenario headers is only available in the sandbox environment.
 
-  | Header Value (Gov-Test-Scenario)        | Scenario                                                            |
-  |-----------------------------------------|---------------------------------------------------------------------|
-  | N/A - DEFAULT                           | Simulates success response.                                         |
-  | NOT_FOUND                               | Simulates the scenario where the given expenses could not be found. |
-  | STATEFUL                                | Performs a stateful delete.                                         |
+  | Header Value (Gov-Test-Scenario)        | Scenario                                                                                        |
+  |-----------------------------------------|-------------------------------------------------------------------------------------------------|
+  | N/A - DEFAULT                           | Simulates success response.                                                                     |
+  | NOT_FOUND                               | Simulates the scenario where the given expenses could not be found.                             |
+  | STATEFUL                                | Performs a stateful delete.                                                                     |
+  | OUTSIDE_AMENDMENT_WINDOW                | Simulates the scenario where request cannot be completed as it is outside the amendment window. |
+
 
 tags:
   - Other Expenses
@@ -39,7 +41,7 @@ responses:
       Link:
         $ref: ./common/headers.yaml#/components/parameters/linkHeader
 
-    content: {}
+    content: { }
 
   "400":
     description: Bad request
@@ -58,6 +60,8 @@ responses:
             $ref: './common/errors.yaml#/components/examples/ruleTaxYearNotSupported'
           RULE_INCORRECT_GOV_TEST_SCENARIO:
             $ref: './common/errors.yaml#/components/examples/ruleIncorrectGovTestScenario'
+          RULE_OUTSIDE_AMENDMENT_WINDOW:
+            $ref: './common/errors.yaml#/components/examples/ruleOutsideAmendmentWindow'
 
   "403":
     description: Forbidden

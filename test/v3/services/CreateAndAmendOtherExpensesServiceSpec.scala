@@ -81,7 +81,8 @@ class CreateAndAmendOtherExpensesServiceSpec extends ServiceSpec {
 
     val extraTysErrors = Seq(
       ("INVALID_CORRELATION_ID", InternalError),
-      ("TAX_YEAR_NOT_SUPPORTED", RuleTaxYearNotSupportedError)
+      ("TAX_YEAR_NOT_SUPPORTED", RuleTaxYearNotSupportedError),
+      ("OUTSIDE_AMENDMENT_WINDOW", RuleOutsideAmendmentWindow)
     )
 
     (errors ++ extraTysErrors).foreach(args => (serviceError _).tupled(args))

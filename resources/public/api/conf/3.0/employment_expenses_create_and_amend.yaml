@@ -8,13 +8,15 @@ description: |
   ### Test data
   Scenario simulation using Gov-Test-Scenario headers is only available in the sandbox environment.
   
-  | Header Value (Gov-Test-Scenario)        | Scenario                                                                                                                                         |
-  |-----------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------|
-  | N/A - DEFAULT                           | Simulates success response.                                                                                                                      |
-  | TAX_YEAR_NOT_ENDED                      | Simulates the scenario where the submission is for a tax year that has not ended.                                                                | 
-  | NOT_FOUND                               | Scenario to simulate not found error.                                                                                                            |
-  | RULE_INVALID_SUBMISSION_PENSION_SCHEME  | Simulates the scenario where customer with single employment source that has "occupational pension" indicator cannot submit employment expenses. |
-  | STATEFUL                                | Performs a stateful create or update.<br><br>At least one custom employment with ‘occupationalPension = false’ must be created for the tax year before you can submit expenses. |                                                             |
+  | Header Value (Gov-Test-Scenario)        | Scenario                                                                                                                                                                        |
+  |-----------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+  | N/A - DEFAULT                           | Simulates success response.                                                                                                                                                     |
+  | TAX_YEAR_NOT_ENDED                      | Simulates the scenario where the submission is for a tax year that has not ended.                                                                                               | 
+  | NOT_FOUND                               | Scenario to simulate not found error.                                                                                                                                           |
+  | RULE_INVALID_SUBMISSION_PENSION_SCHEME  | Simulates the scenario where customer with single employment source that has "occupational pension" indicator cannot submit employment expenses.                                |
+  | STATEFUL                                | Performs a stateful create or update.<br><br>At least one custom employment with ‘occupationalPension = false’ must be created for the tax year before you can submit expenses. |
+  | OUTSIDE_AMENDMENT_WINDOW                | Simulates the scenario where request cannot be completed as it is outside the amendment window.                                                                                 |
+  
 
 tags:
   - Employment Expenses
@@ -90,6 +92,8 @@ responses:
             $ref: './common/errors.yaml#/components/examples/ruleInvalidSubmissionPensionScheme'
           RULE_INCORRECT_GOV_TEST_SCENARIO:
             $ref: './common/errors.yaml#/components/examples/ruleIncorrectGovTestScenario'
+          RULE_OUTSIDE_AMENDMENT_WINDOW:
+            $ref: './common/errors.yaml#/components/examples/ruleOutsideAmendmentWindow'
 
   "403":
     description: Forbidden

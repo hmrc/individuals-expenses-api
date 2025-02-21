@@ -170,7 +170,8 @@ class CreateAndAmendEmploymentExpensesControllerISpec extends IntegrationBaseSpe
         val extraTysErrors = List(
           (BAD_REQUEST, "INVALID_CORRELATION_ID", INTERNAL_SERVER_ERROR, InternalError),
           (UNPROCESSABLE_ENTITY, "TAX_YEAR_NOT_SUPPORTED", BAD_REQUEST, RuleTaxYearNotSupportedError),
-          (UNPROCESSABLE_ENTITY, "INVALID_SUBMISSION_PENSION_SCHEME", BAD_REQUEST, RuleInvalidSubmissionPensionScheme)
+          (UNPROCESSABLE_ENTITY, "INVALID_SUBMISSION_PENSION_SCHEME", BAD_REQUEST, RuleInvalidSubmissionPensionScheme),
+          (UNPROCESSABLE_ENTITY, "OUTSIDE_AMENDMENT_WINDOW", BAD_REQUEST, RuleOutsideAmendmentWindow)
         )
 
         (errors ++ extraTysErrors).foreach(args => (serviceErrorTest _).tupled(args))

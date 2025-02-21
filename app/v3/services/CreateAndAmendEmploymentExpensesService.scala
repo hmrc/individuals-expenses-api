@@ -51,7 +51,8 @@ class CreateAndAmendEmploymentExpensesService @Inject() (connector: CreateAndAme
     val extraTysErrors = Map(
       "INVALID_CORRELATION_ID"            -> InternalError,
       "TAX_YEAR_NOT_SUPPORTED"            -> RuleTaxYearNotSupportedError,
-      "INVALID_SUBMISSION_PENSION_SCHEME" -> RuleInvalidSubmissionPensionScheme
+      "INVALID_SUBMISSION_PENSION_SCHEME" -> RuleInvalidSubmissionPensionScheme,
+      "OUTSIDE_AMENDMENT_WINDOW"          -> RuleOutsideAmendmentWindow
     )
 
     errors ++ extraTysErrors
