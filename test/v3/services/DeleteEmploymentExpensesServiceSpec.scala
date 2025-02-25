@@ -76,9 +76,10 @@ class DeleteEmploymentExpensesServiceSpec extends ServiceSpec {
         )
 
         val extraTysErrors = Map(
-          "INVALID_CORRELATION_ID" -> InternalError,
-          "NOT_FOUND"              -> NotFoundError,
-          "TAX_YEAR_NOT_SUPPORTED" -> RuleTaxYearNotSupportedError
+          "INVALID_CORRELATION_ID"   -> InternalError,
+          "NOT_FOUND"                -> NotFoundError,
+          "TAX_YEAR_NOT_SUPPORTED"   -> RuleTaxYearNotSupportedError,
+          "OUTSIDE_AMENDMENT_WINDOW" -> RuleOutsideAmendmentWindow
         )
 
         errorMap ++ extraTysErrors

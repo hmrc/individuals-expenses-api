@@ -93,7 +93,8 @@ class CreateAndAmendEmploymentExpensesServiceSpec extends ServiceSpec {
       val extraTysErrors = Seq(
         "INVALID_CORRELATION_ID"            -> InternalError,
         "TAX_YEAR_NOT_SUPPORTED"            -> RuleTaxYearNotSupportedError,
-        "INVALID_SUBMISSION_PENSION_SCHEME" -> RuleInvalidSubmissionPensionScheme
+        "INVALID_SUBMISSION_PENSION_SCHEME" -> RuleInvalidSubmissionPensionScheme,
+        "OUTSIDE_AMENDMENT_WINDOW"          -> RuleOutsideAmendmentWindow
       )
 
       (errors ++ extraTysErrors).foreach(args => (serviceError _).tupled(args))
