@@ -9,7 +9,6 @@ description: |
   | Header Value (Gov-Test-Scenario)        | Scenario                                                                                        |
   |-----------------------------------------|-------------------------------------------------------------------------------------------------|
   | N/A - DEFAULT                           | Simulates a success response.                                                                   |
-  | NOT_FOUND                               | Simulates the scenario where no data is found.                                                  |
   | STATEFUL                                | Performs a stateful create or update.                                                           |
   | OUTSIDE_AMENDMENT_WINDOW                | Simulates the scenario where request cannot be completed as it is outside the amendment window. |
 
@@ -116,22 +115,3 @@ responses:
         examples:
           CLIENT_OR_AGENT_NOT_AUTHORISED:
             $ref: './common/errors.yaml#/components/examples/clientOrAgentNotAuthorised'
-
-  "404":
-    description: Not Found
-    headers:
-      X-CorrelationId:
-        $ref: './common/headers.yaml#/components/parameters/correlationId'
-      Deprecation:
-        $ref: ./common/headers.yaml#/components/parameters/deprecationHeader
-      Sunset:
-        $ref: ./common/headers.yaml#/components/parameters/sunsetHeader
-      Link:
-        $ref: ./common/headers.yaml#/components/parameters/linkHeader
-    content:
-      application/json:
-        schema:
-          $ref: './schemas/error-response.yaml'
-        examples:
-          MATCHING_RESOURCE_NOT_FOUND:
-            $ref: './common/errors.yaml#/components/examples/notFound'
