@@ -20,13 +20,10 @@ import config.ExpensesFeatureSwitches
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import shared.config.AppConfig
 import shared.controllers._
-import shared.hateoas.HateoasFactory
 import shared.routing.Version3
 import shared.services.{AuditService, EnrolmentsAuthService, MtdIdLookupService}
 import shared.utils.IdGenerator
 import v3.controllers.validators.IgnoreEmploymentExpensesValidatorFactory
-import v3.models.response.ignoreEmploymentExpenses.IgnoreEmploymentExpensesHateoasData
-import v3.models.response.ignoreEmploymentExpenses.IgnoreEmploymentExpensesResponse.IgnoreEmploymentExpensesLinksFactory
 import v3.services.IgnoreEmploymentExpensesService
 
 import javax.inject.{Inject, Singleton}
@@ -38,7 +35,6 @@ class IgnoreEmploymentExpensesController @Inject() (val authService: EnrolmentsA
                                                     validatorFactory: IgnoreEmploymentExpensesValidatorFactory,
                                                     service: IgnoreEmploymentExpensesService,
                                                     auditService: AuditService,
-                                                    hateoasFactory: HateoasFactory,
                                                     cc: ControllerComponents,
                                                     val idGenerator: IdGenerator)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends AuthorisedController(cc) {
@@ -66,7 +62,6 @@ class IgnoreEmploymentExpensesController @Inject() (val authService: EnrolmentsA
           params = Map("nino" -> nino, "taxYear" -> taxYear),
           includeResponse = true
         ))
-        .withHateoasResult(hateoasFactory)(IgnoreEmploymentExpensesHateoasData(nino, taxYear))
 
       requestHandler.handleRequest()
 

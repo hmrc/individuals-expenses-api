@@ -2,7 +2,7 @@ package shared.auth
 
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import play.api.http.HeaderNames.ACCEPT
-import play.api.http.Status.{FORBIDDEN, INTERNAL_SERVER_ERROR, OK}
+import play.api.http.Status.{FORBIDDEN, INTERNAL_SERVER_ERROR, NO_CONTENT, OK}
 import play.api.libs.json.JsValue
 import play.api.libs.ws.{WSRequest, WSResponse}
 import play.api.test.Helpers.AUTHORIZATION
@@ -34,6 +34,8 @@ abstract class AuthMainAgentsOnlyISpec extends IntegrationBaseSpec {
 
   protected val expectedMtdSuccessStatus: Int = OK
 
+  protected val alternatibeExpectedMtdSuccessStatus: Int = NO_CONTENT
+
   /** One endpoint where supporting agents are allowed.
     */
   override def servicesConfig: Map[String, Any] =
@@ -59,7 +61,7 @@ abstract class AuthMainAgentsOnlyISpec extends IntegrationBaseSpec {
         }
 
         val response: WSResponse = sendMtdRequest(request())
-        response.status shouldBe expectedMtdSuccessStatus
+        (response.status == expectedMtdSuccessStatus || response.status == alternatibeExpectedMtdSuccessStatus) shouldBe true
       }
     }
 

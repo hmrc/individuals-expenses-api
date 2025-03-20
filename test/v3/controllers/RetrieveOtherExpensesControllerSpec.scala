@@ -20,15 +20,12 @@ import play.api.Configuration
 import play.api.mvc.Result
 import shared.config.MockAppConfig
 import shared.controllers.{ControllerBaseSpec, ControllerTestRunner}
-import shared.hateoas.Method.{DELETE, GET, PUT}
-import shared.hateoas.{HateoasWrapper, Link, MockHateoasFactory}
 import shared.models.domain.{Nino, TaxYear}
 import shared.models.errors._
 import shared.models.outcomes.ResponseWrapper
 import v3.controllers.validators.MockRetrieveOtherExpensesValidatorFactory
 import v3.fixtures.RetrieveOtherExpensesFixtures._
 import v3.models.request.retrieveOtherExpenses.RetrieveOtherExpensesRequestData
-import v3.models.response.retrieveOtherExpenses._
 import v3.services.MockRetrieveOtherExpensesService
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -39,20 +36,11 @@ class RetrieveOtherExpensesControllerSpec
     with ControllerTestRunner
     with MockRetrieveOtherExpensesService
     with MockRetrieveOtherExpensesValidatorFactory
-    with MockAppConfig
-    with MockHateoasFactory {
+    with MockAppConfig {
 
   private val taxYear = "2019-20"
 
   private val requestData = RetrieveOtherExpensesRequestData(Nino(validNino), TaxYear.fromMtd(taxYear))
-
-  private val testHateoasLink = List(
-    Link(href = s"/individuals/expenses/other/$validNino/$taxYear", method = PUT, rel = "amend-expenses-other"),
-    Link(href = s"/individuals/expenses/other/$validNino/$taxYear", method = GET, rel = "self"),
-    Link(href = s"/individuals/expenses/other/$validNino/$taxYear", method = DELETE, rel = "delete-expenses-other")
-  )
-
-  private val responseBodyJson = mtdResponseWithHateoasLinks(taxYear)
 
   "handleRequest" should {
     "return a successful response with status 200 (OK)" when {
@@ -68,13 +56,9 @@ class RetrieveOtherExpensesControllerSpec
           .retrieveOtherExpenses(requestData)
           .returns(Future.successful(Right(ResponseWrapper(correlationId, responseModel))))
 
-        MockHateoasFactory
-          .wrap(responseModel, RetrieveOtherExpensesHateoasData(validNino, taxYear))
-          .returns(HateoasWrapper(responseModel, testHateoasLink))
-
         runOkTest(
           expectedStatus = OK,
-          maybeExpectedResponseBody = Some(responseBodyJson)
+          maybeExpectedResponseBody = Some(retrieveOtherExpensesMtdResponse)
         )
       }
     }
@@ -117,7 +101,6 @@ class RetrieveOtherExpensesControllerSpec
       lookupService = mockMtdIdLookupService,
       validatorFactory = mockRetrieveOtherExpensesValidatorFactory,
       service = mockRetrieveOtherExpensesService,
-      hateoasFactory = mockHateoasFactory,
       cc = cc,
       idGenerator = mockIdGenerator
     )

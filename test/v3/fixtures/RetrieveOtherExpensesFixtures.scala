@@ -28,47 +28,23 @@ object RetrieveOtherExpensesFixtures {
     patentRoyaltiesPayments = Some(PatentRoyaltiesPayments(Some("ROYALTIES PAYMENTS"), 2000.10))
   )
 
-  private val responseJson = Json.parse(
-    s"""
-       |{
-       |  "submittedOn": "2019-04-04T01:01:01.000Z",
-       |  "paymentsToTradeUnionsForDeathBenefits": {
-       |    "customerReference": "TRADE UNION PAYMENTS",
-       |    "expenseAmount": 4528.99
-       |  },
-       |  "patentRoyaltiesPayments": {
-       |    "customerReference": "ROYALTIES PAYMENTS",
-       |    "expenseAmount": 2000.10
-       |  }
-       |}
-       |""".stripMargin
-  )
-
-  private def linksJson(taxYear: String) = Json.parse(
-    s"""
-       |{
-       |    "links":[
-       |      {
-       |         "href":"/individuals/expenses/other/AA123456A/$taxYear",
-       |         "method":"PUT",
-       |         "rel":"amend-expenses-other"
-       |      },
-       |      {
-       |         "href":"/individuals/expenses/other/AA123456A/$taxYear",
-       |         "method":"GET",
-       |         "rel":"self"
-       |      },
-       |      {
-       |         "href":"/individuals/expenses/other/AA123456A/$taxYear",
-       |         "method":"DELETE",
-       |         "rel":"delete-expenses-other"
-       |      }
-       |   ]
-       | }
-       |""".stripMargin
-  )
-
-  def mtdResponseWithHateoasLinks(taxYear: String = "2019-20"): JsValue =
-    responseJson.as[JsObject] ++ linksJson(taxYear).as[JsObject]
+  val retrieveOtherExpensesMtdResponse: JsValue =
+    Json
+      .parse(
+        s"""
+         |{
+         |  "submittedOn": "2019-04-04T01:01:01.000Z",
+         |  "paymentsToTradeUnionsForDeathBenefits": {
+         |    "customerReference": "TRADE UNION PAYMENTS",
+         |    "expenseAmount": 4528.99
+         |  },
+         |  "patentRoyaltiesPayments": {
+         |    "customerReference": "ROYALTIES PAYMENTS",
+         |    "expenseAmount": 2000.10
+         |  }
+         |}
+         |""".stripMargin
+      )
+      .as[JsObject]
 
 }

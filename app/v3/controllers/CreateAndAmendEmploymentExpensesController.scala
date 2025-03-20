@@ -21,13 +21,10 @@ import play.api.libs.json.JsValue
 import play.api.mvc.{Action, ControllerComponents}
 import shared.config.AppConfig
 import shared.controllers._
-import shared.hateoas.HateoasFactory
 import shared.routing.Version3
 import shared.services.{AuditService, EnrolmentsAuthService, MtdIdLookupService}
 import shared.utils.IdGenerator
 import v3.controllers.validators.CreateAndAmendEmploymentExpensesValidatorFactory
-import v3.models.response.createAndAmendEmploymentExpenses.CreateAndAmendEmploymentExpensesHateoasData
-import v3.models.response.createAndAmendEmploymentExpenses.CreateAndAmendEmploymentExpensesResponse.AmendOrderLinksFactory
 import v3.services.CreateAndAmendEmploymentExpensesService
 
 import javax.inject.{Inject, Singleton}
@@ -39,7 +36,6 @@ class CreateAndAmendEmploymentExpensesController @Inject() (val authService: Enr
                                                             validatorFactory: CreateAndAmendEmploymentExpensesValidatorFactory,
                                                             service: CreateAndAmendEmploymentExpensesService,
                                                             auditService: AuditService,
-                                                            hateoasFactory: HateoasFactory,
                                                             cc: ControllerComponents,
                                                             idGenerator: IdGenerator)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends AuthorisedController(cc) {
@@ -68,7 +64,6 @@ class CreateAndAmendEmploymentExpensesController @Inject() (val authService: Enr
           requestBody = Some(request.body),
           includeResponse = true
         ))
-        .withHateoasResult(hateoasFactory)(CreateAndAmendEmploymentExpensesHateoasData(nino, taxYear))
 
       requestHandler.handleRequest()
     }

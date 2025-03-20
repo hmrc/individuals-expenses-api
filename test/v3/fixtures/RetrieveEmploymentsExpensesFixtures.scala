@@ -81,82 +81,8 @@ object RetrieveEmploymentsExpensesFixtures {
   val downstreamResponseJsonCustomer: JsValue = responseJson("CUSTOMER")
   val downstreamResponseJsonHmrcHeld: JsValue = responseJson("HMRC HELD")
 
-  private def linksJsonLatest(taxYear: String) = Json.parse(
-    s"""
-       |{
-       |    "links": [
-       |        {
-       |			"href": "/individuals/expenses/employments/AA123456A/$taxYear",
-       |			"method": "PUT",
-       |			"rel": "amend-employment-expenses"
-       |		},
-       |		{
-       |			"href": "/individuals/expenses/employments/AA123456A/$taxYear",
-       |			"method": "GET",
-       |			"rel": "self"
-       |		},
-       |		{
-       |			"href": "/individuals/expenses/employments/AA123456A/$taxYear",
-       |			"method": "DELETE",
-       |			"rel": "delete-employment-expenses"
-       |		},
-       |		{
-       |			"href": "/individuals/expenses/employments/AA123456A/$taxYear/ignore",
-       |			"method": "POST",
-       |			"rel": "ignore-employment-expenses"
-       |	    }
-       |	]
-       | }
-       |""".stripMargin
-  )
-
-  private val linksJsonUser = Json.parse(
-    s"""
-       |{
-       |    "links": [
-       |        {
-       |			"href": "/individuals/expenses/employments/AA123456A/2019-20",
-       |			"method": "PUT",
-       |			"rel": "amend-employment-expenses"
-       |		},
-       |		{
-       |			"href": "/individuals/expenses/employments/AA123456A/2019-20",
-       |			"method": "GET",
-       |			"rel": "self"
-       |		},
-       |		{
-       |			"href": "/individuals/expenses/employments/AA123456A/2019-20",
-       |			"method": "DELETE",
-       |			"rel": "delete-employment-expenses"
-       |		}
-       |	]
-       | }
-       |""".stripMargin
-  )
-
-  private val linksJsonHmrcHeld = Json.parse(
-    s"""
-       |{
-       |    "links": [
-       |        {
-       |			"href": "/individuals/expenses/employments/AA123456A/2019-20",
-       |			"method": "GET",
-       |			"rel": "self"
-       |		},
-       |		{
-       |			"href": "/individuals/expenses/employments/AA123456A/2019-20/ignore",
-       |			"method": "POST",
-       |			"rel": "ignore-employment-expenses"
-       |		}
-       |	]
-       | }
-       |""".stripMargin
-  )
-
-  def mtdResponseWithHateoasLinksLatest(taxYear: String = "2019-20"): JsValue =
-    mtdResponseJsonLatest.as[JsObject] ++ linksJsonLatest(taxYear).as[JsObject]
-
-  val mtdResponseWithHateoasLinksUser: JsValue     = mtdResponseJsonUser.as[JsObject] ++ linksJsonUser.as[JsObject]
-  val mtdResponseWithHateoasLinksHmrcHeld: JsValue = mtdResponseJsonHmrcHeld.as[JsObject] ++ linksJsonHmrcHeld.as[JsObject]
+  val retrieveEmploymentsExpensesMtdResponseLatest: JsValue   = mtdResponseJsonLatest.as[JsObject]
+  val retrieveEmploymentsExpensesMtdResponseUser: JsValue     = mtdResponseJsonUser.as[JsObject]
+  val retrieveEmploymentsExpensesMtdResponseHmrcHeld: JsValue = mtdResponseJsonHmrcHeld.as[JsObject]
 
 }

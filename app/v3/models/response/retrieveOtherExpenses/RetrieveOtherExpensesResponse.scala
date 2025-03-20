@@ -17,31 +17,12 @@
 package v3.models.response.retrieveOtherExpenses
 
 import play.api.libs.json.{Json, OFormat}
-import shared.config.AppConfig
-import shared.hateoas.{HateoasData, HateoasLinksFactory, Link}
 import shared.models.domain.Timestamp
-import v3.common.hateoas.HateoasLinks
 
 case class RetrieveOtherExpensesResponse(submittedOn: Timestamp,
                                          paymentsToTradeUnionsForDeathBenefits: Option[PaymentsToTradeUnionsForDeathBenefits],
                                          patentRoyaltiesPayments: Option[PatentRoyaltiesPayments])
 
-object RetrieveOtherExpensesResponse extends HateoasLinks {
+object RetrieveOtherExpensesResponse {
   implicit val format: OFormat[RetrieveOtherExpensesResponse] = Json.format[RetrieveOtherExpensesResponse]
-
-  implicit object RetrieveOtherExpensesLinksFactory extends HateoasLinksFactory[RetrieveOtherExpensesResponse, RetrieveOtherExpensesHateoasData] {
-
-    override def links(appConfig: AppConfig, data: RetrieveOtherExpensesHateoasData): Seq[Link] = {
-      import data._
-      Seq(
-        createAndAmendOtherExpenses(appConfig, nino, taxYear),
-        retrieveOtherExpenses(appConfig, nino, taxYear),
-        deleteOtherExpenses(appConfig, nino, taxYear)
-      )
-    }
-
-  }
-
 }
-
-case class RetrieveOtherExpensesHateoasData(nino: String, taxYear: String) extends HateoasData
