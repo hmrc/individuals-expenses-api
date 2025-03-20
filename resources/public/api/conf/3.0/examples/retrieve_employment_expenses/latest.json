@@ -12,27 +12,5 @@
     "otherAndCapitalAllowances": 123.12,
     "vehicleExpenses": 123.12,
     "mileageAllowanceRelief": 123.12
-  },
-  "links": [
-    {
-      "href":"/individuals/expenses/employments/TC663795B/2019-20",
-      "method":"GET",
-      "rel":"self"
-    },
-    {
-      "href":"/individuals/expenses/employments/TC663795B/2019-20",
-      "method":"PUT",
-      "rel":"amend-employment-expenses"
-    },
-    {
-      "href":"/individuals/expenses/employments/TC663795B/2019-20",
-      "method":"DELETE",
-      "rel":"delete-employment-expenses"
-    },
-    {
-      "href":"/individuals/expenses/employments/TC663795B/2019-20/ignore",
-      "method":"POST",
-      "rel":"ignore-employment-expenses"
-    }
-  ]
+  }
 }

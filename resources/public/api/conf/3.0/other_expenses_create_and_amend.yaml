@@ -40,8 +40,8 @@ requestBody:
             $ref: './examples/create_and_amend_other_expenses/request.json'
 
 responses:
-  "200":
-    description: Success
+  "204":
+    description: Success(No Content)
     headers:
       X-CorrelationId:
         $ref: './common/headers.yaml#/components/parameters/correlationId'
@@ -51,16 +51,6 @@ responses:
         $ref: ./common/headers.yaml#/components/parameters/sunsetHeader
       Link:
         $ref: ./common/headers.yaml#/components/parameters/linkHeader
-
-    content:
-      application/json:
-        schema:
-          $ref: './schemas/create_and_amend_other_expenses/response.json'
-        examples:
-          example-response:
-            description: Example Response
-            value:
-              $ref: './examples/create_and_amend_other_expenses/response.json'
 
   "400":
     description: Bad request

@@ -32,8 +32,8 @@ post:
         - write:self-assessment
 
   responses:
-    "200":
-      description: Success
+    "204":
+      description: Success(No Content)
       headers:
         X-CorrelationId:
           $ref: './common/headers.yaml#/components/parameters/correlationId'
@@ -43,16 +43,6 @@ post:
           $ref: ./common/headers.yaml#/components/parameters/sunsetHeader
         Link:
           $ref: ./common/headers.yaml#/components/parameters/linkHeader
-
-      content:
-        application/json:
-          schema:
-            $ref: './schemas/ignore_employment_expenses/response.json'
-          examples:
-            example-response:
-              description: Example Response
-              value:
-                $ref: './examples/ignore_employment_expenses/response.json'
 
     "400":
       description: Bad request
