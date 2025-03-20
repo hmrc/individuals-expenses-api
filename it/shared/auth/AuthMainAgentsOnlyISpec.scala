@@ -34,7 +34,7 @@ abstract class AuthMainAgentsOnlyISpec extends IntegrationBaseSpec {
 
   protected val expectedMtdSuccessStatus: Int = OK
 
-  protected val alternatibeExpectedMtdSuccessStatus: Int = NO_CONTENT
+  protected val alternativeExpectedMtdSuccessStatus: Int = NO_CONTENT
 
   /** One endpoint where supporting agents are allowed.
     */
@@ -61,7 +61,7 @@ abstract class AuthMainAgentsOnlyISpec extends IntegrationBaseSpec {
         }
 
         val response: WSResponse = sendMtdRequest(request())
-        (response.status == expectedMtdSuccessStatus || response.status == alternatibeExpectedMtdSuccessStatus) shouldBe true
+        (response.status == expectedMtdSuccessStatus || response.status == alternativeExpectedMtdSuccessStatus) shouldBe true
       }
     }
 
