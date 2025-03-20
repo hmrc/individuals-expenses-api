@@ -31,9 +31,7 @@ abstract class AuthSupportingAgentsAllowedISpec extends IntegrationBaseSpec {
 
   protected val downstreamSuccessStatus: Int = OK
 
-  protected val expectedMtdSuccessStatus: Int = OK
-
-  protected val alternativeExpectedMtdSuccessStatus: Int = NO_CONTENT
+  protected val expectedMtdSuccessStatus: Int = NO_CONTENT
 
   /** One endpoint where supporting agents are allowed.
     */
@@ -60,7 +58,7 @@ abstract class AuthSupportingAgentsAllowedISpec extends IntegrationBaseSpec {
         }
 
         val response: WSResponse = sendMtdRequest(request)
-        (response.status == expectedMtdSuccessStatus || response.status == alternativeExpectedMtdSuccessStatus) shouldBe true
+        response.status shouldBe expectedMtdSuccessStatus
       }
     }
 
@@ -80,7 +78,7 @@ abstract class AuthSupportingAgentsAllowedISpec extends IntegrationBaseSpec {
         }
 
         val response: WSResponse = sendMtdRequest(request)
-        (response.status == expectedMtdSuccessStatus || response.status == alternativeExpectedMtdSuccessStatus) shouldBe true
+        response.status shouldBe expectedMtdSuccessStatus
       }
     }
   }

@@ -37,6 +37,7 @@ class CreateAndAmendOtherExpensesControllerISpec extends IntegrationBaseSpec {
 
         val response: WSResponse = await(request().put(requestBodyJson))
         response.status shouldBe NO_CONTENT
+        response.body.isEmpty shouldBe true
         response.header("X-CorrelationId").nonEmpty shouldBe true
       }
 
@@ -47,6 +48,7 @@ class CreateAndAmendOtherExpensesControllerISpec extends IntegrationBaseSpec {
 
         val response: WSResponse = await(request().put(requestBodyJson))
         response.status shouldBe NO_CONTENT
+        response.body.isEmpty shouldBe true
         response.header("X-CorrelationId").nonEmpty shouldBe true
       }
     }

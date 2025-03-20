@@ -41,7 +41,7 @@ class DeleteEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
 
         val response: WSResponse = await(request().delete())
         response.status shouldBe NO_CONTENT
-        response.body shouldBe ""
+        response.body.isEmpty shouldBe true
         response.header("X-CorrelationId").nonEmpty shouldBe true
       }
 
@@ -56,7 +56,7 @@ class DeleteEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
 
         val response: WSResponse = await(request().delete())
         response.status shouldBe NO_CONTENT
-        response.body shouldBe ""
+        response.body.isEmpty shouldBe true
         response.header("X-CorrelationId").nonEmpty shouldBe true
       }
     }

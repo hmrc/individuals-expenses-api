@@ -40,6 +40,7 @@ class IgnoreEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
 
         val response: WSResponse = await(request().post(requestBody))
         response.status shouldBe NO_CONTENT
+        response.body.isEmpty shouldBe true
         response.header("X-CorrelationId").nonEmpty shouldBe true
       }
 
@@ -51,6 +52,7 @@ class IgnoreEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
 
         val response: WSResponse = await(request().post(requestBody))
         response.status shouldBe NO_CONTENT
+        response.body.isEmpty shouldBe true
         response.header("X-CorrelationId").nonEmpty shouldBe true
       }
     }

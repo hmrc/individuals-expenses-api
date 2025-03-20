@@ -39,6 +39,7 @@ class DeleteOtherExpensesControllerISpec extends IntegrationBaseSpec {
 
         val response: WSResponse = await(request().delete())
         response.status shouldBe NO_CONTENT
+        response.body.isEmpty shouldBe true
         response.header("X-CorrelationId").nonEmpty shouldBe true
       }
       "any valid TYS request is made" in new TysIfsTest with Test {
