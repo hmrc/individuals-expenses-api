@@ -38,7 +38,7 @@ class RetrieveEmploymentsExpensesControllerISpec extends IntegrationBaseSpec {
 
         val response: WSResponse = await(request(latestMtdUri).get())
         response.status shouldBe OK
-        response.json shouldBe mtdResponseWithHateoasLinksLatest()
+        response.json shouldBe retrieveEmploymentsExpensesMtdResponseLatest
         response.header("X-CorrelationId").nonEmpty shouldBe true
         response.header("Content-Type") shouldBe Some("application/json")
       }
@@ -50,7 +50,7 @@ class RetrieveEmploymentsExpensesControllerISpec extends IntegrationBaseSpec {
 
         val response: WSResponse = await(request(hmrcHeldMtdUri).get())
         response.status shouldBe OK
-        response.json shouldBe mtdResponseWithHateoasLinksHmrcHeld
+        response.json shouldBe retrieveEmploymentsExpensesMtdResponseHmrcHeld
         response.header("X-CorrelationId").nonEmpty shouldBe true
         response.header("Content-Type") shouldBe Some("application/json")
       }
@@ -62,7 +62,7 @@ class RetrieveEmploymentsExpensesControllerISpec extends IntegrationBaseSpec {
 
         val response: WSResponse = await(request(userMtdUri).get())
         response.status shouldBe OK
-        response.json shouldBe mtdResponseWithHateoasLinksUser
+        response.json shouldBe retrieveEmploymentsExpensesMtdResponseUser
         response.header("X-CorrelationId").nonEmpty shouldBe true
         response.header("Content-Type") shouldBe Some("application/json")
       }
@@ -74,7 +74,7 @@ class RetrieveEmploymentsExpensesControllerISpec extends IntegrationBaseSpec {
 
         val response: WSResponse = await(request(latestMtdUri).get())
         response.status shouldBe OK
-        response.json shouldBe mtdResponseWithHateoasLinksLatest(mtdTaxYear)
+        response.json shouldBe retrieveEmploymentsExpensesMtdResponseLatest
         response.header("X-CorrelationId").nonEmpty shouldBe true
         response.header("Content-Type") shouldBe Some("application/json")
       }

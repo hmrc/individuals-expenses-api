@@ -30,7 +30,7 @@ class IgnoreEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
 
   "Calling the ignore endpoint" should {
 
-    "return a 200 status code" when {
+    "return a 204 status code" when {
 
       "any valid request is made" in new NonTysTest {
 
@@ -39,8 +39,8 @@ class IgnoreEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
         }
 
         val response: WSResponse = await(request().post(requestBody))
-        response.status shouldBe OK
-        response.json shouldBe responseBody
+        response.status shouldBe NO_CONTENT
+        response.body.isEmpty shouldBe true
         response.header("X-CorrelationId").nonEmpty shouldBe true
       }
 
@@ -51,9 +51,8 @@ class IgnoreEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
         }
 
         val response: WSResponse = await(request().post(requestBody))
-        response.status shouldBe OK
-        response.json shouldBe responseBody
-
+        response.status shouldBe NO_CONTENT
+        response.body.isEmpty shouldBe true
         response.header("X-CorrelationId").nonEmpty shouldBe true
       }
     }

@@ -141,24 +141,7 @@ class RetrieveOtherExpensesControllerISpec extends IntegrationBaseSpec {
          |  "patentRoyaltiesPayments": {
          |    "customerReference": "ROYALTIES PAYMENTS",
          |    "expenseAmount": 3015.50
-         |  },
-         |  "links":[
-         |      {
-         |         "href":"/individuals/expenses/other/$nino/$taxYear",
-         |         "method":"PUT",
-         |         "rel":"amend-expenses-other"
-         |      },
-         |      {
-         |         "href":"/individuals/expenses/other/$nino/$taxYear",
-         |         "method":"GET",
-         |         "rel":"self"
-         |      },
-         |      {
-         |         "href":"/individuals/expenses/other/$nino/$taxYear",
-         |         "method":"DELETE",
-         |         "rel":"delete-expenses-other"
-         |      }
-         |   ]
+         |  }
          |}
          |""".stripMargin
     )

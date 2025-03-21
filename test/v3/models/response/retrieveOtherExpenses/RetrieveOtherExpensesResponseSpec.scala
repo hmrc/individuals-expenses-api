@@ -18,8 +18,6 @@ package v3.models.response.retrieveOtherExpenses
 
 import play.api.libs.json.Json
 import shared.config.MockAppConfig
-import shared.hateoas.Link
-import shared.hateoas.Method.{DELETE, GET, PUT}
 import shared.models.domain.Timestamp
 import shared.utils.UnitSpec
 
@@ -110,21 +108,6 @@ class RetrieveOtherExpensesResponseSpec extends UnitSpec with MockAppConfig {
       "return an empty JSON" in {
         Json.toJson(retrieveOtherExpensesBodyWithoutPayments) shouldBe paymentsMissingJson
       }
-    }
-  }
-
-  "LinksFactory" should {
-    "return the correct links" in {
-      val nino    = "mynino"
-      val taxYear = "mytaxyear"
-
-      MockedAppConfig.apiGatewayContext.returns("my/context").anyNumberOfTimes()
-      RetrieveOtherExpensesResponse.RetrieveOtherExpensesLinksFactory.links(mockAppConfig, RetrieveOtherExpensesHateoasData(nino, taxYear)) shouldBe
-        Seq(
-          Link(s"/my/context/other/$nino/$taxYear", PUT, "amend-expenses-other"),
-          Link(s"/my/context/other/$nino/$taxYear", GET, "self"),
-          Link(s"/my/context/other/$nino/$taxYear", DELETE, "delete-expenses-other")
-        )
     }
   }
 

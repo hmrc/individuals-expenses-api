@@ -19,11 +19,9 @@ package v3.controllers
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import shared.config.AppConfig
 import shared.controllers._
-import shared.hateoas.HateoasFactory
 import shared.services.{EnrolmentsAuthService, MtdIdLookupService}
 import shared.utils.IdGenerator
 import v3.controllers.validators.RetrieveEmploymentExpensesValidatorFactory
-import v3.models.response.retrieveEmploymentExpenses.RetrieveEmploymentsExpensesHateoasData
 import v3.services.RetrieveEmploymentsExpensesService
 
 import javax.inject.{Inject, Singleton}
@@ -34,7 +32,6 @@ class RetrieveEmploymentsExpensesController @Inject() (val authService: Enrolmen
                                                        val lookupService: MtdIdLookupService,
                                                        validatorFactory: RetrieveEmploymentExpensesValidatorFactory,
                                                        service: RetrieveEmploymentsExpensesService,
-                                                       hateoasFactory: HateoasFactory,
                                                        cc: ControllerComponents,
                                                        val idGenerator: IdGenerator)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends AuthorisedController(cc) {
@@ -53,7 +50,7 @@ class RetrieveEmploymentsExpensesController @Inject() (val authService: Enrolmen
       val requestHandler = RequestHandler
         .withValidator(validator)
         .withService(service.retrieveEmploymentsExpenses)
-        .withHateoasResult(hateoasFactory)(RetrieveEmploymentsExpensesHateoasData(nino, taxYear, source))
+        .withPlainJsonResult()
 
       requestHandler.handleRequest()
 

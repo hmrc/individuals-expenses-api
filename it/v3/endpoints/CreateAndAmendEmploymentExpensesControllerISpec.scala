@@ -29,14 +29,14 @@ import shared.support.IntegrationBaseSpec
 class CreateAndAmendEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
 
   "Calling the amend endpoint" should {
-    "return a 200 status code" when {
+    "return a 204 status code" when {
       "any valid request is made" in new NonTysTest {
         override def setupStubs(): Unit =
           DownstreamStub.onSuccess(DownstreamStub.PUT, downstreamUri, NO_CONTENT, JsObject.empty)
 
         val response: WSResponse = await(request().put(requestBodyJson))
-        response.status shouldBe OK
-        response.json shouldBe hateoasResponse
+        response.status shouldBe NO_CONTENT
+        response.body.isEmpty shouldBe true
         response.header("X-CorrelationId").nonEmpty shouldBe true
       }
 
@@ -45,8 +45,8 @@ class CreateAndAmendEmploymentExpensesControllerISpec extends IntegrationBaseSpe
           DownstreamStub.onSuccess(DownstreamStub.PUT, downstreamUri, NO_CONTENT, JsObject.empty)
 
         val response: WSResponse = await(request().put(requestBodyJson))
-        response.status shouldBe OK
-        response.json shouldBe hateoasResponse
+        response.status shouldBe NO_CONTENT
+        response.body.isEmpty shouldBe true
         response.header("X-CorrelationId").nonEmpty shouldBe true
       }
     }
@@ -199,28 +199,6 @@ class CreateAndAmendEmploymentExpensesControllerISpec extends IntegrationBaseSpe
          |        "vehicleExpenses": $amount,
          |        "mileageAllowanceRelief": $amount
          |    }
-         |}
-         |""".stripMargin)
-
-    lazy val hateoasResponse: JsValue = Json.parse(s"""
-         |{
-         |  "links": [
-         |    {
-         |      "href": "/individuals/expenses/employments/$nino/$taxYear",
-         |      "method": "GET",
-         |      "rel": "self"
-         |    },
-         |    {
-         |      "href": "/individuals/expenses/employments/$nino/$taxYear",
-         |      "method": "PUT",
-         |      "rel": "amend-employment-expenses"
-         |    },
-         |    {
-         |      "href": "/individuals/expenses/employments/$nino/$taxYear",
-         |      "method": "DELETE",
-         |      "rel": "delete-employment-expenses"
-         |    }
-         |  ]
          |}
          |""".stripMargin)
 

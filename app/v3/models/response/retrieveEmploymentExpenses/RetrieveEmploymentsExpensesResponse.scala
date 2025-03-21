@@ -19,10 +19,7 @@ package v3.models.response.retrieveEmploymentExpenses
 import common.domain.{DownstreamSource, MtdSource}
 import play.api.libs.functional.syntax._
 import play.api.libs.json.{JsPath, Json, OWrites, Reads}
-import shared.config.AppConfig
-import shared.hateoas.{HateoasData, HateoasLinksFactory, Link}
 import shared.models.domain.Timestamp
-import v3.common.hateoas.HateoasLinks
 
 case class RetrieveEmploymentsExpensesResponse(submittedOn: Option[Timestamp],
                                                totalExpenses: Option[BigDecimal],
@@ -30,7 +27,7 @@ case class RetrieveEmploymentsExpensesResponse(submittedOn: Option[Timestamp],
                                                dateIgnored: Option[Timestamp],
                                                expenses: Option[Expenses])
 
-object RetrieveEmploymentsExpensesResponse extends HateoasLinks {
+object RetrieveEmploymentsExpensesResponse {
 
   implicit val reads: Reads[RetrieveEmploymentsExpensesResponse] = (
     (JsPath \ "submittedOn").readNullable[Timestamp] and
@@ -41,32 +38,4 @@ object RetrieveEmploymentsExpensesResponse extends HateoasLinks {
   )(RetrieveEmploymentsExpensesResponse.apply _)
 
   implicit val writes: OWrites[RetrieveEmploymentsExpensesResponse] = Json.writes[RetrieveEmploymentsExpensesResponse]
-
-  implicit object RetrieveEmploymentsExpensesLinksFactory
-      extends HateoasLinksFactory[RetrieveEmploymentsExpensesResponse, RetrieveEmploymentsExpensesHateoasData] {
-
-    override def links(appConfig: AppConfig, data: RetrieveEmploymentsExpensesHateoasData): Seq[Link] = {
-      import data._
-      data.source match {
-        case "latest" =>
-          Seq(
-            createAndAmendEmploymentExpenses(appConfig, nino, taxYear),
-            retrieveEmploymentExpenses(appConfig, nino, taxYear),
-            deleteEmploymentExpenses(appConfig, nino, taxYear),
-            ignoreEmploymentExpenses(appConfig, nino, taxYear)
-          )
-        case "hmrcHeld" => Seq(retrieveEmploymentExpenses(appConfig, nino, taxYear), ignoreEmploymentExpenses(appConfig, nino, taxYear))
-        case "user" =>
-          Seq(
-            createAndAmendEmploymentExpenses(appConfig, nino, taxYear),
-            retrieveEmploymentExpenses(appConfig, nino, taxYear),
-            deleteEmploymentExpenses(appConfig, nino, taxYear)
-          )
-      }
-    }
-
-  }
-
 }
-
-case class RetrieveEmploymentsExpensesHateoasData(nino: String, taxYear: String, source: String) extends HateoasData

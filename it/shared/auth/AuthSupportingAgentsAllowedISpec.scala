@@ -2,7 +2,7 @@ package shared.auth
 
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import play.api.http.HeaderNames.ACCEPT
-import play.api.http.Status.OK
+import play.api.http.Status.{NO_CONTENT, OK}
 import play.api.libs.json.JsValue
 import play.api.libs.ws.{WSRequest, WSResponse}
 import play.api.test.Helpers.AUTHORIZATION
@@ -31,7 +31,7 @@ abstract class AuthSupportingAgentsAllowedISpec extends IntegrationBaseSpec {
 
   protected val downstreamSuccessStatus: Int = OK
 
-  protected val expectedMtdSuccessStatus: Int = OK
+  protected val expectedMtdSuccessStatus: Int = NO_CONTENT
 
   /** One endpoint where supporting agents are allowed.
     */

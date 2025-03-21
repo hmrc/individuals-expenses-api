@@ -17,19 +17,16 @@
 package v3.controllers
 
 import play.api.Configuration
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.JsValue
 import play.api.mvc.Result
 import shared.config.MockAppConfig
 import shared.controllers.{ControllerBaseSpec, ControllerTestRunner}
-import shared.hateoas.Method.{DELETE, GET}
-import shared.hateoas.{HateoasWrapper, Link, MockHateoasFactory}
 import shared.models.audit.{AuditEvent, AuditResponse, GenericAuditDetail}
 import shared.models.domain.{Nino, TaxYear}
 import shared.models.errors._
 import shared.models.outcomes.ResponseWrapper
 import v3.controllers.validators.MockIgnoreEmploymentExpensesValidatorFactory
 import v3.models.request.ignoreEmploymentExpenses._
-import v3.models.response.ignoreEmploymentExpenses.IgnoreEmploymentExpensesHateoasData
 import v3.services.MockIgnoreEmploymentExpensesService
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -40,37 +37,14 @@ class IgnoreEmploymentExpensesControllerSpec
     with ControllerTestRunner
     with MockIgnoreEmploymentExpensesService
     with MockIgnoreEmploymentExpensesValidatorFactory
-    with MockHateoasFactory
     with MockAppConfig {
 
   private val taxYear = "2019-20"
 
-  private val testHateoasLinks = List(
-    Link(href = s"/individuals/expenses/employments/$validNino/$taxYear", method = GET, rel = "self"),
-    Link(href = s"/individuals/expenses/employments/$validNino/$taxYear", method = DELETE, rel = "delete-employment-expenses")
-  )
-
-  private val responseBodyJson: JsValue = Json.parse(s"""
-       |{
-       |  "links": [
-       |    {
-       |      "href": "/individuals/expenses/employments/$validNino/$taxYear",
-       |      "method": "GET",
-       |      "rel": "self"
-       |    },
-       |    {
-       |      "href": "/individuals/expenses/employments/$validNino/$taxYear",
-       |      "method": "DELETE",
-       |      "rel": "delete-employment-expenses"
-       |    }
-       |  ]
-       |}
-       |""".stripMargin)
-
   private val requestData = IgnoreEmploymentExpensesRequestData(Nino(validNino), TaxYear.fromMtd(taxYear))
 
   "handleRequest" should {
-    "return Ok" when {
+    "return No Content" when {
       "the request received is valid" in new Test {
         willUseValidator(returningSuccess(requestData))
         MockedAppConfig.featureSwitchConfig.anyNumberOfTimes() returns Configuration(
@@ -83,14 +57,10 @@ class IgnoreEmploymentExpensesControllerSpec
           .ignore(requestData)
           .returns(Future.successful(Right(ResponseWrapper(correlationId, ()))))
 
-        MockHateoasFactory
-          .wrap((), IgnoreEmploymentExpensesHateoasData(validNino, taxYear))
-          .returns(HateoasWrapper((), testHateoasLinks))
-
         runOkTestWithAudit(
-          expectedStatus = OK,
-          maybeExpectedResponseBody = Some(responseBodyJson),
-          maybeAuditResponseBody = Some(responseBodyJson)
+          expectedStatus = NO_CONTENT,
+          maybeExpectedResponseBody = None,
+          maybeAuditResponseBody = None
         )
       }
     }
@@ -134,7 +104,6 @@ class IgnoreEmploymentExpensesControllerSpec
       validatorFactory = mockIgnoreEmploymentExpensesValidatorFactory,
       service = mockService,
       auditService = mockAuditService,
-      hateoasFactory = mockHateoasFactory,
       cc = cc,
       idGenerator = mockIdGenerator
     )
