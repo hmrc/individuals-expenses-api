@@ -18,13 +18,14 @@ package v2.connectors
 
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
+import org.scalatest.TestSuite
 import shared.connectors.DownstreamOutcome
 import uk.gov.hmrc.http.HeaderCarrier
 import v2.models.request.deleteOtherExpenses.DeleteOtherExpensesRequestData
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockDeleteOtherExpensesConnector extends MockFactory {
+trait MockDeleteOtherExpensesConnector extends TestSuite with MockFactory {
 
   val mockDeleteOtherExpensesConnector: DeleteOtherExpensesConnector = mock[DeleteOtherExpensesConnector]
 

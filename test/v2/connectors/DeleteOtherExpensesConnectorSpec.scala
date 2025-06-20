@@ -19,6 +19,7 @@ package v2.connectors
 import shared.connectors.ConnectorSpec
 import shared.models.domain.{Nino, TaxYear}
 import shared.models.outcomes.ResponseWrapper
+import uk.gov.hmrc.http.StringContextOps
 import v2.models.request.deleteOtherExpenses.DeleteOtherExpensesRequestData
 
 import scala.concurrent.Future
@@ -30,7 +31,7 @@ class DeleteOtherExpensesConnectorSpec extends ConnectorSpec {
   trait Test {
     _: ConnectorTest =>
     def taxYear: TaxYear
-    protected val request = DeleteOtherExpensesRequestData(Nino(nino), taxYear)
+    protected val request: DeleteOtherExpensesRequestData = DeleteOtherExpensesRequestData(Nino(nino), taxYear)
 
     protected val connector: DeleteOtherExpensesConnector = new DeleteOtherExpensesConnector(
       http = mockHttpClient,
@@ -43,18 +44,18 @@ class DeleteOtherExpensesConnectorSpec extends ConnectorSpec {
     "return a 204 with no body" when {
       "the downstream call is successful" in new IfsTest with Test {
         def taxYear: TaxYear = TaxYear.fromMtd("2017-18")
-        val outcome          = Right(ResponseWrapper(correlationId, ()))
+        val outcome: Right[Nothing, ResponseWrapper[Unit]] = Right(ResponseWrapper(correlationId, ()))
 
-        willDelete(s"$baseUrl/income-tax/expenses/other/$nino/2017-18").returns(Future.successful(outcome))
+        willDelete(url"$baseUrl/income-tax/expenses/other/$nino/2017-18").returns(Future.successful(outcome))
 
         await(connector.deleteOtherExpenses(request)) shouldBe outcome
       }
     }
     "a valid request is called for a Tax Year Specific tax year" in new IfsTest with Test {
       def taxYear: TaxYear = TaxYear.fromMtd("2023-24")
-      val outcome          = Right(ResponseWrapper(correlationId, ()))
+      val outcome: Right[Nothing, ResponseWrapper[Unit]] = Right(ResponseWrapper(correlationId, ()))
 
-      willDelete(s"$baseUrl/income-tax/expenses/other/23-24/$nino").returns(Future.successful(outcome))
+      willDelete(url"$baseUrl/income-tax/expenses/other/23-24/$nino").returns(Future.successful(outcome))
 
       await(connector.deleteOtherExpenses(request)) shouldBe outcome
     }

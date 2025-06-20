@@ -20,13 +20,14 @@ import cats.data.Validated
 import cats.data.Validated.{Invalid, Valid}
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
+import org.scalatest.TestSuite
 import shared.controllers.validators.Validator
 import shared.models.errors.MtdError
 import v3.models.request.ignoreEmploymentExpenses.IgnoreEmploymentExpensesRequestData
 
 import java.time.Clock
 
-trait MockIgnoreEmploymentExpensesValidatorFactory extends MockFactory {
+trait MockIgnoreEmploymentExpensesValidatorFactory extends TestSuite with MockFactory {
 
   val mockIgnoreEmploymentExpensesValidatorFactory: IgnoreEmploymentExpensesValidatorFactory =
     mock[IgnoreEmploymentExpensesValidatorFactory]

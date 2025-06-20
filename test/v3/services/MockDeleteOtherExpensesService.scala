@@ -18,6 +18,7 @@ package v3.services
 
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
+import org.scalatest.TestSuite
 import shared.controllers.RequestContext
 import shared.models.errors.ErrorWrapper
 import shared.models.outcomes.ResponseWrapper
@@ -25,7 +26,7 @@ import v3.models.request.deleteOtherExpenses.DeleteOtherExpensesRequestData
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockDeleteOtherExpensesService extends MockFactory {
+trait MockDeleteOtherExpensesService extends TestSuite with MockFactory {
 
   val mockDeleteOtherExpensesService: DeleteOtherExpensesService = mock[DeleteOtherExpensesService]
 

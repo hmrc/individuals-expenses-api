@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,10 @@
 
 package v3.connectors
 
-import shared.connectors.ConnectorSpec
+import shared.connectors.{ConnectorSpec, DownstreamOutcome}
 import shared.models.domain.{Nino, TaxYear}
 import shared.models.outcomes.ResponseWrapper
+import uk.gov.hmrc.http.StringContextOps
 import v3.models.request.deleteEmploymentExpenses.DeleteEmploymentExpensesRequestData
 
 import scala.concurrent.Future
@@ -51,9 +52,9 @@ class DeleteEmploymentExpensesConnectorSpec extends ConnectorSpec {
         def taxYear: TaxYear                               = TaxYear.fromMtd("2017-18")
         val outcome: Right[Nothing, ResponseWrapper[Unit]] = Right(ResponseWrapper(correlationId, ()))
 
-        willDelete(s"$baseUrl/income-tax/expenses/employments/$nino/2017-18") returns Future.successful(outcome)
+        willDelete(url"$baseUrl/income-tax/expenses/employments/$nino/2017-18") returns Future.successful(outcome)
 
-        val result = await(connector.deleteEmploymentExpenses(request))
+        val result: DownstreamOutcome[Unit] = await(connector.deleteEmploymentExpenses(request))
 
         result shouldBe outcome
       }
@@ -62,9 +63,9 @@ class DeleteEmploymentExpensesConnectorSpec extends ConnectorSpec {
         def taxYear: TaxYear                               = TaxYear.fromMtd("2023-24")
         val outcome: Right[Nothing, ResponseWrapper[Unit]] = Right(ResponseWrapper(correlationId, ()))
 
-        willDelete(s"$baseUrl/income-tax/expenses/employments/23-24/$nino") returns Future.successful(outcome)
+        willDelete(url"$baseUrl/income-tax/expenses/employments/23-24/$nino") returns Future.successful(outcome)
 
-        val result = await(connector.deleteEmploymentExpenses(request))
+        val result: DownstreamOutcome[Unit] = await(connector.deleteEmploymentExpenses(request))
 
         result shouldBe outcome
       }

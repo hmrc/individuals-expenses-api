@@ -19,11 +19,8 @@ package v3.connectors
 import shared.connectors.{ConnectorSpec, DownstreamOutcome}
 import shared.models.domain.{Nino, TaxYear}
 import shared.models.outcomes.ResponseWrapper
-import v3.models.request.createAndAmendEmploymentExpenses.{
-  CreateAndAmendEmploymentExpensesBody,
-  CreateAndAmendEmploymentExpensesRequestData,
-  Expenses
-}
+import uk.gov.hmrc.http.StringContextOps
+import v3.models.request.createAndAmendEmploymentExpenses.{CreateAndAmendEmploymentExpensesBody, CreateAndAmendEmploymentExpensesRequestData, Expenses}
 
 import scala.concurrent.Future
 
@@ -66,10 +63,10 @@ class CreateAndAmendEmploymentExpensesConnectorSpec extends ConnectorSpec {
 
         def taxYear: TaxYear = TaxYear.fromMtd("2021-22")
 
-        val expectedOutcome = Right(ResponseWrapper(correlationId, ()))
+        val expectedOutcome: Right[Nothing, ResponseWrapper[Unit]] = Right(ResponseWrapper(correlationId, ()))
 
         willPut(
-          url = s"$baseUrl/income-tax/expenses/employments/$nino/2021-22",
+          url = url"$baseUrl/income-tax/expenses/employments/$nino/2021-22",
           body = body
         )
           .returns(Future.successful(expectedOutcome))
@@ -84,10 +81,10 @@ class CreateAndAmendEmploymentExpensesConnectorSpec extends ConnectorSpec {
 
         def taxYear: TaxYear = TaxYear.fromMtd("2023-24")
 
-        val expectedOutcome = Right(ResponseWrapper(correlationId, ()))
+        val expectedOutcome: Right[Nothing, ResponseWrapper[Unit]] = Right(ResponseWrapper(correlationId, ()))
 
         willPut(
-          url = s"$baseUrl/income-tax/23-24/expenses/employments/$nino",
+          url = url"$baseUrl/income-tax/23-24/expenses/employments/$nino",
           body = body
         )
           .returns(Future.successful(expectedOutcome))

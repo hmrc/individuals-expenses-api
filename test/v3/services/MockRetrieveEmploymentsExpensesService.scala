@@ -18,6 +18,7 @@ package v3.services
 
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
+import org.scalatest.TestSuite
 import shared.controllers.RequestContext
 import shared.models.errors.ErrorWrapper
 import shared.models.outcomes.ResponseWrapper
@@ -26,7 +27,7 @@ import v3.models.response.retrieveEmploymentExpenses.RetrieveEmploymentsExpenses
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockRetrieveEmploymentsExpensesService extends MockFactory {
+trait MockRetrieveEmploymentsExpensesService extends TestSuite with MockFactory {
 
   val mockRetrieveEmploymentsExpensesService: RetrieveEmploymentsExpensesService = mock[RetrieveEmploymentsExpensesService]
 

@@ -19,6 +19,7 @@ package v3.connectors
 import shared.connectors.ConnectorSpec
 import shared.models.domain.{Nino, TaxYear}
 import shared.models.outcomes.ResponseWrapper
+import uk.gov.hmrc.http.StringContextOps
 import v3.models.request.ignoreEmploymentExpenses.{IgnoreEmploymentExpensesBody, IgnoreEmploymentExpensesRequestData}
 
 import scala.concurrent.Future
@@ -35,17 +36,17 @@ class IgnoreEmploymentExpensesConnectorSpec extends ConnectorSpec {
       appConfig = mockAppConfig
     )
 
-    val outcome = Right(ResponseWrapper(correlationId, ()))
+    val outcome: Right[Nothing, ResponseWrapper[Unit]] = Right(ResponseWrapper(correlationId, ()))
 
   }
 
   "ignore" should {
     "return the expected response for a non-TYS request" when {
       "a valid request is made" in new IfsTest with Test {
-        val request = IgnoreEmploymentExpensesRequestData(Nino("AA123456A"), TaxYear.fromMtd("2021-22"))
+        val request: IgnoreEmploymentExpensesRequestData = IgnoreEmploymentExpensesRequestData(Nino("AA123456A"), TaxYear.fromMtd("2021-22"))
 
         willPut(
-          url = s"$baseUrl/income-tax/expenses/employments/AA123456A/2021-22",
+          url = url"$baseUrl/income-tax/expenses/employments/AA123456A/2021-22",
           body = body
         ).returns(Future.successful(outcome))
 
@@ -55,10 +56,10 @@ class IgnoreEmploymentExpensesConnectorSpec extends ConnectorSpec {
 
     "return the expected response for a TYS request" when {
       "a valid request is made" in new IfsTest with Test {
-        val request = IgnoreEmploymentExpensesRequestData(Nino("AA123456A"), TaxYear.fromMtd("2023-24"))
+        val request: IgnoreEmploymentExpensesRequestData = IgnoreEmploymentExpensesRequestData(Nino("AA123456A"), TaxYear.fromMtd("2023-24"))
 
         willPut(
-          url = s"$baseUrl/income-tax/23-24/expenses/employments/AA123456A",
+          url = url"$baseUrl/income-tax/23-24/expenses/employments/AA123456A",
           body = body
         ).returns(Future.successful(outcome))
 

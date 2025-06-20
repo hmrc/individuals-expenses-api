@@ -18,13 +18,14 @@ package v2.connectors
 
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
+import org.scalatest.TestSuite
 import shared.connectors.DownstreamOutcome
 import uk.gov.hmrc.http.HeaderCarrier
 import v2.models.request.ignoreEmploymentExpenses.IgnoreEmploymentExpensesRequestData
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockIgnoreEmploymentExpensesConnector extends MockFactory {
+trait MockIgnoreEmploymentExpensesConnector extends TestSuite with MockFactory {
 
   val mockIgnoreEmploymentExpensesConnector: IgnoreEmploymentExpensesConnector = mock[IgnoreEmploymentExpensesConnector]
 
