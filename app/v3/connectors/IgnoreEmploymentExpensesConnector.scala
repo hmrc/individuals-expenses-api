@@ -20,7 +20,8 @@ import shared.config.AppConfig
 import shared.connectors.DownstreamUri.IfsUri
 import shared.connectors.httpparsers.StandardDownstreamHttpParser._
 import shared.connectors.{BaseDownstreamConnector, DownstreamOutcome}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.HeaderCarrier
 import v3.models.request.ignoreEmploymentExpenses.{IgnoreEmploymentExpensesBody, IgnoreEmploymentExpensesRequestData}
 
 import javax.inject.{Inject, Singleton}
@@ -28,7 +29,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class IgnoreEmploymentExpensesConnector @Inject() (
-    val http: HttpClient,
+    val http: HttpClientV2,
     val appConfig: AppConfig
 ) extends BaseDownstreamConnector {
 
