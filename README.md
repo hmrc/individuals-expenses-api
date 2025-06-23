@@ -24,7 +24,7 @@ Start the service manager profile: `sm2 --start MTDFB_INDIVIDUALS_EXPENSES`
 
 ```
 sbt test
-sbt it:test
+sbt it/test
 ```
 
 ## Viewing OAS
