@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,19 @@
  * limitations under the License.
  */
 
-package shared.utils
+package shared.services
 
-import org.scalamock.handlers.CallHandler
-import org.scalamock.scalatest.MockFactory
-import org.scalatest.TestSuite
+import com.github.tomakehurst.wiremock.stubbing.StubMapping
+import play.api.http.Status.NO_CONTENT
+import shared.support.WireMockMethods
 
-trait MockIdGenerator extends TestSuite with MockFactory {
+object AuditStub extends WireMockMethods {
 
-  protected val mockIdGenerator: IdGenerator = mock[IdGenerator]
+  private val auditUri: String = s"/write/audit.*"
 
-  object MockedIdGenerator {
-    def generateCorrelationId: CallHandler[String] = (() => mockIdGenerator.generateCorrelationId).expects()
+  def audit(): StubMapping = {
+    when(method = POST, uri = auditUri)
+      .thenReturn(status = NO_CONTENT)
   }
 
 }

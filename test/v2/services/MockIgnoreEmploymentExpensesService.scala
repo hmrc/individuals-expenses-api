@@ -18,6 +18,7 @@ package v2.services
 
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
+import org.scalatest.TestSuite
 import shared.controllers.RequestContext
 import shared.models.errors.ErrorWrapper
 import shared.models.outcomes.ResponseWrapper
@@ -25,7 +26,7 @@ import v2.models.request.ignoreEmploymentExpenses.IgnoreEmploymentExpensesReques
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockIgnoreEmploymentExpensesService extends MockFactory {
+trait MockIgnoreEmploymentExpensesService extends TestSuite with MockFactory {
 
   val mockService: IgnoreEmploymentExpensesService = mock[IgnoreEmploymentExpensesService]
 

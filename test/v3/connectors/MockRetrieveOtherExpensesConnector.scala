@@ -18,6 +18,7 @@ package v3.connectors
 
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
+import org.scalatest.TestSuite
 import shared.connectors.DownstreamOutcome
 import uk.gov.hmrc.http.HeaderCarrier
 import v3.models.request.retrieveOtherExpenses.RetrieveOtherExpensesRequestData
@@ -25,7 +26,7 @@ import v3.models.response.retrieveOtherExpenses.RetrieveOtherExpensesResponse
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockRetrieveOtherExpensesConnector extends MockFactory {
+trait MockRetrieveOtherExpensesConnector extends TestSuite with MockFactory {
 
   val mockRetrieveOtherExpensesConnector: RetrieveOtherExpensesConnector = mock[RetrieveOtherExpensesConnector]
 

@@ -18,6 +18,7 @@ package v3.services
 
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
+import org.scalatest.TestSuite
 import shared.controllers.RequestContext
 import shared.models.errors.ErrorWrapper
 import shared.models.outcomes.ResponseWrapper
@@ -25,7 +26,7 @@ import v3.models.request.createAndAmendOtherExpenses.CreateAndAmendOtherExpenses
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockCreateAndAmendOtherExpensesService extends MockFactory {
+trait MockCreateAndAmendOtherExpensesService extends TestSuite with MockFactory {
 
   val mockService: CreateAndAmendOtherExpensesService = mock[CreateAndAmendOtherExpensesService]
 

@@ -19,6 +19,7 @@ package v3.connectors
 import shared.connectors.ConnectorSpec
 import shared.models.domain.{Nino, TaxYear, Timestamp}
 import shared.models.outcomes.ResponseWrapper
+import uk.gov.hmrc.http.StringContextOps
 import v3.models.request.retrieveOtherExpenses.RetrieveOtherExpensesRequestData
 import v3.models.response.retrieveOtherExpenses.{PatentRoyaltiesPayments, PaymentsToTradeUnionsForDeathBenefits, RetrieveOtherExpensesResponse}
 
@@ -56,9 +57,9 @@ class RetrieveOtherExpensesConnectorSpec extends ConnectorSpec {
       "the downstream call is successful" in new IfsTest with Test {
 
         def taxYear: String = "2021-22"
-        val outcome         = Right(ResponseWrapper(correlationId, retrieveOtherExpensesResponse))
+        val outcome: Right[Nothing, ResponseWrapper[RetrieveOtherExpensesResponse]] = Right(ResponseWrapper(correlationId, retrieveOtherExpensesResponse))
 
-        willGet(url = s"$baseUrl/income-tax/expenses/other/$nino/2021-22")
+        willGet(url = url"$baseUrl/income-tax/expenses/other/$nino/2021-22")
           .returns(Future.successful(outcome))
 
         await(connector.retrieveOtherExpenses(request)) shouldBe outcome
@@ -67,9 +68,9 @@ class RetrieveOtherExpensesConnectorSpec extends ConnectorSpec {
       "the downstream call is successful for a TYS tax year" in new IfsTest with Test {
 
         def taxYear: String = "2023-24"
-        val outcome         = Right(ResponseWrapper(correlationId, retrieveOtherExpensesResponse))
+        val outcome: Right[Nothing, ResponseWrapper[RetrieveOtherExpensesResponse]] = Right(ResponseWrapper(correlationId, retrieveOtherExpensesResponse))
 
-        willGet(url = s"$baseUrl/income-tax/expenses/other/23-24/$nino")
+        willGet(url = url"$baseUrl/income-tax/expenses/other/23-24/$nino")
           .returns(Future.successful(outcome))
 
         await(connector.retrieveOtherExpenses(request)) shouldBe outcome

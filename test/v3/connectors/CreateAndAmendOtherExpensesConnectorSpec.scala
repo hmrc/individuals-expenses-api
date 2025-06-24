@@ -19,6 +19,7 @@ package v3.connectors
 import shared.connectors.ConnectorSpec
 import shared.models.domain.{Nino, TaxYear}
 import shared.models.outcomes.ResponseWrapper
+import uk.gov.hmrc.http.StringContextOps
 import v3.models.request.createAndAmendOtherExpenses._
 
 import scala.concurrent.Future
@@ -30,10 +31,10 @@ class CreateAndAmendOtherExpensesConnectorSpec extends ConnectorSpec {
       "a valid request is made" in new IfsTest with Test {
         def taxYear: String = "2021-22"
 
-        val outcome = Right(ResponseWrapper(correlationId, ()))
+        val outcome: Right[Nothing, ResponseWrapper[Unit]] = Right(ResponseWrapper(correlationId, ()))
 
         willPut(
-          url = s"$baseUrl/income-tax/expenses/other/$nino/2021-22",
+          url = url"$baseUrl/income-tax/expenses/other/$nino/2021-22",
           body = body
         )
           .returns(Future.successful(outcome))
@@ -48,7 +49,7 @@ class CreateAndAmendOtherExpensesConnectorSpec extends ConnectorSpec {
         val outcome: Right[Nothing, ResponseWrapper[Unit]] = Right(ResponseWrapper(correlationId, ()))
 
         willPut(
-          url = s"$baseUrl/income-tax/expenses/other/23-24/$nino",
+          url = url"$baseUrl/income-tax/expenses/other/23-24/$nino",
           body = body
         )
           .returns(Future.successful(outcome))

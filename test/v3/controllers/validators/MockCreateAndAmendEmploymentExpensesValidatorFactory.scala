@@ -20,6 +20,7 @@ import cats.data.Validated
 import cats.data.Validated.{Invalid, Valid}
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
+import org.scalatest.TestSuite
 import play.api.libs.json.JsValue
 import shared.controllers.validators.Validator
 import shared.models.errors.MtdError
@@ -27,7 +28,7 @@ import v3.models.request.createAndAmendEmploymentExpenses.CreateAndAmendEmployme
 
 import java.time.Clock
 
-trait MockCreateAndAmendEmploymentExpensesValidatorFactory extends MockFactory {
+trait MockCreateAndAmendEmploymentExpensesValidatorFactory extends TestSuite with MockFactory {
 
   val mockCreateAndAmendEmploymentExpensesValidatorFactory: CreateAndAmendEmploymentExpensesValidatorFactory =
     mock[CreateAndAmendEmploymentExpensesValidatorFactory]

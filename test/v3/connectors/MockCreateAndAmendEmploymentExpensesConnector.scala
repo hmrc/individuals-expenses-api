@@ -19,12 +19,13 @@ package v3.connectors
 import shared.connectors.DownstreamOutcome
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
+import org.scalatest.TestSuite
 import uk.gov.hmrc.http.HeaderCarrier
 import v3.models.request.createAndAmendEmploymentExpenses.CreateAndAmendEmploymentExpensesRequestData
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockCreateAndAmendEmploymentExpensesConnector extends MockFactory {
+trait MockCreateAndAmendEmploymentExpensesConnector extends TestSuite with MockFactory {
 
   val mockCreateAndAmendEmploymentExpensesConnector: CreateAndAmendEmploymentExpensesConnector = mock[CreateAndAmendEmploymentExpensesConnector]
 
