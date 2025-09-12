@@ -22,7 +22,6 @@ ThisBuild / scalacOptions ++= Seq(
   "-Werror",
   "-Wconf:msg=Flag.*repeatedly:s"
 )
-//ThisBuild / scalacOptions += "-nowarn"
 ThisBuild / scalafmtOnCompile := true
 
 val appName = "individuals-expenses-api"
