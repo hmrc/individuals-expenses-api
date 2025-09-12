@@ -109,7 +109,7 @@ trait ConnectorSpec extends UnitSpec with Status with MimeTypes with HeaderNames
     private val token       = s"$name-token"
     private val environment = s"$name-environment"
 
-    protected final lazy val requiredHeaders: Seq[(String, String)] = List(
+    protected final val requiredHeaders: Seq[(String, String)] = List(
       "Authorization"        -> s"Bearer $token",
       "Environment"          -> environment,
       "User-Agent"           -> "this-api",
@@ -147,7 +147,7 @@ trait ConnectorSpec extends UnitSpec with Status with MimeTypes with HeaderNames
 
     private val environment = "hip-environment"
 
-    protected final lazy val requiredHeaders: Seq[(String, String)] = List(
+    protected final val requiredHeaders: Seq[(String, String)] = List(
       "Authorization"        -> s"Basic $token",
       "Environment"          -> environment,
       "User-Agent"           -> "this-api",

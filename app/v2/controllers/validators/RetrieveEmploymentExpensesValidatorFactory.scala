@@ -40,7 +40,7 @@ class RetrieveEmploymentExpensesValidatorFactory {
           ResolveNino(nino),
           resolveTaxYear(taxYear),
           ResolveMtdSource(source)
-        ).mapN(RetrieveEmploymentsExpensesRequestData)
+        ).mapN(RetrieveEmploymentsExpensesRequestData.apply)
 
     }
 

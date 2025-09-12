@@ -47,7 +47,7 @@ class IgnoreEmploymentExpensesValidatorFactory {
         (
           ResolveNino(nino),
           resolvedTaxYear
-        ).mapN(IgnoreEmploymentExpensesRequestData)
+        ).mapN(IgnoreEmploymentExpensesRequestData.apply)
       }
 
     }

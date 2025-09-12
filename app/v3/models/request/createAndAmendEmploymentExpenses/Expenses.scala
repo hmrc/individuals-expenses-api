@@ -17,6 +17,7 @@
 package v3.models.request.createAndAmendEmploymentExpenses
 
 import play.api.libs.json.{Json, OFormat}
+import shared.utils.EmptinessChecker
 
 case class Expenses(businessTravelCosts: Option[BigDecimal],
                     jobExpenses: Option[BigDecimal],
@@ -39,5 +40,6 @@ case class Expenses(businessTravelCosts: Option[BigDecimal],
 }
 
 object Expenses {
-  implicit val format: OFormat[Expenses] = Json.format[Expenses]
+  given derived: EmptinessChecker[Expenses] = EmptinessChecker.derived
+  implicit val format: OFormat[Expenses]    = Json.format[Expenses]
 }

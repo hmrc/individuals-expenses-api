@@ -19,24 +19,18 @@ package common.domain
 import play.api.libs.json._
 import shared.utils.enums.Enums
 
-sealed trait MtdSource {
-  def toDownstream: DownstreamSource
+enum MtdSource {
+  case hmrcHeld, user, latest
+
+  def toDownstream: DownstreamSource = this match
+    case MtdSource.hmrcHeld => DownstreamSource.`HMRC-HELD`
+    case MtdSource.user     => DownstreamSource.`CUSTOMER`
+    case MtdSource.latest   => DownstreamSource.`LATEST`
+
 }
 
 object MtdSource {
+  val parser: PartialFunction[String, MtdSource] = Enums.parser(values)
 
-  case object `hmrcHeld` extends MtdSource {
-    override def toDownstream: DownstreamSource = DownstreamSource.`HMRC-HELD`
-  }
-
-  case object `user` extends MtdSource {
-    override def toDownstream: DownstreamSource = DownstreamSource.`CUSTOMER`
-  }
-
-  case object `latest` extends MtdSource {
-    override def toDownstream: DownstreamSource = DownstreamSource.`LATEST`
-  }
-
-  implicit val format: Format[MtdSource]         = Enums.format[MtdSource]
-  val parser: PartialFunction[String, MtdSource] = Enums.parser[MtdSource]
+  given Format[MtdSource] = Enums.format(values)
 }

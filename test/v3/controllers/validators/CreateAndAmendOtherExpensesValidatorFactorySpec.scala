@@ -36,20 +36,16 @@ class CreateAndAmendOtherExpensesValidatorFactorySpec extends UnitSpec with Json
   private val validNino    = "AA123456A"
   private val validTaxYear = "2023-24"
 
-  private def getNumber(withDecimals: Boolean)(base: Int) = if (withDecimals) base else base + 0.12
-
-  private def validBody(withDecimals: Boolean = true): JsValue = {
-    val number = getNumber(withDecimals)(_)
-
+  private def validBody(): JsValue = {
     Json.parse(s"""
         |{
         |  "paymentsToTradeUnionsForDeathBenefits": {
         |    "customerReference": "TRADE UNION PAYMENTS",
-        |    "expenseAmount": ${number(0)}
+        |    "expenseAmount": ${BigDecimal(0)}
         |  },
         |  "patentRoyaltiesPayments":{
         |    "customerReference": "ROYALTIES PAYMENTS",
-        |    "expenseAmount": ${number(1)}
+        |    "expenseAmount": ${BigDecimal(1)}
         |  }
         |}""".stripMargin)
   }
@@ -57,14 +53,10 @@ class CreateAndAmendOtherExpensesValidatorFactorySpec extends UnitSpec with Json
   private val parsedNino    = Nino(validNino)
   private val parsedTaxYear = TaxYear.fromMtd(validTaxYear)
 
-  private def parsedBody(withDecimals: Boolean = true) = {
-    val number = getNumber(withDecimals)(_)
-
-    CreateAndAmendOtherExpensesBody(
-      Some(PaymentsToTradeUnionsForDeathBenefits(Some("TRADE UNION PAYMENTS"), number(0))),
-      Some(PatentRoyaltiesPayments(Some("ROYALTIES PAYMENTS"), number(1)))
-    )
-  }
+  private def parsedBody() = CreateAndAmendOtherExpensesBody(
+    Some(PaymentsToTradeUnionsForDeathBenefits(Some("TRADE UNION PAYMENTS"), BigDecimal(0))),
+    Some(PatentRoyaltiesPayments(Some("ROYALTIES PAYMENTS"), BigDecimal(1)))
+  )
 
   private val validatorFactory = new CreateAndAmendOtherExpensesValidatorFactory
 
@@ -81,10 +73,10 @@ class CreateAndAmendOtherExpensesValidatorFactorySpec extends UnitSpec with Json
       }
 
       "passed a valid request without decimals" in {
-        val result = validator(validNino, validTaxYear, validBody(withDecimals = false)).validateAndWrapResult()
+        val result = validator(validNino, validTaxYear, validBody()).validateAndWrapResult()
 
         result shouldBe Right(
-          CreateAndAmendOtherExpensesRequestData(parsedNino, parsedTaxYear, parsedBody(withDecimals = false))
+          CreateAndAmendOtherExpensesRequestData(parsedNino, parsedTaxYear, parsedBody())
         )
       }
 

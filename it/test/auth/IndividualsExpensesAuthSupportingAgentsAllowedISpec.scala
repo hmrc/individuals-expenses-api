@@ -22,6 +22,7 @@ import play.api.libs.ws.{WSRequest, WSResponse}
 import shared.auth.AuthSupportingAgentsAllowedISpec
 import shared.models.domain.TaxYear
 import shared.services.DownstreamStub
+import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 
 class IndividualsExpensesAuthSupportingAgentsAllowedISpec extends AuthSupportingAgentsAllowedISpec {
 

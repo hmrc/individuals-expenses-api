@@ -25,6 +25,7 @@ import play.api.test.Helpers.AUTHORIZATION
 import shared.models.errors._
 import shared.services.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 import shared.support.IntegrationBaseSpec
+import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 
 class IgnoreEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
 
@@ -81,7 +82,7 @@ class IgnoreEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
           ("AA123456A", "2019-21", BAD_REQUEST, RuleTaxYearRangeInvalidError)
         )
 
-        input.foreach(args => (parserErrorTest _).tupled(args))
+        input.foreach(args => parserErrorTest.tupled(args))
 
       }
 
@@ -115,7 +116,7 @@ class IgnoreEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
           (UNPROCESSABLE_ENTITY, "TAX_YEAR_NOT_SUPPORTED", BAD_REQUEST, RuleTaxYearNotSupportedError)
         )
 
-        (errors ++ extraTysErrors).foreach(args => (serviceErrorTest _).tupled(args))
+        (errors ++ extraTysErrors).foreach(args => serviceErrorTest.tupled(args))
       }
     }
   }

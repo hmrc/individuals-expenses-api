@@ -29,19 +29,19 @@ class ExpensesApiDefinitionFactorySpec extends UnitSpec with MockAppConfig {
 
   class Test extends MockHttpClient with MockAppConfig {
     MockedAppConfig.apiGatewayContext returns "individuals/expenses"
+    MockedAppConfig.apiStatus(Version2) returns "BETA"
+    MockedAppConfig.endpointsEnabled(Version2).returns(false).anyNumberOfTimes()
+    MockedAppConfig.deprecationFor(Version2).returns(NotDeprecated.valid).anyNumberOfTimes()
+    MockedAppConfig.apiStatus(Version3) returns "BETA"
+    MockedAppConfig.endpointsEnabled(Version3).returns(false).anyNumberOfTimes()
+    MockedAppConfig.deprecationFor(Version3).returns(NotDeprecated.valid).anyNumberOfTimes()
+
     val apiDefinitionFactory = new ExpensesApiDefinitionFactory(mockAppConfig)
   }
 
   "definition" when {
     "called" should {
       "return a valid Definition case class" in new Test {
-        MockedAppConfig.apiStatus(Version2) returns "BETA"
-        MockedAppConfig.endpointsEnabled(Version2).returns(false).anyNumberOfTimes()
-        MockedAppConfig.deprecationFor(Version2).returns(NotDeprecated.valid).anyNumberOfTimes()
-        MockedAppConfig.apiStatus(Version3) returns "BETA"
-        MockedAppConfig.endpointsEnabled(Version3).returns(false).anyNumberOfTimes()
-        MockedAppConfig.deprecationFor(Version3).returns(NotDeprecated.valid).anyNumberOfTimes()
-
         apiDefinitionFactory.definition shouldBe
           Definition(
             api = APIDefinition(

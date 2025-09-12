@@ -17,7 +17,7 @@
 package definition
 
 import shared.config.AppConfig
-import shared.definition._
+import shared.definition.*
 import shared.routing.{Version2, Version3}
 
 import javax.inject.{Inject, Singleton}
@@ -25,13 +25,13 @@ import javax.inject.{Inject, Singleton}
 @Singleton
 class ExpensesApiDefinitionFactory @Inject() (protected val appConfig: AppConfig) extends ApiDefinitionFactory {
 
-  lazy val definition: Definition =
+  val definition: Definition =
     Definition(
       api = APIDefinition(
         name = "Individuals Expenses (MTD)",
         description = "An API for retrieving individual expenses data for Self Assessment",
         context = appConfig.apiGatewayContext,
-        categories = List("INCOME_TAX_MTD"),
+        categories = List(mtdCategory),
         versions = List(
           APIVersion(
             version = Version2,

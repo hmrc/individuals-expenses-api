@@ -154,7 +154,7 @@ class CreateAndAmendOtherExpensesControllerSpec
 
   trait Test extends ControllerTest with AuditEventChecking[GenericAuditDetail] {
 
-    val controller = new CreateAndAmendOtherExpensesController(
+    val controller: CreateAndAmendOtherExpensesController = new CreateAndAmendOtherExpensesController(
       authService = mockEnrolmentsAuthService,
       lookupService = mockMtdIdLookupService,
       validatorFactory = mockCreateAndAmendOtherExpensesValidatorFactory,

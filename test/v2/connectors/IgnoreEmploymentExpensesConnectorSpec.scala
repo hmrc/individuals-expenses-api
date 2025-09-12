@@ -29,7 +29,7 @@ class IgnoreEmploymentExpensesConnectorSpec extends ConnectorSpec {
   val body: IgnoreEmploymentExpensesBody = IgnoreEmploymentExpensesBody(true)
 
   trait Test {
-    _: ConnectorTest =>
+    self: ConnectorTest =>
 
     val connector: IgnoreEmploymentExpensesConnector = new IgnoreEmploymentExpensesConnector(
       http = mockHttpClient,

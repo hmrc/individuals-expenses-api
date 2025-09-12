@@ -17,10 +17,11 @@
 package shared.controllers.validators.resolvers
 
 import cats.data.Validated.{Invalid, Valid}
-import play.api.libs.json._
-import shapeless.HNil
+import play.api.libs.json.*
+import shared.controllers.validators.resolvers.UnexpectedJsonFieldsValidator.SchemaStructureSource
 import shared.models.errors.RuleIncorrectOrEmptyBodyError
 import shared.models.utils.JsonErrorValidators
+import shared.utils.EmptinessChecker.{derived, field}
 import shared.utils.{EmptinessChecker, UnitSpec}
 
 class ResolveNonEmptyJsonObjectSpec extends UnitSpec with ResolverSupport with JsonErrorValidators {
@@ -29,9 +30,11 @@ class ResolveNonEmptyJsonObjectSpec extends UnitSpec with ResolverSupport with J
   case class Baz(field1: Option[String], field2: Option[String])
   case class Qux(mandatory: String, oneOf1: Option[String] = None, oneOf2: Option[String] = None)
 
-  // at least one of oneOf1 and oneOf2 must be included:
-  implicit val emptinessChecker: EmptinessChecker[Qux] = EmptinessChecker.use { o =>
-    "oneOf1" -> o.oneOf1 :: "oneOf2" -> o.oneOf2 :: HNil
+  given EmptinessChecker[Qux] = EmptinessChecker.use { o =>
+    List(
+      field("oneOf1", o.oneOf1),
+      field("oneOf2", o.oneOf2)
+    )
   }
 
   case class Foo(bar: Bar, bars: Option[Seq[Bar]] = None, baz: Option[Baz] = None, qux: Option[Qux] = None)

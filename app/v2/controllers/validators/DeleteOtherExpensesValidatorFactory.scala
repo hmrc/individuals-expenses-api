@@ -38,7 +38,7 @@ class DeleteOtherExpensesValidatorFactory {
         (
           ResolveNino(nino),
           resolveTaxYear(taxYear)
-        ).mapN(DeleteOtherExpensesRequestData)
+        ).mapN(DeleteOtherExpensesRequestData.apply)
 
     }
 

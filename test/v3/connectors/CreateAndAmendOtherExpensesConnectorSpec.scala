@@ -60,7 +60,7 @@ class CreateAndAmendOtherExpensesConnectorSpec extends ConnectorSpec {
   }
 
   trait Test {
-    _: ConnectorTest =>
+    self: ConnectorTest =>
 
     val nino: String = "AA123456A"
     def taxYear: String

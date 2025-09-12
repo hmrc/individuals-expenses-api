@@ -25,6 +25,7 @@ import play.api.test.Helpers.AUTHORIZATION
 import shared.models.errors._
 import shared.services.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 import shared.support.IntegrationBaseSpec
+import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 
 class CreateAndAmendOtherExpensesControllerISpec extends IntegrationBaseSpec {
 
@@ -194,7 +195,7 @@ class CreateAndAmendOtherExpensesControllerISpec extends IntegrationBaseSpec {
           (UNPROCESSABLE_ENTITY, "TAX_YEAR_NOT_SUPPORTED", BAD_REQUEST, RuleTaxYearNotSupportedError)
         )
 
-        (errors ++ extraTysErrors).foreach(args => (serviceErrorTest _).tupled(args))
+        (errors ++ extraTysErrors).foreach(args => serviceErrorTest.tupled(args))
       }
     }
   }
@@ -218,7 +219,7 @@ class CreateAndAmendOtherExpensesControllerISpec extends IntegrationBaseSpec {
          |""".stripMargin
     )
 
-    val responseBody = Json.parse(s"""
+    val responseBody: JsValue = Json.parse(s"""
          |{
          |  "links": [
          |    {

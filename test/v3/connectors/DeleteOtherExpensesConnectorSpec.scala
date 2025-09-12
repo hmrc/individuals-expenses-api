@@ -29,7 +29,7 @@ class DeleteOtherExpensesConnectorSpec extends ConnectorSpec {
   val nino: String = "AA123456A"
 
   trait Test {
-    _: ConnectorTest =>
+    self: ConnectorTest =>
     def taxYear: TaxYear
     protected val request: DeleteOtherExpensesRequestData = DeleteOtherExpensesRequestData(Nino(nino), taxYear)
 
@@ -43,7 +43,7 @@ class DeleteOtherExpensesConnectorSpec extends ConnectorSpec {
   "deleteOtherExpenses" should {
     "return a 204 with no body" when {
       "the downstream call is successful" in new IfsTest with Test {
-        def taxYear: TaxYear = TaxYear.fromMtd("2017-18")
+        def taxYear: TaxYear                               = TaxYear.fromMtd("2017-18")
         val outcome: Right[Nothing, ResponseWrapper[Unit]] = Right(ResponseWrapper(correlationId, ()))
 
         willDelete(url"$baseUrl/income-tax/expenses/other/$nino/2017-18").returns(Future.successful(outcome))
@@ -52,7 +52,7 @@ class DeleteOtherExpensesConnectorSpec extends ConnectorSpec {
       }
     }
     "a valid request is called for a Tax Year Specific tax year" in new IfsTest with Test {
-      def taxYear: TaxYear = TaxYear.fromMtd("2023-24")
+      def taxYear: TaxYear                               = TaxYear.fromMtd("2023-24")
       val outcome: Right[Nothing, ResponseWrapper[Unit]] = Right(ResponseWrapper(correlationId, ()))
 
       willDelete(url"$baseUrl/income-tax/expenses/other/23-24/$nino").returns(Future.successful(outcome))

@@ -20,7 +20,11 @@ import shared.connectors.{ConnectorSpec, DownstreamOutcome}
 import shared.models.domain.{Nino, TaxYear}
 import shared.models.outcomes.ResponseWrapper
 import uk.gov.hmrc.http.StringContextOps
-import v2.models.request.createAndAmendEmploymentExpenses.{CreateAndAmendEmploymentExpensesBody, CreateAndAmendEmploymentExpensesRequestData, Expenses}
+import v2.models.request.createAndAmendEmploymentExpenses.{
+  CreateAndAmendEmploymentExpensesBody,
+  CreateAndAmendEmploymentExpensesRequestData,
+  Expenses
+}
 
 import scala.concurrent.Future
 
@@ -42,7 +46,7 @@ class CreateAndAmendEmploymentExpensesConnectorSpec extends ConnectorSpec {
   )
 
   trait Test {
-    _: ConnectorTest =>
+    self: ConnectorTest =>
 
     def taxYear: TaxYear
 
