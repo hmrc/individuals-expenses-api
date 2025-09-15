@@ -52,7 +52,7 @@ class CreateAndAmendEmploymentExpensesValidatorFactory {
           ResolveNino(nino),
           resolvedTaxYear,
           resolveJson(body)
-        ).mapN(CreateAndAmendEmploymentExpensesRequestData) andThen validateBusinessRules
+        ).mapN(CreateAndAmendEmploymentExpensesRequestData.apply) andThen validateBusinessRules
 
       private def validateBusinessRules(
           parsed: CreateAndAmendEmploymentExpensesRequestData): Validated[Seq[MtdError], CreateAndAmendEmploymentExpensesRequestData] = {

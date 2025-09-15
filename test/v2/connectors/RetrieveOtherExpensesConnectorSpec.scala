@@ -37,7 +37,7 @@ class RetrieveOtherExpensesConnectorSpec extends ConnectorSpec {
     )
 
   trait Test {
-    _: ConnectorTest =>
+    self: ConnectorTest =>
 
     def taxYear: String
 
@@ -57,7 +57,8 @@ class RetrieveOtherExpensesConnectorSpec extends ConnectorSpec {
       "the downstream call is successful" in new IfsTest with Test {
 
         def taxYear: String = "2021-22"
-        val outcome: Right[Nothing, ResponseWrapper[RetrieveOtherExpensesResponse]] = Right(ResponseWrapper(correlationId, retrieveOtherExpensesResponse))
+        val outcome: Right[Nothing, ResponseWrapper[RetrieveOtherExpensesResponse]] =
+          Right(ResponseWrapper(correlationId, retrieveOtherExpensesResponse))
 
         willGet(url = url"$baseUrl/income-tax/expenses/other/$nino/2021-22")
           .returns(Future.successful(outcome))
@@ -68,7 +69,8 @@ class RetrieveOtherExpensesConnectorSpec extends ConnectorSpec {
       "the downstream call is successful for a TYS tax year" in new IfsTest with Test {
 
         def taxYear: String = "2023-24"
-        val outcome: Right[Nothing, ResponseWrapper[RetrieveOtherExpensesResponse]] = Right(ResponseWrapper(correlationId, retrieveOtherExpensesResponse))
+        val outcome: Right[Nothing, ResponseWrapper[RetrieveOtherExpensesResponse]] =
+          Right(ResponseWrapper(correlationId, retrieveOtherExpensesResponse))
 
         willGet(url = url"$baseUrl/income-tax/expenses/other/23-24/$nino")
           .returns(Future.successful(outcome))

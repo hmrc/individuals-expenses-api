@@ -28,8 +28,8 @@ import scala.concurrent.Future
 
 class RetrieveOtherExpensesServiceSpec extends ServiceSpec {
 
-  val taxYear = "2017-18"
-  val nino    = Nino("AA123456A")
+  val taxYear    = "2017-18"
+  val nino: Nino = Nino("AA123456A")
 
   val body: RetrieveOtherExpensesResponse = RetrieveOtherExpensesResponse(
     Timestamp("2019-04-04T01:01:01Z"),
@@ -86,7 +86,7 @@ class RetrieveOtherExpensesServiceSpec extends ServiceSpec {
         "TAX_YEAR_NOT_SUPPORTED" -> RuleTaxYearNotSupportedError
       )
 
-      (errors ++ extraTysErrors).foreach(args => (serviceError _).tupled(args))
+      (errors ++ extraTysErrors).foreach(args => serviceError.tupled(args))
     }
   }
 

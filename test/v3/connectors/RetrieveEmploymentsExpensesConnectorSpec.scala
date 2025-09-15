@@ -32,7 +32,7 @@ class RetrieveEmploymentsExpensesConnectorSpec extends ConnectorSpec {
   val nino: String = "AA123456A"
 
   trait Test {
-    _: ConnectorTest =>
+    self: ConnectorTest =>
 
     def taxYear: String
 
@@ -53,7 +53,7 @@ class RetrieveEmploymentsExpensesConnectorSpec extends ConnectorSpec {
   "retrieveEmploymentExpenses" should {
     "return a result" when {
       "the downstream call is successful for a non-TYS tax year" in new IfsTest with Test {
-        def taxYear: String = "2019-20"
+        def taxYear: String                                                               = "2019-20"
         val outcome: Right[Nothing, ResponseWrapper[RetrieveEmploymentsExpensesResponse]] = Right(ResponseWrapper(correlationId, responseModelUser))
 
         willGet(url"$baseUrl/income-tax/expenses/employments/$nino/2019-20?view=CUSTOMER")
@@ -63,7 +63,7 @@ class RetrieveEmploymentsExpensesConnectorSpec extends ConnectorSpec {
       }
 
       "the downstream call is successful for a TYS tax year" in new IfsTest with Test {
-        def taxYear: String = "2023-24"
+        def taxYear: String                                                               = "2023-24"
         val outcome: Right[Nothing, ResponseWrapper[RetrieveEmploymentsExpensesResponse]] = Right(ResponseWrapper(correlationId, responseModelUser))
 
         willGet(url"$baseUrl/income-tax/expenses/employments/23-24/$nino?view=CUSTOMER")

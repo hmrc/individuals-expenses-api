@@ -48,7 +48,7 @@ class CreateAndAmendOtherExpensesValidatorFactory {
           ResolveNino(nino),
           resolveTaxYear(taxYear),
           resolveJson(body)
-        ).mapN(CreateAndAmendOtherExpensesRequestData) andThen validateBusinessRules
+        ).mapN(CreateAndAmendOtherExpensesRequestData.apply) andThen validateBusinessRules
 
       private val customerRefRegex = "^[0-9a-zA-Z{À-˿’}\\- _&`():.'^]{1,90}$".r
 

@@ -17,7 +17,7 @@
 package v2.models.response.retrieveEmploymentExpenses
 
 import common.domain.{DownstreamSource, MtdSource}
-import play.api.libs.functional.syntax._
+import play.api.libs.functional.syntax.*
 import play.api.libs.json.{JsPath, Json, OWrites, Reads}
 import shared.config.AppConfig
 import shared.hateoas.{HateoasData, HateoasLinksFactory, Link}
@@ -38,7 +38,7 @@ object RetrieveEmploymentsExpensesResponse extends HateoasLinks {
       (JsPath \ "source").readNullable[DownstreamSource].map(_.map(_.toMtd)) and
       (JsPath \ "dateIgnored").readNullable[Timestamp] and
       (JsPath \ "expenses").readNullable[Expenses]
-  )(RetrieveEmploymentsExpensesResponse.apply _)
+  )(RetrieveEmploymentsExpensesResponse.apply)
 
   implicit val writes: OWrites[RetrieveEmploymentsExpensesResponse] = Json.writes[RetrieveEmploymentsExpensesResponse]
 

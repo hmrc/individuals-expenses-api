@@ -25,6 +25,7 @@ import play.api.test.Helpers.AUTHORIZATION
 import shared.models.errors._
 import shared.services.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 import shared.support.IntegrationBaseSpec
+import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 
 class CreateAndAmendEmploymentExpensesControllerISpec extends IntegrationBaseSpec {
 
@@ -173,7 +174,7 @@ class CreateAndAmendEmploymentExpensesControllerISpec extends IntegrationBaseSpe
           (UNPROCESSABLE_ENTITY, "INVALID_SUBMISSION_PENSION_SCHEME", BAD_REQUEST, RuleInvalidSubmissionPensionScheme)
         )
 
-        (errors ++ extraTysErrors).foreach(args => (serviceErrorTest _).tupled(args))
+        (errors ++ extraTysErrors).foreach(args => serviceErrorTest.tupled(args))
       }
     }
   }

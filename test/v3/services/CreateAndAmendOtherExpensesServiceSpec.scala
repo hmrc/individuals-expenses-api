@@ -85,7 +85,7 @@ class CreateAndAmendOtherExpensesServiceSpec extends ServiceSpec {
       ("OUTSIDE_AMENDMENT_WINDOW", RuleOutsideAmendmentWindow)
     )
 
-    (errors ++ extraTysErrors).foreach(args => (serviceError _).tupled(args))
+    (errors ++ extraTysErrors).foreach(args => serviceError.tupled(args))
   }
 
 }

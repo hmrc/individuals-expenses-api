@@ -98,7 +98,7 @@ class IgnoreEmploymentExpensesControllerSpec
 
   trait Test extends ControllerTest with AuditEventChecking[GenericAuditDetail] {
 
-    val controller = new IgnoreEmploymentExpensesController(
+    val controller: IgnoreEmploymentExpensesController = new IgnoreEmploymentExpensesController(
       authService = mockEnrolmentsAuthService,
       lookupService = mockMtdIdLookupService,
       validatorFactory = mockIgnoreEmploymentExpensesValidatorFactory,

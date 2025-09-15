@@ -16,8 +16,13 @@
 import sbt.*
 import uk.gov.hmrc.DefaultBuildSettings
 
-ThisBuild / scalaVersion := "2.13.16"
+ThisBuild / scalaVersion := "3.5.2"
 ThisBuild / majorVersion := 0
+ThisBuild / scalacOptions ++= Seq(
+  "-Werror",
+  "-Wconf:msg=Flag.*repeatedly:s"
+)
+ThisBuild / scalafmtOnCompile := true
 
 val appName = "individuals-expenses-api"
 
@@ -29,9 +34,6 @@ lazy val microservice = Project(appName, file("."))
     retrieveManaged                 := true,
     update / evictionWarningOptions := EvictionWarningOptions.default.withWarnScalaVersionEviction(warnScalaVersionEviction = false),
     scalacOptions ++= List(
-      "-language:higherKinds",
-      "-Xlint:-byname-implicit",
-      "-Xfatal-warnings",
       "-Wconf:src=routes/.*:silent",
       "-feature"
     )
@@ -51,6 +53,3 @@ lazy val it = project
     Test / fork := true,
     Test / javaOptions += "-Dlogger.resource=logback-test.xml")
   .settings(libraryDependencies ++= AppDependencies.itDependencies)
-  .settings(
-    scalacOptions ++= Seq("-Xfatal-warnings")
-  )

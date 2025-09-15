@@ -85,7 +85,7 @@ class DeleteEmploymentExpensesServiceSpec extends ServiceSpec {
         errorMap ++ extraTysErrors
       }
 
-      input.foreach(args => (serviceError _).tupled(args))
+      input.foreach(args => serviceError.tupled(args))
     }
   }
 

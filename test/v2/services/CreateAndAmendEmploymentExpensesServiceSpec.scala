@@ -96,7 +96,7 @@ class CreateAndAmendEmploymentExpensesServiceSpec extends ServiceSpec {
         "INVALID_SUBMISSION_PENSION_SCHEME" -> RuleInvalidSubmissionPensionScheme
       )
 
-      (errors ++ extraTysErrors).foreach(args => (serviceError _).tupled(args))
+      (errors ++ extraTysErrors).foreach(args => serviceError.tupled(args))
     }
   }
 

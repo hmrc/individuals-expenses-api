@@ -17,7 +17,7 @@
 package v3.models.response.retrieveEmploymentExpenses
 
 import common.domain.{DownstreamSource, MtdSource}
-import play.api.libs.functional.syntax._
+import play.api.libs.functional.syntax.*
 import play.api.libs.json.{JsPath, Json, OWrites, Reads}
 import shared.models.domain.Timestamp
 
@@ -35,7 +35,7 @@ object RetrieveEmploymentsExpensesResponse {
       (JsPath \ "source").readNullable[DownstreamSource].map(_.map(_.toMtd)) and
       (JsPath \ "dateIgnored").readNullable[Timestamp] and
       (JsPath \ "expenses").readNullable[Expenses]
-  )(RetrieveEmploymentsExpensesResponse.apply _)
+  )(RetrieveEmploymentsExpensesResponse.apply)
 
   implicit val writes: OWrites[RetrieveEmploymentsExpensesResponse] = Json.writes[RetrieveEmploymentsExpensesResponse]
 }

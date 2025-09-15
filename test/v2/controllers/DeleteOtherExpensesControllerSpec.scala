@@ -95,7 +95,7 @@ class DeleteOtherExpensesControllerSpec
 
   trait Test extends ControllerTest with AuditEventChecking[GenericAuditDetail] {
 
-    val controller = new DeleteOtherExpensesController(
+    val controller: DeleteOtherExpensesController = new DeleteOtherExpensesController(
       authService = mockEnrolmentsAuthService,
       lookupService = mockMtdIdLookupService,
       validatorFactory = mockDeleteOtherExpensesValidatorFactory,
