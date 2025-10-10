@@ -212,7 +212,6 @@ class CreateAndAmendOtherExpensesControllerISpec extends IntegrationBaseSpec {
          |    "expenseAmount": 5000.99
          |  },
          |  "patentRoyaltiesPayments":{
-         |    "customerReference": "ROYALTIES PAYMENTS",
          |    "expenseAmount": 5000.99
          |  }
          |}

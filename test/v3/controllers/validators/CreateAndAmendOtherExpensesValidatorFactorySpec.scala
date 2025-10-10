@@ -88,6 +88,36 @@ class CreateAndAmendOtherExpensesValidatorFactorySpec extends UnitSpec with Json
         )
       }
 
+      "passed a valid request without patentRoyaltiesPayments customerReference" in {
+        val result =
+          validator(validNino, validTaxYear, validBody().removeProperty("/patentRoyaltiesPayments/customerReference")).validateAndWrapResult()
+
+        result shouldBe Right(
+          CreateAndAmendOtherExpensesRequestData(
+            parsedNino,
+            parsedTaxYear,
+            CreateAndAmendOtherExpensesBody(
+              Some(PaymentsToTradeUnionsForDeathBenefits(Some("TRADE UNION PAYMENTS"), BigDecimal(0))),
+              Some(PatentRoyaltiesPayments(None, BigDecimal(1))))
+          )
+        )
+      }
+
+      "passed a valid request without paymentsToTradeUnionsForDeathBenefits customerReference" in {
+        val result = validator(validNino, validTaxYear, validBody().removeProperty("/paymentsToTradeUnionsForDeathBenefits/customerReference"))
+          .validateAndWrapResult()
+
+        result shouldBe Right(
+          CreateAndAmendOtherExpensesRequestData(
+            parsedNino,
+            parsedTaxYear,
+            CreateAndAmendOtherExpensesBody(
+              Some(PaymentsToTradeUnionsForDeathBenefits(None, BigDecimal(0))),
+              Some(PatentRoyaltiesPayments(Some("ROYALTIES PAYMENTS"), BigDecimal(1))))
+          )
+        )
+      }
+
       "passed a valid request without patentRoyaltiesPayments" in {
         val result = validator(validNino, validTaxYear, validBody().removeProperty("/patentRoyaltiesPayments")).validateAndWrapResult()
 

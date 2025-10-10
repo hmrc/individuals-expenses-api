@@ -209,7 +209,6 @@ class CreateAndAmendOtherExpensesControllerISpec extends IntegrationBaseSpec {
       s"""
          |{
          |  "paymentsToTradeUnionsForDeathBenefits": {
-         |    "customerReference": "TRADE UNION PAYMENTS",
          |    "expenseAmount": 5000.99
          |  },
          |  "patentRoyaltiesPayments":{
