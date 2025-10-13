@@ -97,7 +97,7 @@ class CreateAndAmendOtherExpensesValidatorFactorySpec extends UnitSpec with Json
         )
       }
 
-      "passed a valid request without tradeUnionCustomerReference" in {
+      "passed a valid request without patentRoyaltiesPayments customerReference" in {
         val result =
           validator(validNino, validTaxYear, validBody().removeProperty("/patentRoyaltiesPayments/customerReference")).validateAndWrapResult()
 
@@ -112,7 +112,7 @@ class CreateAndAmendOtherExpensesValidatorFactorySpec extends UnitSpec with Json
         )
       }
 
-      "passed a valid request without royaltiesCustomerReference" in {
+      "passed a valid request without paymentsToTradeUnionsForDeathBenefits customerReference" in {
         val result = validator(validNino, validTaxYear, validBody().removeProperty("/paymentsToTradeUnionsForDeathBenefits/customerReference"))
           .validateAndWrapResult()
 

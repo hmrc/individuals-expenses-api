@@ -70,10 +70,10 @@ class CreateAndAmendOtherExpensesValidatorFactory {
       }
 
       private def validate(maybeCustomerRef: Option[String], path: String): Validated[Seq[MtdError], Unit] =
-        maybeCustomerRef match {
-          case Some(ref) if customerRefRegex.matches(ref) => Valid(())
-          case None                                       => Valid(())
-          case _                                          => Invalid(List(CustomerReferenceFormatError.withPath(path)))
+        if (maybeCustomerRef.forall(customerRefRegex.matches)) {
+          Valid(())
+        } else {
+          Invalid(List(CustomerReferenceFormatError.withPath(path)))
         }
 
     }
