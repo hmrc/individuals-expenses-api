@@ -1,4 +1,4 @@
-Individuals Expenses API
+DSAIndividuals Expenses API
 ========================
 These API endpoints allow software packages to retrieve, amend and delete expenses for:
 
