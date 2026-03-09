@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,18 +20,15 @@ import cats.implicits.catsSyntaxValidatedId
 import shared.config.Deprecation.NotDeprecated
 import shared.config.MockAppConfig
 import shared.definition.APIStatus.BETA
-import shared.definition._
+import shared.definition.*
 import shared.mocks.MockHttpClient
-import shared.routing.{Version2, Version3}
+import shared.routing.*
 import shared.utils.UnitSpec
 
 class ExpensesApiDefinitionFactorySpec extends UnitSpec with MockAppConfig {
 
   class Test extends MockHttpClient with MockAppConfig {
     MockedAppConfig.apiGatewayContext returns "individuals/expenses"
-    MockedAppConfig.apiStatus(Version2) returns "BETA"
-    MockedAppConfig.endpointsEnabled(Version2).returns(false).anyNumberOfTimes()
-    MockedAppConfig.deprecationFor(Version2).returns(NotDeprecated.valid).anyNumberOfTimes()
     MockedAppConfig.apiStatus(Version3) returns "BETA"
     MockedAppConfig.endpointsEnabled(Version3).returns(false).anyNumberOfTimes()
     MockedAppConfig.deprecationFor(Version3).returns(NotDeprecated.valid).anyNumberOfTimes()
@@ -50,11 +47,6 @@ class ExpensesApiDefinitionFactorySpec extends UnitSpec with MockAppConfig {
               context = "individuals/expenses",
               categories = List("INCOME_TAX_MTD"),
               versions = List(
-                APIVersion(
-                  version = Version2,
-                  status = BETA,
-                  endpointsEnabled = false
-                ),
                 APIVersion(
                   version = Version3,
                   status = BETA,
