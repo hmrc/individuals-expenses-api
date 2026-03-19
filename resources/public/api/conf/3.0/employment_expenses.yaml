@@ -11,8 +11,6 @@ get:
   security:
     - User-Restricted:
         - read:self-assessment
-  parameters:
-    - $ref: './common/queryParameters.yaml#/components/parameters/source'
   
 delete:
   $ref: "./employment_expenses_delete.yaml"
