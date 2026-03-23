@@ -1,6 +1,5 @@
 put:
-  $ref: "./employment_expenses_create_and_amend.yaml"  
-  summary: Create and Amend Employment Expenses
+  $ref: "./employment_expenses_create_and_amend.yaml"
   security:
     - User-Restricted:
         - write:self-assessment
