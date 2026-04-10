@@ -11,42 +11,42 @@
         "businessTravelCosts": {
           "description": "Expenses associated with business travel.\n\nThe value must be between 0 and 99999999999.99",
           "type": "number",
-          "example": "2000.99"
+          "example": 2000.99
         },
         "jobExpenses": {
           "description": "The actual expense of replacing or maintaining tools or special work clothes.\n\nThe value must be between 0 and 99999999999.99",
           "type": "number",
-          "example": "2000.99"
+          "example": 2000.99
         },
         "flatRateJobExpenses": {
           "description": "Fixed rate expenses applied for replacing or maintaining tools or special work clothes.\n\nThe value must be between 0 and 99999999999.99",
           "type": "number",
-          "example": "2000.99"
+          "example": 2000.99
         },
         "professionalSubscriptions": {
           "description": "Fees or subscriptions to professional bodies, required in order to undertake the employment.\n\nThe value must be between 0 and 99999999999.99",
           "type": "number",
-          "example": "2000.99"
+          "example": 2000.99
         },
         "hotelAndMealExpenses": {
           "description": "Subsistence costs incurred with work.\n\nThe value must be between 0 and 99999999999.99",
           "type": "number",
-          "example": "2000.99"
+          "example": 2000.99
         },
         "otherAndCapitalAllowances": {
           "description": "The expense from purchasing small items required for this employment.\n\nThe value must be between 0 and 99999999999.99",
           "type": "number",
-          "example": "2000.99"
+          "example": 2000.99
         },
         "vehicleExpenses": {
           "description": "Vehicle expenses for using own car, van or motorcycle for business mileage occurred during work.\n\nThe value must be between 0 and 99999999999.99",
           "type": "number",
-          "example": "2000.99"
+          "example": 2000.99
         },
         "mileageAllowanceRelief": {
           "description": "The shortfall incurred when the employer pays less than the approved mileage rate.\n\nThe value must be between 0 and 99999999999.99",
           "type": "number",
-          "example": "2000.99"
+          "example": 2000.99
         }
       },
       "additionalProperties": false
