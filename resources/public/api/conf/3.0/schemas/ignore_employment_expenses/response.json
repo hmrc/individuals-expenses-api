@@ -2,6 +2,6 @@
   "$schema": "http://json-schema.org/draft-04/schema#",
   "title": "Ignore Expenses",
   "description": "Allows HMRC Held expenses to be ignored",
-  "type": "object"
+  "type": "object",
   "additionalProperties": false
 }
