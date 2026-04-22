@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,6 +38,10 @@ class TaxYearSpec extends UnitSpec {
 
       "return the tax year in the 'Tax Year Specific API' format" in {
         taxYear.asTysDownstream shouldBe "23-24"
+      }
+
+      "return the tax year via toString" in {
+        taxYear.toString shouldBe "TaxYear(2024)"
       }
     }
 

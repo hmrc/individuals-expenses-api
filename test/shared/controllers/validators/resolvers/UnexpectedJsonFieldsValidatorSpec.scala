@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,9 +34,21 @@ class UnexpectedJsonFieldsValidatorSpec extends UnitSpec {
 
   case class Foo(bar: Bar, bars: Option[Seq[Bar]] = None, bar2: Option[Bar] = None)
 
+  case class Baz(
+      str: String,
+      int: Int,
+      double: Double,
+      bool: Boolean,
+      bigInt: BigInt,
+      bigDec: BigDecimal,
+      taxYear: shared.models.domain.TaxYear
+  )
+
   implicit val someEnumChecker: SchemaStructureSource[SomeEnum] = SchemaStructureSource.leaf
 
   val validator = new UnexpectedJsonFieldsValidator[Foo]
+
+  val validatorBaz = new UnexpectedJsonFieldsValidator[Baz]
 
   private def errorWithPaths(paths: String*) = Some(Seq(RuleIncorrectOrEmptyBodyError.withPaths(paths)))
 
@@ -220,6 +232,61 @@ class UnexpectedJsonFieldsValidatorSpec extends UnitSpec {
             validator.validator((json, dataA1)) shouldBe errorWithPaths("/a/a2")
           }
         }
+      }
+    }
+  }
+
+  "UnexpectedJsonFieldsValidator for Baz" when {
+    "validating with various primitive types" must {
+      "validate successfully with no extra fields" in {
+        val json = Json
+          .parse("""{
+            "str": "test",
+            "int": 42,
+            "double": 3.14,
+            "bool": true,
+            "bigInt": 123456789,
+            "bigDec": 123.456,
+            "taxYear": "2023-24"
+          }""")
+          .as[JsObject]
+        val data = Baz(
+          str = "test",
+          int = 42,
+          double = 3.14,
+          bool = true,
+          bigInt = BigInt(123456789),
+          bigDec = BigDecimal(123.456),
+          taxYear = shared.models.domain.TaxYear.fromMtd("2023-24")
+        )
+
+        validatorBaz.validator((json, data)) shouldBe None
+      }
+
+      "detect extra fields" in {
+        val json = Json
+          .parse("""{
+            "str": "test",
+            "int": 42,
+            "double": 3.14,
+            "bool": true,
+            "bigInt": 123456789,
+            "bigDec": 123.456,
+            "taxYear": "2023-24",
+            "extra": "field"
+          }""")
+          .as[JsObject]
+        val data = Baz(
+          str = "test",
+          int = 42,
+          double = 3.14,
+          bool = true,
+          bigInt = BigInt(123456789),
+          bigDec = BigDecimal(123.456),
+          taxYear = shared.models.domain.TaxYear.fromMtd("2023-24")
+        )
+
+        validatorBaz.validator((json, data)) shouldBe errorWithPaths("/extra")
       }
     }
   }

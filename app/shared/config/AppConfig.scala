@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -112,7 +112,7 @@ class AppConfig @Inject() (config: ServicesConfig, protected[config] val configu
 
   def apiDocumentationUrl: String =
     configuration
-      .get[Option[String]]("api.documentation-url")
+      .getOptional[String]("api.documentation-url")
       .getOrElse(s"https://developer.service.hmrc.gov.uk/api-documentation/docs/api/service/$appName")
 
   private val DATE_FORMATTER = new DateTimeFormatterBuilder()
