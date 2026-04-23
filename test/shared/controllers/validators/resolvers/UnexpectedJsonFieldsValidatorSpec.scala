@@ -17,7 +17,9 @@
 package shared.controllers.validators.resolvers
 
 import play.api.libs.json.{JsObject, Json}
-import shared.controllers.validators.resolvers.UnexpectedJsonFieldsValidator.SchemaStructureSource
+import UnexpectedJsonFieldsValidator.SchemaStructureSource
+import UnexpectedJsonFieldsValidator.SchemaStructure.{Arr, Leaf}
+import shared.models.domain.TaxYear
 import shared.models.errors.RuleIncorrectOrEmptyBodyError
 import shared.utils.UnitSpec
 
@@ -34,21 +36,9 @@ class UnexpectedJsonFieldsValidatorSpec extends UnitSpec {
 
   case class Foo(bar: Bar, bars: Option[Seq[Bar]] = None, bar2: Option[Bar] = None)
 
-  case class Baz(
-      str: String,
-      int: Int,
-      double: Double,
-      bool: Boolean,
-      bigInt: BigInt,
-      bigDec: BigDecimal,
-      taxYear: shared.models.domain.TaxYear
-  )
-
   implicit val someEnumChecker: SchemaStructureSource[SomeEnum] = SchemaStructureSource.leaf
 
   val validator = new UnexpectedJsonFieldsValidator[Foo]
-
-  val validatorBaz = new UnexpectedJsonFieldsValidator[Baz]
 
   private def errorWithPaths(paths: String*) = Some(Seq(RuleIncorrectOrEmptyBodyError.withPaths(paths)))
 
@@ -236,58 +226,36 @@ class UnexpectedJsonFieldsValidatorSpec extends UnitSpec {
     }
   }
 
-  "UnexpectedJsonFieldsValidator for Baz" when {
-    "validating with various primitive types" must {
-      "validate successfully with no extra fields" in {
-        val json = Json
-          .parse("""{
-            "str": "test",
-            "int": 42,
-            "double": 3.14,
-            "bool": true,
-            "bigInt": 123456789,
-            "bigDec": 123.456,
-            "taxYear": "2023-24"
-          }""")
-          .as[JsObject]
-        val data = Baz(
-          str = "test",
-          int = 42,
-          double = 3.14,
-          bool = true,
-          bigInt = BigInt(123456789),
-          bigDec = BigDecimal(123.456),
-          taxYear = shared.models.domain.TaxYear.fromMtd("2023-24")
-        )
+  "SchemaStructureSource" must {
+    "return Leaf for non-list types" in {
+      SchemaStructureSource[String].schemaStructureOf("test") shouldBe Leaf
+      SchemaStructureSource[Int].schemaStructureOf(1) shouldBe Leaf
+      SchemaStructureSource[Double].schemaStructureOf(1.00) shouldBe Leaf
+      SchemaStructureSource[Boolean].schemaStructureOf(true) shouldBe Leaf
+      SchemaStructureSource[BigInt].schemaStructureOf(BigInt(1)) shouldBe Leaf
+      SchemaStructureSource[BigDecimal].schemaStructureOf(BigDecimal(1)) shouldBe Leaf
+      SchemaStructureSource[TaxYear].schemaStructureOf(TaxYear.fromMtd("2025-26")) shouldBe Leaf
+      SchemaStructureSource[Option[String]].schemaStructureOf(Some("test")) shouldBe Leaf
+      SchemaStructureSource[Option[String]].schemaStructureOf(None) shouldBe Leaf
+    }
 
-        validatorBaz.validator((json, data)) shouldBe None
-      }
+    "return Arr of Leaf for non-empty Seq" in {
+      SchemaStructureSource[Seq[String]].schemaStructureOf(Seq("test", "test")) shouldBe Arr(Seq(Leaf, Leaf))
+      SchemaStructureSource[Seq[Int]].schemaStructureOf(Seq(1, 1)) shouldBe Arr(Seq(Leaf, Leaf))
+    }
 
-      "detect extra fields" in {
-        val json = Json
-          .parse("""{
-            "str": "test",
-            "int": 42,
-            "double": 3.14,
-            "bool": true,
-            "bigInt": 123456789,
-            "bigDec": 123.456,
-            "taxYear": "2023-24",
-            "extra": "field"
-          }""")
-          .as[JsObject]
-        val data = Baz(
-          str = "test",
-          int = 42,
-          double = 3.14,
-          bool = true,
-          bigInt = BigInt(123456789),
-          bigDec = BigDecimal(123.456),
-          taxYear = shared.models.domain.TaxYear.fromMtd("2023-24")
-        )
+    "return empty Arr for empty Seq" in {
+      SchemaStructureSource[Seq[Double]].schemaStructureOf(Seq.empty) shouldBe Arr(Seq.empty)
+      SchemaStructureSource[Seq[Boolean]].schemaStructureOf(Seq.empty) shouldBe Arr(Seq.empty)
+    }
 
-        validatorBaz.validator((json, data)) shouldBe errorWithPaths("/extra")
-      }
+    "return Arr of Leaf for non-empty List" in {
+      SchemaStructureSource[List[BigInt]].schemaStructureOf(List(BigInt(1), BigInt(1))) shouldBe Arr(Seq(Leaf, Leaf))
+      SchemaStructureSource[List[BigDecimal]].schemaStructureOf(List(BigDecimal(1), BigDecimal(1))) shouldBe Arr(Seq(Leaf, Leaf))
+    }
+
+    "return empty Arr for empty List" in {
+      SchemaStructureSource[List[TaxYear]].schemaStructureOf(List.empty) shouldBe Arr(Seq.empty)
     }
   }
 

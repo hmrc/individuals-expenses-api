@@ -16,17 +16,15 @@
 
 package shared.connectors
 
-import com.google.common.base.Charsets
 import org.scalamock.handlers.CallHandler
 import play.api.http.{HeaderNames, MimeTypes, Status}
 import play.api.libs.json.{Json, Writes}
-import shared.config.{BasicAuthDownstreamConfig, DownstreamConfig, MockAppConfig}
+import shared.config.{DownstreamConfig, MockAppConfig}
 import shared.mocks.MockHttpClient
 import shared.utils.UnitSpec
 import uk.gov.hmrc.http.HeaderCarrier
 
 import java.net.URL
-import java.util.Base64
 import scala.concurrent.{ExecutionContext, Future}
 
 trait ConnectorSpec extends UnitSpec with Status with MimeTypes with HeaderNames {
@@ -136,28 +134,6 @@ trait ConnectorSpec extends UnitSpec with Status with MimeTypes with HeaderNames
     override val name = "tys-ifs"
 
     MockedAppConfig.tysIfsDownstreamConfig.anyNumberOfTimes() returns config
-  }
-
-  protected trait HipTest extends ConnectorTest {
-    private val clientId     = "clientId"
-    private val clientSecret = "clientSecret"
-
-    private val token =
-      Base64.getEncoder.encodeToString(s"$clientId:$clientSecret".getBytes(Charsets.UTF_8))
-
-    private val environment = "hip-environment"
-
-    protected final val requiredHeaders: Seq[(String, String)] = List(
-      "Authorization"        -> s"Basic $token",
-      "Environment"          -> environment,
-      "User-Agent"           -> "this-api",
-      "CorrelationId"        -> correlationId,
-      "Gov-Test-Scenario"    -> "DEFAULT"
-    ) ++ intent.map("intent" -> _)
-
-    MockedAppConfig.hipDownstreamConfig
-      .anyNumberOfTimes() returns BasicAuthDownstreamConfig(this.baseUrl, environment, clientId, clientSecret, Some(allowedHeaders))
-
   }
 
 }

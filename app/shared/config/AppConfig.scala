@@ -65,10 +65,9 @@ class AppConfig @Inject() (config: ServicesConfig, protected[config] val configu
     BasicAuthDownstreamConfig(baseUrl, env, clientId, clientSecret, environmentHeaders)
   }
 
-  def desDownstreamConfig: DownstreamConfig          = downstreamConfig("des")
-  def ifsDownstreamConfig: DownstreamConfig          = downstreamConfig("ifs")
-  def tysIfsDownstreamConfig: DownstreamConfig       = downstreamConfig("tys-ifs")
-  def hipDownstreamConfig: BasicAuthDownstreamConfig = basicAuthDownstreamConfig("hip")
+  def desDownstreamConfig: DownstreamConfig    = downstreamConfig("des")
+  def ifsDownstreamConfig: DownstreamConfig    = downstreamConfig("ifs")
+  def tysIfsDownstreamConfig: DownstreamConfig = downstreamConfig("tys-ifs")
 
   // API Config
   def apiGatewayContext: String                    = config.getString("api.gateway.context")
