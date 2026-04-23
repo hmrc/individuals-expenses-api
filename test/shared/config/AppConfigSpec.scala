@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -88,6 +88,17 @@ class AppConfigSpec extends UnitSpec {
         "TYS-IFS-ABCD1234",
         expectedTysIfsEnvHeaders
       )
+    }
+  }
+
+  "return the apiDocumentationUrl" when {
+    "it is not specified" in {
+      val changedAppConfig = appConfig("", None)
+      changedAppConfig.apiDocumentationUrl shouldBe s"https://developer.service.hmrc.gov.uk/api-documentation/docs/api/service/${changedAppConfig.appName}"
+    }
+    "it is specified" in {
+      val changedAppConfig = appConfig("", Some("test123"))
+      changedAppConfig.apiDocumentationUrl shouldBe "test123"
     }
   }
 
@@ -398,7 +409,7 @@ class AppConfigSpec extends UnitSpec {
     }
   }
 
-  private def appConfig(versionConf: String): AppConfig = {
+  private def appConfig(versionConf: String, apiDocumentationUrl: Option[String] = None): AppConfig = {
     val conf = ConfigFactory.parseString(
       """
         |  appName = "any-name-api"
@@ -409,7 +420,11 @@ class AppConfigSpec extends UnitSpec {
 
         versionConf ++
 
-        """
+        s"""
+          |${apiDocumentationUrl match {
+            case Some(url) => s"documentation-url = $url"
+            case _         => ""
+          }}
           |  }
           |  
           |  microservice {

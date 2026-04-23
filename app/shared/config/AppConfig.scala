@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -65,10 +65,9 @@ class AppConfig @Inject() (config: ServicesConfig, protected[config] val configu
     BasicAuthDownstreamConfig(baseUrl, env, clientId, clientSecret, environmentHeaders)
   }
 
-  def desDownstreamConfig: DownstreamConfig          = downstreamConfig("des")
-  def ifsDownstreamConfig: DownstreamConfig          = downstreamConfig("ifs")
-  def tysIfsDownstreamConfig: DownstreamConfig       = downstreamConfig("tys-ifs")
-  def hipDownstreamConfig: BasicAuthDownstreamConfig = basicAuthDownstreamConfig("hip")
+  def desDownstreamConfig: DownstreamConfig    = downstreamConfig("des")
+  def ifsDownstreamConfig: DownstreamConfig    = downstreamConfig("ifs")
+  def tysIfsDownstreamConfig: DownstreamConfig = downstreamConfig("tys-ifs")
 
   // API Config
   def apiGatewayContext: String                    = config.getString("api.gateway.context")
@@ -112,7 +111,7 @@ class AppConfig @Inject() (config: ServicesConfig, protected[config] val configu
 
   def apiDocumentationUrl: String =
     configuration
-      .get[Option[String]]("api.documentation-url")
+      .getOptional[String]("api.documentation-url")
       .getOrElse(s"https://developer.service.hmrc.gov.uk/api-documentation/docs/api/service/$appName")
 
   private val DATE_FORMATTER = new DateTimeFormatterBuilder()

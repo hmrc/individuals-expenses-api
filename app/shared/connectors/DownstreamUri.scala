@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,18 +33,5 @@ object DownstreamUri {
 
   def IfsUri[Resp](value: String)(implicit appConfig: AppConfig): DownstreamUri[Resp] =
     withStandardStrategy(value, appConfig.ifsDownstreamConfig)
-
-  def TaxYearSpecificIfsUri[Resp](value: String)(implicit appConfig: AppConfig): DownstreamUri[Resp] =
-    withStandardStrategy(value, appConfig.tysIfsDownstreamConfig)
-
-  def HipUri[Resp](path: String)(implicit appConfig: AppConfig): DownstreamUri[Resp] =
-    DownstreamUri(path, DownstreamStrategy.basicAuthStrategy(appConfig.hipDownstreamConfig))
-
-  def DesToHipMigrationUri[Resp](path: String, switchName: String)(implicit appConfig: AppConfig): DownstreamUri[Resp] = {
-    lazy val desStrategy = DownstreamStrategy.standardStrategy(appConfig.desDownstreamConfig)
-    lazy val hipStategy  = DownstreamStrategy.basicAuthStrategy(appConfig.hipDownstreamConfig)
-
-    DownstreamUri(path, DownstreamStrategy.switchedStrategy(onStrategy = hipStategy, offStrategy = desStrategy, switchName))
-  }
 
 }

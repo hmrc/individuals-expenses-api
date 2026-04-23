@@ -41,6 +41,19 @@ class ApiDefinitionSpec extends UnitSpec {
       |"requiresTrust": false
       |}""".stripMargin)
 
+  private val definitionJson: JsValue = Json.parse(
+    """{
+      | "api": {
+      |   "name": "b",
+      |   "description": "c",
+      |   "context": "d",
+      |   "categories": ["category"],
+      |   "versions": [{"version":"3.0","status":"ALPHA","endpointsEnabled":true}],
+      |   "requiresTrust": false
+      | }
+      |}""".stripMargin
+  )
+
   "APIVersion" when {
 
     "the full model is present" should {
@@ -75,6 +88,20 @@ class ApiDefinitionSpec extends UnitSpec {
         assertThrows[IllegalArgumentException](
           apiDefinition.copy(name = "")
         )
+      }
+    }
+  }
+
+  "Definition" when {
+    "the full model is present" should {
+      "correctly write the model to json" in {
+        Json.toJson(Definition(apiDefinition)) shouldBe definitionJson
+      }
+    }
+
+    "the full Json is present" should {
+      "correctly read JSON to a model" in {
+        definitionJson.as[Definition] shouldBe Definition(apiDefinition)
       }
     }
   }
