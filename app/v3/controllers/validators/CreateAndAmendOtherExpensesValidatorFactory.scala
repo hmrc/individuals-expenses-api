@@ -22,13 +22,7 @@ import cats.implicits._
 import common.error.CustomerReferenceFormatError
 import play.api.libs.json.JsValue
 import shared.controllers.validators.Validator
-import shared.controllers.validators.resolvers.{
-  ResolveNino,
-  ResolveNonEmptyJsonObject,
-  ResolveParsedNumber,
-  ResolveTaxYearMinimum,
-  ResolveStringPattern
-}
+import shared.controllers.validators.resolvers.*
 import shared.models.domain.TaxYear
 import shared.models.errors.MtdError
 import v3.models.request.createAndAmendOtherExpenses.{CreateAndAmendOtherExpensesBody, CreateAndAmendOtherExpensesRequestData}
@@ -45,9 +39,6 @@ class CreateAndAmendOtherExpensesValidatorFactory {
   private val resolveParsedNumber = ResolveParsedNumber()
 
   private val stringRegex = "^[0-9a-zA-Z{À-˿’}\\- _&`():.'^]{1,90}$".r
-
-  private def resolveStringByPattern(value: Option[String], error: MtdError) =
-    ResolveStringPattern(value, stringRegex, error)
 
   def validator(nino: String, taxYear: String, body: JsValue): Validator[CreateAndAmendOtherExpensesRequestData] =
     new Validator[CreateAndAmendOtherExpensesRequestData] {
@@ -74,11 +65,9 @@ class CreateAndAmendOtherExpensesValidatorFactory {
           (paymentsToTradeUnionsForDeathBenefits.flatMap(_.customerReference), "/paymentsToTradeUnionsForDeathBenefits/customerReference"),
           (patentRoyaltiesPayments.flatMap(_.customerReference), "/patentRoyaltiesPayments/customerReference")
         ).traverse_ { case (maybeValue, path) =>
-          resolveStringByPattern(maybeValue, CustomerReferenceFormatError.withPath(path))
+          ResolveStringPattern(maybeValue, stringRegex, CustomerReferenceFormatError.withPath(path))
         }
         List(validatedExpensesAmounts, validatedCustomerReferences).traverse_(identity).map(_ => parsed)
       }
-
     }
-
 }
