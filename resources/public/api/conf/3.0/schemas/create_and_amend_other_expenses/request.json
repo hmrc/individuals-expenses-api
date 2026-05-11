@@ -9,7 +9,7 @@
       "type": "object",
       "properties": {
         "customerReference": {
-          "description": "A reference the user supplies to identify the record.",
+          "description": "A reference the user supplies to identify the record. Must not be empty or contain only whitespace.",
           "type": "string",
           "example": "TRADE UNION PAYMENTS"
         },
