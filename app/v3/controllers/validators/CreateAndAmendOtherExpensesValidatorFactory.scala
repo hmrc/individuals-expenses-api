@@ -38,7 +38,7 @@ class CreateAndAmendOtherExpensesValidatorFactory {
 
   private val resolveParsedNumber = ResolveParsedNumber()
 
-  private val stringRegex = "^[0-9a-zA-Z{À-˿’}\\- _&`():.'^]{1,90}$".r
+  private val customerRefRegex = "^[0-9a-zA-Z{À-˿’}\\- _&`():.'^]{1,90}$".r
 
   def validator(nino: String, taxYear: String, body: JsValue): Validator[CreateAndAmendOtherExpensesRequestData] =
     new Validator[CreateAndAmendOtherExpensesRequestData] {
@@ -65,7 +65,7 @@ class CreateAndAmendOtherExpensesValidatorFactory {
           (paymentsToTradeUnionsForDeathBenefits.flatMap(_.customerReference), "/paymentsToTradeUnionsForDeathBenefits/customerReference"),
           (patentRoyaltiesPayments.flatMap(_.customerReference), "/patentRoyaltiesPayments/customerReference")
         ).traverse_ { case (maybeValue, path) =>
-          ResolveStringPattern(maybeValue, stringRegex, CustomerReferenceFormatError.withPath(path))
+          ResolveStringPattern(maybeValue, customerRefRegex, CustomerReferenceFormatError.withPath(path))
         }
         List(validatedExpensesAmounts, validatedCustomerReferences).traverse_(identity).map(_ => parsed)
       }
