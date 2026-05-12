@@ -22,7 +22,7 @@ import cats.implicits._
 import common.error.CustomerReferenceFormatError
 import play.api.libs.json.JsValue
 import shared.controllers.validators.Validator
-import shared.controllers.validators.resolvers.{ResolveNino, ResolveNonEmptyJsonObject, ResolveParsedNumber, ResolveTaxYearMinimum}
+import shared.controllers.validators.resolvers.*
 import shared.models.domain.TaxYear
 import shared.models.errors.MtdError
 import v3.models.request.createAndAmendOtherExpenses.{CreateAndAmendOtherExpensesBody, CreateAndAmendOtherExpensesRequestData}
@@ -38,6 +38,8 @@ class CreateAndAmendOtherExpensesValidatorFactory {
 
   private val resolveParsedNumber = ResolveParsedNumber()
 
+  private val customerRefRegex = "^[0-9a-zA-Z{À-˿’}\\- _&`():.'^]{1,90}$".r
+
   def validator(nino: String, taxYear: String, body: JsValue): Validator[CreateAndAmendOtherExpensesRequestData] =
     new Validator[CreateAndAmendOtherExpensesRequestData] {
 
@@ -50,8 +52,6 @@ class CreateAndAmendOtherExpensesValidatorFactory {
           resolveJson(body)
         ).mapN(CreateAndAmendOtherExpensesRequestData.apply) andThen validateBusinessRules
 
-      private val customerRefRegex = "^[0-9a-zA-Z{À-˿’}\\- _&`():.'^]{1,90}$".r
-
       private def validateBusinessRules(
           parsed: CreateAndAmendOtherExpensesRequestData): Validated[Seq[MtdError], CreateAndAmendOtherExpensesRequestData] = {
         import parsed.body._
@@ -62,20 +62,12 @@ class CreateAndAmendOtherExpensesValidatorFactory {
         ).traverse_ { case (value, path) => resolveParsedNumber(value, path = path) }
 
         val validatedCustomerReferences = List(
-          (paymentsToTradeUnionsForDeathBenefits.map(_.customerReference), "/paymentsToTradeUnionsForDeathBenefits/customerReference"),
-          (patentRoyaltiesPayments.map(_.customerReference), "/patentRoyaltiesPayments/customerReference")
-        ).traverse_ { case (maybeValue, path) => maybeValue.map(validate(_, path)).getOrElse(Valid(())) }
-
+          (paymentsToTradeUnionsForDeathBenefits.flatMap(_.customerReference), "/paymentsToTradeUnionsForDeathBenefits/customerReference"),
+          (patentRoyaltiesPayments.flatMap(_.customerReference), "/patentRoyaltiesPayments/customerReference")
+        ).traverse_ { case (maybeValue, path) =>
+          ResolveStringPattern(maybeValue, customerRefRegex, CustomerReferenceFormatError.withPath(path))
+        }
         List(validatedExpensesAmounts, validatedCustomerReferences).traverse_(identity).map(_ => parsed)
       }
-
-      private def validate(maybeCustomerRef: Option[String], path: String): Validated[Seq[MtdError], Unit] =
-        if (maybeCustomerRef.forall(customerRefRegex.matches)) {
-          Valid(())
-        } else {
-          Invalid(List(CustomerReferenceFormatError.withPath(path)))
-        }
-
     }
-
 }

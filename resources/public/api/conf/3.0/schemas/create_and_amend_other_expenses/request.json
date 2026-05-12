@@ -9,9 +9,10 @@
       "type": "object",
       "properties": {
         "customerReference": {
-          "description": "A reference the user supplies to identify the record.",
+          "description": "A reference the user supplies to identify the record. Must not be empty or contain only whitespace.",
           "type": "string",
-          "example": "TRADE UNION PAYMENTS"
+          "example": "TRADE UNION PAYMENTS",
+          "pattern": "^[0-9a-zA-Z{À-˿’}\\- _&`():.'^]{1,90}$"
         },
         "expenseAmount": {
           "description": "The amount spent or cost incurred. The value must be between 0 and 99999999999.99 up to 2 decimal places.",
@@ -32,9 +33,10 @@
       "type": "object",
       "properties": {
         "customerReference": {
-          "description": "A reference the user supplies to identify the record.",
+          "description": "A reference the user supplies to identify the record. Must not be empty or contain only whitespace.",
           "type": "string",
-          "example": "ROYALTIES PAYMENTS"
+          "example": "ROYALTIES PAYMENTS",
+          "pattern": "^[0-9a-zA-Z{À-˿’}\\- _&`():.'^]{1,90}$"
         },
         "expenseAmount": {
           "description": "The amount spent or cost incurred. The value must be between 0 and 99999999999.99 up to 2 decimal places.",

@@ -24,18 +24,21 @@ import scala.util.matching.Regex
 
 case class ResolveStringPattern(regexFormat: Regex, error: MtdError) extends ResolverSupport {
 
-  val resolver: Resolver[String, String] = value =>
-    if (regexFormat.matches(value))
-      Valid(value)
-    else
-      Invalid(List(error))
+  val resolver: Resolver[String, String] = value => if (value.trim.nonEmpty && regexFormat.matches(value)) Valid(value) else Invalid(List(error))
 
   def apply(value: String): Validated[Seq[MtdError], String] = resolver(value)
+
+  def apply(value: Option[String]): Validated[Seq[MtdError], Option[String]] = resolver.resolveOptionally(value)
 }
 
 object ResolveStringPattern {
 
   def apply(value: String, regexFormat: Regex, error: MtdError): Validated[Seq[MtdError], String] = {
+    val resolver = ResolveStringPattern(regexFormat, error)
+    resolver(value)
+  }
+
+  def apply(value: Option[String], regexFormat: Regex, error: MtdError): Validated[Seq[MtdError], Option[String]] = {
     val resolver = ResolveStringPattern(regexFormat, error)
     resolver(value)
   }
