@@ -49,9 +49,9 @@ class RetrieveEmploymentsExpensesServiceSpec extends ServiceSpec {
       "return mapped result" in new Test {
         MockRetrieveEmploymentsExpensesConnector
           .retrieveEmploymentsExpenses(requestData)
-          .returns(Future.successful(Right(ResponseWrapper(correlationId, responseModelLatest))))
+          .returns(Future.successful(Right(ResponseWrapper(correlationId, responseModelUser))))
 
-        await(service.retrieveEmploymentsExpenses(requestData)) shouldBe Right(ResponseWrapper(correlationId, responseModelLatest))
+        await(service.retrieveEmploymentsExpenses(requestData)) shouldBe Right(ResponseWrapper(correlationId, responseModelUser))
       }
     }
   }

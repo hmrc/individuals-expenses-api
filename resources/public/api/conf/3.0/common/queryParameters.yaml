@@ -8,5 +8,5 @@ components:
         returned.
       schema:
         type: string
-        enum: [ user, hmrcHeld, latest ]
-        example: latest
+        enum: [ user, hmrcHeld ]
+        example: user

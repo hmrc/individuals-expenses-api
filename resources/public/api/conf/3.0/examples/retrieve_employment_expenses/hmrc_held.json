@@ -1,8 +1,8 @@
 {
-  "submittedOn": "2020-12-12T12:12:12Z",
+  "submittedOn": "2020-12-11T12:12.000Z",
   "totalExpenses": 123.12,
   "source": "hmrcHeld",
-  "dateIgnored": "2020-12-11T12:12:12Z",
+  "dateIgnored": "2020-12-13T12:12.000Z",
   "expenses": {
     "businessTravelCosts": 123.12,
     "jobExpenses": 123.12,

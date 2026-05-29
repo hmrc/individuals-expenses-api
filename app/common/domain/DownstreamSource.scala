@@ -20,12 +20,11 @@ import play.api.libs.json.*
 import shared.utils.enums.Enums
 
 enum DownstreamSource {
-  case `HMRC HELD`, `CUSTOMER`, `LATEST`, `HMRC-HELD`
+  case `HMRC HELD`, `CUSTOMER`, `HMRC-HELD`
 
   def toMtd: MtdSource = this match
     case DownstreamSource.`HMRC HELD` => MtdSource.hmrcHeld
     case DownstreamSource.`CUSTOMER`  => MtdSource.user
-    case DownstreamSource.`LATEST`    => MtdSource.latest
     case DownstreamSource.`HMRC-HELD` => MtdSource.hmrcHeld
 
 }
