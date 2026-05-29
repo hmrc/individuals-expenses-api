@@ -31,6 +31,18 @@ class RetrieveEmploymentsExpensesControllerISpec extends IntegrationBaseSpec {
 
   "Calling the retrieve endpoint" should {
     "return a 200 status code" when {
+      "valid latest request is made" in new NonTysTest {
+        override def setupStubs(): Unit = {
+          DownstreamStub.onSuccess(DownstreamStub.GET, downstreamUri, Map("view" -> latestSourceDownstream), OK, downstreamResponseJsonCustomer)
+        }
+
+        val response: WSResponse = await(request(latestMtdUri).get())
+        response.status shouldBe OK
+        response.json shouldBe retrieveEmploymentsExpensesMtdResponseUser
+        response.header("X-CorrelationId").nonEmpty shouldBe true
+        response.header("Content-Type") shouldBe Some("application/json")
+      }
+
       "valid hmrcHeld request is made" in new NonTysTest {
         override def setupStubs(): Unit = {
           DownstreamStub.onSuccess(DownstreamStub.GET, downstreamUri, Map("view" -> hmrcHeldSourceDownstream), OK, downstreamResponseJsonHmrcHeld)
@@ -138,11 +150,16 @@ class RetrieveEmploymentsExpensesControllerISpec extends IntegrationBaseSpec {
 
     val nino = "AA123456A"
 
+    val latestSourceMtd        = "latest"
+    val latestSourceDownstream = "LATEST"
+
     val hmrcHeldSourceMtd        = "hmrcHeld"
     val hmrcHeldSourceDownstream = "HMRC-HELD"
 
     val userSourceMtd        = "user"
     val userSourceDownstream = "CUSTOMER"
+
+    def latestMtdUri: String = s"/employments/$nino/$mtdTaxYear?source=$latestSourceMtd"
 
     def hmrcHeldMtdUri: String = s"/employments/$nino/$mtdTaxYear?source=$hmrcHeldSourceMtd"
 

@@ -16,15 +16,16 @@
 
 package common.domain
 
-import play.api.libs.json._
+import play.api.libs.json.*
 import shared.utils.enums.Enums
 
 enum MtdSource {
-  case hmrcHeld, user
+  case hmrcHeld, user, latest
 
-  def toDownstream: DownstreamSource = this match
-    case MtdSource.hmrcHeld => DownstreamSource.`HMRC-HELD`
-    case MtdSource.user     => DownstreamSource.`CUSTOMER`
+  def toDownstream: String = this match
+    case MtdSource.hmrcHeld => "HMRC-HELD"
+    case MtdSource.user     => "CUSTOMER"
+    case MtdSource.latest   => "LATEST"
 
 }
 

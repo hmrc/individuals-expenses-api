@@ -21,19 +21,25 @@ import shared.utils.enums.EnumJsonSpecSupport
 
 class MtdSourceSpec extends UnitSpec with EnumJsonSpecSupport {
 
+  val mtdLatest   = MtdSource.`latest`
   val mtdCustomer = MtdSource.`user`
   val mtdHmrc     = MtdSource.`hmrcHeld`
 
-  val desCustomer     = DownstreamSource.`CUSTOMER`
-  val desOutgoingHmrc = DownstreamSource.`HMRC-HELD`
+  val desLatest       = "LATEST"
+  val desCustomer     = "CUSTOMER"
+  val desOutgoingHmrc = "HMRC-HELD"
 
   testRoundTrip[MtdSource](
+    ("latest", MtdSource.`latest`),
     ("user", MtdSource.`user`),
     ("hmrcHeld", MtdSource.`hmrcHeld`)
   )
 
   "mtdSources" when {
     "when using the toDownstream" should {
+      "return the correct DesSource for latest" in {
+        mtdLatest.toDownstream shouldBe desLatest
+      }
       "return the correct DesSource for customer" in {
         mtdCustomer.toDownstream shouldBe desCustomer
       }

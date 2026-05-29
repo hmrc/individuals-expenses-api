@@ -17,14 +17,14 @@
 package v3.controllers.validators.resolvers
 
 import cats.data.Validated.{Invalid, Valid}
-import common.domain.MtdSource.{`hmrcHeld`, `user`}
+import common.domain.MtdSource.{`hmrcHeld`, `latest`, `user`}
 import common.error.SourceFormatError
 import shared.utils.UnitSpec
 
 class ResolveMtdSourceSpec extends UnitSpec {
 
   "ResolveMtdSource" should {
-    List(("user", `user`), ("hmrcHeld", `hmrcHeld`))
+    List(("latest", `latest`), ("user", `user`), ("hmrcHeld", `hmrcHeld`))
       .foreach { case (code, source) =>
         s"return an empty list for valid country code $code" in {
           val result = ResolveMtdSource(code)
