@@ -18,12 +18,11 @@
       "example" : 2000.99
     },
     "source": {
-      "description": "Specifies the source of data returned. \"latest\" combines the HMRC and user-provided overridden values.",
+      "description": "Specifies the source of data returned.",
       "type": "string",
       "enum": [
         "hmrcHeld",
-        "user",
-        "latest"
+        "user"
       ]
     },
     "dateIgnored": {

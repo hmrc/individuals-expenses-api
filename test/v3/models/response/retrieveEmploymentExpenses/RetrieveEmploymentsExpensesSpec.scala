@@ -18,15 +18,12 @@ package v3.models.response.retrieveEmploymentExpenses
 
 import shared.models.utils.JsonErrorValidators
 import shared.utils.UnitSpec
-import v3.fixtures.RetrieveEmploymentsExpensesFixtures._
+import v3.fixtures.RetrieveEmploymentsExpensesFixtures.*
 
 class RetrieveEmploymentsExpensesSpec extends UnitSpec with JsonErrorValidators {
 
   "reads" when {
     "passed valid JSON" should {
-      "return a valid model for latest" in {
-        responseModelLatest shouldBe downstreamResponseJsonLatest.as[RetrieveEmploymentsExpensesResponse]
-      }
       "return a valid model for customer" in {
         responseModelUser shouldBe downstreamResponseJsonCustomer.as[RetrieveEmploymentsExpensesResponse]
       }
@@ -38,9 +35,6 @@ class RetrieveEmploymentsExpensesSpec extends UnitSpec with JsonErrorValidators 
 
   "writes" when {
     "passed a response object" should {
-      "return valid JSON for latest" in {
-        responseModelLatest.toJson shouldBe mtdResponseJsonLatest
-      }
       "return valid JSON for user" in {
         responseModelUser.toJson shouldBe mtdResponseJsonUser
       }

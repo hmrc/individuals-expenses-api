@@ -61,10 +61,6 @@ responses:
             description: Example hmrcHeld response
             value:
               $ref: './examples/retrieve_employment_expenses/hmrc_held.json'
-          example-latest-response:
-            description: Example latest response
-            value:
-              $ref: './examples/retrieve_employment_expenses/latest.json'
 
   "400":
     description: Bad request

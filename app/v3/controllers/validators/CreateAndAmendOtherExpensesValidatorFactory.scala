@@ -69,5 +69,7 @@ class CreateAndAmendOtherExpensesValidatorFactory {
         }
         List(validatedExpensesAmounts, validatedCustomerReferences).traverse_(identity).map(_ => parsed)
       }
+
     }
+
 }

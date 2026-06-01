@@ -42,7 +42,6 @@ object RetrieveEmploymentsExpensesFixtures {
     expenses = Some(expensesModel)
   )
 
-  val responseModelLatest: RetrieveEmploymentsExpensesResponse   = responseModel(Some(MtdSource.`latest`))
   val responseModelUser: RetrieveEmploymentsExpensesResponse     = responseModel(Some(MtdSource.`user`))
   val responseModelHmrcHeld: RetrieveEmploymentsExpensesResponse = responseModel(Some(MtdSource.`hmrcHeld`))
 
@@ -73,15 +72,12 @@ object RetrieveEmploymentsExpensesFixtures {
        |""".stripMargin
   )
 
-  val mtdResponseJsonLatest: JsValue   = responseJson("latest")
   val mtdResponseJsonUser: JsValue     = responseJson("user")
   val mtdResponseJsonHmrcHeld: JsValue = responseJson("hmrcHeld")
 
-  val downstreamResponseJsonLatest: JsValue   = responseJson("LATEST")
   val downstreamResponseJsonCustomer: JsValue = responseJson("CUSTOMER")
   val downstreamResponseJsonHmrcHeld: JsValue = responseJson("HMRC HELD")
 
-  val retrieveEmploymentsExpensesMtdResponseLatest: JsValue   = mtdResponseJsonLatest.as[JsObject]
   val retrieveEmploymentsExpensesMtdResponseUser: JsValue     = mtdResponseJsonUser.as[JsObject]
   val retrieveEmploymentsExpensesMtdResponseHmrcHeld: JsValue = mtdResponseJsonHmrcHeld.as[JsObject]
 

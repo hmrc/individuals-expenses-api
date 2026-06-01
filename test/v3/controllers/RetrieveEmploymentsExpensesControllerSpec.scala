@@ -22,10 +22,10 @@ import play.api.mvc.Result
 import shared.config.MockAppConfig
 import shared.controllers.{ControllerBaseSpec, ControllerTestRunner}
 import shared.models.domain.{Nino, TaxYear}
-import shared.models.errors._
+import shared.models.errors.*
 import shared.models.outcomes.ResponseWrapper
 import v3.controllers.validators.MockRetrieveEmploymentExpensesValidatorFactory
-import v3.fixtures.RetrieveEmploymentsExpensesFixtures._
+import v3.fixtures.RetrieveEmploymentsExpensesFixtures.*
 import v3.models.request.retrieveEmploymentExpenses.RetrieveEmploymentsExpensesRequestData
 import v3.services.MockRetrieveEmploymentsExpensesService
 
@@ -40,7 +40,7 @@ class RetrieveEmploymentsExpensesControllerSpec
     with MockAppConfig {
 
   private val taxYear = "2019-20"
-  private val source  = MtdSource.`latest`
+  private val source  = MtdSource.`user`
 
   private val requestData = RetrieveEmploymentsExpensesRequestData(Nino(validNino), TaxYear.fromMtd(taxYear), source)
 
@@ -57,11 +57,11 @@ class RetrieveEmploymentsExpensesControllerSpec
 
         MockRetrieveEmploymentsExpensesService
           .retrieveEmploymentsExpenses(requestData)
-          .returns(Future.successful(Right(ResponseWrapper(correlationId, responseModelLatest))))
+          .returns(Future.successful(Right(ResponseWrapper(correlationId, responseModelUser))))
 
         runOkTest(
           expectedStatus = OK,
-          maybeExpectedResponseBody = Some(retrieveEmploymentsExpensesMtdResponseLatest)
+          maybeExpectedResponseBody = Some(retrieveEmploymentsExpensesMtdResponseUser)
         )
       }
     }

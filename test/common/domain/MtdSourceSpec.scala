@@ -25,9 +25,9 @@ class MtdSourceSpec extends UnitSpec with EnumJsonSpecSupport {
   val mtdCustomer = MtdSource.`user`
   val mtdHmrc     = MtdSource.`hmrcHeld`
 
-  val desLatest       = DownstreamSource.`LATEST`
-  val desCustomer     = DownstreamSource.`CUSTOMER`
-  val desOutgoingHmrc = DownstreamSource.`HMRC-HELD`
+  val desLatest       = "LATEST"
+  val desCustomer     = "CUSTOMER"
+  val desOutgoingHmrc = "HMRC-HELD"
 
   testRoundTrip[MtdSource](
     ("latest", MtdSource.`latest`),

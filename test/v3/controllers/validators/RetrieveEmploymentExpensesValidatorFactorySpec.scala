@@ -19,7 +19,7 @@ package v3.controllers.validators
 import common.domain.MtdSource
 import common.error.SourceFormatError
 import shared.models.domain.{Nino, TaxYear}
-import shared.models.errors._
+import shared.models.errors.*
 import shared.utils.UnitSpec
 import v3.models.request.retrieveEmploymentExpenses.RetrieveEmploymentsExpensesRequestData
 
@@ -29,11 +29,11 @@ class RetrieveEmploymentExpensesValidatorFactorySpec extends UnitSpec {
 
   private val validNino    = "AA123456A"
   private val validTaxYear = "2023-24"
-  private val validSource  = "latest"
+  private val validSource  = "user"
 
   private val parsedNino    = Nino(validNino)
   private val parsedTaxYear = TaxYear.fromMtd(validTaxYear)
-  private val parsedSource  = MtdSource.`latest`
+  private val parsedSource  = MtdSource.`user`
 
   private val validatorFactory = new RetrieveEmploymentExpensesValidatorFactory
 

@@ -18,14 +18,14 @@ package v3.endpoints
 
 import common.error.SourceFormatError
 import play.api.http.HeaderNames.ACCEPT
-import play.api.http.Status._
+import play.api.http.Status.*
 import play.api.libs.json.Json
 import play.api.libs.ws.{WSRequest, WSResponse}
 import play.api.test.Helpers.AUTHORIZATION
-import shared.models.errors._
+import shared.models.errors.*
 import shared.services.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 import shared.support.IntegrationBaseSpec
-import v3.fixtures.RetrieveEmploymentsExpensesFixtures._
+import v3.fixtures.RetrieveEmploymentsExpensesFixtures.*
 
 class RetrieveEmploymentsExpensesControllerISpec extends IntegrationBaseSpec {
 
@@ -33,12 +33,12 @@ class RetrieveEmploymentsExpensesControllerISpec extends IntegrationBaseSpec {
     "return a 200 status code" when {
       "valid latest request is made" in new NonTysTest {
         override def setupStubs(): Unit = {
-          DownstreamStub.onSuccess(DownstreamStub.GET, downstreamUri, Map("view" -> latestSourceDownstream), OK, downstreamResponseJsonLatest)
+          DownstreamStub.onSuccess(DownstreamStub.GET, downstreamUri, Map("view" -> latestSourceDownstream), OK, downstreamResponseJsonCustomer)
         }
 
         val response: WSResponse = await(request(latestMtdUri).get())
         response.status shouldBe OK
-        response.json shouldBe retrieveEmploymentsExpensesMtdResponseLatest
+        response.json shouldBe retrieveEmploymentsExpensesMtdResponseUser
         response.header("X-CorrelationId").nonEmpty shouldBe true
         response.header("Content-Type") shouldBe Some("application/json")
       }
@@ -69,12 +69,12 @@ class RetrieveEmploymentsExpensesControllerISpec extends IntegrationBaseSpec {
 
       "valid request is made for a Tax Year Specific (TYS) tax year" in new TysIfsTest {
         override def setupStubs(): Unit = {
-          DownstreamStub.onSuccess(DownstreamStub.GET, downstreamUri, Map("view" -> latestSourceDownstream), OK, downstreamResponseJsonLatest)
+          DownstreamStub.onSuccess(DownstreamStub.GET, downstreamUri, Map("view" -> userSourceDownstream), OK, downstreamResponseJsonCustomer)
         }
 
-        val response: WSResponse = await(request(latestMtdUri).get())
+        val response: WSResponse = await(request(userMtdUri).get())
         response.status shouldBe OK
-        response.json shouldBe retrieveEmploymentsExpensesMtdResponseLatest
+        response.json shouldBe retrieveEmploymentsExpensesMtdResponseUser
         response.header("X-CorrelationId").nonEmpty shouldBe true
         response.header("Content-Type") shouldBe Some("application/json")
       }
@@ -90,22 +90,22 @@ class RetrieveEmploymentsExpensesControllerISpec extends IntegrationBaseSpec {
                                 expectedBody: MtdError): Unit = {
           s"validation fails with ${expectedBody.code} error" in new NonTysTest {
 
-            override val nino: String            = requestNino
-            override val mtdTaxYear: String      = requestTaxYear
-            override val latestSourceMtd: String = requestSource
+            override val nino: String          = requestNino
+            override val mtdTaxYear: String    = requestTaxYear
+            override val userSourceMtd: String = requestSource
 
-            val response: WSResponse = await(request(latestMtdUri).get())
+            val response: WSResponse = await(request(userMtdUri).get())
             response.status shouldBe expectedStatus
             response.json shouldBe Json.toJson(expectedBody)
           }
         }
 
         val input = List(
-          ("Walrus", "2019-20", "latest", BAD_REQUEST, NinoFormatError),
-          ("AA123456A", "203100", "latest", BAD_REQUEST, TaxYearFormatError),
+          ("Walrus", "2019-20", "user", BAD_REQUEST, NinoFormatError),
+          ("AA123456A", "203100", "user", BAD_REQUEST, TaxYearFormatError),
           ("AA123456A", "2019-20", "Walrus", BAD_REQUEST, SourceFormatError),
-          ("AA123456A", "2017-18", "latest", BAD_REQUEST, RuleTaxYearNotSupportedError),
-          ("AA123456A", "2018-20", "latest", BAD_REQUEST, RuleTaxYearRangeInvalidError)
+          ("AA123456A", "2017-18", "user", BAD_REQUEST, RuleTaxYearNotSupportedError),
+          ("AA123456A", "2018-20", "user", BAD_REQUEST, RuleTaxYearRangeInvalidError)
         )
 
         input.foreach(args => validationErrorTest.tupled(args))
@@ -118,7 +118,7 @@ class RetrieveEmploymentsExpensesControllerISpec extends IntegrationBaseSpec {
               DownstreamStub.onError(DownstreamStub.GET, downstreamUri, downstreamStatus, errorBody(downstreamCode))
             }
 
-            val response: WSResponse = await(request(latestMtdUri).get())
+            val response: WSResponse = await(request(userMtdUri).get())
             response.status shouldBe expectedStatus
             response.json shouldBe Json.toJson(expectedBody)
           }
