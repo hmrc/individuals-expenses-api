@@ -16,12 +16,12 @@
 
 package v3.controllers.validators
 
+import api.models.domain.{Nino, TaxYear}
+import api.models.errors.*
+import api.models.utils.JsonErrorValidators
+import api.utils.UnitSpec
 import common.error.CustomerReferenceFormatError
-import play.api.libs.json._
-import shared.models.domain.{Nino, TaxYear}
-import shared.models.errors._
-import shared.models.utils.JsonErrorValidators
-import shared.utils.UnitSpec
+import play.api.libs.json.*
 import v3.models.request.createAndAmendOtherExpenses.{
   CreateAndAmendOtherExpensesBody,
   CreateAndAmendOtherExpensesRequestData,

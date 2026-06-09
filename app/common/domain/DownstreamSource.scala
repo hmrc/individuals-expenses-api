@@ -16,8 +16,8 @@
 
 package common.domain
 
+import api.utils.enums.Enums
 import play.api.libs.json.*
-import shared.utils.enums.Enums
 
 enum DownstreamSource {
   case `HMRC HELD`, `CUSTOMER`, `HMRC-HELD`

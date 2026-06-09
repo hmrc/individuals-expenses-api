@@ -16,7 +16,7 @@
 
 package v3.fixtures
 
-import shared.models.domain.Timestamp
+import api.models.domain.Timestamp
 import play.api.libs.json.{JsObject, JsValue, Json}
 import v3.models.response.retrieveOtherExpenses.{PatentRoyaltiesPayments, PaymentsToTradeUnionsForDeathBenefits, RetrieveOtherExpensesResponse}
 

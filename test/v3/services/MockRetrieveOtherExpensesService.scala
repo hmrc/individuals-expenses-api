@@ -16,12 +16,12 @@
 
 package v3.services
 
+import api.controllers.RequestContext
+import api.models.errors.ErrorWrapper
+import api.models.outcomes.ResponseWrapper
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.TestSuite
-import shared.controllers.RequestContext
-import shared.models.errors.ErrorWrapper
-import shared.models.outcomes.ResponseWrapper
 import v3.models.request.retrieveOtherExpenses.RetrieveOtherExpensesRequestData
 import v3.models.response.retrieveOtherExpenses.RetrieveOtherExpensesResponse
 

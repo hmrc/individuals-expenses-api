@@ -16,7 +16,7 @@
 
 package common.error
 
-import shared.models.errors.MtdError
+import api.models.errors.MtdError
 import play.api.http.Status.BAD_REQUEST
 
 object RuleInvalidSubmissionPensionScheme

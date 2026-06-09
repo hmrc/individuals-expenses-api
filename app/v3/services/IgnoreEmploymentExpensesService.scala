@@ -16,11 +16,11 @@
 
 package v3.services
 
-import cats.implicits._
+import api.controllers.RequestContext
+import api.models.errors.*
+import api.services.{BaseService, ServiceOutcome}
+import cats.implicits.*
 import common.error.TaxYearNotEndedError
-import shared.controllers.RequestContext
-import shared.models.errors._
-import shared.services.{BaseService, ServiceOutcome}
 import v3.connectors.IgnoreEmploymentExpensesConnector
 import v3.models.request.ignoreEmploymentExpenses.IgnoreEmploymentExpensesRequestData
 

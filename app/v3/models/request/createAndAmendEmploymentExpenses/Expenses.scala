@@ -16,8 +16,8 @@
 
 package v3.models.request.createAndAmendEmploymentExpenses
 
+import api.utils.EmptinessChecker
 import play.api.libs.json.{Json, OFormat}
-import shared.utils.EmptinessChecker
 
 case class Expenses(businessTravelCosts: Option[BigDecimal],
                     jobExpenses: Option[BigDecimal],

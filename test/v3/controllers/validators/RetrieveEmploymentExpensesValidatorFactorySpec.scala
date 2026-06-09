@@ -16,11 +16,11 @@
 
 package v3.controllers.validators
 
+import api.models.domain.{Nino, TaxYear}
+import api.models.errors.*
+import api.utils.UnitSpec
 import common.domain.MtdSource
 import common.error.SourceFormatError
-import shared.models.domain.{Nino, TaxYear}
-import shared.models.errors.*
-import shared.utils.UnitSpec
 import v3.models.request.retrieveEmploymentExpenses.RetrieveEmploymentsExpensesRequestData
 
 class RetrieveEmploymentExpensesValidatorFactorySpec extends UnitSpec {

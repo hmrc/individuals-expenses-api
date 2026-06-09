@@ -16,9 +16,9 @@
 
 package v3.models.response.retrieveOtherExpenses
 
+import api.models.utils.JsonErrorValidators
+import api.utils.UnitSpec
 import play.api.libs.json.Json
-import shared.models.utils.JsonErrorValidators
-import shared.utils.UnitSpec
 
 class PaymentsToTradeUnionsForDeathBenefitsSpec extends UnitSpec with JsonErrorValidators {
 

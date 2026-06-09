@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import sbt.*
+
 import uk.gov.hmrc.DefaultBuildSettings
 
 ThisBuild / scalaVersion := "3.5.2"
@@ -27,14 +27,12 @@ ThisBuild / scalafmtOnCompile := true
 val appName = "individuals-expenses-api"
 
 lazy val microservice = Project(appName, file("."))
-  .enablePlugins(play.sbt.PlayScala, SbtDistributablesPlugin)
+  .enablePlugins(PlayScala, SbtDistributablesPlugin)
   .disablePlugins(JUnitXmlReportPlugin) // Required to prevent https://github.com/scalatest/scalatest/issues/1427
   .settings(
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test,
-    retrieveManaged                 := true,
-    update / evictionWarningOptions := EvictionWarningOptions.default.withWarnScalaVersionEviction(warnScalaVersionEviction = false),
     scalacOptions ++= List(
-      "-Wconf:src=routes/.*:silent",
+      "-Wconf:src=routes/.*:s",
       "-feature"
     )
   )
@@ -42,7 +40,7 @@ lazy val microservice = Project(appName, file("."))
     Compile / unmanagedResourceDirectories += baseDirectory.value / "resources",
     Compile / unmanagedClasspath += baseDirectory.value / "resources"
   )
-  .settings(CodeCoverageSettings.settings *)
+  .settings(CodeCoverageSettings.settings)
   .settings(PlayKeys.playDefaultPort := 7795)
 
 lazy val it = project

@@ -16,6 +16,6 @@
 
 package v3.models.request.ignoreEmploymentExpenses
 
-import shared.models.domain.{Nino, TaxYear}
+import api.models.domain.{Nino, TaxYear}
 
 case class IgnoreEmploymentExpensesRequestData(nino: Nino, taxYear: TaxYear)

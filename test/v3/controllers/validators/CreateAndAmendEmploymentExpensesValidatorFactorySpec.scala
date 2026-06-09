@@ -16,11 +16,11 @@
 
 package v3.controllers.validators
 
+import api.models.domain.{Nino, TaxYear}
+import api.models.errors.*
+import api.models.utils.JsonErrorValidators
+import api.utils.UnitSpec
 import play.api.libs.json.{JsNumber, JsObject, JsValue, Json}
-import shared.models.domain.{Nino, TaxYear}
-import shared.models.errors._
-import shared.models.utils.JsonErrorValidators
-import shared.utils.UnitSpec
 import v3.models.request.createAndAmendEmploymentExpenses.{
   CreateAndAmendEmploymentExpensesBody,
   CreateAndAmendEmploymentExpensesRequestData,

@@ -16,17 +16,17 @@
 
 package v3.controllers
 
+import api.config.MockAppConfig
+import api.controllers.{ControllerBaseSpec, ControllerTestRunner}
+import api.models.audit.{AuditEvent, AuditResponse, GenericAuditDetail}
+import api.models.domain.{Nino, TaxYear}
+import api.models.errors.*
+import api.models.outcomes.ResponseWrapper
 import play.api.Configuration
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Result
-import shared.config.MockAppConfig
-import shared.controllers.{ControllerBaseSpec, ControllerTestRunner}
-import shared.models.audit.{AuditEvent, AuditResponse, GenericAuditDetail}
-import shared.models.domain.{Nino, TaxYear}
-import shared.models.errors._
-import shared.models.outcomes.ResponseWrapper
 import v3.controllers.validators.MockCreateAndAmendOtherExpensesValidatorFactory
-import v3.models.request.createAndAmendOtherExpenses._
+import v3.models.request.createAndAmendOtherExpenses.*
 import v3.services.MockCreateAndAmendOtherExpensesService
 
 import scala.concurrent.ExecutionContext.Implicits.global

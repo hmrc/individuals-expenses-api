@@ -16,6 +16,6 @@
 
 package v3.models.request.retrieveOtherExpenses
 
-import shared.models.domain.{Nino, TaxYear}
+import api.models.domain.{Nino, TaxYear}
 
 case class RetrieveOtherExpensesRequestData(nino: Nino, taxYear: TaxYear)

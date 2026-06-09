@@ -16,6 +16,6 @@
 
 package v3.models.request.createAndAmendOtherExpenses
 
-import shared.models.domain.{Nino, TaxYear}
+import api.models.domain.{Nino, TaxYear}
 
 case class CreateAndAmendOtherExpensesRequestData(nino: Nino, taxYear: TaxYear, body: CreateAndAmendOtherExpensesBody)

@@ -16,10 +16,10 @@
 
 package v3.services
 
-import cats.implicits._
-import shared.controllers.RequestContext
-import shared.models.errors._
-import shared.services.{BaseService, ServiceOutcome}
+import api.controllers.RequestContext
+import api.models.errors.*
+import api.services.{BaseService, ServiceOutcome}
+import cats.implicits.*
 import v3.connectors.RetrieveOtherExpensesConnector
 import v3.models.request.retrieveOtherExpenses.RetrieveOtherExpensesRequestData
 import v3.models.response.retrieveOtherExpenses.RetrieveOtherExpensesResponse

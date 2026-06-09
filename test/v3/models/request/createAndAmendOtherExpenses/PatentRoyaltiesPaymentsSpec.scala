@@ -16,9 +16,9 @@
 
 package v3.models.request.createAndAmendOtherExpenses
 
-import shared.models.utils.JsonErrorValidators
+import api.models.utils.JsonErrorValidators
+import api.utils.UnitSpec
 import play.api.libs.json.Json
-import shared.utils.UnitSpec
 
 class PatentRoyaltiesPaymentsSpec extends UnitSpec with JsonErrorValidators {
 

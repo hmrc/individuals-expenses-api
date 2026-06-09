@@ -16,15 +16,15 @@
 
 package v3.controllers.validators
 
+import api.controllers.validators.Validator
+import api.controllers.validators.resolvers.*
+import api.models.domain.TaxYear
+import api.models.errors.MtdError
 import cats.data.Validated
-import cats.data.Validated._
-import cats.implicits._
+import cats.data.Validated.*
+import cats.implicits.*
 import common.error.CustomerReferenceFormatError
 import play.api.libs.json.JsValue
-import shared.controllers.validators.Validator
-import shared.controllers.validators.resolvers.*
-import shared.models.domain.TaxYear
-import shared.models.errors.MtdError
 import v3.models.request.createAndAmendOtherExpenses.{CreateAndAmendOtherExpensesBody, CreateAndAmendOtherExpensesRequestData}
 
 import javax.inject.Singleton
@@ -54,7 +54,7 @@ class CreateAndAmendOtherExpensesValidatorFactory {
 
       private def validateBusinessRules(
           parsed: CreateAndAmendOtherExpensesRequestData): Validated[Seq[MtdError], CreateAndAmendOtherExpensesRequestData] = {
-        import parsed.body._
+        import parsed.body.*
 
         val validatedExpensesAmounts = List(
           (paymentsToTradeUnionsForDeathBenefits.map(_.expenseAmount), "/paymentsToTradeUnionsForDeathBenefits/expenseAmount"),

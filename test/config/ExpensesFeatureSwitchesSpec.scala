@@ -16,9 +16,9 @@
 
 package config
 
+import api.config.FeatureSwitchesBehaviour
+import api.utils.UnitSpec
 import play.api.Configuration
-import shared.config.FeatureSwitchesBehaviour
-import shared.utils.UnitSpec
 
 class ExpensesFeatureSwitchesSpec extends UnitSpec with FeatureSwitchesBehaviour[ExpensesFeatureSwitches] {
   override def featureSwitches(configuration: Configuration): ExpensesFeatureSwitches = ExpensesFeatureSwitches(configuration)

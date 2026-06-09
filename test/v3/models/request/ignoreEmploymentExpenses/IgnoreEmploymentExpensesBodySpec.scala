@@ -16,8 +16,8 @@
 
 package v3.models.request.ignoreEmploymentExpenses
 
+import api.utils.UnitSpec
 import play.api.libs.json.{JsValue, Json}
-import shared.utils.UnitSpec
 
 class IgnoreEmploymentExpensesBodySpec extends UnitSpec {
 

@@ -16,14 +16,14 @@
 
 package v3.controllers.validators
 
+import api.controllers.validators.Validator
+import api.controllers.validators.resolvers.*
+import api.models.domain.TaxYear
+import api.models.errors.MtdError
 import cats.data.Validated
-import cats.data.Validated._
-import cats.implicits._
+import cats.data.Validated.*
+import cats.implicits.*
 import play.api.libs.json.JsValue
-import shared.controllers.validators.Validator
-import shared.controllers.validators.resolvers._
-import shared.models.domain.TaxYear
-import shared.models.errors.MtdError
 import v3.models.request.createAndAmendEmploymentExpenses.{CreateAndAmendEmploymentExpensesBody, CreateAndAmendEmploymentExpensesRequestData}
 
 import java.time.Clock
@@ -56,7 +56,7 @@ class CreateAndAmendEmploymentExpensesValidatorFactory {
 
       private def validateBusinessRules(
           parsed: CreateAndAmendEmploymentExpensesRequestData): Validated[Seq[MtdError], CreateAndAmendEmploymentExpensesRequestData] = {
-        import parsed.body.expenses._
+        import parsed.body.expenses.*
 
         List(
           (businessTravelCosts, "/expenses/businessTravelCosts"),

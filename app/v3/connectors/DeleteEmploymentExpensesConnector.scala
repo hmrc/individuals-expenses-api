@@ -16,13 +16,13 @@
 
 package v3.connectors
 
+import api.config.AppConfig
+import api.connectors.DownstreamUri.{DesUri, IfsUri}
+import api.connectors.httpparsers.StandardDownstreamHttpParser.*
+import api.connectors.{BaseDownstreamConnector, DownstreamOutcome}
 import play.api.http.Status.NO_CONTENT
-import shared.config.AppConfig
-import shared.connectors.DownstreamUri.{DesUri, IfsUri}
-import shared.connectors.httpparsers.StandardDownstreamHttpParser._
-import shared.connectors.{BaseDownstreamConnector, DownstreamOutcome}
-import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.client.HttpClientV2
 import v3.models.request.deleteEmploymentExpenses.DeleteEmploymentExpensesRequestData
 
 import javax.inject.{Inject, Singleton}
@@ -38,7 +38,7 @@ class DeleteEmploymentExpensesConnector @Inject() (val http: HttpClientV2, val a
 
     implicit val successCode: SuccessCode = SuccessCode(NO_CONTENT)
 
-    import request._
+    import request.*
 
     val downstreamUri =
       if (request.taxYear.useTaxYearSpecificApi) {
