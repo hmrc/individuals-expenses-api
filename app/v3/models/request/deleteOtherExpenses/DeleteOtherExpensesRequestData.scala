@@ -16,6 +16,6 @@
 
 package v3.models.request.deleteOtherExpenses
 
-import shared.models.domain.{Nino, TaxYear}
+import api.models.domain.{Nino, TaxYear}
 
 case class DeleteOtherExpensesRequestData(nino: Nino, taxYear: TaxYear)

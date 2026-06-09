@@ -16,14 +16,14 @@
 
 package definition
 
+import api.config.Deprecation.NotDeprecated
+import api.config.MockAppConfig
+import api.definition.*
+import api.definition.APIStatus.BETA
+import api.mocks.MockHttpClient
+import api.routing.*
+import api.utils.UnitSpec
 import cats.implicits.catsSyntaxValidatedId
-import shared.config.Deprecation.NotDeprecated
-import shared.config.MockAppConfig
-import shared.definition.APIStatus.BETA
-import shared.definition.*
-import shared.mocks.MockHttpClient
-import shared.routing.*
-import shared.utils.UnitSpec
 
 class ExpensesApiDefinitionFactorySpec extends UnitSpec with MockAppConfig {
 

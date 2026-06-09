@@ -16,11 +16,11 @@
 
 package v3.services
 
+import api.models.domain.{Nino, TaxYear}
+import api.models.errors.*
+import api.models.outcomes.ResponseWrapper
+import api.services.ServiceSpec
 import common.error.{RuleInvalidSubmissionPensionScheme, TaxYearNotEndedError}
-import shared.models.domain.{Nino, TaxYear}
-import shared.models.errors._
-import shared.models.outcomes.ResponseWrapper
-import shared.services.ServiceSpec
 import v3.connectors.MockCreateAndAmendEmploymentExpensesConnector
 import v3.models.request.createAndAmendEmploymentExpenses.{
   CreateAndAmendEmploymentExpensesBody,

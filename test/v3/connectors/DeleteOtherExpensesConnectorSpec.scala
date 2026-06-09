@@ -16,9 +16,9 @@
 
 package v3.connectors
 
-import shared.connectors.ConnectorSpec
-import shared.models.domain.{Nino, TaxYear}
-import shared.models.outcomes.ResponseWrapper
+import api.connectors.ConnectorSpec
+import api.models.domain.{Nino, TaxYear}
+import api.models.outcomes.ResponseWrapper
 import uk.gov.hmrc.http.StringContextOps
 import v3.models.request.deleteOtherExpenses.DeleteOtherExpensesRequestData
 

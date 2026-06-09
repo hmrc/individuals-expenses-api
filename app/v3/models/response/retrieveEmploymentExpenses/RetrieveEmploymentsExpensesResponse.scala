@@ -16,10 +16,10 @@
 
 package v3.models.response.retrieveEmploymentExpenses
 
+import api.models.domain.Timestamp
 import common.domain.{DownstreamSource, MtdSource}
 import play.api.libs.functional.syntax.*
 import play.api.libs.json.{JsPath, Json, OWrites, Reads}
-import shared.models.domain.Timestamp
 
 case class RetrieveEmploymentsExpensesResponse(submittedOn: Option[Timestamp],
                                                totalExpenses: Option[BigDecimal],

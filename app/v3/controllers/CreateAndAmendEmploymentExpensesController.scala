@@ -16,14 +16,14 @@
 
 package v3.controllers
 
+import api.config.AppConfig
+import api.controllers.*
+import api.routing.Version3
+import api.services.{AuditService, EnrolmentsAuthService, MtdIdLookupService}
+import api.utils.IdGenerator
 import config.ExpensesFeatureSwitches
 import play.api.libs.json.JsValue
 import play.api.mvc.{Action, ControllerComponents}
-import shared.config.AppConfig
-import shared.controllers._
-import shared.routing.Version3
-import shared.services.{AuditService, EnrolmentsAuthService, MtdIdLookupService}
-import shared.utils.IdGenerator
 import v3.controllers.validators.CreateAndAmendEmploymentExpensesValidatorFactory
 import v3.services.CreateAndAmendEmploymentExpensesService
 

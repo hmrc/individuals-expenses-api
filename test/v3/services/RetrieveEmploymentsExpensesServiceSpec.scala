@@ -16,14 +16,14 @@
 
 package v3.services
 
+import api.models.domain.{Nino, TaxYear}
+import api.models.errors.*
+import api.models.outcomes.ResponseWrapper
+import api.services.ServiceSpec
 import common.domain.MtdSource
 import common.error.SourceFormatError
-import shared.models.domain.{Nino, TaxYear}
-import shared.models.errors._
-import shared.models.outcomes.ResponseWrapper
-import shared.services.ServiceSpec
 import v3.connectors.MockRetrieveEmploymentsExpensesConnector
-import v3.fixtures.RetrieveEmploymentsExpensesFixtures._
+import v3.fixtures.RetrieveEmploymentsExpensesFixtures.*
 import v3.models.request.retrieveEmploymentExpenses.RetrieveEmploymentsExpensesRequestData
 
 import scala.concurrent.Future

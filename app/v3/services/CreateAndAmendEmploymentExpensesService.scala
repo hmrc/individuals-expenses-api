@@ -16,11 +16,11 @@
 
 package v3.services
 
+import api.controllers.RequestContext
+import api.models.errors.*
+import api.services.{BaseService, ServiceOutcome}
 import cats.implicits.toBifunctorOps
 import common.error.{RuleInvalidSubmissionPensionScheme, TaxYearNotEndedError}
-import shared.controllers.RequestContext
-import shared.models.errors._
-import shared.services.{BaseService, ServiceOutcome}
 import v3.connectors.CreateAndAmendEmploymentExpensesConnector
 import v3.models.request.createAndAmendEmploymentExpenses.CreateAndAmendEmploymentExpensesRequestData
 

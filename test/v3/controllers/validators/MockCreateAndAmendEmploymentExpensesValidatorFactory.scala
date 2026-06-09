@@ -16,14 +16,14 @@
 
 package v3.controllers.validators
 
+import api.controllers.validators.Validator
+import api.models.errors.MtdError
 import cats.data.Validated
 import cats.data.Validated.{Invalid, Valid}
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.TestSuite
 import play.api.libs.json.JsValue
-import shared.controllers.validators.Validator
-import shared.models.errors.MtdError
 import v3.models.request.createAndAmendEmploymentExpenses.CreateAndAmendEmploymentExpensesRequestData
 
 import java.time.Clock

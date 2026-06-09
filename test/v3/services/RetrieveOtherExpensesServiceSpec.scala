@@ -16,13 +16,13 @@
 
 package v3.services
 
-import shared.models.domain.{Nino, TaxYear, Timestamp}
-import shared.models.errors._
-import shared.models.outcomes.ResponseWrapper
-import shared.services.ServiceSpec
+import api.models.domain.{Nino, TaxYear, Timestamp}
+import api.models.errors.*
+import api.models.outcomes.ResponseWrapper
+import api.services.ServiceSpec
 import v3.connectors.MockRetrieveOtherExpensesConnector
 import v3.models.request.retrieveOtherExpenses.RetrieveOtherExpensesRequestData
-import v3.models.response.retrieveOtherExpenses._
+import v3.models.response.retrieveOtherExpenses.*
 
 import scala.concurrent.Future
 

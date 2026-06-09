@@ -16,10 +16,10 @@
 
 package v3.models.response.retrieveOtherExpenses
 
+import api.config.MockAppConfig
+import api.models.domain.Timestamp
+import api.utils.UnitSpec
 import play.api.libs.json.Json
-import shared.config.MockAppConfig
-import shared.models.domain.Timestamp
-import shared.utils.UnitSpec
 
 class RetrieveOtherExpensesResponseSpec extends UnitSpec with MockAppConfig {
 

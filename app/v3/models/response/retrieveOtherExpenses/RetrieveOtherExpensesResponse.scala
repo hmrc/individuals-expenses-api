@@ -16,8 +16,8 @@
 
 package v3.models.response.retrieveOtherExpenses
 
+import api.models.domain.Timestamp
 import play.api.libs.json.{Json, OFormat}
-import shared.models.domain.Timestamp
 
 case class RetrieveOtherExpensesResponse(submittedOn: Timestamp,
                                          paymentsToTradeUnionsForDeathBenefits: Option[PaymentsToTradeUnionsForDeathBenefits],

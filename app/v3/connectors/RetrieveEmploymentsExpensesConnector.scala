@@ -16,12 +16,12 @@
 
 package v3.connectors
 
-import shared.config.AppConfig
-import shared.connectors.DownstreamUri._
-import shared.connectors.httpparsers.StandardDownstreamHttpParser._
-import shared.connectors.{BaseDownstreamConnector, DownstreamOutcome}
-import uk.gov.hmrc.http.client.HttpClientV2
+import api.config.AppConfig
+import api.connectors.DownstreamUri.*
+import api.connectors.httpparsers.StandardDownstreamHttpParser.*
+import api.connectors.{BaseDownstreamConnector, DownstreamOutcome}
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.client.HttpClientV2
 import v3.models.request.retrieveEmploymentExpenses.RetrieveEmploymentsExpensesRequestData
 import v3.models.response.retrieveEmploymentExpenses.RetrieveEmploymentsExpensesResponse
 
