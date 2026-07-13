@@ -1,7 +1,7 @@
 summary: Create and Amend Employment Expenses
 description: |
-  This endpoint enables you to add or update existing employment expenses. This endpoint can only be used after the tax 
-  year has ended. A National Insurance number and tax year are required.
+  This endpoint enables you to add or update existing employment expenses. A National Insurance number and tax year are required.
+  **This endpoint can only be used after the tax year has ended.**
   
   Amending an expense will override the expense and remove the "dateIgnored" flag from HMRC-provided expenses.
 

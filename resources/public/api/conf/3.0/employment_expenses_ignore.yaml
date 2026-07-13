@@ -1,8 +1,8 @@
 post:
   summary: Ignore Employment Expenses
   description: |
-    This endpoint enables you to ignore HMRC-provided employment expenses for this user. This endpoint can only be used 
-    after the tax year has ended. A National Insurance number and tax year must be provided.
+    This endpoint enables you to ignore HMRC-provided employment expenses for this user. A National Insurance number and tax year must be provided.
+    **This endpoint can only be used after the tax year has ended.**
     
     Ignoring an expense will remove any amended expenses and add the "dateIgnored" flag to HMRC-provided expenses.
   
