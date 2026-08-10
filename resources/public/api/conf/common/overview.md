@@ -1,3 +1,5 @@
+> HMRC is no longer accepting production credential access requests for new 2026–27 quarterly update products, as the market window for these products has now closed.
+
 Use the Individuals Expenses API to submit, edit and retrieve information about a customer’s work-related expenses eligible for tax relief.
 
 This API is related to the following customer journey:
