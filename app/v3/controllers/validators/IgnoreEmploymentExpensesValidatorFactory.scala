@@ -37,21 +37,15 @@ class IgnoreEmploymentExpensesValidatorFactory {
       clock: Clock = Clock.systemUTC): Validator[IgnoreEmploymentExpensesRequestData] =
     new Validator[IgnoreEmploymentExpensesRequestData] {
 
-      private val resolveTaxYear         = ResolveDetailedTaxYear(minimumTaxYear)
-      private val resolveCompleteTaxYear = ResolveDetailedTaxYear(minimumTaxYear, allowIncompleteTaxYear = false)
-
-      private lazy val resolvedTaxYear = {
-        if (temporalValidationEnabled) {
-          resolveCompleteTaxYear(taxYear)
-        } else {
-          resolveTaxYear(taxYear)
-        }
-      }
+      private val resolvedTaxYear = ResolveDetailedTaxYear(
+        minimumTaxYear = minimumTaxYear,
+        allowIncompleteTaxYear = !temporalValidationEnabled
+      )
 
       def validate: Validated[Seq[MtdError], IgnoreEmploymentExpensesRequestData] = {
         (
           ResolveNino(nino),
-          resolvedTaxYear
+          resolvedTaxYear(taxYear)
         ).mapN(IgnoreEmploymentExpensesRequestData.apply)
       }
 
