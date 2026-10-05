@@ -17,7 +17,7 @@
 package v3.controllers.validators
 
 import api.controllers.validators.Validator
-import api.controllers.validators.resolvers.{ResolveIncompleteTaxYear, ResolveNino, ResolveTaxYearMinimum}
+import api.controllers.validators.resolvers.{ResolveNino, ResolveDetailedTaxYear}
 import api.models.domain.TaxYear
 import api.models.errors.MtdError
 import cats.data.Validated
@@ -37,16 +37,15 @@ class IgnoreEmploymentExpensesValidatorFactory {
       clock: Clock = Clock.systemUTC): Validator[IgnoreEmploymentExpensesRequestData] =
     new Validator[IgnoreEmploymentExpensesRequestData] {
 
-      private lazy val resolvedTaxYear = {
-        ResolveTaxYearMinimum(minimumTaxYear)(taxYear) andThen { parsedTaxYear =>
-          if (temporalValidationEnabled) ResolveIncompleteTaxYear().resolver(taxYear) else Valid(parsedTaxYear)
-        }
-      }
+      private val resolvedTaxYear = ResolveDetailedTaxYear(
+        minimumTaxYear = minimumTaxYear,
+        allowIncompleteTaxYear = !temporalValidationEnabled
+      )
 
       def validate: Validated[Seq[MtdError], IgnoreEmploymentExpensesRequestData] = {
         (
           ResolveNino(nino),
-          resolvedTaxYear
+          resolvedTaxYear(taxYear)
         ).mapN(IgnoreEmploymentExpensesRequestData.apply)
       }
 

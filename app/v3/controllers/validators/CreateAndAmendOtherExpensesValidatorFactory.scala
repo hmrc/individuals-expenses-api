@@ -43,7 +43,7 @@ class CreateAndAmendOtherExpensesValidatorFactory {
   def validator(nino: String, taxYear: String, body: JsValue): Validator[CreateAndAmendOtherExpensesRequestData] =
     new Validator[CreateAndAmendOtherExpensesRequestData] {
 
-      private val resolveTaxYear = ResolveTaxYearMinimum(minimumTaxYear)
+      private val resolveTaxYear = ResolveDetailedTaxYear(minimumTaxYear)
 
       def validate: Validated[Seq[MtdError], CreateAndAmendOtherExpensesRequestData] =
         (

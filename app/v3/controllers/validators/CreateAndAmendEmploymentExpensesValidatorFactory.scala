@@ -41,16 +41,15 @@ class CreateAndAmendEmploymentExpensesValidatorFactory {
       clock: Clock = Clock.systemUTC): Validator[CreateAndAmendEmploymentExpensesRequestData] =
     new Validator[CreateAndAmendEmploymentExpensesRequestData] {
 
-      private lazy val resolvedTaxYear = {
-        ResolveTaxYearMinimum(minimumTaxYear)(taxYear) andThen { parsedTaxYear =>
-          if (temporalValidationEnabled) ResolveIncompleteTaxYear().resolver(taxYear) else Valid(parsedTaxYear)
-        }
-      }
+      private val resolvedTaxYear = ResolveDetailedTaxYear(
+        minimumTaxYear = minimumTaxYear,
+        allowIncompleteTaxYear = !temporalValidationEnabled
+      )
 
       def validate: Validated[Seq[MtdError], CreateAndAmendEmploymentExpensesRequestData] =
         (
           ResolveNino(nino),
-          resolvedTaxYear,
+          resolvedTaxYear(taxYear),
           resolveJson(body)
         ).mapN(CreateAndAmendEmploymentExpensesRequestData.apply) andThen validateBusinessRules
 
