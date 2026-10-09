@@ -11,7 +11,6 @@ description: |
   | Header Value (Gov-Test-Scenario)        | Scenario                                                                                                                                                                        |
   |-----------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
   | N/A - DEFAULT                           | Simulates success response.                                                                                                                                                     |
-  | TAX_YEAR_NOT_ENDED                      | Simulates the scenario where the submission is for a tax year that has not ended.                                                                                               | 
   | NOT_FOUND                               | Scenario to simulate not found error.                                                                                                                                           |
   | RULE_INVALID_SUBMISSION_PENSION_SCHEME  | Simulates the scenario where customer with single employment source that has "occupational pension" indicator cannot submit employment expenses.                                |
   | STATEFUL                                | Performs a stateful create or update.<br><br>At least one custom employment with ‘occupationalPension = false’ must be created for the tax year before you can submit expenses. |
@@ -28,6 +27,7 @@ parameters:
   - $ref: './common/headers.yaml#/components/parameters/contentTypeJson'
   - $ref: './common/headers.yaml#/components/parameters/authorizationWriteScopeHeader'
   - $ref: './common/headers.yaml#/components/parameters/testScenarioHeader'
+  - $ref: './common/headers.yaml#/components/parameters/suspendTemporalValidationsHeader'
 
 security:
   - User-Restricted:
