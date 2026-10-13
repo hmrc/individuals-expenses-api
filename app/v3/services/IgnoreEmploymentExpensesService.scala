@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ import api.controllers.RequestContext
 import api.models.errors.*
 import api.services.{BaseService, ServiceOutcome}
 import cats.implicits.*
-import common.error.TaxYearNotEndedError
 import v3.connectors.IgnoreEmploymentExpensesConnector
 import v3.models.request.ignoreEmploymentExpenses.IgnoreEmploymentExpensesRequestData
 
@@ -41,7 +40,7 @@ class IgnoreEmploymentExpensesService @Inject() (connector: IgnoreEmploymentExpe
       "INVALID_TAX_YEAR"                -> TaxYearFormatError,
       "INVALID_CORRELATIONID"           -> InternalError,
       "INVALID_PAYLOAD"                 -> InternalError,
-      "INVALID_REQUEST_BEFORE_TAX_YEAR" -> TaxYearNotEndedError,
+      "INVALID_REQUEST_BEFORE_TAX_YEAR" -> RuleTaxYearNotEndedError,
       "INCOME_SOURCE_NOT_FOUND"         -> NotFoundError,
       "SERVER_ERROR"                    -> InternalError,
       "SERVICE_UNAVAILABLE"             -> InternalError

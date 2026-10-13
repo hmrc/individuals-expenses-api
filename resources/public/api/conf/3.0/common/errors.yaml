@@ -55,10 +55,10 @@ components:
         message: Tax year range invalid. A tax year range of one year is required
 
     ruleTaxYearNotEnded:
-      description: The submission has been made before the Tax year it relates to has ended.
+      description: The submission has been made before the tax year it relates to has ended.
       value:
         code: RULE_TAX_YEAR_NOT_ENDED
-        message: Tax year not ended
+        message: The specified tax year has not yet ended
 
     ruleInvalidSubmissionPensionScheme:
       description: |

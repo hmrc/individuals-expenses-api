@@ -25,7 +25,9 @@ object NinoFormatError extends MtdError("FORMAT_NINO", "The NINO format is inval
 
 object TaxYearFormatError extends MtdError("FORMAT_TAX_YEAR", "The taxYear format is invalid", BAD_REQUEST)
 
-object DateFormatError extends MtdError(code = "FORMAT_DATE", message = "The supplied date format is not valid", BAD_REQUEST)
+object SourceFormatError extends MtdError("FORMAT_SOURCE", "The provided source is invalid", BAD_REQUEST)
+
+object CustomerReferenceFormatError extends MtdError("FORMAT_CUSTOMER_REFERENCE", "The provided customer reference is not valid", BAD_REQUEST)
 
 object ValueFormatError extends MtdError("FORMAT_VALUE", "The value must be between 0 and 99999999999.99", BAD_REQUEST) {
 
@@ -48,9 +50,6 @@ object BVRError extends MtdError("BUSINESS_ERROR", "Business validation error", 
 object InvalidHttpMethodError extends MtdError("INVALID_HTTP_METHOD", "Invalid HTTP method", METHOD_NOT_ALLOWED)
 
 object InvalidBodyTypeError extends MtdError("INVALID_BODY_TYPE", "Expecting text/json or application/json body", UNSUPPORTED_MEDIA_TYPE)
-
-object InvalidTaxYearParameterError
-    extends MtdError(code = "INVALID_TAX_YEAR_PARAMETER", message = "A tax year before 2023-24 was supplied", BAD_REQUEST)
 
 //Authentication/Authorisation errors
 
@@ -79,6 +78,12 @@ object RuleIncorrectOrEmptyBodyError
 object RuleTaxYearRangeInvalidError extends MtdError("RULE_TAX_YEAR_RANGE_INVALID", "A tax year range of one year is required", BAD_REQUEST)
 
 object RuleTaxYearNotEndedError extends MtdError("RULE_TAX_YEAR_NOT_ENDED", "The specified tax year has not yet ended", BAD_REQUEST)
+
+object RuleInvalidSubmissionPensionScheme
+    extends MtdError(
+      "RULE_INVALID_SUBMISSION_PENSION_SCHEME",
+      "Data item submitted is invalid for a customer with an occupational pension and no other employment source - for example, employment expenses or benefit in kind (apart from medical insurance) are not valid",
+      BAD_REQUEST)
 
 //Stub Errors
 object RuleIncorrectGovTestScenarioError

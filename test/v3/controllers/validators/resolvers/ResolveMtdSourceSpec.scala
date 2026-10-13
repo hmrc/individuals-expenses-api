@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,17 +16,17 @@
 
 package v3.controllers.validators.resolvers
 
+import api.models.errors.SourceFormatError
 import api.utils.UnitSpec
 import cats.data.Validated.{Invalid, Valid}
 import common.domain.MtdSource.{`hmrcHeld`, `latest`, `user`}
-import common.error.SourceFormatError
 
 class ResolveMtdSourceSpec extends UnitSpec {
 
   "ResolveMtdSource" should {
     List(("latest", `latest`), ("user", `user`), ("hmrcHeld", `hmrcHeld`))
       .foreach { case (code, source) =>
-        s"return an empty list for valid country code $code" in {
+        s"return a valid MtdSource for valid source code $code" in {
           val result = ResolveMtdSource(code)
           result shouldBe Valid(source)
         }
