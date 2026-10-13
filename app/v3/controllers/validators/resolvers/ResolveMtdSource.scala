@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,10 @@
 package v3.controllers.validators.resolvers
 
 import api.controllers.validators.resolvers.ResolverSupport
-import api.models.errors.MtdError
+import api.models.errors.{MtdError, SourceFormatError}
 import cats.data.Validated
 import cats.data.Validated.{Invalid, Valid}
 import common.domain.MtdSource
-import common.error.SourceFormatError
 
 import scala.util.{Failure, Success, Try}
 

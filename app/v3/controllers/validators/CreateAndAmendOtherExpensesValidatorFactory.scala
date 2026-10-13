@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,11 +19,10 @@ package v3.controllers.validators
 import api.controllers.validators.Validator
 import api.controllers.validators.resolvers.*
 import api.models.domain.TaxYear
-import api.models.errors.MtdError
+import api.models.errors.{CustomerReferenceFormatError, MtdError}
 import cats.data.Validated
 import cats.data.Validated.*
 import cats.implicits.*
-import common.error.CustomerReferenceFormatError
 import play.api.libs.json.JsValue
 import v3.models.request.createAndAmendOtherExpenses.{CreateAndAmendOtherExpensesBody, CreateAndAmendOtherExpensesRequestData}
 

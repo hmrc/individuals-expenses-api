@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ import api.models.domain.{Nino, TaxYear}
 import api.models.errors.*
 import api.models.outcomes.ResponseWrapper
 import api.services.ServiceSpec
-import common.error.{RuleInvalidSubmissionPensionScheme, TaxYearNotEndedError}
 import v3.connectors.MockCreateAndAmendEmploymentExpensesConnector
 import v3.models.request.createAndAmendEmploymentExpenses.{
   CreateAndAmendEmploymentExpensesBody,
@@ -84,7 +83,7 @@ class CreateAndAmendEmploymentExpensesServiceSpec extends ServiceSpec {
         "INVALID_TAX_YEAR"                -> TaxYearFormatError,
         "INVALID_CORRELATIONID"           -> InternalError,
         "INVALID_PAYLOAD"                 -> InternalError,
-        "INVALID_REQUEST_BEFORE_TAX_YEAR" -> TaxYearNotEndedError,
+        "INVALID_REQUEST_BEFORE_TAX_YEAR" -> RuleTaxYearNotEndedError,
         "INCOME_SOURCE_NOT_FOUND"         -> NotFoundError,
         "SERVER_ERROR"                    -> InternalError,
         "SERVICE_UNAVAILABLE"             -> InternalError
