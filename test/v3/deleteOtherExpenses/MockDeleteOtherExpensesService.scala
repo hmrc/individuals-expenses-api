@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package v3.services
+package v3.deleteOtherExpenses
 
 import api.controllers.RequestContext
 import api.models.errors.ErrorWrapper
@@ -22,7 +22,7 @@ import api.models.outcomes.ResponseWrapper
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.TestSuite
-import v3.models.request.deleteOtherExpenses.DeleteOtherExpensesRequestData
+import v3.deleteOtherExpenses.model.request.DeleteOtherExpensesRequestData
 
 import scala.concurrent.{ExecutionContext, Future}
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package v3.controllers
+package v3.deleteOtherExpenses
 
 import api.config.MockAppConfig
 import api.controllers.{ControllerBaseSpec, ControllerTestRunner}
@@ -25,9 +25,7 @@ import api.models.outcomes.ResponseWrapper
 import play.api.Configuration
 import play.api.libs.json.JsValue
 import play.api.mvc.Result
-import v3.controllers.validators.MockDeleteOtherExpensesValidatorFactory
-import v3.models.request.deleteOtherExpenses.DeleteOtherExpensesRequestData
-import v3.services.MockDeleteOtherExpensesService
+import v3.deleteOtherExpenses.model.request.DeleteOtherExpensesRequestData
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future

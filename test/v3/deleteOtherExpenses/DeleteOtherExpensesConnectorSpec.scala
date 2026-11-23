@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package v3.connectors
+package v3.deleteOtherExpenses
 
 import api.connectors.ConnectorSpec
 import api.models.domain.{Nino, TaxYear}
 import api.models.outcomes.ResponseWrapper
 import uk.gov.hmrc.http.StringContextOps
-import v3.models.request.deleteOtherExpenses.DeleteOtherExpensesRequestData
+import v3.deleteOtherExpenses.model.request.DeleteOtherExpensesRequestData
 
 import scala.concurrent.Future
 

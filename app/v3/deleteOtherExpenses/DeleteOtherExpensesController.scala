@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package v3.controllers
+package v3.deleteOtherExpenses
 
 import api.config.AppConfig
 import api.controllers.*
@@ -22,8 +22,6 @@ import api.routing.Version3
 import api.services.{AuditService, EnrolmentsAuthService, MtdIdLookupService}
 import api.utils.IdGenerator
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
-import v3.controllers.validators.DeleteOtherExpensesValidatorFactory
-import v3.services.DeleteOtherExpensesService
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext

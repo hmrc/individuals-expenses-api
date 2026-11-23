@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package v3.services
+package v3.deleteOtherExpenses
 
 import api.controllers.RequestContext
 import api.models.errors.*
 import api.services.{BaseService, ServiceOutcome}
 import cats.implicits.*
-import v3.connectors.DeleteOtherExpensesConnector
-import v3.models.request.deleteOtherExpenses.DeleteOtherExpensesRequestData
+import v3.deleteOtherExpenses.model.request.DeleteOtherExpensesRequestData
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}

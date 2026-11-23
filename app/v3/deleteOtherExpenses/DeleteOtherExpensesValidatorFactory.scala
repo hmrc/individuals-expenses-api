@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package v3.controllers.validators
+package v3.deleteOtherExpenses
 
 import api.controllers.validators.Validator
 import api.controllers.validators.resolvers.{ResolveDetailedTaxYear, ResolveNino}
@@ -23,8 +23,8 @@ import api.models.errors.MtdError
 import cats.data.Validated
 import cats.data.Validated.*
 import cats.implicits.catsSyntaxTuple2Semigroupal
-import v3.controllers.validators.DeleteOtherExpensesValidatorFactory.resolveTaxYear
-import v3.models.request.deleteOtherExpenses.DeleteOtherExpensesRequestData
+import v3.deleteOtherExpenses.DeleteOtherExpensesValidatorFactory.resolveTaxYear
+import v3.deleteOtherExpenses.model.request.DeleteOtherExpensesRequestData
 
 import javax.inject.Singleton
 

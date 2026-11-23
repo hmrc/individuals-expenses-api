@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package v3.controllers.validators
+package v3.deleteOtherExpenses
 
 import api.models.domain.{Nino, TaxYear}
 import api.models.errors.*
 import api.utils.UnitSpec
-import v3.models.request.deleteOtherExpenses.DeleteOtherExpensesRequestData
+import v3.deleteOtherExpenses.model.request.DeleteOtherExpensesRequestData
 
 class DeleteOtherExpensesValidatorFactorySpec extends UnitSpec {
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package v3.models.request.deleteOtherExpenses
+package v3.deleteOtherExpenses.model.request
 
 import api.models.domain.{Nino, TaxYear}
 

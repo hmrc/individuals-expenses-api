@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package v3.controllers.validators
+package v3.deleteOtherExpenses
 
 import api.controllers.validators.Validator
 import api.models.errors.MtdError
@@ -23,7 +23,7 @@ import cats.data.Validated.{Invalid, Valid}
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.TestSuite
-import v3.models.request.deleteOtherExpenses.DeleteOtherExpensesRequestData
+import v3.deleteOtherExpenses.model.request.DeleteOtherExpensesRequestData
 
 trait MockDeleteOtherExpensesValidatorFactory extends TestSuite with MockFactory {
 

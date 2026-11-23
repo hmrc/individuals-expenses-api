@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package v3.services
+package v3.deleteOtherExpenses
 
 import api.models.domain.{Nino, TaxYear}
 import api.models.errors.*
 import api.models.outcomes.ResponseWrapper
 import api.services.ServiceSpec
-import v3.connectors.MockDeleteOtherExpensesConnector
-import v3.models.request.deleteOtherExpenses.DeleteOtherExpensesRequestData
+import v3.deleteOtherExpenses.model.request.DeleteOtherExpensesRequestData
 
 import scala.concurrent.Future
 

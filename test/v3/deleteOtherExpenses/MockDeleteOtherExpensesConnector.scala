@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package v3.connectors
+package v3.deleteOtherExpenses
 
 import api.connectors.DownstreamOutcome
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.TestSuite
 import uk.gov.hmrc.http.HeaderCarrier
-import v3.models.request.deleteOtherExpenses.DeleteOtherExpensesRequestData
+import v3.deleteOtherExpenses.model.request.DeleteOtherExpensesRequestData
 
 import scala.concurrent.{ExecutionContext, Future}
 
